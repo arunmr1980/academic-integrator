@@ -30,14 +30,15 @@ class TimetableIntegratorTest(unittest.TestCase):
 			self.check_events(expected_class_calendar.events,generated_class_calendar.events)
 
 	def check_events(self,expected_class_calendar_events,generated_class_calendar_events) :
-		for index in range(0,len(expected_class_calendar_events)) :
+
+		for index in range(0,len(expected_class_calendar_events) - 1) :
 			self.assertEqual(expected_class_calendar_events[index].event_type , generated_class_calendar_events[index].event_type)
 			self.assertEqual(expected_class_calendar_events[index].from_time , generated_class_calendar_events[index].from_time)
 			self.assertEqual(expected_class_calendar_events[index].to_time , generated_class_calendar_events[index].to_time)
 			self.check_params(expected_class_calendar_events[index].params,generated_class_calendar_events[index].params)
 
 	def check_params(self,expected_class_calendar_event_params,generated_class_calendar_event_params) :
-		for index in range(0,len(expected_class_calendar_event_params)) :
+		for index in range(0,len(expected_class_calendar_event_params) - 1) :
 			self.assertEqual(expected_class_calendar_event_params[index].key,generated_class_calendar_event_params[index].key)
 			self.assertEqual(expected_class_calendar_event_params[index].value,generated_class_calendar_event_params[index].value)
 
@@ -64,7 +65,6 @@ class TimetableIntegratorTest(unittest.TestCase):
 		for teacher_calendar_key in teacher_calendars_dict :
 			expected_teacher_calendar = expected_teacher_calendar_dict[teacher_calendar_key]
 			teacher_calendar = teacher_calendars_dict[teacher_calendar_key]
-			print(expected_teacher_calendar,teacher_calendar)
 			self.assertEqual(expected_teacher_calendar.institution_key,teacher_calendar.institution_key )
 			self.assertEqual(expected_teacher_calendar.calendar_date,teacher_calendar.calendar_date )
 			self.assertEqual(expected_teacher_calendar.subscriber_key,teacher_calendar.subscriber_key )

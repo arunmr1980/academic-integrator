@@ -11,4 +11,4 @@ Running a specific test
 
 Running all tests
 
-> python3 -n unittest discover <test_folder>
+> python3 -m unittest discover <test_folder>

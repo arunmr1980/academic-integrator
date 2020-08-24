@@ -84,6 +84,7 @@ def get_event(time_table_period,timetable_configuration_periods,date):
 
 
 def get_standard_time(time,date) :
+	
 	splited_date = date.split('-')
 	splited_date = list(map(int,splited_date))
 	time_hour = int(time[0:2])
@@ -164,7 +165,6 @@ def integrate_teacher_timetable(class_calendar_list) :
 		calendar_date = teacher_calendar.calendar_date
 		subscriber_key = teacher_calendar.subscriber_key
 		teacher_calendars_dict[calendar_date + subscriber_key] = teacher_calendar
-		print(teacher_calendars_dict)
 	return teacher_calendars_dict
 
 
