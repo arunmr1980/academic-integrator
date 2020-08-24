@@ -10,12 +10,16 @@ def delete_calendar(calendar_key) :
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(CALENDAR_TBL)
     response=table.delete_item(
-      Key={ 
+      Key={
         'calendar_key':calendar_key
       }
     )
     return response
 
+# TODO Change the implementation
+# a new index of institution_key and subscriber_type is added
+# Also implement getting attitional items if in one query all items are not returned
+#
 def get_all_calendars(institution_key,subscriber_type):
     calendar_list =[]
     dynamodb = boto3.resource('dynamodb')
@@ -36,7 +40,3 @@ def add_or_update_calendar(calendar):
         Item = calendar
     )
     return response
-
-
-
-
