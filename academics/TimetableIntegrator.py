@@ -65,6 +65,7 @@ def integrate_class_timetable(timetable, academic_configuration):
 
 
 def get_event(time_table_period,timetable_configuration_periods,date):
+
 	current_configuration_period = None
 	if timetable_configuration_periods is not None :
 		for timetable_configuration_period in timetable_configuration_periods :
