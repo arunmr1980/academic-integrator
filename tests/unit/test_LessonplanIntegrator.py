@@ -2,13 +2,13 @@ import unittest
 import json
 from academics.TimetableIntegrator import integrate_class_timetable,integrate_teacher_timetable
 from academics.timetable import AcademicConfiguration as academic_config
-import academics.timetable.TimeTable as ttable 
+import academics.timetable.TimeTable as ttable
 from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as calendar
 import academics.lessonplan.LessonPlan as lessonplan
 from academics.calendar.CalendarLessonPlanIntegrator import integrate_calendar_to_lesson_plan
-import operator 
-import pprint 
+import operator
+import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 
@@ -19,10 +19,10 @@ class LessonplanIntegratorTest(unittest.TestCase):
 	def test_lessonplan(self) :
 		expected_lesson_plan_list = self.get_expected_lesson_plan_list()
 		current_lesson_plan_list = self.get_current_lesson_plan_list()
-		time_table=self.get_time_table()
-		academic_configuration=self.get_academic_configuration()
-		generated_class_calendar_dict = integrate_class_timetable(time_table,academic_configuration)
-		generated_lesson_plan_list= integrate_calendar_to_lesson_plan(generated_class_calendar_dict,current_lesson_plan_list)
+		class_calendar_dict= self.get_calendar()
+		class_calendar_dict_obj = calendar.Calendar(class_calendar_dict)
+		generated_lesson_plan_list = integrate_calendar_to_lesson_plan(class_calendar_dict_obj,current_lesson_plan_list)
+
 		generated_lesson_plans_dict = self.get_generated_lesson_plans_dict(generated_lesson_plan_list)
 		for expected_lesson_plan in expected_lesson_plan_list :
 			lesson_plan_key = expected_lesson_plan.lesson_plan_key
@@ -59,13 +59,12 @@ class LessonplanIntegratorTest(unittest.TestCase):
 			self.assertEqual(generated_lesson_plan_sessions[index].name,expected_lesson_plan_sessions[index].name)
 			self.assertEqual(generated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
 			self.check_schedule(generated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
-			
-	def check_schedule(self,generated_lesson_plan_shedule,expexted_lesson_plan_shedule) :
-		self.assertEqual(generated_lesson_plan_shedule.start_time,expexted_lesson_plan_shedule.start_time)
-		self.assertEqual(generated_lesson_plan_shedule.end_time,expexted_lesson_plan_shedule.end_time)
+
+	def check_schedule(self,generated_lesson_plan_shedule,expected_lesson_plan_shedule) :
+		self.assertEqual(generated_lesson_plan_shedule.start_time,expected_lesson_plan_shedule.start_time)
+		self.assertEqual(generated_lesson_plan_shedule.end_time,expected_lesson_plan_shedule.end_time)
 
 
-	
 
 
 	def get_generated_lesson_plans_dict(self,generated_lesson_plan_list) :
@@ -73,7 +72,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		for generated_lesson_plan in generated_lesson_plan_list :
 			generated_lesson_plans_dict[generated_lesson_plan.lesson_plan_key] =  generated_lesson_plan
 		return generated_lesson_plans_dict
-		
+
 
 	def get_expected_lesson_plan_list(self) :
 		expected_lesson_plan_list =[]
@@ -97,15 +96,22 @@ class LessonplanIntegratorTest(unittest.TestCase):
 			teacher_calendar_dict_list = json.load(calendar_list)
 		return teacher_calendar_dict_list
 
-	def get_calendar_list(self) :
+	def get_class_calendar_list(self) :
+		class_calendar_obj_list = []
 		with open('tests/unit/fixtures/class_calendar_list.json', 'r') as calendar_list:
-			class_calendar_dict_list = json.load(calendar_list)	
-		return class_calendar_dict_list
+			class_calendar_dict_list = json.load(calendar_list)
+		for class_cal in class_calendar_dict_list :
+			class_calendar_obj_list.append(calendar.Calendar(class_cal))
+		return class_calendar_obj_list
 
+	def get_calendar(self) :
+	    with open('tests/unit/fixtures/class_calendar.json', 'r') as calendar:
+		    class_calendar_dict = json.load(calendar)
+	    return class_calendar_dict
 
 	def get_time_table(self):
 		with open('tests/unit/fixtures/timetable.json', 'r') as timetable:
-			timetable = json.load(timetable)	
+			timetable = json.load(timetable)
 		return ttable.TimeTable(timetable)
 
 
@@ -119,10 +125,3 @@ class LessonplanIntegratorTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
-
-
-
-
-

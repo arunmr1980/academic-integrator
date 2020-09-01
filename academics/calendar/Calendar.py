@@ -22,7 +22,7 @@ class Calendar:
                 events = item['events']
                 for event in events :
                     self.events.append(Event(event))
-                 
+
 
             except KeyError as ke:
                 logger.debug ('[WARN] - KeyError in Calendar -events not present'.format (str (ke)))
@@ -53,8 +53,7 @@ class Calendar:
                 item['from_time'] = event.from_time
             if event.to_time is not None :
                 item['to_time'] = event.to_time
-                  
-                 
+
 
 
             if event.ref_calendar_key is not None :
@@ -73,7 +72,7 @@ class Calendar:
             }
             collection_params.append(item)
         return collection_params
-        
+
 
 
 
@@ -89,7 +88,7 @@ class Event :
             self.params = []
         else :
             try :
-                ref_calendar_key = item['ref_calendar_key'] 
+                ref_calendar_key = item['ref_calendar_key']
                 self.ref_calendar_key = ref_calendar_key
             except KeyError as ke:
                 logger.debug ('[WARN] - KeyError in Event -ref_calendar_key not present'.format (str (ke)))
@@ -113,7 +112,7 @@ class Event :
                 to_time = item['to_time']
                 self.to_time = item['to_time']
             except KeyError as ke:
-                logger.debug ('[WARN] - KeyError in Event -to_time not present'.format (str (ke)))                  
+                logger.debug ('[WARN] - KeyError in Event -to_time not present'.format (str (ke)))
             try :
                 self.params = []
                 params = item['params']
@@ -130,5 +129,3 @@ class Param:
         else :
             self.key = item['key']
             self.value = item['value']
-          
-
