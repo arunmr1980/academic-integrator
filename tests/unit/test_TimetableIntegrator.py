@@ -2,21 +2,19 @@ import unittest
 import json
 from academics.TimetableIntegrator import integrate_class_timetable,integrate_teacher_timetable
 from academics.timetable import AcademicConfiguration as academic_config
-import academics.timetable.TimeTable as ttable 
+import academics.timetable.TimeTable as ttable
 from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as calendar
-import pprint 
-pp = pprint.PrettyPrinter(indent=4)
-
 
 
 class TimetableIntegratorTest(unittest.TestCase):
 
 
 	def test_class_calender(self) :
+		gclogger.info("")
+		gclogger.info("[UnitTest] testing class calendar .....")
 		time_table=self.get_time_table()
 		academic_configuration=self.get_academic_configuration()
-
 		generated_class_calendar_dict = integrate_class_timetable(time_table,academic_configuration)
 		class_calendar_dict_list = self.get_calendar_list()
 		for class_calendar in class_calendar_dict_list :
@@ -43,17 +41,19 @@ class TimetableIntegratorTest(unittest.TestCase):
 			self.assertEqual(expected_class_calendar_event_params[index].value,generated_class_calendar_event_params[index].value)
 
 
-	gclogger.info("--------------- Class calendar test passed -----------------")
+	gclogger.info("-----[Unit Test] Class calendar test passed -----------------")
 
 
-	def test_teacher_calender(self) :	
+	def test_teacher_calender(self) :
+		gclogger.info("")
+		gclogger.info("[UnitTest] testing teacher calendar .....")
+
 		expected_teacher_calendar_dict = {}
 		time_table=self.get_time_table()
-		academic_configuration=self.get_academic_configuration()		
-		generated_class_calendar_dict = integrate_class_timetable(time_table,academic_configuration)	
-		class_calendar_list = []
-		for generated_class_calendar in generated_class_calendar_dict.values() :
-			class_calendar_list.append(generated_class_calendar)
+		academic_configuration=self.get_academic_configuration()
+		generated_class_calendar_dict = integrate_class_timetable(time_table,academic_configuration)
+
+		class_calendar_list = generated_class_calendar_dict.values()
 		teacher_calendars_dict = integrate_teacher_timetable(class_calendar_list)
 		teacher_calendar_dict_list = self.get_teacher_calendar_list()
 		for teacher_calendar in teacher_calendar_dict_list :
@@ -68,8 +68,8 @@ class TimetableIntegratorTest(unittest.TestCase):
 			self.assertEqual(expected_teacher_calendar.institution_key,teacher_calendar.institution_key )
 			self.assertEqual(expected_teacher_calendar.calendar_date,teacher_calendar.calendar_date )
 			self.assertEqual(expected_teacher_calendar.subscriber_key,teacher_calendar.subscriber_key )
-			self.assertEqual(expected_teacher_calendar.subscriber_type,teacher_calendar.subscriber_type )		
-		gclogger.info("------------------Teacher calendar test passed -----------------")
+			self.assertEqual(expected_teacher_calendar.subscriber_type,teacher_calendar.subscriber_type )
+		gclogger.info("-----[UnitTest] Teacher calendar test passed -----------------")
 
 
 	def get_teacher_calendar_list(self) :
@@ -79,13 +79,13 @@ class TimetableIntegratorTest(unittest.TestCase):
 
 	def get_calendar_list(self) :
 		with open('tests/unit/fixtures/class_calendar_list.json', 'r') as calendar_list:
-			class_calendar_dict_list = json.load(calendar_list)	
+			class_calendar_dict_list = json.load(calendar_list)
 		return class_calendar_dict_list
 
 
 	def get_time_table(self):
 		with open('tests/unit/fixtures/timetable.json', 'r') as timetable:
-			timetable = json.load(timetable)	
+			timetable = json.load(timetable)
 		return ttable.TimeTable(timetable)
 
 
@@ -99,10 +99,3 @@ class TimetableIntegratorTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
-
-
-
-
-

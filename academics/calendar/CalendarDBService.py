@@ -2,6 +2,7 @@ import boto3
 from boto3.dynamodb.conditions import Key,Attr
 import academics.calendar.Calendar as cal
 from academics.logger import GCLogger as logger
+
 import operator
 
 CALENDAR_TBL = 'Calendar'
@@ -16,6 +17,7 @@ def delete_calendar(calendar_key) :
       }
     )
     return response
+
 
 def get_calendar(calendar_key) :
     dynamodb = boto3.resource('dynamodb')

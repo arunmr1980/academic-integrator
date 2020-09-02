@@ -8,17 +8,22 @@ import academics.timetable.TimeTableDBService as timetable_service
 from academics.timetable.TimeTable import TimeTable
 import academics.timetable.TimeTableDBService as timetable_service
 from academics.TimetableIntegrator import generate_and_save_calenders
-import operator 
+import operator
 from academics.logger import GCLogger as gclogger
 
 class TimetableIntegratorTest(unittest.TestCase):
 
-	def setUp(self) :		
-		timetable= self.get_timetable_from_json()
-		response = timetable_service.create_timetable(timetable)	
-		academic_configuration = self.get_academic_config_from_json()
+	@classmethod
+	def setUpClass(self) :
+		gclogger.info(" ")
+		gclogger.info(" Setting up timetable integrator test......")
+		timetable= self.get_timetable_from_json(self)
+		response = timetable_service.create_timetable(timetable)
+		academic_configuration = self.get_academic_config_from_json(self)
 		response = academic_service.create_academic_config(academic_configuration)
-	
+		gclogger.info(" Setup complete ......")
+		gclogger.info(" ")
+
 	def test_class_calendar(self) :
 		class_calendars_dict={}
 		class_calendar_list = []
@@ -27,7 +32,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
 		generate_and_save_calenders(timetable.time_table_key,academic_configuration.academic_year)
 		class_calender_list = calendar_service.get_all_calendars('test-school-1','CLASS-DIV')
-		
+
 		for class_calendar in class_calender_list :
 			calendar_date = class_calendar.calendar_date
 			class_calendars_dict[calendar_date] = class_calendar
@@ -48,7 +53,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 			self.assertEqual(expected_class_calendar.subscriber_type,generated_class_calendar.subscriber_type )
 			self.check_events(expected_class_calendar.events,generated_class_calendar.events)
 		gclogger.info("--------------- Class calendar test passed -----------------")
-		
+
 
 	def check_events(self,expected_class_calendar_events,generated_class_calendar_events) :
 		for index in range(0,len(expected_class_calendar_events)) :
@@ -62,7 +67,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 		for index in range(0,len(expected_class_calendar_event_params)) :
 			self.assertEqual(expected_class_calendar_event_params[index].key,generated_class_calendar_event_params[index].key)
 			self.assertEqual(expected_class_calendar_event_params[index].value,generated_class_calendar_event_params[index].value)
-	
+
 
 
 
@@ -86,18 +91,21 @@ class TimetableIntegratorTest(unittest.TestCase):
 			subscriber_key = teacher_calender.subscriber_key
 			calendar_date = teacher_calender.calendar_date
 			teacher_calendars_dict[calendar_date + subscriber_key] = teacher_calender
-		
+
 		for teacher_calendar_key in teacher_calendars_dict :
 			expected_teacher_calendar = expected_teacher_calendars_dict[teacher_calendar_key]
 			teacher_calendar = teacher_calendars_dict[teacher_calendar_key]
 			self.assertEqual(expected_teacher_calendar.institution_key,teacher_calendar.institution_key )
 			self.assertEqual(expected_teacher_calendar.calendar_date,teacher_calendar.calendar_date )
 			self.assertEqual(expected_teacher_calendar.subscriber_key,teacher_calendar.subscriber_key )
-			self.assertEqual(expected_teacher_calendar.subscriber_type,teacher_calendar.subscriber_type )		
+			self.assertEqual(expected_teacher_calendar.subscriber_type,teacher_calendar.subscriber_type )
 		gclogger.info("------------------Teacher calendar test passed -----------------")
 
-	
-	def tearDown(self):
+
+	@classmethod
+	def tearDownClass(self):
+		gclogger.info(" ")
+		gclogger.info(" Tear down timetable integrator test ......")
 		timetable = timetable_service.get_time_table('test-time-table-1')
 		school_key = timetable.school_key
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
