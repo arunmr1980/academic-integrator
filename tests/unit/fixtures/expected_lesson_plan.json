@@ -4,7 +4,7 @@
       "division":"A",
       "lesson_plan_key":"test-lessonplan-1",
       "resources":[
-         
+
       ],
       "subject_code":"bio1",
       "topics":[
@@ -15,14 +15,14 @@
             "topics":[
                {
                   "assignments":[
-                     
+
                   ],
                   "code":"CHAP1-TOP1",
                   "description":"edited",
                   "name":"topic 1",
                   "order_index":1,
                   "resources":[
-                     
+
                   ],
                   "sessions":[
                      {
@@ -38,7 +38,7 @@
                            "end_time":"2020-08-03T10:40:00"
                         },
                         "resources":[
-                           
+
                         ]
                      },
                      {
@@ -54,21 +54,21 @@
                            "end_time":"2020-08-04T12:10:00"
                         },
                         "resources":[
-                           
+
                         ]
                      }
                   ]
                },
                {
                   "assignments":[
-                     
+
                   ],
                   "code":"CHAP1-TOP2",
                   "description":"ghgdhhh",
                   "name":"topic 2",
                   "order_index":2,
                   "resources":[
-                     
+
                   ],
                   "sessions":[
                      {
@@ -82,10 +82,10 @@
                            "calendar_key":"test-key",
                            "event_code":"event-1",
                            "start_time":"2020-08-05T11:30:00",
-                           "end_time":"2020-08-05T12:00:00"
+                           "end_time":"2020-08-05T12:10:00"
                         },
                         "resources":[
-                           
+
                         ]
                      },
                      {
@@ -102,7 +102,7 @@
                            "end_time":"2020-08-10T10:40:00"
                         },
                         "resources":[
-                           
+
                         ]
                      }
                   ]
@@ -116,7 +116,7 @@
       "division":"A",
       "lesson_plan_key":"test-lessonplan-2",
       "resources":[
-         
+
       ],
       "subject_code":"bio2",
       "topics":[
@@ -127,14 +127,14 @@
             "topics":[
                {
                   "assignments":[
-                     
+
                   ],
                   "code":"CHAP2-TOP1",
                   "description":"edited",
                   "name":"topic 1",
                   "order_index":1,
                   "resources":[
-                     
+
                   ],
                   "sessions":[
                      {
@@ -150,7 +150,7 @@
                            "end_time":"2020-08-03T11:20:00"
                         },
                         "resources":[
-                           
+
                         ]
                      },
                      {
@@ -166,21 +166,21 @@
                            "end_time":"2020-08-04T10:40:00"
                         },
                         "resources":[
-                           
+
                         ]
                      }
                   ]
                },
                {
                   "assignments":[
-                     
+
                   ],
                   "code":"CHAP2-TOP2",
                   "description":"ghgdhhh",
                   "name":"topic 2",
                   "order_index":2,
                   "resources":[
-                     
+
                   ],
                   "sessions":[
                      {
@@ -197,7 +197,7 @@
                            "end_time":"2020-08-05T11:20:00"
                         },
                         "resources":[
-                           
+
                         ]
                      },
                      {
@@ -214,7 +214,7 @@
                            "end_time":"2020-08-10T11:20:00"
                         },
                         "resources":[
-                           
+
                         ]
                      }
                   ]
@@ -228,7 +228,7 @@
       "division":"A",
       "lesson_plan_key":"test-lessonplan-3",
       "resources":[
-         
+
       ],
       "subject_code":"bio3",
       "topics":[
@@ -239,14 +239,14 @@
             "topics":[
                {
                   "assignments":[
-                     
+
                   ],
                   "code":"CHAP3-TOP1",
                   "description":"edited",
                   "name":"topic 1",
                   "order_index":1,
                   "resources":[
-                     
+
                   ],
                   "sessions":[
                      {
@@ -262,7 +262,7 @@
                            "end_time":"2020-08-03T12:10:00"
                         },
                         "resources":[
-                           
+
                         ]
                      },
                      {
@@ -278,21 +278,21 @@
                            "end_time":"2020-08-04T11:20:00"
                         },
                         "resources":[
-                           
+
                         ]
                      }
                   ]
                },
                {
                   "assignments":[
-                     
+
                   ],
                   "code":"CHAP3-TOP2",
                   "description":"ghgdhhh",
                   "name":"topic 2",
                   "order_index":2,
                   "resources":[
-                     
+
                   ],
                   "sessions":[
                      {
@@ -309,7 +309,7 @@
                            "end_time":"2020-08-05T10:40:00"
                         },
                         "resources":[
-                           
+
                         ]
                      },
                      {
@@ -326,7 +326,7 @@
                            "end_time":"2020-08-10T12:10:00"
                         },
                         "resources":[
-                           
+
                         ]
                      }
                   ]

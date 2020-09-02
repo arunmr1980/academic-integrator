@@ -10,7 +10,7 @@ def integrate_calendar(calendar_key):
 	current_calendar = calendar_service.get_calendar(calendar_key)
 	generated_class_calendar = current_calendar
 	current_lesson_plan_list = []
-	current_lesson_plan_list = get_lesson_plan_list(current_calendar, current_lesson_plan_list)
+	current_lesson_plan_list = get_all_lesson_plan_list(current_calendar, current_lesson_plan_list)
 	current_lesson_plan_list = integrate_calendar_to_lesson_plan(generated_class_calendar,current_lesson_plan_list)
 	return current_lesson_plan_list
 
@@ -18,7 +18,7 @@ def integrate_calendar(calendar_key):
 def integrate_calendars_to_lesson_plan(generated_class_calendar_list):
 	current_lesson_plan_list = []
 	for generated_class_calendar in generated_class_calendar_list :
-		current_lesson_plan_list = get_lesson_plan_list(generated_class_calendar, current_lesson_plan_list)
+		current_lesson_plan_list = get_all_lesson_plan_list(generated_class_calendar, current_lesson_plan_list)
 		current_lesson_plan_list = integrate_calendar_to_lesson_plan(generated_class_calendar, current_lesson_plan_list)
 	return current_lesson_plan_list
 
@@ -43,7 +43,7 @@ def integrate_calendar_to_lesson_plan(generated_class_calendar,current_lesson_pl
 	return current_lesson_plan_list
 
 
-def get_lesson_plan_list(current_calendar, current_lesson_plan_list):
+def get_all_lesson_plan_list(current_calendar, current_lesson_plan_list):
 	class_key = current_calendar.subscriber_key[:-2]
 	class_div = current_calendar.subscriber_key[-1:]
 

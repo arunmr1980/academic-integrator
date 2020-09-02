@@ -22,7 +22,7 @@ class LessonPlan:
             try:
                 topics = item["topics"]
                 for topic in topics :
-                     self.topics.append(Topics(topic))
+                    self.topics.append(Topics(topic))
             except KeyError as ke:
                 logger.debug('[WARN] - KeyError in LessonPlan - topics not present'.format(str (ke)))
             try :
@@ -67,11 +67,11 @@ class LessonPlan:
                 item['resources'] = assignments.resources
             assignments_list.append(item)
         return assignments_list
-        
+
 
     def get_resources_dict(self,resources) :
         resource_list =[]
-        for resource in resources :    
+        for resource in resources :
             item ={
                 'code' : resource.code,
                 'link' : resource.link,
@@ -85,10 +85,10 @@ class LessonPlan:
 
     def get_topics_dict(self,topics) :
         topics_list =[]
-        for topic in topics :     
+        for topic in topics :
             item ={
                 'code' : topic.code,
-                'name ' : topic.name,
+                'name' : topic.name,
                 'order_index': topic.order_index
             }
             if hasattr(topic,'topics') and topic.topics is not None :
@@ -120,7 +120,7 @@ class LessonPlan:
                 'code' : topic.code ,
                 'description' : topic.description,
                 'name' : topic.name,
-                'order_index' : topic.order_index,     
+                'order_index' : topic.order_index,
             }
             if hasattr(topic,'resources') and topic.resources is not None :
                 item['resources'] = self.get_resource(topic.resources)
@@ -155,7 +155,7 @@ class LessonPlan:
 
     def get_sessions(self,sessions) :
         sessions_list = []
-        for session in sessions :      
+        for session in sessions :
             item = {
                 'code' :session.code,
                 'completion_datetime' :session.completion_datetime,
@@ -173,7 +173,7 @@ class LessonPlan:
                 item['schedule'] = self.get_schedule(session.schedule)
             sessions_list.append(item)
         return sessions_list
-        
+
     def get_schedule(self,schedule) :
         item = {
             'calendar_key': schedule.calendar_key,
@@ -257,13 +257,13 @@ class Topics :
             self.name = item['name']
             self.order_index = item['order_index']
             self.topics = []
+            self.comments = []
             try :
                 topics =item['topics']
                 for topic in topics :
                     self.topics.append(Topic(topic))
             except KeyError as ke:
                 logger.debug('[WARN] - KeyError in Topics - topics not present'.format(str (ke)))
-            self.comments = []
             try :
                 comments = item['comments']
                 for comment in comments :
@@ -279,18 +279,38 @@ class Comment :
             self.employee_name = None
             self.type = None
         else :
-            self.comment = item['comment']
-            self.date_time = item['date_time']
-            self.employee_key = item['employee_key']
-            self.employee_name = item['employee_name']
-            self.type = item['type']
+            try :
+                comment =item['comment']
+                self.comment = comment
+            except KeyError as ke:
+                logger.debug('[WARN] - KeyError in Comment - comment not present'.format(str (ke)))
+            try :
+                date_time =item['date_time']
+                self.date_time = date_time
+            except KeyError as ke:
+                logger.debug('[WARN] - KeyError in Comment - date_time not present'.format(str (ke)))
+            try :
+                employee_key =item['employee_key']
+                self.employee_key = employee_key
+            except KeyError as ke:
+                logger.debug('[WARN] - KeyError in Comment - employee_key not present'.format(str (ke)))
+            try :
+                employee_name =item['employee_name']
+                self.employee_name = employee_name
+            except KeyError as ke:
+                logger.debug('[WARN] - KeyError in Comment - employee_name not present'.format(str (ke)))
+            try :
+                type =item['type']
+                self.type = type
+            except KeyError as ke:
+                logger.debug('[WARN] - KeyError in Comment - type not present'.format(str (ke)))
 class Topic :
     def __init__(self, item):
         if item is None:
             self.assignments = []
             self.code = None
             self.description = None
-            self.comments = [] 
+            self.comments = []
             self.name = None
             self.order_index = None
             self.resources = []
@@ -300,6 +320,7 @@ class Topic :
             self.name = item['name']
             self.order_index = item['order_index']
             self.resources = []
+            self.comments = []
             try :
                 description =item['description']
                 self.description = description
@@ -331,7 +352,8 @@ class Topic :
 
             try :
                 comments = item['comments']
-                self.comments = comments
+                for comment in comments :
+                    self.comments.append(Comment(comment))
             except KeyError as ke:
                 logger.debug('[WARN] - KeyError in Topic - comments not present'.format(str (ke)))
 class Assignment :
@@ -376,7 +398,7 @@ class Resource :
             self.code = None
         else :
             try :
-                code = item['code'] 
+                code = item['code']
                 self.code = code
             except KeyError as ke:
                 logger.debug ('[WARN] - KeyError in Resource - code not present'.format (str (ke)))
@@ -405,33 +427,33 @@ class Session :
                 logger.debug('[WARN] - KeyError in Session - comments not present'.format(str (ke)))
 
             try :
-                description = item['description'] 
+                description = item['description']
                 self.description = description
             except KeyError as ke:
                 logger.debug ('[WARN] - KeyError in Session - description not present'.format (str (ke)))
             try :
-                completion_datetime = item['completion_datetime'] 
+                completion_datetime = item['completion_datetime']
                 self.completion_datetime = completion_datetime
             except KeyError as ke:
                 logger.debug ('[WARN] - KeyError in Session - completion_datetime not present'.format (str (ke)))
 
             try :
-                completion_status = item['completion_status'] 
+                completion_status = item['completion_status']
                 self.completion_status = completion_status
             except KeyError as ke:
                 logger.debug ('[WARN] - KeyError in Session - completion_status not present'.format (str (ke)))
             try :
-                resources = item['resources'] 
+                resources = item['resources']
                 self.resources = resources
             except KeyError as ke:
                 logger.debug ('[WARN] - KeyError in Session - resources not present'.format (str (ke)))
-               
+
             try :
                 self.schedule = Schedule(item['schedule'])
             except KeyError as ke:
                 logger.debug('[WARN] - KeyError in Session - schedule not present'.format(str (ke)))
 
-            
+
 class Schedule :
     def __init__(self, item):
         if item is None:
@@ -444,11 +466,3 @@ class Schedule :
             self.event_code = item['event_code']
             self.start_time = item['start_time']
             self.end_time = item['end_time']
-
-
-
-
-
-
-
-                

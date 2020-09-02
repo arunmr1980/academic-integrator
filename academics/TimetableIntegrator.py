@@ -12,8 +12,7 @@ import academics.calendar.CalendarDBService as calendar_service
 
 
 
-
-def generate_and_save_calenders(time_table_key,academic_year):	
+def generate_and_save_calenders(time_table_key,academic_year):
 	timetable = timetable_service.get_time_table(time_table_key)
 	school_key = timetable.school_key
 	academic_configuration = academic_service.get_academig(school_key,academic_year)
@@ -39,8 +38,8 @@ def generate_and_save_calenders(time_table_key,academic_year):
 		gclogger.info('A Teacher calendar uploaded for '+ teacher_calendar_dict['calendar_key'])
 
 
-	
-	
+
+
 
 
 
@@ -48,7 +47,7 @@ def integrate_class_timetable(timetable, academic_configuration):
 	class_calendar_dict = {}
 	start_date = academic_configuration.start_date
 	end_date = academic_configuration.end_date
-	
+
 	gclogger.info("Processing timetable " + timetable.time_table_key + ' between dates ' + start_date + ' - ' + end_date)
 	if is_exist_employee_key_and_subject_code(timetable) :
 		dates_list = get_dates(start_date,end_date)
@@ -57,7 +56,7 @@ def integrate_class_timetable(timetable, academic_configuration):
 			day_code = findDay(date).upper()
 
 			class_calendar=generate_class_calendar(day_code[0:3],timetable,date,academic_configuration.time_table_configuration)
-			if class_calendar is not None :	
+			if class_calendar is not None :
 				class_calendar_dict[class_calendar.calendar_date] = class_calendar
 				gclogger.info("Class calendar generated for " + date + ' claendar key ' + class_calendar.calendar_key)
 	return class_calendar_dict
@@ -85,7 +84,7 @@ def get_event(time_table_period,timetable_configuration_periods,date):
 
 
 def get_standard_time(time,date) :
-	
+
 	splited_date = date.split('-')
 	splited_date = list(map(int,splited_date))
 	time_hour = int(time[0:2])
@@ -156,7 +155,7 @@ def integrate_teacher_timetable(class_calendar_list) :
 	for class_calendar in class_calendar_list :
 		for event in class_calendar.events :
 			employee_key = get_employee_key(event.params)
-			teacher_calendar = get_teacher_calendar(teacher_calendar_list,employee_key,class_calendar)	
+			teacher_calendar = get_teacher_calendar(teacher_calendar_list,employee_key,class_calendar)
 			event_object = calendar.Event(None)
 			event_object.event_code = event.event_code
 			event_object.ref_calendar_key = class_calendar.calendar_key
@@ -196,7 +195,7 @@ def generate_employee_calendar(employee_key,class_calendar) :
 	employee_calendar.subscriber_key = employee_key
 	employee_calendar.subscriber_type = 'EMPLOYEE'
 	employee_calendar.events = []
-	
+
 	return employee_calendar
 
 

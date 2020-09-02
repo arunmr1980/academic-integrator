@@ -32,7 +32,7 @@ def delete_lessonplan(lesson_plan_key) :
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(LESSON_PLAN)
     response=table.delete_item(
-      Key={ 
+      Key={
         'lesson_plan_key':lesson_plan_key
       }
     )
