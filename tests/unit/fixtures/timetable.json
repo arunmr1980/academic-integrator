@@ -146,7 +146,7 @@
                   "employee_key":"employee-1",
                   "order_index":1,
                   "period_code":"MON-1",
-                  "subject_key":"mal01"
+                  "subject_key":"bio1"
                },
                {
                   "class_info_key":null,
@@ -154,7 +154,7 @@
                   "employee_key":"employee-1",
                   "order_index":2,
                   "period_code":"MON-2",
-                  "subject_key":"nhyt6"
+                  "subject_key":"bio2"
                },
                {
                   "class_info_key":null,
@@ -162,7 +162,7 @@
                   "employee_key":"employee-1",
                   "order_index":3,
                   "period_code":"MON-3",
-                  "subject_key":"scphy1"
+                  "subject_key":"bio3"
                }
                
             ]
@@ -177,7 +177,7 @@
                   "employee_key":"employee-2",
                   "order_index":1,
                   "period_code":"TUE-1",
-                  "subject_key":"nhyt6"
+                  "subject_key":"bio2"
                },
                {
                   "class_info_key":null,
@@ -185,7 +185,7 @@
                   "employee_key":"employee-2",
                   "order_index":2,
                   "period_code":"TUE-2",
-                  "subject_key":"nhyt6"
+                  "subject_key":"bio3"
                },
                {
                   "class_info_key":null,
@@ -193,7 +193,7 @@
                   "employee_key":"employee-3",
                   "order_index":3,
                   "period_code":"TUE-3",
-                  "subject_key":"scphy1"
+                  "subject_key":"bio1"
                }
                
             ]
@@ -208,7 +208,7 @@
                   "employee_key":"employee-1",
                   "order_index":1,
                   "period_code":"WED-1",
-                  "subject_key":"nhy6"
+                  "subject_key":"bio3"
                },
                {
                   "class_info_key":null,
@@ -216,7 +216,7 @@
                   "employee_key":"employee-2",
                   "order_index":2,
                   "period_code":"WED-2",
-                  "subject_key":"sght3"
+                  "subject_key":"bio2"
                },
                {
                   "class_info_key":null,
@@ -224,7 +224,7 @@
                   "employee_key":"employee-3",
                   "order_index":3,
                   "period_code":"WED-3",
-                  "subject_key":"nhyt6"
+                  "subject_key":"bio1"
                }
             ]
          }   
