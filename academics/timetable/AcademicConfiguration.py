@@ -85,7 +85,7 @@ class Periods :
             self.start_time = None
         else :
             self.end_time = item['end_time']
-            self.oreder_index = item['order_index']
+            self.order_index = item['order_index']
             self.period_code = item['period_code']
             self.start_time = item['start_time']
 
