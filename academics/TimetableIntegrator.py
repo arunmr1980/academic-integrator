@@ -40,9 +40,6 @@ def generate_and_save_calenders(time_table_key,academic_year):
 
 
 
-
-
-
 def integrate_class_timetable(timetable, academic_configuration):
 	class_calendar_dict = {}
 	start_date = academic_configuration.start_date
@@ -114,7 +111,6 @@ def get_params(subject_key,employee_key,period_code) :
 
 
 def generate_class_calendar(day_code,time_table,date,timetable_configuration):
-	# print(timetable_configuration.time_table_schedules.day_tables)
 
 	timetable_configuration_periods = None
 	if hasattr(timetable_configuration , 'time_table_schedules'):
@@ -180,6 +176,8 @@ def get_teacher_calendar(teacher_calendar_list,employee_key, class_calendar) :
 	for teacher_calendar in teacher_calendar_list :
 		if teacher_calendar.subscriber_key == employee_key and teacher_calendar.calendar_date == class_calendar.calendar_date :
 			teacher_calendar_result = teacher_calendar
+		else :
+			teacher_calendar_result = calendar_service.get_calendar_by_date_and_key(class_calendar.calendar_date,employee_key)
 
 	if teacher_calendar_result is None:
 		teacher_calendar_result = generate_employee_calendar(employee_key,class_calendar)

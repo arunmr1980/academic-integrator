@@ -18,6 +18,15 @@ def delete_calendar(calendar_key) :
     )
     return response
 
+def get_calendar_by_date_and_key(calendar_date, subscriber_key):
+    dynamo_db = boto3.resource('dynamodb')
+    table = dynamo_db.Table(CALENDAR_TBL)
+    response = table.query(
+        KeyConditionExpression=Key('subscriber_key').eq(subscriber_key) & Key('calendar_date').eq(calendar_date),
+        IndexName='subscriber_key-calendar_date-index'
+    )
+    if len(response['Items']) > 0 :
+        return cal.Calendar(response['Items'][0])
 
 def get_calendar(calendar_key) :
     dynamodb = boto3.resource('dynamodb')
