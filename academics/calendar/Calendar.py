@@ -84,6 +84,7 @@ class Event :
             self.event_type = None
             self.from_time = None
             self.to_time = None
+            self.is_class = None
             self.ref_calendar_key = None
             self.params = []
         else :
@@ -92,6 +93,11 @@ class Event :
                 self.ref_calendar_key = ref_calendar_key
             except KeyError as ke:
                 logger.debug ('[WARN] - KeyError in Event -ref_calendar_key not present'.format (str (ke)))
+            try :
+                is_class = item['is_class']
+                self.is_class = is_class
+            except KeyError as ke:
+                logger.debug ('[WARN] - KeyError in Event -is_class not present'.format (str (ke)))
 
             try :
                 event_code = item['event_code']
