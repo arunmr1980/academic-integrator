@@ -8,8 +8,8 @@ import academics.timetable.KeyGeneration as key
 import academics.calendar.Calendar as calendar
 import academics.academic.AcademicDBService as academic_service
 import academics.calendar.CalendarDBService as calendar_service
-
-
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 
 def generate_and_save_calenders(time_table_key,academic_year):
@@ -111,7 +111,6 @@ def get_params(subject_key,employee_key,period_code) :
 
 
 def generate_class_calendar(day_code,time_table,date,timetable_configuration):
-
 	timetable_configuration_periods = None
 	if hasattr(timetable_configuration , 'time_table_schedules'):
 		if hasattr(timetable_configuration.time_table_schedules[0],'day_tables'):
@@ -134,14 +133,36 @@ def generate_class_calendar(day_code,time_table,date,timetable_configuration):
 						event = get_event(time_table_period,timetable_configuration_periods,date)
 						events_list.append(event)
 				if (day.day_code == day_code):
-					class_calendar=calendar.Calendar(None)
-					class_calendar.institution_key = time_table.school_key
-					class_calendar.calendar_date = date
-					class_calendar.calendar_key = key.generate_key(16)
-					class_calendar.subscriber_key = str(class_key + '-' + division)
-					class_calendar.subscriber_type = "CLASS-DIV"
-					class_calendar.events = events_list
-					return class_calendar
+					subscriber_key = class_key+"-"+division
+					existing_calendar_record = calendar_service.get_calendar_by_date_and_key(date,subscriber_key)
+					if existing_calendar_record is not None :
+						for event in events_list :
+							existing_calendar_record = check_is_event_exist_and_remove(event, existing_calendar_record)
+							existing_calendar_record.events.append(event)
+						class_calendar = existing_calendar_record
+						return class_calendar
+					else:
+						class_calendar=calendar.Calendar(None)
+						class_calendar.institution_key = time_table.school_key
+						class_calendar.calendar_date = date
+						class_calendar.calendar_key = key.generate_key(16)
+						class_calendar.subscriber_key = str(class_key + '-' + division)
+						class_calendar.subscriber_type = "CLASS-DIV"
+						class_calendar.events = events_list
+						return class_calendar
+
+def check_is_event_exist_and_remove(event,existing_calendar_record) :
+	for event_info in existing_calendar_record.events :
+		if hasattr(event_info, 'params'):
+			for param in event_info.params :
+				if param.value == get_period_param(event) :
+					existing_calendar_record.events.remove(event_info)
+	return existing_calendar_record
+
+def get_period_param(event) :
+	for param in event.params :
+		if(param.key == 'period_code') :
+			return param.value
 
 
 def integrate_teacher_timetable(class_calendar_list) :
