@@ -56,7 +56,7 @@ class Calendar:
 
 
 
-            if event.ref_calendar_key is not None :
+            if hasattr(event,'ref_calendar_key') and event.ref_calendar_key is not None :
                 item['ref_calendar_key'] = event.ref_calendar_key
             if event.params is not None and len(event.params) > 0 :
                 item['params'] = self.get_event_params_list(event.params)
