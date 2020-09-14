@@ -55,25 +55,23 @@ def integrate_class_timetable(timetable, academic_configuration,class_calendar_h
 			gclogger.debug(' date - ' + date)
 			day_code = findDay(date).upper()
 			existing_class_calendar = is_class_calendar_exist(date,class_calendar_holiday_list)
-			existing_school_calendar = is_school_calendar_exist(date,school_calendar_holiday_list) 
-			if existing_school_calendar is not None : 
-				print('School calendar exist for the date ---------->' + date)			
-				holiday_period_list = get_holiday_period_list(existing_school_calendar,academic_configuration,timetable,day_code[0:3])
+			existing_school_calendar = is_school_calendar_exist(date,school_calendar_holiday_list)
+			if existing_school_calendar is not None :
+				print('School calendar exist for the date ---------->' + date)
+				holiday_period_list = generate_holiday_period_list(existing_school_calendar,academic_configuration,timetable,day_code[0:3])
 				if existing_class_calendar is not None :
-					holiday_period_list_from_class_calendar = get_holiday_period_list(existing_class_calendar,academic_configuration,timetable,day_code[0:3])	
-				else : 
-					holiday_period_list_from_class_calendar = []	
+					holiday_period_list_from_class_calendar = generate_holiday_period_list(existing_class_calendar,academic_configuration,timetable,day_code[0:3])
+				else :
+					holiday_period_list_from_class_calendar = []
 
 				holiday_period_list.extend(holiday_period_list_from_class_calendar)
 				generated_class_calendar = generate_holiday_class_calendar(day_code[0:3],timetable,date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)
 
 
 			elif existing_class_calendar is not None :
-				holiday_period_list = get_holiday_period_list(existing_class_calendar,academic_configuration,timetable,day_code[0:3])
+				holiday_period_list = generate_holiday_period_list(existing_class_calendar,academic_configuration,timetable,day_code[0:3])
+				print("len holiday_period_list..........", len(holiday_period_list))
 				generated_class_calendar = generate_holiday_class_calendar(day_code[0:3],timetable,date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)
-
-
-
 
 
 
@@ -102,7 +100,7 @@ def update_existing_class_calendar(day_code,timetable,date,timetable_configurati
 		return
 
 	if hasattr(timetable, 'timetable') and timetable.timetable is not None :
-		class_key=timetable.class_key	
+		class_key=timetable.class_key
 		division=timetable.division
 		if hasattr(timetable.timetable,'day_tables') and len(timetable.timetable.day_tables) > 0 :
 			for day in timetable.timetable.day_tables :
@@ -112,10 +110,10 @@ def update_existing_class_calendar(day_code,timetable,date,timetable_configurati
 						if timetable_configuration_periods is not None:
 							event = get_event(time_table_period,timetable_configuration_periods,date)
 							if event is not None :
-								if not is_this_event_holiday_in_school_calendar(event,existing_school_calendar) :
-									print('Event to be added on existing class calendar is ' + str(event.params[0].value))
+								generated_class_calendar.events.append(event)
+								# if not is_this_event_holiday_in_school_calendar(event,existing_school_calendar) :
+								print('Event to be added on existing class calendar is ' + str(event.params[0].value))
 
-									generated_class_calendar.events.append(event)
 
 								# else :
 								# 	remove_event_form_generated_class_calendar(event)
@@ -130,21 +128,16 @@ def update_existing_class_calendar(day_code,timetable,date,timetable_configurati
 
 def remove_event_form_generated_class_calendar(event) :
 	pass
-def is_this_event_holiday_in_school_calendar(event,existing_school_calendar) :
-	start_time = event.from_time
-	end_time = event.to_time
-	for event_info in existing_school_calendar.events :
-		if is_class(event_info.params[0]) == False :
-			holiday_start_time = event_info.from_time
-			holiday_end_time = event_info.to_time
-			if check_is_event_holiday(start_time,holiday_start_time,end_time,holiday_end_time) :
-				return True
 
-
-
-
-
-
+# def is_this_event_holiday_in_school_calendar(event,existing_school_calendar) :
+# 	start_time = event.from_time
+# 	end_time = event.to_time
+# 	for event_info in existing_school_calendar.events :
+# 		if is_class(event_info.params[0]) == False :
+# 			holiday_start_time = event_info.from_time
+# 			holiday_end_time = event_info.to_time
+# 			if check_is_event_holiday(start_time,holiday_start_time,end_time,holiday_end_time) :
+# 				return True
 
 
 
@@ -155,14 +148,11 @@ def is_this_event_holiday_in_school_calendar(event,existing_school_calendar) :
 
 
 
-
-
-
 def get_start_time_and_end_time(academic_configuration,day_code,timetable) :
 	start_time_end_time = {}
 	time_table_schedule = get_time_table_shedule(academic_configuration,timetable)
 	if time_table_schedule :
-		day_tables = time_table_schedule.day_tables 
+		day_tables = time_table_schedule.day_tables
 		for day_table in day_tables :
 			if day_table.day_code == day_code :
 				start_time_end_time['start_time'] = day_table.periods[0].start_time
@@ -187,12 +177,11 @@ def is_class_calendar_exist(date,class_calendar_holiday_list) :
 			return class_calendar
 
 
-def is_school_calendar_exist(date,school_calendar_holiday_list) :	
+def is_school_calendar_exist(date,school_calendar_holiday_list) :
 	for school_calendar in school_calendar_holiday_list :
 		if school_calendar.calendar_date == date :
 			return school_calendar
 
-			
 
 
 
@@ -205,22 +194,22 @@ def is_class(param) :
 	return is_class
 
 
-def get_holiday_period_list(calendar,academic_configuration,timetable,day_code) :
+def generate_holiday_period_list(calendar,academic_configuration,timetable,day_code) :
 	print('checking is partial holiday on date '+ calendar.calendar_date)
 	holiday_period_list =[]
 	for event in calendar.events :
 		if is_class(event.params[0]) == False :
-			start_time = event.from_time 	
-			end_time = event.to_time 	
+			start_time = event.from_time
+			end_time = event.to_time
 			print("The events startng from ------->" + start_time + " and ending to ------->" + end_time + " are leave")
-			partial_holiday_periods = start_period_end_period(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
+			partial_holiday_periods = get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
 			for partial_holiday_period in partial_holiday_periods :
 				holiday_period_list.append(partial_holiday_period)
 
 	return holiday_period_list
 
-			
-def start_period_end_period(start_time,end_time,day_code,academic_configuration,timetable,date) :
+
+def get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,date) :
 
 	start_period_order_index = None
 	end_period_order_index = None
@@ -233,19 +222,22 @@ def start_period_end_period(start_time,end_time,day_code,academic_configuration,
 							if day_table.day_code == day_code :
 								for period in day_table.periods :
 									standard_start_time = get_standard_time(period.start_time,date)
+									print("standard_start_time", standard_start_time)
 									standard_end_time = get_standard_time(period.end_time,date)
-									if check_holiday_time_conflict(start_time,end_time,standard_start_time,standard_start_time) :
+									print("standard_end_time", standard_end_time)
+
+									if check_holiday_time_conflict(start_time,end_time,standard_start_time,standard_end_time) :
 										partial_holiday_period_list.append(period)
 
+	return partial_holiday_period_list
 
-										
 
 	# if hasattr(academic_configuration.time_table_configuration ,'time_table_schedules') :
 	# 	for time_table_schedule in academic_configuration.time_table_configuration.time_table_schedules :
 	# 			for class_key in time_table_schedule.applied_classes :
 	# 				if class_key == timetable.class_key :
 	# 					for day_table in  time_table_schedule.day_tables :
-	# 						if day_table.day_code == day_code :	
+	# 						if day_table.day_code == day_code :
 	# 							if start_period_order_index == end_period_order_index :
 	# 								print('This period has no class of period index --------------> ' + str(start_period_order_index))
 	# 								partial_holiday_period_list.append(day_table.periods[start_period_order_index - 1])
@@ -257,30 +249,33 @@ def start_period_end_period(start_time,end_time,day_code,academic_configuration,
 	# 									print("Adding period of period index " + str(index) + ' to partial_holiday_period_list')
 
 
-	return partial_holiday_period_list
-										
+
 def check_holiday_time_conflict(event_start_time,event_end_time,standard_start_time,standard_end_time) :
 	is_conflict = False
+
+	off_time_start_hr =  int(event_start_time.split(':',2)[0][-2:])
+	off_time_end_hr = int(event_end_time.split(':',2)[0][-2:])
+	off_time_start_min = int(event_start_time.split(':',2)[1])
+	off_time_end_min = int(event_end_time.split(':',2)[1])
+
+	standard_start_hr = int(standard_start_time.split(':',2)[0][-2:])
+	standard_end_hr =  int(standard_end_time.split(':',2)[0][-2:])
+	standard_start_min = int(standard_start_time.split(':',2)[1])
+	standard_end_min =  int(standard_end_time.split(':',2)[1])
+
 	if event_start_time == standard_start_time :
 		is_conflict = True
-	elif  int(event_start_time.split(':',2)[0][-2:]) > int(standard_start_time.split(':',2)[0][-2:]) :
+	elif event_end_time == standard_end_time :
 		is_conflict = True
-	elif int(event_start_time.split(':',2)[0][-2:]) == int(standard_start_time.split(':',2)[0][-2:]) and int(event_start_time.split(':',2)[1]) > int(standard_start_time.split(':',2)[1]) :
+	elif off_time_start_hr < standard_start_hr and off_time_end_hr >= standard_end_hr :
 		is_conflict = True
-	else :
+	elif off_time_start_hr <= standard_start_hr and off_time_end_hr > standard_end_hr :
+		is_conflict = True
+	elif off_time_start_hr == standard_start_hr and off_time_start_min <  standard_start_min and off_time_end_hr == standard_end_hr and off_time_end_min > standard_end_min:
+		is_conflict = True
+	else:
 		is_conflict = False
-	if event_end_time == standard_end_time :
-		is_conflict = True
-	elif  int(event_end_time.split(':',2)[0][-2:]) < int(standard_end_time.split(':',2)[0][-2:]) :
-		is_conflict = True
-	elif int(event_end_time.split(':',2)[0][-2:]) == int(standard_end_time.split(':',2)[0][-2:]) and int(event_end_time.split(':',2)[1]) < int(standard_end_time.split(':',2)[1]) :
-		is_conflict = True
-	else :
-		is_conflict = False
-
-	return is_conflict	
-
-
+	return is_conflict
 
 
 
@@ -415,7 +410,7 @@ def generate_holiday_class_calendar(day_code,time_table,date,timetable_configura
 		return
 
 	if hasattr(time_table, 'timetable') and time_table.timetable is not None :
-		class_key=time_table.class_key	
+		class_key=time_table.class_key
 		division=time_table.division
 		if hasattr(time_table.timetable,'day_tables') and len(time_table.timetable.day_tables) > 0 :
 			for day in time_table.timetable.day_tables :
@@ -434,7 +429,7 @@ def generate_holiday_class_calendar(day_code,time_table,date,timetable_configura
 							existing_class_calendar.events.append(event)
 						class_calendar = existing_class_calendar
 
-					else :			
+					else :
 						class_calendar=calendar.Calendar(None)
 						class_calendar.institution_key = time_table.school_key
 						class_calendar.calendar_date = date
@@ -447,7 +442,7 @@ def generate_holiday_class_calendar(day_code,time_table,date,timetable_configura
 					class_calendar_dict = c.make_calendar_dict(class_calendar)
 					pp.pprint(class_calendar_dict)
 					return class_calendar
-		
+
 
 
 def integrate_teacher_timetable(class_calendar_list) :
