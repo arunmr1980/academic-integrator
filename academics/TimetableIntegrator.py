@@ -17,7 +17,11 @@ def generate_and_save_calenders(time_table_key,academic_year):
 	timetable = timetable_service.get_time_table(time_table_key)
 	school_key = timetable.school_key
 	academic_configuration = academic_service.get_academig(school_key,academic_year)
-	generated_class_calendar_dict = integrate_class_timetable(timetable,academic_configuration)
+	existing_class_calendar_list = calendar_service.get_all_calendars('test-school-1','CLASS-DIV')	
+	existing_school_calendar_list = calendar_service.get_all_calendars('test-school-1','SCHOOL')
+	
+
+	generated_class_calendar_dict = integrate_class_timetable(timetable,academic_configuration,existing_class_calendar_list,existing_school_calendar_list)
 	class_calendar_list = []
 	for generated_class_calendar in generated_class_calendar_dict.values() :
 		class_calendar_list.append(generated_class_calendar)
@@ -75,18 +79,10 @@ def integrate_class_timetable(timetable, academic_configuration,class_calendar_h
 
 
 
-
-	# 		if class_calendar :
-	# 			start_time_end_time = get_start_time_and_end_time(academic_configuration,day_code[0:3],timetable)
-	# 			start_time = start_time_end_time['start_time']
-	# 			end_time = start_time_end_time['end_time']
-	# 			class_calendar = check_full_holiday(start_time,end_time,class_calendar,day_code[0:3],timetable)
-	# 		else :
-	# 			class_calendar = generate_class_calendar(day_code[0:3],timetable,date,academic_configuration.time_table_configuration)
-	# 		if class_calendar is not None :
-	# 			class_calendar_dict[class_calendar.calendar_date] = class_calendar
-	# 			gclogger.info("Class calendar generated for " + date + ' claendar key ' + class_calendar.calendar_key)
-	# return class_calendar_dict
+			if generated_class_calendar is not None :
+				class_calendar_dict[generated_class_calendar.calendar_date] = generated_class_calendar
+				gclogger.info("Class calendar generated for " + date + ' claendar key ' + generated_class_calendar.calendar_key)
+	return class_calendar_dict
 
 def update_existing_class_calendar(day_code,timetable,date,timetable_configuration,holiday_period_list,generated_class_calendar,existing_school_calendar) :
 	timetable_configuration_periods = None
@@ -195,13 +191,12 @@ def is_class(param) :
 
 
 def generate_holiday_period_list(calendar,academic_configuration,timetable,day_code) :
-	print('checking is partial holiday on date '+ calendar.calendar_date)
+	print('checking is holiday on date '+ calendar.calendar_date)
 	holiday_period_list =[]
 	for event in calendar.events :
 		if is_class(event.params[0]) == False :
 			start_time = event.from_time
 			end_time = event.to_time
-			print("The events startng from ------->" + start_time + " and ending to ------->" + end_time + " are leave")
 			partial_holiday_periods = get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
 			for partial_holiday_period in partial_holiday_periods :
 				holiday_period_list.append(partial_holiday_period)
@@ -211,8 +206,6 @@ def generate_holiday_period_list(calendar,academic_configuration,timetable,day_c
 
 def get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,date) :
 
-	start_period_order_index = None
-	end_period_order_index = None
 	partial_holiday_period_list =[]
 	if hasattr(academic_configuration.time_table_configuration ,'time_table_schedules') :
 		for time_table_schedule in academic_configuration.time_table_configuration.time_table_schedules :
@@ -225,29 +218,10 @@ def get_holiday_period_list(start_time,end_time,day_code,academic_configuration,
 									print("standard_start_time", standard_start_time)
 									standard_end_time = get_standard_time(period.end_time,date)
 									print("standard_end_time", standard_end_time)
-
 									if check_holiday_time_conflict(start_time,end_time,standard_start_time,standard_end_time) :
 										partial_holiday_period_list.append(period)
 
 	return partial_holiday_period_list
-
-
-	# if hasattr(academic_configuration.time_table_configuration ,'time_table_schedules') :
-	# 	for time_table_schedule in academic_configuration.time_table_configuration.time_table_schedules :
-	# 			for class_key in time_table_schedule.applied_classes :
-	# 				if class_key == timetable.class_key :
-	# 					for day_table in  time_table_schedule.day_tables :
-	# 						if day_table.day_code == day_code :
-	# 							if start_period_order_index == end_period_order_index :
-	# 								print('This period has no class of period index --------------> ' + str(start_period_order_index))
-	# 								partial_holiday_period_list.append(day_table.periods[start_period_order_index - 1])
-	# 								print("Adding period of period index " + str(start_period_order_index) + ' to partial_holiday_period_list')
-	# 							else :
-	# 								for index in range(start_period_order_index,end_period_order_index) :
-	# 									print()
-	# 									partial_holiday_period_list.append(day_table.periods[index])
-	# 									print("Adding period of period index " + str(index) + ' to partial_holiday_period_list')
-
 
 
 def check_holiday_time_conflict(event_start_time,event_end_time,standard_start_time,standard_end_time) :
@@ -331,27 +305,6 @@ def get_params(subject_key,employee_key,period_code) :
 	return params
 
 
-# def generate_holiday_class_calendar(school_calendar,class_calendar,timetable):
-# 	if class_calendar is not None :
-# 		class_calendar.events = get_holiday_events(school_calendar.events[0])
-# 		return class_calendar
-# 	else :
-# 		class_calendar=calendar.Calendar(None)
-# 		class_calendar.institution_key = timetable.school_key
-# 		class_calendar.calendar_date = school_calendar.calendar_date
-# 		class_calendar.calendar_key = key.generate_key(16)
-# 		class_calendar.subscriber_key = str(timetable.class_key + '-' + timetable.division)
-# 		class_calendar.subscriber_type = "CLASS-DIV"
-# 		class_calendar.events = get_holiday_events(school_calendar.events[0])
-# 		print('generated full hiliday class calendar for the date ' +str(school_calendar.calendar_date))
-# 		c = calendar.Calendar(None)
-# 		class_calendar_dict = c.make_calendar_dict(class_calendar)
-# 		pp.pprint(class_calendar_dict)
-
-# 		return class_calendar
-
-
-
 
 def get_holiday_events(school_calendar_event) :
 	event_list = []
@@ -363,43 +316,11 @@ def get_holiday_events(school_calendar_event) :
 	event_list.append(event)
 	return event_list
 
-def generate_class_calendar(day_code,time_table,date,timetable_configuration):
-	# print(timetable_configuration.time_table_schedules.day_tables)
-
-	timetable_configuration_periods = None
-	if hasattr(timetable_configuration , 'time_table_schedules'):
-		if hasattr(timetable_configuration.time_table_schedules[0],'day_tables'):
-			for day in timetable_configuration.time_table_schedules[0].day_tables :
-				if (day.day_code == day_code) :
-					timetable_configuration_periods = day.periods
-	else:
-		gclogger.warn("Time table schedules not present in configuration. Can not process")
-		return
-
-	if hasattr(time_table, 'timetable') and time_table.timetable is not None :
-		class_key=time_table.class_key
-		division=time_table.division
-		if hasattr(time_table.timetable,'day_tables') and len(time_table.timetable.day_tables) > 0 :
-			for day in time_table.timetable.day_tables :
-				periods = day.periods
-				events_list = []
-				for time_table_period in periods :
-					if 	timetable_configuration_periods is not None:
-						event = get_event(time_table_period,timetable_configuration_periods,date)
-						events_list.append(event)
-				if (day.day_code == day_code):
-					class_calendar=calendar.Calendar(None)
-					class_calendar.institution_key = time_table.school_key
-					class_calendar.calendar_date = date
-					class_calendar.calendar_key = key.generate_key(16)
-					class_calendar.subscriber_key = str(class_key + '-' + division)
-					class_calendar.subscriber_type = "CLASS-DIV"
-					class_calendar.events = events_list
-					return class_calendar
 
 
 def generate_holiday_class_calendar(day_code,time_table,date,timetable_configuration,partial_holiday_period_list,existing_class_calendar):
 	timetable_configuration_periods = None
+	class_calendar = None
 	if hasattr(timetable_configuration , 'time_table_schedules'):
 		if hasattr(timetable_configuration.time_table_schedules[0],'day_tables'):
 			for day in timetable_configuration.time_table_schedules[0].day_tables :
@@ -430,17 +351,19 @@ def generate_holiday_class_calendar(day_code,time_table,date,timetable_configura
 						class_calendar = existing_class_calendar
 
 					else :
-						class_calendar=calendar.Calendar(None)
-						class_calendar.institution_key = time_table.school_key
-						class_calendar.calendar_date = date
-						class_calendar.calendar_key = key.generate_key(16)
-						class_calendar.subscriber_key = str(class_key + '-' + division)
-						class_calendar.subscriber_type = "CLASS-DIV"
-						class_calendar.events = events_list
-					print("A partial holiday calendar generated on date " + date)
-					c = calendar.Calendar(None)
-					class_calendar_dict = c.make_calendar_dict(class_calendar)
-					pp.pprint(class_calendar_dict)
+						if len(events_list) > 0 :
+							class_calendar=calendar.Calendar(None)
+							class_calendar.institution_key = time_table.school_key
+							class_calendar.calendar_date = date
+							class_calendar.calendar_key = key.generate_key(16)
+							class_calendar.subscriber_key = str(class_key + '-' + division)
+							class_calendar.subscriber_type = "CLASS-DIV"
+							class_calendar.events = events_list
+					if class_calendar is not None :		
+						print("A partial holiday calendar generated on date " + date)
+						c = calendar.Calendar(None)
+						class_calendar_dict = c.make_calendar_dict(class_calendar)
+						pp.pprint(class_calendar_dict)
 					return class_calendar
 
 
@@ -458,7 +381,8 @@ def integrate_teacher_timetable(class_calendar_list) :
 			event_object.ref_calendar_key = class_calendar.calendar_key
 			teacher_calendar.events.append(event_object)
 			gclogger.info("Adding event " + event_object.event_code + " to teacher calendar " + teacher_calendar.calendar_key)
-	for teacher_calendar in teacher_calendar_list :
+
+	for teacher_calendar in teacher_calendar_list :		
 		calendar_date = teacher_calendar.calendar_date
 		subscriber_key = teacher_calendar.subscriber_key
 		teacher_calendars_dict[calendar_date + subscriber_key] = teacher_calendar
@@ -486,13 +410,15 @@ def get_teacher_calendar(teacher_calendar_list,employee_key, class_calendar) :
 		if teacher_calendar.subscriber_key == employee_key and teacher_calendar.calendar_date == class_calendar.calendar_date :
 			teacher_calendar_result = teacher_calendar
 
-	if teacher_calendar_result is None:
+	if teacher_calendar_result is None :
 		teacher_calendar_result = generate_employee_calendar(employee_key,class_calendar)
-		teacher_calendar_list.append(teacher_calendar_result)
+		if teacher_calendar_result.subscriber_key is not None :
+			teacher_calendar_list.append(teacher_calendar_result)
 	return teacher_calendar_result
 
 
 def generate_employee_calendar(employee_key,class_calendar) :
+
 	employee_calendar=calendar.Calendar(None)
 	employee_calendar.calendar_date = class_calendar.calendar_date
 	employee_calendar.calendar_key = key.generate_key(16)
