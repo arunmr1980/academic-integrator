@@ -10,6 +10,18 @@ def lambda_handler(event, context):
        payload=record["body"]
        request = json.loads(payload)
        try:
+          request_type = request['request_type']
+          if request_type = 'TIMETABLE_TO_CALENDAR_GEN':
+              generate_and_save_calenders(request)
+          if request_type = 'CALENDAR_TO_LESSON_PLAN_GEN':
+              generate_and_save_calenders(request)
+       except:
+          logger.info("Unexpected error ...")
+          send_response(400,"unexpected error")
+
+
+def generate_and_save_calenders(request):
+       try:
           timetable_key = request['time_table_key']
           academic_year = request['academic_year']
           logger.info('Processing for timetable ' + timetable_key + ' and academic_year ' + academic_year)
@@ -21,6 +33,7 @@ def lambda_handler(event, context):
        except:
           logger.info("Unexpected error ...")
           send_response(400,"unexpected error")
+
 
 
 
