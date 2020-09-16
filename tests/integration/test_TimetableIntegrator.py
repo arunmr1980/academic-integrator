@@ -60,26 +60,6 @@ class TimetableIntegratorTest(unittest.TestCase):
 		for expected_class_calendar in expected_class_calendar_list :
 			calendar_date = expected_class_calendar.calendar_date
 			generated_class_calendar = class_calendars_dict[calendar_date]
-			for i in generated_class_calendar.events :
-				print(i.__dict__,'all attributes===============<<<<<<<<>>>>>>>>>>>==============')
-				
-				
-			for i in expected_class_calendar.events :
-				print(i.__dict__,'all attributes===============<<<<<<<<>>>>>>>>>>>==============')
-				
-				
-
-
-			print("EXPECTED CLASS CALENDARRRRRRRRRRRR and EXPECTEDDDDDD")
-			c = calendar.Calendar(None)
-			class_calendar_dict = c.make_calendar_dict(expected_class_calendar)
-			pp.pprint(class_calendar_dict)
-			print('--__---______----_______-----____-----____--___-__-___----__--__-_-')
-			c = calendar.Calendar(None)
-			class_calendar_dict = c.make_calendar_dict(generated_class_calendar)
-			pp.pprint(class_calendar_dict)
-			print(':::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::')
-
 			self.assertEqual(expected_class_calendar.institution_key,generated_class_calendar.institution_key )
 			self.assertEqual(expected_class_calendar.calendar_date,generated_class_calendar.calendar_date )
 			self.assertEqual(expected_class_calendar.subscriber_key,generated_class_calendar.subscriber_key )
@@ -95,7 +75,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 			self.assertEqual(expected_class_calendar_events[index].event_type , generated_class_calendar_events[index].event_type)
 			self.assertEqual(expected_class_calendar_events[index].from_time , generated_class_calendar_events[index].from_time)
 		
-			# self.assertEqual(expected_class_calendar_events[index].to_time , generated_class_calendar_events[index].to_time)
+			self.assertEqual(expected_class_calendar_events[index].to_time , generated_class_calendar_events[index].to_time)
 			self.check_params(expected_class_calendar_events[index].params,generated_class_calendar_events[index].params)
 
 

@@ -55,13 +55,13 @@ def integrate_class_timetable(timetable, academic_configuration,class_calendar_h
 	if is_exist_employee_key_and_subject_code(timetable) :
 		dates_list = get_dates(start_date,end_date)
 		for date in dates_list :
-			print(date,'dateeeee')
+			gclogger.info(date,'dateeeee')
 			gclogger.debug(' date - ' + date)
 			day_code = findDay(date).upper()
 			existing_class_calendar = is_class_calendar_exist(date,class_calendar_holiday_list)
 			existing_school_calendar = is_school_calendar_exist(date,school_calendar_holiday_list)
 			if existing_school_calendar is not None :
-				print('School calendar exist for the date ---------->' + date)
+				gclogger.info('School calendar exist for the date ---------->' + date)
 				holiday_period_list = generate_holiday_period_list(existing_school_calendar,academic_configuration,timetable,day_code[0:3])
 				if existing_class_calendar is not None :
 					holiday_period_list_from_class_calendar = generate_holiday_period_list(existing_class_calendar,academic_configuration,timetable,day_code[0:3])
@@ -74,7 +74,7 @@ def integrate_class_timetable(timetable, academic_configuration,class_calendar_h
 
 			elif existing_class_calendar is not None :
 				holiday_period_list = generate_holiday_period_list(existing_class_calendar,academic_configuration,timetable,day_code[0:3])
-				print("len holiday_period_list..........", len(holiday_period_list))
+				gclogger.info("len holiday_period_list..........", len(holiday_period_list))
 				generated_class_calendar = generate_holiday_class_calendar(day_code[0:3],timetable,date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)
 
 
@@ -108,7 +108,7 @@ def update_existing_class_calendar(day_code,timetable,date,timetable_configurati
 							if event is not None :
 								generated_class_calendar.events.append(event)
 								# if not is_this_event_holiday_in_school_calendar(event,existing_school_calendar) :
-								print('Event to be added on existing class calendar is ' + str(event.params[0].value))
+								gclogger.info('Event to be added on existing class calendar is ' + str(event.params[0].value))
 
 
 								# else :
@@ -116,7 +116,7 @@ def update_existing_class_calendar(day_code,timetable,date,timetable_configurati
 
 
 
-	print("Updated class calendar generated on date " + date)
+	gclogger.info("Updated class calendar generated on date " + date)
 	c = calendar.Calendar(None)
 	class_calendar_dict = c.make_calendar_dict(generated_class_calendar)
 	pp.pprint(class_calendar_dict)
