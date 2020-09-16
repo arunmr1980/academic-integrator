@@ -164,7 +164,7 @@
                   "period_code":"MON-3",
                   "subject_key":"bio3"
                }
-               
+
             ]
          },
          {
@@ -195,7 +195,7 @@
                   "period_code":"TUE-3",
                   "subject_key":"bio1"
                }
-               
+
             ]
          },
          {
@@ -227,7 +227,7 @@
                   "subject_key":"bio1"
                }
             ]
-         }   
+         }
       ]
    }
 }

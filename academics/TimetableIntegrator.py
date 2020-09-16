@@ -17,8 +17,8 @@ def generate_and_save_calenders(time_table_key,academic_year):
 	timetable = timetable_service.get_time_table(time_table_key)
 	school_key = timetable.school_key
 	academic_configuration = academic_service.get_academig(school_key,academic_year)
-	existing_class_calendar_list = calendar_service.get_all_calendars('test-school-1','CLASS-DIV')
-	existing_school_calendar_list = calendar_service.get_all_calendars('test-school-1','SCHOOL')
+	existing_class_calendar_list = calendar_service.get_all_calendars(timetable.school_key,'CLASS-DIV')
+	existing_school_calendar_list = calendar_service.get_all_calendars(timetable.school_key,'SCHOOL')
 
 
 	generated_class_calendar_dict = integrate_class_timetable(timetable,academic_configuration,existing_class_calendar_list,existing_school_calendar_list)
@@ -45,7 +45,7 @@ def generate_and_save_calenders(time_table_key,academic_year):
 
 
 
-def integrate_class_timetable(timetable, academic_configuration,class_calendar_holiday_list,school_calendar_holiday_list):
+def integrate_class_timetable(timetable, academic_configuration,existing_class_calendar_list,existing_school_calendar_list):
 	class_calendar_dict = {}
 	start_date = academic_configuration.start_date
 	end_date = academic_configuration.end_date
@@ -57,8 +57,8 @@ def integrate_class_timetable(timetable, academic_configuration,class_calendar_h
 		for date in dates_list :
 			gclogger.debug(' date - ' + date)
 			day_code = findDay(date).upper()
-			existing_class_calendar = is_class_calendar_exist(date,class_calendar_holiday_list)
-			existing_school_calendar = is_school_calendar_exist(date,school_calendar_holiday_list)
+			existing_class_calendar = is_class_calendar_exist(date,existing_class_calendar_list)
+			existing_school_calendar = is_school_calendar_exist(date,existing_school_calendar_list)
 			if existing_school_calendar is not None :
 				gclogger.info('School calendar exist for the date ---------->' + date)
 				holiday_period_list = generate_holiday_period_list(existing_school_calendar,academic_configuration,timetable,day_code[0:3])
@@ -135,14 +135,14 @@ def get_time_table_shedule(academic_configuration,timetable) :
 						return time_table_schedule
 
 
-def is_class_calendar_exist(date,class_calendar_holiday_list) :
-	for class_calendar in class_calendar_holiday_list :
+def is_class_calendar_exist(date,existing_class_calendar_list) :
+	for class_calendar in existing_class_calendar_list :
 		if class_calendar.calendar_date == date :
 			return class_calendar
 
 
-def is_school_calendar_exist(date,school_calendar_holiday_list) :
-	for school_calendar in school_calendar_holiday_list :
+def is_school_calendar_exist(date,existing_school_calendar_list) :
+	for school_calendar in existing_school_calendar_list :
 		if school_calendar.calendar_date == date :
 			return school_calendar
 
@@ -309,12 +309,12 @@ def generate_class_calendar(day_code,time_table,date,timetable_configuration,par
 
 							events_list.append(event)
 				if (day.day_code == day_code):
-
 					if existing_class_calendar is not None :
 						for event in events_list :
+							existing_class_calendar = check_is_event_exist_and_remove(event, existing_class_calendar)
 							existing_class_calendar.events.append(event)
 						class_calendar = existing_class_calendar
-
+						return class_calendar
 					else :
 						if len(events_list) > 0 :
 							class_calendar=calendar.Calendar(None)
@@ -328,6 +328,19 @@ def generate_class_calendar(day_code,time_table,date,timetable_configuration,par
 						c = calendar.Calendar(None)
 						class_calendar_dict = c.make_calendar_dict(class_calendar)
 					return class_calendar
+
+def check_is_event_exist_and_remove(event,existing_class_calendar) :
+	for event_info in existing_class_calendar.events :
+		if hasattr(event_info, 'params'):
+			for param in event_info.params :
+				if param.value == get_period_param(event) :
+					existing_class_calendar.events.remove(event_info)
+	return existing_class_calendar
+
+def get_period_param(event) :
+	for param in event.params :
+		if(param.key == 'period_code') :
+			return param.value
 
 
 
@@ -372,6 +385,8 @@ def get_teacher_calendar(teacher_calendar_list,employee_key, class_calendar) :
 	for teacher_calendar in teacher_calendar_list :
 		if teacher_calendar.subscriber_key == employee_key and teacher_calendar.calendar_date == class_calendar.calendar_date :
 			teacher_calendar_result = teacher_calendar
+		else :
+			teacher_calendar_result = calendar_service.get_calendar_by_date_and_key(class_calendar.calendar_date,employee_key)
 
 	if teacher_calendar_result is None :
 		teacher_calendar_result = generate_employee_calendar(employee_key,class_calendar)

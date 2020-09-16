@@ -43,7 +43,6 @@ class Calendar:
     def get_calendar_event_list(self,event_list):
         collection_list = []
         for event in event_list:
-
             item = {
                 'event_code': event.event_code,
             }
@@ -54,11 +53,9 @@ class Calendar:
             if hasattr(event,'to_time') and event.to_time is not None :
                 item['to_time'] = event.to_time
 
-
-
             if hasattr(event,'ref_calendar_key') and event.ref_calendar_key is not None :
                 item['ref_calendar_key'] = event.ref_calendar_key
-            if event.params is not None and len(event.params) > 0 :
+            if hasattr(event, 'params') and event.params is not None and len(event.params) > 0  :
                 item['params'] = self.get_event_params_list(event.params)
             collection_list.append(item)
         return collection_list
