@@ -5,65 +5,16 @@
       "subscriber_key":"8B1B22E72AE-A",
       "subscriber_type":"CLASS-DIV",
       "events":[
-         {
-            "event_code":"event-1",
-            "event_type":"CLASS_SESSION",
-            "from_time":"2020-08-03T10:00:00",
-            "params":[
-               {
-                  "key":"period_code",
-                  "value":"MON-1"
-               },
-               {
-                  "key":"subject_key",
-                  "value":"mal01"
-               },
-               {
-                  "key":"teacher_emp_key",
-                  "value":"employee-1"
-               }
+         {   "event_code": "event-1",
+             "event_type": "HOLIDAY",
+             "from_time": "2020-08-03T09:00:00",
+             "params": [
+                  {
+                     "key": "is_class_flag",
+                   "value": "false"
+                  }
             ],
-            "to_time":"2020-08-03T10:40:00"
-         },
-         {
-            "event_code":"event-1",
-            "event_type":"CLASS_SESSION",
-            "from_time":"2020-08-03T10:40:00",
-            "params":[
-               {
-                  "key":"period_code",
-                  "value":"MON-2"
-               },
-               {
-                  "key":"subject_key",
-                  "value":"nhyt6"
-               },
-               {
-                  "key":"teacher_emp_key",
-                  "value":"employee-1"
-               }
-            ],
-            "to_time":"2020-08-03T11:20:00"
-         },
-         {
-            "event_code":"event-1",
-            "event_type":"CLASS_SESSION",
-            "from_time":"2020-08-03T11:30:00",
-            "params":[
-               {
-                  "key":"period_code",
-                  "value":"MON-3"
-               },
-               {
-                  "key":"subject_key",
-                  "value":"scphy1"
-               },
-               {
-                  "key":"teacher_emp_key",
-                  "value":"employee-1"
-               }
-            ],
-            "to_time":"2020-08-03T12:10:00"
+             "to_time": "2020-08-03T12:01:00"
          }
       ]
    },
@@ -74,134 +25,22 @@
       "subscriber_key":"8B1B22E72AE-A",
       "subscriber_type":"CLASS-DIV",
       "events":[
-         {
-            "event_code":"event-1",
-            "event_type":"CLASS_SESSION",
-            "from_time":"2020-08-04T10:00:00",
-            "params":[
-               {
-                  "key":"period_code",
-                  "value":"TUE-1"
-               },
-               {
-                  "key":"subject_key",
-                  "value":"nhyt6"
-               },
-               {
-                  "key":"teacher_emp_key",
-                  "value":"employee-2"
-               }
-            ],
-            "to_time":"2020-08-04T10:40:00"
-         },
-         {
-            "event_code":"event-1",
-            "event_type":"CLASS_SESSION",
-            "from_time":"2020-08-04T10:40:00",
-            "params":[
-               {
-                  "key":"period_code",
-                  "value":"TUE-2"
-               },
-               {
-                  "key":"subject_key",
-                  "value":"nhyt6"
-               },
-               {
-                  "key":"teacher_emp_key",
-                  "value":"employee-2"
-               }
-            ],
-            "to_time":"2020-08-04T11:20:00"
-         },
-         {
-            "event_code":"event-1",
-            "event_type":"CLASS_SESSION",
-            "from_time":"2020-08-04T11:30:00",
-            "params":[
-               {
-                  "key":"period_code",
-                  "value":"TUE-3"
-               },
-               {
-                  "key":"subject_key",
-                  "value":"scphy1"
-               },
-               {
-                  "key":"teacher_emp_key",
-                  "value":"employee-3"
-               }
-            ],
-            "to_time":"2020-08-04T12:10:00"
-         }
-      ]
-   },
-   {
-      "institution_key" :"test-school-1",
-      "calendar_key":"test-key",
-      "calendar_date":"2020-08-05",
-      "subscriber_key":"8B1B22E72AE-A",
-      "subscriber_type":"CLASS-DIV",
-      "events":[
-         {
-            "event_code":"event-1",
-            "event_type":"CLASS_SESSION",
-            "from_time":"2020-08-05T10:00:00",
-            "params":[
-               {
-                  "key":"period_code",
-                  "value":"WED-1"
-               },
-               {
-                  "key":"subject_key",
-                  "value":"nhy6"
-               },
-               {
-                  "key":"teacher_emp_key",
-                  "value":"employee-1"
-               }
-            ],
-            "to_time":"2020-08-05T10:40:00"
-         },
-         {
-            "event_code":"event-1",
-            "event_type":"CLASS_SESSION",
-            "from_time":"2020-08-05T10:40:00",
-            "params":[
-               {
-                  "key":"period_code",
-                  "value":"WED-2"
-               },
-               {
-                  "key":"subject_key",
-                  "value":"sght3"
-               },
-               {
-                  "key":"teacher_emp_key",
-                  "value":"employee-2"
-               }
-            ],
-            "to_time":"2020-08-05T11:20:00"
-         },
-         {
-            "event_code":"event-1",
-            "event_type":"CLASS_SESSION",
-            "from_time":"2020-08-05T11:30:00",
-            "params":[
-               {
-                  "key":"period_code",
-                  "value":"WED-3"
-               },
-               {
-                  "key":"subject_key",
-                  "value":"nhyt6"
-               },
-               {
-                  "key":"teacher_emp_key",
-                  "value":"employee-3"
-               }
-            ],
-            "to_time":"2020-08-05T12:10:00"
+         {   "event_code": "event-1",
+             "event_type": "HOLIDAY",
+             "from_time": "2020-08-04T10:40:00",
+             "params": [{"key": "is_class_flag", "value": "false"}],
+             "to_time": "2020-08-04T11:20:00"
+          },
+         {   "event_code": "5e5a27",
+             "event_type": "CLASS_SESSION",
+             "from_time": "2020-08-04T11:30:00",
+             "params": 
+               [   
+                  {"key": "period_code", "value": "TUE-3"},
+                  {"key": "subject_key", "value": "bio1"},
+                  {   "key": "teacher_emp_key","value": "employee-3" } 
+               ],
+                "to_time": "2020-08-04T12:10:00"
          }
       ]
    },
@@ -212,66 +51,22 @@
       "subscriber_key":"8B1B22E72AE-A",
       "subscriber_type":"CLASS-DIV",
       "events":[
-         {
-            "event_code":"event-1",
-            "event_type":"CLASS_SESSION",
-            "from_time":"2020-08-10T10:00:00",
-            "params":[
-               {
-                  "key":"period_code",
-                  "value":"MON-1"
-               },
-               {
-                  "key":"subject_key",
-                  "value":"mal01"
-               },
-               {
-                  "key":"teacher_emp_key",
-                  "value":"employee-1"
-               }
-            ],
-            "to_time":"2020-08-10T10:40:00"
-         },
-         {
-            "event_code":"event-1",
-            "event_type":"CLASS_SESSION",
-            "from_time":"2020-08-10T10:40:00",
-            "params":[
-               {
-                  "key":"period_code",
-                  "value":"MON-2"
-               },
-               {
-                  "key":"subject_key",
-                  "value":"nhyt6"
-               },
-               {
-                  "key":"teacher_emp_key",
-                  "value":"employee-1"
-               }
-            ],
-            "to_time":"2020-08-10T11:20:00"
-         },
-         {
-            "event_code":"event-1",
-            "event_type":"CLASS_SESSION",
-            "from_time":"2020-08-10T11:30:00",
-            "params":[
-               {
-                  "key":"period_code",
-                  "value":"MON-3"
-               },
-               {
-                  "key":"subject_key",
-                  "value":"scphy1"
-               },
-               {
-                  "key":"teacher_emp_key",
-                  "value":"employee-1"
-               }
-            ],
-            "to_time":"2020-08-10T12:10:00"
-         }
+         {   "event_code": "1ee304",
+              "event_type": "CLASS_SESSION",
+              "from_time": "2020-08-10T10:40:00",
+              "params": [   {"key": "period_code", "value": "MON-2"},
+                            {"key": "subject_key", "value": "bio2"},
+                            {   "key": "teacher_emp_key",
+                                "value": "employee-1"}],
+              "to_time": "2020-08-10T11:20:00"},
+              {   "event_code": "b19d7a",
+                  "event_type": "CLASS_SESSION",
+                  "from_time": "2020-08-10T11:30:00",
+                  "params": [   {"key": "period_code", "value": "MON-3"},
+                                {"key": "subject_key", "value": "bio3"},
+                                {   "key": "teacher_emp_key",
+                                    "value": "employee-1"}],
+                  "to_time": "2020-08-10T12:10:00"}
       ]
    }
 ]

@@ -22,7 +22,7 @@ class Calendar:
                 events = item['events']
                 for event in events :
                     self.events.append(Event(event))
-                 
+
 
             except KeyError as ke:
                 logger.debug ('[WARN] - KeyError in Calendar -events not present'.format (str (ke)))
@@ -43,23 +43,19 @@ class Calendar:
     def get_calendar_event_list(self,event_list):
         collection_list = []
         for event in event_list:
-
             item = {
                 'event_code': event.event_code,
             }
             if event.event_type is not None :
                 item['event_type'] = event.event_type
-            if event.from_time is not None :
+            if hasattr(event,'from_time') and event.from_time is not None :
                 item['from_time'] = event.from_time
-            if event.to_time is not None :
+            if hasattr(event,'to_time') and event.to_time is not None :
                 item['to_time'] = event.to_time
-                  
-                 
 
-
-            if event.ref_calendar_key is not None :
+            if hasattr(event,'ref_calendar_key') and event.ref_calendar_key is not None :
                 item['ref_calendar_key'] = event.ref_calendar_key
-            if event.params is not None and len(event.params) > 0 :
+            if hasattr(event, 'params') and event.params is not None and len(event.params) > 0  :
                 item['params'] = self.get_event_params_list(event.params)
             collection_list.append(item)
         return collection_list
@@ -73,7 +69,7 @@ class Calendar:
             }
             collection_params.append(item)
         return collection_params
-        
+
 
 
 
@@ -85,14 +81,20 @@ class Event :
             self.event_type = None
             self.from_time = None
             self.to_time = None
+            self.is_class = None
             self.ref_calendar_key = None
             self.params = []
         else :
             try :
-                ref_calendar_key = item['ref_calendar_key'] 
+                ref_calendar_key = item['ref_calendar_key']
                 self.ref_calendar_key = ref_calendar_key
             except KeyError as ke:
                 logger.debug ('[WARN] - KeyError in Event -ref_calendar_key not present'.format (str (ke)))
+            try :
+                is_class = item['is_class']
+                self.is_class = is_class
+            except KeyError as ke:
+                logger.debug ('[WARN] - KeyError in Event -is_class not present'.format (str (ke)))
 
             try :
                 event_code = item['event_code']
@@ -113,7 +115,7 @@ class Event :
                 to_time = item['to_time']
                 self.to_time = item['to_time']
             except KeyError as ke:
-                logger.debug ('[WARN] - KeyError in Event -to_time not present'.format (str (ke)))                  
+                logger.debug ('[WARN] - KeyError in Event -to_time not present'.format (str (ke)))
             try :
                 self.params = []
                 params = item['params']
@@ -130,5 +132,3 @@ class Param:
         else :
             self.key = item['key']
             self.value = item['value']
-          
-
