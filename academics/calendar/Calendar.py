@@ -46,7 +46,7 @@ class Calendar:
             item = {
                 'event_code': event.event_code,
             }
-            if event.event_type is not None :
+            if hasattr(event,'event_type') and event.event_type is not None :
                 item['event_type'] = event.event_type
             if hasattr(event,'from_time') and event.from_time is not None :
                 item['from_time'] = event.from_time
