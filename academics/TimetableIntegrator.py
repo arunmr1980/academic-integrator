@@ -14,23 +14,35 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 def generate_and_save_calenders(time_table_key,academic_year):
+	gclogger.info("Generating for timetable " + time_table_key + " academic_year " + academic_year)
 	timetable = timetable_service.get_time_table(time_table_key)
 	school_key = timetable.school_key
 	academic_configuration = academic_service.get_academig(school_key,academic_year)
-	existing_class_calendar_list = calendar_service.get_all_calendars(timetable.school_key,'CLASS-DIV')
-	existing_school_calendar_list = calendar_service.get_all_calendars(timetable.school_key,'SCHOOL')
 
+	### TODO - Getting all calendars cause too many reads and use up memory. Change to class based querying
+	existing_class_calendar_list = calendar_service.get_all_calendars(timetable.school_key,'CLASS-DIV')
+	gclogger.info("Existing class calendar list size " + str(len(existing_class_calendar_list)))
+	# TODO Limit school calendar access to particular academic year
+	existing_school_calendar_list = calendar_service.get_all_calendars(timetable.school_key,'SCHOOL')
+	gclogger.info("Existing school calendar list size " + str(len(existing_school_calendar_list)))
 
 	generated_class_calendar_dict = integrate_class_timetable(timetable,academic_configuration,existing_class_calendar_list,existing_school_calendar_list)
-	class_calendar_list = []
-	for generated_class_calendar in generated_class_calendar_dict.values() :
-		class_calendar_list.append(generated_class_calendar)
+	gclogger.info("Number of class calendars generated " + str(len(generated_class_calendar_dict)))
+	class_calendar_list = generated_class_calendar_dict.values()
+	# for generated_class_calendar in generated_class_calendar_dict.values() :
+	# 	class_calendar_list.append(generated_class_calendar)
 
 	generated_teacher_calendar_dict = integrate_teacher_timetable(class_calendar_list)
+	gclogger.info("Number of teacher calendars generated " + str(len(generated_teacher_calendar_dict)))
 
-	teacher_calendar_list = []
-	for generated_teacher_calendar in generated_teacher_calendar_dict.values() :
-		teacher_calendar_list.append(generated_teacher_calendar)
+	teacher_calendar_list = generated_teacher_calendar_dict.values()
+	# for generated_teacher_calendar in generated_teacher_calendar_dict.values() :
+	# 	teacher_calendar_list.append(generated_teacher_calendar)
+
+	#save_or_update_calendars(class_calendar_list, teacher_calendar_list)
+
+
+def save_or_update_calendars(class_calendar_list, teacher_calendar_list):
 	for class_calendar in class_calendar_list :
 		class_calendar_dict = calendar.Calendar(None)
 		class_calendar_dict = class_calendar_dict.make_calendar_dict(class_calendar)
@@ -356,17 +368,17 @@ def integrate_teacher_timetable(class_calendar_list) :
 	for class_calendar in class_calendar_list :
 		for event in class_calendar.events :
 			employee_key = get_employee_key(event.params)
-			teacher_calendar = get_teacher_calendar(teacher_calendar_list,employee_key,class_calendar)
+
+			set_teacher_calendar_dict(teacher_calendars_dict,employee_key,class_calendar)
+			key = class_calendar.calendar_date + employee_key
+			teacher_calendar = teacher_calendars_dict[key]
+
 			event_object = calendar.Event(None)
 			event_object.event_code = event.event_code
 			event_object.ref_calendar_key = class_calendar.calendar_key
 			teacher_calendar.events.append(event_object)
 			gclogger.info("Adding event " + event_object.event_code + " to teacher calendar " + teacher_calendar.calendar_key)
 
-	for teacher_calendar in teacher_calendar_list :
-		calendar_date = teacher_calendar.calendar_date
-		subscriber_key = teacher_calendar.subscriber_key
-		teacher_calendars_dict[calendar_date + subscriber_key] = teacher_calendar
 	return teacher_calendars_dict
 
 
@@ -385,19 +397,14 @@ def period_exist_or_not(time_table_period,partial_holiday_period_list) :
 			period_exist = True
 	return period_exist
 
-def get_teacher_calendar(teacher_calendar_list,employee_key, class_calendar) :
-	teacher_calendar_result = None
-	for teacher_calendar in teacher_calendar_list :
-		if teacher_calendar.subscriber_key == employee_key and teacher_calendar.calendar_date == class_calendar.calendar_date :
-			teacher_calendar_result = teacher_calendar
-		else :
-			teacher_calendar_result = calendar_service.get_calendar_by_date_and_key(class_calendar.calendar_date,employee_key)
 
-	if teacher_calendar_result is None :
-		teacher_calendar_result = generate_employee_calendar(employee_key,class_calendar)
-		if teacher_calendar_result.subscriber_key is not None :
-			teacher_calendar_list.append(teacher_calendar_result)
-	return teacher_calendar_result
+def set_teacher_calendar_dict(teacher_calendars_dict,employee_key, class_calendar) :
+	key = class_calendar.calendar_date + employee_key
+	if key not in teacher_calendars_dict:
+		teacher_cal = calendar_service.get_calendar_by_date_and_key(class_calendar.calendar_date,employee_key)
+		if teacher_cal is None:
+			teacher_cal = generate_employee_calendar(employee_key,class_calendar)
+		teacher_calendars_dict[key] = teacher_cal
 
 
 def generate_employee_calendar(employee_key,class_calendar) :
