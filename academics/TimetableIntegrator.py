@@ -39,10 +39,13 @@ def generate_and_save_calenders(time_table_key,academic_year):
 	# for generated_teacher_calendar in generated_teacher_calendar_dict.values() :
 	# 	teacher_calendar_list.append(generated_teacher_calendar)
 
-	#save_or_update_calendars(class_calendar_list, teacher_calendar_list)
+	save_or_update_calendars(class_calendar_list, teacher_calendar_list)
 
 
 def save_or_update_calendars(class_calendar_list, teacher_calendar_list):
+	gclogger.info("------ Saving/Updating calendars ---------------------")
+	gclogger.info(" Class calendars - " + str(len(class_calendar_list)))
+	gclogger.info(" Teacher calendars - " + str(len(teacher_calendar_list)))
 	for class_calendar in class_calendar_list :
 		class_calendar_dict = calendar.Calendar(None)
 		class_calendar_dict = class_calendar_dict.make_calendar_dict(class_calendar)
@@ -399,12 +402,18 @@ def period_exist_or_not(time_table_period,partial_holiday_period_list) :
 
 
 def set_teacher_calendar_dict(teacher_calendars_dict,employee_key, class_calendar) :
+	gclogger.info("Getting Teacher calendar -------------------------------------------------------------")
 	key = class_calendar.calendar_date + employee_key
 	if key not in teacher_calendars_dict:
 		teacher_cal = calendar_service.get_calendar_by_date_and_key(class_calendar.calendar_date,employee_key)
 		if teacher_cal is None:
 			teacher_cal = generate_employee_calendar(employee_key,class_calendar)
+			gclogger.info("Teacher calendar - New record created in DB")
+		else:
+			gclogger.info("Teacher calendar - Existing record loaded from DB")
 		teacher_calendars_dict[key] = teacher_cal
+	else:
+		gclogger.info("Teacher calendar present in Dict")
 
 
 def generate_employee_calendar(employee_key,class_calendar) :
