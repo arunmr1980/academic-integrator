@@ -56,6 +56,7 @@ def integrate_class_timetable(timetable, academic_configuration,existing_class_c
 		dates_list = get_dates(start_date,end_date)
 		for date in dates_list :
 			gclogger.debug(' date - ' + date)
+			gclogger.debug(' date - ' + date)
 			day_code = findDay(date).upper()
 			existing_class_calendar = is_class_calendar_exist(date,existing_class_calendar_list)
 			existing_school_calendar = is_school_calendar_exist(date,existing_school_calendar_list)
@@ -73,6 +74,10 @@ def integrate_class_timetable(timetable, academic_configuration,existing_class_c
 
 			elif existing_class_calendar is not None :
 				holiday_period_list = generate_holiday_period_list(existing_class_calendar,academic_configuration,timetable,day_code[0:3])
+				generated_class_calendar = generate_class_calendar(day_code[0:3],timetable,date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)
+
+			else :
+				holiday_period_list = []
 				generated_class_calendar = generate_class_calendar(day_code[0:3],timetable,date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)
 
 

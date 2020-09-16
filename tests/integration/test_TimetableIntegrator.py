@@ -24,16 +24,15 @@ class TimetableIntegratorTest(unittest.TestCase):
 		academic_configuration = self.get_academic_config_from_json(self)
 		response = academic_service.create_academic_config(academic_configuration)
 		class_calendar_holiday_list = self.get_holiday_class_calendar_list_from_json(self)
-	
+
 		school_calendar_holiday_list = self.get_holiday_school_calendar_list_from_json(self)
-		
-		for calendar in class_calendar_holiday_list :			
-			response = calendar_service.add_or_update_calendar(calendar)			
+
+		for calendar in class_calendar_holiday_list :
+			response = calendar_service.add_or_update_calendar(calendar)
 
 		for calendar in school_calendar_holiday_list :
 			response = calendar_service.add_or_update_calendar(calendar)
-		
-		
+
 
 		gclogger.info(" Setup complete ......")
 		gclogger.info(" ")
@@ -66,7 +65,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 			self.assertEqual(expected_class_calendar.subscriber_type,generated_class_calendar.subscriber_type )
 			self.check_events(expected_class_calendar.events,generated_class_calendar.events)
 
-		
+
 		# gclogger.info("--------------- Class calendar test passed -----------------")
 
 
@@ -74,7 +73,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 		for index in range(0,len(expected_class_calendar_events)) :
 			self.assertEqual(expected_class_calendar_events[index].event_type , generated_class_calendar_events[index].event_type)
 			self.assertEqual(expected_class_calendar_events[index].from_time , generated_class_calendar_events[index].from_time)
-		
+
 			self.assertEqual(expected_class_calendar_events[index].to_time , generated_class_calendar_events[index].to_time)
 			self.check_params(expected_class_calendar_events[index].params,generated_class_calendar_events[index].params)
 
