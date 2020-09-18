@@ -61,10 +61,13 @@ class LessonPlan:
                 'assignment_code' : assignment.assignment_code,
                 'description' :assignment.description,
                 'name' : assignment.name,
-                'topic_ref_code' : assignment.topic_ref_code
             }
+            if hasattr(assignment,'topic_ref_code') and assignment.topic_ref_code is not None :
+                item['topic_ref_code'] = assignment.topic_ref_code
+            if hasattr(assignment,'session_ref_code') and assignment.session_ref_code is not None :
+                item['session_ref_code'] = assignment.session_ref_code
             if hasattr(assignment,'resources') and assignment.resources is not None :
-                item['resources'] = assignments.resources
+                item['resources'] = assignment.resources
             assignments_list.append(item)
         return assignments_list
 
@@ -74,12 +77,16 @@ class LessonPlan:
         for resource in resources :
             item ={
                 'code' : resource.code,
-                'link' : resource.link,
                 'name' : resource.name,
                 'publishable' : resource.publishable,
                 'type' :resource.type
-
             }
+            if hasattr(resource,'description') and resource.description is not None :
+                item['description'] = resource.description
+            if hasattr(resource,'description') and resource.description is not None :
+                item['link'] = resource.link
+            if hasattr(resource,'file_key') and resource.file_key is not None :
+                item['file_key'] = resource.file_key
             resource_list.append(item)
         return resource_list
 
@@ -118,10 +125,12 @@ class LessonPlan:
         for topic in topics :
             item = {
                 'code' : topic.code ,
-                'description' : topic.description,
                 'name' : topic.name,
                 'order_index' : topic.order_index,
             }
+            if hasattr(topic,'description') and topic.description is not None :
+                item['description'] = topic.description
+
             if hasattr(topic,'resources') and topic.resources is not None :
                 item['resources'] = self.get_resource(topic.resources)
 
@@ -141,16 +150,19 @@ class LessonPlan:
                 'time_to_complete_mins' : assignment.time_to_complete_mins
             }
             if hasattr(assignment,'assigned_to') and assignment.assigned_to is not None :
-                item['resources'] = self.get_assigned_to(topic.assigned_to)
+                item['assigned_to'] = self.get_assigned_to(assignment.assigned_to)
             assignments_list.append(item)
         return assignments_list
 
     def get_assigned_to(self,assigned_to):
         item = {
-            'due_date' : assigned_to.due_date,
             'status' : assigned_to.status,
             'type' :assigned_to.type
         }
+        if hasattr(assigned_to,'assigned_date') and assigned_to.assigned_date is not None :
+            item['assigned_date'] = assigned_to.assigned_date,
+        if hasattr(assigned_to,'due_date') and assigned_to.due_date is not None :
+            item['due_date'] = assigned_to.due_date
         return item
 
     def get_sessions(self,sessions) :
@@ -158,11 +170,13 @@ class LessonPlan:
         for session in sessions :
             item = {
                 'code' :session.code,
-                'completion_datetime' :session.completion_datetime,
-                'completion_status' :session.completion_status,
                 'name' :session.name,
                 'order_index' :session.order_index
             }
+            if hasattr(session,'completion_status') and session.completion_status is not None :
+                item['completion_status'] = session.completion_status
+            if hasattr(session,'completion_datetime') and session.completion_datetime is not None :
+                item['completion_datetime'] = session.completion_datetime
             if hasattr(session,'description') and session.description is not None :
                 item['description'] = session.description
             if hasattr(session,'resources') and session.resources is not None :
