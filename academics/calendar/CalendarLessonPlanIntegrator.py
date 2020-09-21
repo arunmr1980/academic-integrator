@@ -5,10 +5,14 @@ from academics.lessonplan import LessonplanDBService as lessonplan_service
 import academics.timetable.TimeTableDBService as timetable_service
 
 
-def calendars_lesson_plan_integration(timetable_key, academic_year) :
+def calendars_lesson_plan_integration(subscriber_key) :
+	class_calender_list = calendar_service.get_all_calendars(subscriber_key,'CLASS-DIV')
+	integrate_calendars_to_lesson_plan(class_calender_list)
+
+def calendars_lesson_plan_integration_from_timetable(timetable_key, academic_year) :
 	timetable = timetable_service.get_time_table(time_table_key)
 	subscriber_key = timetable.class_key + "-" + timetable.division
-  	class_calender_list = calendar_service.get_all_calendars(subscriber_key,'CLASS-DIV')
+	class_calender_list = calendar_service.get_all_calendars(subscriber_key,'CLASS-DIV')
 	integrate_calendars_to_lesson_plan(class_calender_list)
 
 def integrate_calendar(calendar_key):
@@ -103,7 +107,6 @@ def get_lesson_plan(subject_code,current_lesson_plan_list) :
 def get_subject_code(event) :
 	if hasattr(event, 'params') :
 		for param in event.params :
-			# print(param.value)
 			if param.key == 'subject_key' :
 				return param.value
 	else :
