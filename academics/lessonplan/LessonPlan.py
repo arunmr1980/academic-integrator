@@ -155,12 +155,13 @@ class LessonPlan:
         return assignments_list
 
     def get_assigned_to(self,assigned_to):
-        item = {
-            'status' : assigned_to.status,
-            'type' :assigned_to.type
-        }
+        item = {}
+        if hasattr(assigned_to,'type') and assigned_to.type is not None :
+            item['type'] = assigned_to.type
+        if hasattr(assigned_to,'status') and assigned_to.status is not None :
+            item['status'] = assigned_to.status
         if hasattr(assigned_to,'assigned_date') and assigned_to.assigned_date is not None :
-            item['assigned_date'] = assigned_to.assigned_date,
+            item['assigned_date'] = assigned_to.assigned_date
         if hasattr(assigned_to,'due_date') and assigned_to.due_date is not None :
             item['due_date'] = assigned_to.due_date
         return item
@@ -375,12 +376,12 @@ class Assignment :
         if item is None:
             self.code = None
             self.time_to_complete_mins = None
-            # self.description = None
             self.assigned_to = {}
         else :
             self.code = item['code']
             self.time_to_complete_mins = item['time_to_complete_mins']
             # self.description = item['description']
+            self.assigned_to = None
             try :
                 self.assigned_to = AssignedTo(item['assigned_to'])
             except KeyError as ke:
@@ -393,11 +394,15 @@ class AssignedTo :
             self.type = None
             self.assigned_date = None
         else :
-            self.status = item['status']
+
             try :
                 self.type = item['type']
             except KeyError as ke:
                 logger.debug('[WARN] - KeyError in AssignedTo - type not present'.format(str (ke)))
+            try :
+                self.status = item['status']
+            except KeyError as ke:
+                logger.debug('[WARN] - KeyError in AssignedTo - status not present'.format(str (ke)))
             try :
                 self.assigned_date = item['assigned_date']
             except KeyError as ke:
