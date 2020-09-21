@@ -8,7 +8,7 @@ import academics.timetable.TimeTableDBService as timetable_service
 def calendars_lesson_plan_integration(timetable_key, academic_year) :
 	timetable = timetable_service.get_time_table(time_table_key)
 	subscriber_key = timetable.class_key + "-" + timetable.division
-  	class_calender_list = calendar_service.get_all_calendars(subscriber_key,'CLASS-DIV')
+	class_calender_list = calendar_service.get_all_calendars(subscriber_key,'CLASS-DIV')
 	integrate_calendars_to_lesson_plan(class_calender_list)
 
 def integrate_calendar(calendar_key):
