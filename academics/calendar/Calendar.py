@@ -1,5 +1,6 @@
 from academics.logger import GCLogger as logger
-
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 class Calendar:
 
@@ -12,6 +13,7 @@ class Calendar:
             self.calendar_date = None
             self.institution_key = None
         else:
+
             self.calendar_key = item["calendar_key"]
             self.subscriber_key = item["subscriber_key"]
             self.subscriber_type = item["subscriber_type"]

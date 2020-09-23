@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 import datetime
+from datetime import datetime as dt
 import calendar as cal
 import academics.timetable.TimeTableDBService as timetable_service
 from academics.logger import GCLogger as gclogger
@@ -11,7 +12,6 @@ import academics.calendar.CalendarDBService as calendar_service
 
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
-
 
 def generate_and_save_calenders(time_table_key,academic_year):
 	gclogger.info("Generating for timetable " + time_table_key + " academic_year " + academic_year)
@@ -164,6 +164,7 @@ def get_holiday_period_list(start_time,end_time,day_code,academic_configuration,
 								for period in day_table.periods :
 									standard_start_time = get_standard_time(period.start_time,date)
 									standard_end_time = get_standard_time(period.end_time,date)
+									# print(standard_start_time,standard_end_time,"period start time and end time--------->")
 									if check_holiday_time_conflict(start_time,end_time,standard_start_time,standard_end_time) :
 										partial_holiday_period_list.append(period)
 
@@ -171,31 +172,81 @@ def get_holiday_period_list(start_time,end_time,day_code,academic_configuration,
 
 
 def check_holiday_time_conflict(event_start_time,event_end_time,standard_start_time,standard_end_time) :
-	is_conflict = False
+	is_conflict = None
+	event_start_time_year = int(event_start_time[:4])
+	event_start_time_month = int(event_start_time[5:7])
+	event_start_time_day = int(event_start_time[8:10])
+	event_start_time_hour = int(event_start_time[11:13])
+	event_start_time_min = int(event_start_time[14:16])
+	event_start_time_sec = int(event_start_time[-2:])
 
-	off_time_start_hr =  int(event_start_time.split(':',2)[0][-2:])
-	off_time_end_hr = int(event_end_time.split(':',2)[0][-2:])
-	off_time_start_min = int(event_start_time.split(':',2)[1])
-	off_time_end_min = int(event_end_time.split(':',2)[1])
+	event_end_time_year = int(event_end_time[:4])
+	event_end_time_month = int(event_end_time[5:7])
+	event_end_time_day = int(event_end_time[8:10])
+	event_end_time_hour = int(event_end_time[11:13])
+	event_end_time_min = int(event_end_time[14:16])
+	event_end_time_sec = int(event_end_time[-2:])
 
-	standard_start_hr = int(standard_start_time.split(':',2)[0][-2:])
-	standard_end_hr =  int(standard_end_time.split(':',2)[0][-2:])
-	standard_start_min = int(standard_start_time.split(':',2)[1])
-	standard_end_min =  int(standard_end_time.split(':',2)[1])
+	standard_start_time_year = int(standard_start_time[:4])
+	standard_start_time_month = int(standard_start_time[5:7])
+	standard_start_time_day = int(standard_start_time[8:10])
+	standard_start_time_hour = int(standard_start_time[11:13])
+	standard_start_time_min = int(standard_start_time[14:16])
+	standard_start_time_sec = int(standard_start_time[-2:])
 
-	if event_start_time == standard_start_time :
-		is_conflict = True
-	elif event_end_time == standard_end_time :
-		is_conflict = True
-	elif off_time_start_hr < standard_start_hr and off_time_end_hr >= standard_end_hr :
-		is_conflict = True
-	elif off_time_start_hr <= standard_start_hr and off_time_end_hr > standard_end_hr :
-		is_conflict = True
-	elif off_time_start_hr == standard_start_hr and off_time_start_min <  standard_start_min and off_time_end_hr == standard_end_hr and off_time_end_min > standard_end_min:
-		is_conflict = True
-	else:
-		is_conflict = False
+	standard_end_time_year = int(standard_end_time[:4])
+	standard_end_time_month = int(standard_end_time[5:7])
+	standard_end_time_day = int(standard_end_time[8:10])
+	standard_end_time_hour = int(standard_end_time[11:13])
+	standard_end_time_min = int(standard_end_time[14:16])
+	standard_end_time_sec = int(standard_end_time[-2:])
+
+	standard_start_time = dt(standard_start_time_year, standard_start_time_month, standard_start_time_day, standard_start_time_hour, standard_start_time_min, standard_start_time_sec, 000000)
+	standard_end_time = dt(standard_end_time_year, standard_end_time_month, standard_end_time_day, standard_end_time_hour, standard_end_time_min, standard_end_time_sec, 000000)
+	event_start_time = dt(event_start_time_year, event_start_time_month, event_start_time_day, event_start_time_hour, event_start_time_min, event_start_time_sec, 000000)
+	event_end_time = dt(event_end_time_year, event_end_time_month, event_end_time_day, event_end_time_hour, event_end_time_min, event_end_time_sec, 000000)
+
+	delta = max(event_start_time,standard_start_time) - min(event_end_time,standard_end_time)
+	if delta.days < 0 :
+	    is_conflict = True
+	else :
+	    is_conflict = False
+
 	return is_conflict
+
+	# is_conflict = False
+	# off_time_start_hr =  int(event_start_time.split(':',2)[0][-2:])
+	# off_time_end_hr = int(event_end_time.split(':',2)[0][-2:])
+	# off_time_start_min = int(event_start_time.split(':',2)[1])
+	# off_time_end_min = int(event_end_time.split(':',2)[1])
+	#
+	# standard_start_hr = int(standard_start_time.split(':',2)[0][-2:])
+	# standard_end_hr =  int(standard_end_time.split(':',2)[0][-2:])
+	# standard_start_min = int(standard_start_time.split(':',2)[1])
+	# standard_end_min =  int(standard_end_time.split(':',2)[1])
+	#
+	# if event_start_time == standard_start_time :
+	# 	is_conflict = True
+	# 	print(is_conflict,"--1--")
+	# elif event_end_time == standard_end_time :
+	# 	is_conflict = True
+	# 	print(is_conflict,"--2--")
+	# elif (off_time_start_hr <= standard_start_hr and off_time_end_hr >= standard_end_hr and off_time_end_min != standard_start_min) :
+	# 	is_conflict = True
+	# 	print(is_conflict,"--3--")
+	# elif (off_time_start_hr <standard_start_hr and off_time_end_hr > standard_end_hr) :
+	# 	is_conflict = True
+	# 	print(is_conflict,"--4--")
+	# elif off_time_start_hr == standard_start_hr and off_time_start_min <  standard_start_min and off_time_end_hr == standard_end_hr and off_time_end_min > standard_end_min:
+	# 	is_conflict = True
+	# 	print(is_conflict,"--5--")
+	# elif off_time_start_hr == standard_start_hr and off_time_end_hr >= standard_end_hr :
+	# 	is_conflict = True
+	# 	print(is_conflict,"--6--")
+	#
+	# else:
+	# 	is_conflict = False
+	# return is_conflict
 
 
 
