@@ -5,6 +5,18 @@ import academics.lessonplan.LessonPlan as lessonplan
 
 LESSON_PLAN = "LessonPlan"
 
+
+def get_lessonplan(lesson_plan_key) :
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table(LESSON_PLAN)
+    response=table.get_item(
+      Key={
+        'lesson_plan_key':lesson_plan_key
+      }
+    )
+    if response['Item'] is not None:
+        return lessonplan.LessonPlan(response['Item'])
+
 def create_lessonplan(lessonplan):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(LESSON_PLAN)

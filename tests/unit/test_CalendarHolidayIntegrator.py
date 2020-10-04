@@ -7,6 +7,7 @@ from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as calendar
 import academics.lessonplan.LessonPlan as lessonplan
 from academics.calendar.CalendarLessonPlanIntegrator import integrate_calendar_to_lesson_plan
+from academics.lessonplan.LessonplanIntegrator import holiday_calendar_to_lessonplan_integrator
 import operator
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -29,39 +30,20 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 		division = subscriber_key[-1:]
 		current_lesson_plan_list = self.get_current_lesson_plan_list()
 		expected_lesson_plan_list = self.get_expected_lesson_plan_list()
-
 		if calendar.subscriber_type == 'CLASS-DIV' :
 			for current_lessonplan in current_lesson_plan_list :
 				if current_lessonplan.class_key == class_key and current_lessonplan.division == division :
-					print("LESSON PLAN KEY------------------->  ",current_lessonplan.lesson_plan_key)
-					holiday_period_list = self.generate_holiday_period_list(event,calendar,academic_configuration,timetable,day_code)
-					schedules = self.find_schedules(current_lessonplan.topics[0].topics,holiday_period_list,calendar.calendar_date)
-					current_lessonplan = self.remove_shedules(schedules,current_lessonplan)
-					shedule_list= self.get_all_remaining_schedules(current_lessonplan)
-					self.get_lesson_plan_after_remove_all_shedules(current_lessonplan)
-					self.get_updated_lesson_plan(shedule_list,current_lessonplan)
-					self.check_lesson_plans(current_lessonplan,expected_lesson_plan_list)
-
-
-
-
+					updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
+					self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 		else :
-			print(len(current_lesson_plan_list),"lesson plan listttttttttttt")
 			for current_lessonplan in current_lesson_plan_list :
-				print("LESSON PLAN KEY------------------->  ",current_lessonplan.lesson_plan_key)
-				holiday_period_list = self.generate_holiday_period_list(event,calendar,academic_configuration,timetable,day_code)
-				schedules = self.find_schedules(current_lessonplan.topics[0].topics,holiday_period_list,calendar.calendar_date)
-				current_lessonplan = self.remove_shedules(schedules,current_lessonplan)
-				shedule_list= self.get_all_remaining_schedules(current_lessonplan)
-				self.get_lesson_plan_after_remove_all_shedules(current_lessonplan)
-				self.get_updated_lesson_plan(shedule_list,current_lessonplan)
-				self.check_lesson_plans(current_lessonplan,expected_lesson_plan_list)
+				updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
+				self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 
 
 	def check_lesson_plans(self,updated_lesson_plan,expected_lesson_plan_list) :
 		for expected_lesson_plan in expected_lesson_plan_list :
 			if expected_lesson_plan.lesson_plan_key == updated_lesson_plan.lesson_plan_key :
-
 				self.assertEqual(updated_lesson_plan.lesson_plan_key,expected_lesson_plan.lesson_plan_key)
 				self.assertEqual(updated_lesson_plan.class_key,expected_lesson_plan.class_key)
 				self.assertEqual(updated_lesson_plan.division,expected_lesson_plan.division)
@@ -69,7 +51,7 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 				self.assertEqual(updated_lesson_plan.resources,expected_lesson_plan.resources)
 				self.check_topics(updated_lesson_plan.topics,expected_lesson_plan.topics)
 
-		print(" <<<--------------------------------UNIT TEST PASSED------------------------------>>> ")
+		print(" <<<-------------------------------- UNIT TEST PASSED ------------------------------>>> ")
 
 	def check_topics(self,updated_lesson_plan_topics,expected_lesson_plan_topics):
 		for index in range(0,len(updated_lesson_plan_topics)) :
@@ -101,74 +83,17 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 		self.assertEqual(updated_lesson_plan_shedule.end_time,expected_lesson_plan_shedule.end_time)
 
 
-	def get_lesson_plan_after_remove_all_shedules(self,current_lessonplan) :
-		for main_topic in current_lessonplan.topics :
-			for topic in main_topic.topics :
-				for session in topic.sessions :
-					if hasattr(session , 'schedule') :
-						del session.schedule
+
+
+	
+
+	
+
+	
 
 
 
-
-	def get_updated_lesson_plan(self,shedule_list,current_lessonplan) :
-		index = -1
-		for main_topic in current_lessonplan.topics :
-			for topic in main_topic.topics :
-				for session in topic.sessions :
-					index += 1
-					if index < len(shedule_list) :
-						session.schedule = shedule_list[index]
-
-
-
-	def get_all_remaining_schedules(self,current_lessonplan) :
-		schedule_list = []
-		for main_topic in current_lessonplan.topics :
-			for topic in main_topic.topics :
-				for session in topic.sessions :
-					if hasattr(session , 'schedule') :
-						schedule_list.append(session.schedule)
-		return schedule_list
-
-
-
-	def remove_shedules(self,schedules,current_lessonplan) :
-		for schedule in schedules :
-			schedule_start_time = schedule.start_time
-			schedule_end_time = schedule.end_time
-			for topic in current_lessonplan.topics[0].topics :
-				for session in topic.sessions :
-					if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
-						del session.schedule
-		return current_lessonplan
-
-
-
-	def generate_holiday_period_list(self,event,calendar,academic_configuration,timetable,day_code) :
-
-		holiday_period_list =[]
-		if is_class(event.params[0]) == False :
-			start_time = event.from_time
-			end_time = event.to_time
-			# print(start_time,"start time-------------<<<<<")
-			# print(end_time,"end time-------------<<<<<")
-			partial_holiday_periods = get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
-			for partial_holiday_period in partial_holiday_periods :
-				holiday_period_list.append(partial_holiday_period)
-		return holiday_period_list
-
-
-
-	def find_schedules(self,topics,holiday_period_list,date) :
-		schedule_list = []
-		for topic in topics :
-			for session in topic.sessions :
-				schedule = self.get_schedule(holiday_period_list,session.schedule,date)
-				if schedule is not None :
-					schedule_list.append(schedule)
-		return schedule_list
-
+	
 
 
 	def get_schedule(self,holiday_period_list,schedule,date) :
