@@ -1,0 +1,84 @@
+{
+  "academic_years": [
+    {
+      "code": "2017-2018",
+      "end_date": "31/05/2018",
+      "name": "2017-2018",
+      "start_date": "01/06/2017"
+    },
+    {
+      "code": "2020-2021",
+      "end_date": "10/08/2020",
+      "name": "2020-2021",
+      "start_date": "01/08/2020"
+    }
+  ],
+  "address": "Word No. 43, Ujjain, Madhya Pradesh, Postal Code: 456010 India",
+  "affiliation": {
+    "board": "CBSE",
+    "number": "23210704304",
+    "type": "Saroj Agrawal"
+  },
+  "amenities": {
+    "dance_room": "yes",
+    "gym": "yes",
+    "hostel": "None",
+    "indoor_games": "None",
+    "music_room": "None",
+    "swimming_pool": "yes"
+  },
+  "classes_available": {
+    "high_school": "None",
+    "higher_secondary": "None",
+    "lower_primary": "None",
+    "nursery": "None",
+    "preschool": "None",
+    "upper_primary": "None"
+  },
+  "name": "Tagore High School",
+  "product_configuration": {
+    "user_roles": [
+      "001520839719544416F7AFA8D2-C22B-49F3-A682-4F85792E0AE1803476865",
+      "001520873443492427CD0C8C60-5BE9-480F-A772-C030CEF2BF2B54185669",
+      null,
+      "00152102114528767218D9D4AA-7504-46DE-9857-61FEBD1F436A-1024570122",
+      null,
+      null
+    ]
+  },
+  "school_id": "test-school-1",
+  "school_information": {
+    "description": "Awesome school",
+    "email": "tagoreschool@gmail.com",
+    "founding_year": "Not Applicable",
+    "foundingYear": "1980",
+    "phone": "87777999",
+    "principal": "Hss Girls Dashahara Maida",
+    "school_category": "5",
+    "school_management_key": "0014998662616694692F81459E-BA4B-4CE9-9558-F3C2D741044A-1069398332",
+    "school_trust": "500",
+    "school_type": "Primary with Upper Primary and Secondary",
+    "website": "Hindi"
+  },
+  "transport": {
+    "routes": [
+      "001517309958400135E9D21EE7-B2F4-4647-AF03-4CC39FEF032F-997047610"
+    ],
+    "trips": [
+      "001517310066953596F94EF045-5166-4C05-9D76-52DB6BE92FC6-491164618",
+      "001519277730663785CF66AC1F-1EC0-4CF8-BFFC-FD3CF702305E-1367743777",
+      "0015192778105261109F242220-01F0-4396-AF14-747F6EE00DBA-723168363",
+      "0015192778885509853313BCF7-D635-47A1-AD30-BF870FC5DADC1972710782"
+    ],
+    "vehicles": [
+      "001517210271668740C00B849D-F4DA-45D4-AAE2-480C2CD093BA211311654",
+      "001521182675647215398CDB5C-523E-44AC-B611-6544F9750A3D-1722315926"
+    ]
+  },
+  "user_management": {
+    "user_roles": [
+      "0015070143893629470F6C4BC2-88A7-482C-B5ED-78E4F06CA62C-1404634178",
+      "0015070146216876494E51F066-DCD7-4AC8-8C9F-A6FDA6139BE71965389822"
+    ]
+  }
+}

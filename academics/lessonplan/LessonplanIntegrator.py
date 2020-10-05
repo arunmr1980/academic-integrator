@@ -1,10 +1,18 @@
+import datetime 
 from academics.TimetableIntegrator import *
 import academics.classinfo.ClassInfoDBService as class_info_service
+import academics.lessonplan.LessonplanDBService as lessonplan_service
+import academics.lessonplan.LessonplanDBService as lessonplan_service
+import academics.school.SchoolDBService as school_service
+import academics.lessonplan.LessonPlan as lessonplan
 
-def integrate_holiday_lessonplan(event_code,calendar_key,school_key) :
+
+def integrate_holiday_lessonplan(event_code,calendar_key) :
+	timetable = timetable_service.get_time_table('test-time-table-1')
+	school_key = timetable.school_key
+	print("school key--------------->",school_key)
+	academic_configuration = academic_service.get_academig(school_key,'2020-2021')
 	updated_lessonplan_list = []
-	event_code = 'event-1'
-	calendar_key ='test-key-5'
 	calendar = calendar_service.get_calendar(calendar_key)
 	print("calensar-------------> ",calendar.calendar_key,'typeeeee----->',calendar.subscriber_type)
 	event = get_event_from_calendar(calendar,event_code)
@@ -30,12 +38,13 @@ def integrate_holiday_lessonplan(event_code,calendar_key,school_key) :
 				updated_lessonplan_list.append(updated_lessonplan)
 				
 	else :
-		print("subscribe type is not class div ============>>>>>>>>>>>>")
-		academic_year = '2020-2021'
-		#academic year can get from school table
-		# school key ---->1e4d12bc2b58050ff084f8da	
+		school = school_service.get_school(school_key)
+		print(school,'schoooooooool========================================;;;;;;;;')
+		academic_year = get_academic_yr_from_calendar(school,calendar.calendar_date)
+		# academic_year = '2020-2021'
+
 		class_info_list = class_info_service.get_classinfo_list(school_key,academic_year)
-		print(class_info_list,'class info listttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt')		
+		print(class_info_list,'class info list --------------------------------->')		
 		for class_info in class_info_list :
 			if hasattr(class_info, 'divisions') :
 				for div in class_info.divisions :
@@ -49,11 +58,44 @@ def integrate_holiday_lessonplan(event_code,calendar_key,school_key) :
 						lp = lessonplan.LessonPlan(None)
 						updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 						response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-						print(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(current_lesson_plan_dict['lesson_plan_key']))
+						print(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
 						updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
 						updated_lessonplan_list.append(updated_lessonplan)
-	print(updated_lessonplan_list,'???????????????????????????????????????????????????')
 	return updated_lessonplan_list
+
+
+def get_academic_yr_from_calendar(school,calendar_date) :
+	if hasattr(school,'academic_years') :
+		for academic_year in school.academic_years :
+			academic_year = find_academic_year(academic_year,calendar_date)
+			if academic_year is not None :
+				return academic_year
+
+
+def find_academic_year(academic_year,calendar_date) :
+	start_date = academic_year.start_date
+	end_date = academic_year.end_date
+
+	start_date_year = int(start_date[-4:])
+	start_date_month = int(start_date[3:5])
+	start_date_day = int(start_date[:2])
+
+	end_date_year = int(end_date[-4:])
+	end_date_month = int(end_date[3:5])
+	end_date_day = int(end_date[:2])
+
+	calendar_date_year = int(calendar_date[:4])
+	calendar_date_month = int(calendar_date[5:7])
+	calendar_date_day = int(calendar_date[-2:])
+
+	start_date = datetime.datetime(start_date_year, start_date_month, start_date_day)
+	end_date = datetime.datetime(end_date_year, end_date_month, end_date_day)
+	calendar_date = datetime.datetime(calendar_date_year, calendar_date_month, calendar_date_day)
+
+	if start_date <= calendar_date <= end_date :
+		return academic_year.name
+
+	print(start_date,end_date,calendar_date,'looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooookkkkk')
 
 
 def get_event_from_calendar(calendar,event_code) :
