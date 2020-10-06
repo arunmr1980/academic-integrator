@@ -10,22 +10,21 @@ import academics.lessonplan.LessonPlan as lessonplan
 def integrate_holiday_lessonplan(event_code,calendar_key) :
 	timetable = timetable_service.get_time_table('test-time-table-1')
 	school_key = timetable.school_key
-	print("school key--------------->",school_key)
+	gclogger.info("school key--------------->" + str(school_key))
 	academic_configuration = academic_service.get_academig(school_key,'2020-2021')
 	updated_lessonplan_list = []
 	calendar = calendar_service.get_calendar(calendar_key)
-	print("calensar-------------> ",calendar.calendar_key,'typeeeee----->',calendar.subscriber_type)
 	event = get_event_from_calendar(calendar,event_code)
-	print("EVENT START TIME AND END TIME ----------------->",event.from_time,event.to_time)
+	gclogger.info("EVENT START TIME AND END TIME ----------------->" + str(event.from_time) + str(event.to_time))
 	day_code = findDay(calendar.calendar_date).upper()[0:3]
 	subscriber_key = calendar.subscriber_key
-	print("subscriber_key------------------->>>>",subscriber_key)
+	gclogger.info("subscriber_key------------------->>>>" + str(subscriber_key))
 	
 	if calendar.subscriber_type == 'CLASS-DIV' :
 		class_key = subscriber_key[:-2]
 		division = subscriber_key[-1:]
-		print("class keyyyy------>",class_key)
-		print("Division--------->",division)
+		gclogger.info("class keyyyy------>" + str(class_key))
+		gclogger.info("Division--------->" + str(division))
 		current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 		for current_lessonplan in current_lesson_plan_list :
 			if current_lessonplan.class_key == class_key and current_lessonplan.division == division :
@@ -33,32 +32,32 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 				lp = lessonplan.LessonPlan(None)
 				updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 				response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-				print(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(current_lesson_plan_dict['lesson_plan_key']))
+				gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(current_lesson_plan_dict['lesson_plan_key']))
 				updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
 				updated_lessonplan_list.append(updated_lessonplan)
 				
 	else :
 		school = school_service.get_school(school_key)
-		print(school,'schoooooooool========================================;;;;;;;;')
+		gclogger.info('school --------------->' + str(school.school_id))
 		academic_year = get_academic_yr_from_calendar(school,calendar.calendar_date)
 		# academic_year = '2020-2021'
 
 		class_info_list = class_info_service.get_classinfo_list(school_key,academic_year)
-		print(class_info_list,'class info list --------------------------------->')		
+		gclogger.info('class info list --------------------------------->' + str(class_info_list))		
 		for class_info in class_info_list :
 			if hasattr(class_info, 'divisions') :
 				for div in class_info.divisions :
 					division = div.name
 					class_key = class_info.class_info_key
-					print("class keyyyy------>",class_key)
-					print("Division--------->",division)
+					gclogger.info("class keyyyy------> " + str(class_key))
+					gclogger.info("Division---------> " + str(division))
 					current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 					for current_lessonplan in current_lesson_plan_list :
 						updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
 						lp = lessonplan.LessonPlan(None)
 						updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 						response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-						print(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
+						gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
 						updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
 						updated_lessonplan_list.append(updated_lessonplan)
 	return updated_lessonplan_list
@@ -93,9 +92,7 @@ def find_academic_year(academic_year,calendar_date) :
 	calendar_date = datetime.datetime(calendar_date_year, calendar_date_month, calendar_date_day)
 
 	if start_date <= calendar_date <= end_date :
-		return academic_year.name
-
-	print(start_date,end_date,calendar_date,'looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooookkkkk')
+		return academic_year.code
 
 
 def get_event_from_calendar(calendar,event_code) :
@@ -105,9 +102,16 @@ def get_event_from_calendar(calendar,event_code) :
 
 
 def holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code) :	
-	print("LESSON PLAN KEY------------------->  ",current_lessonplan.lesson_plan_key)
+	gclogger.info("LESSON PLAN KEY------------------->  " + str(current_lessonplan.lesson_plan_key))
 	holiday_period_list = generate_holiday_period_list(event,calendar,academic_configuration,timetable,day_code)
+	gclogger.info("---------- Holiday Period list is  -----------------")
+	for holiday_period in holiday_period_list :
+		gclogger.info("---------- Holiday Period list is  " + str(holiday_period.period_code)+' -----------------')
 	schedules = find_schedules(current_lessonplan.topics[0].topics,holiday_period_list,calendar.calendar_date)
+	gclogger.info("---------- Schedule to remove is   -----------------")
+	for schedule in schedules :
+		gclogger.info("---------- " + str(holiday_period.period_code) + " ---------")
+
 	current_lessonplan = remove_shedules(schedules,current_lessonplan)
 	shedule_list = get_all_remaining_schedules(current_lessonplan)
 	current_lessonplan = get_lesson_plan_after_remove_all_shedules(current_lessonplan)

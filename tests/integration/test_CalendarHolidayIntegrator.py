@@ -25,34 +25,34 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 	def setUp(self) :
 		school_dict = self.get_school()
 		response = school_service.add_or_update_school(school_dict)
-		print(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  School Uploaded ' + str(school_dict['school_id']) + '  ------------- ')
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  School Uploaded ' + str(school_dict['school_id']) + '  ------------- ')
 		timetable = self.get_timetable_from_json()
 		response = timetable_service.create_timetable(timetable)
-		print(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -----------  time table uploaded  ---------- '+str(timetable['time_table_key']))
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -----------  time table uploaded  ---------- '+str(timetable['time_table_key']))
 		academic_configuration = self.get_academic_config_from_json()
 		response = academic_service.create_academic_config(academic_configuration)
-		print(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  Academic configuration uploaded  ------------- '+str(academic_configuration['academic_config_key']))
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  Academic configuration uploaded  ------------- '+str(academic_configuration['academic_config_key']))
 		holiday_calendars = self.get_holiday_calendars()
 		for holiday_calendar in holiday_calendars :
 			cal = calendar.Calendar(None)
 			calendar_dict = cal.make_calendar_dict(holiday_calendar)
 			response = calendar_service.add_or_update_calendar(calendar_dict)
-			print(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Holiday calendar uploaded --------- '+str(calendar_dict['calendar_key']))
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Holiday calendar uploaded --------- '+str(calendar_dict['calendar_key']))
 
 		current_lesson_plan_list = self.get_current_lesson_plan_list()
 		for current_lesson_plan in current_lesson_plan_list :
 			lesson_plan = lessonplan.LessonPlan(None)
 			lesson_plan_dict = lesson_plan.make_lessonplan_dict(current_lesson_plan)
 			response = lessonplan_service.create_lessonplan(lesson_plan_dict)
-			print(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ---------- A Lesson Plan uploaded -------------'+str(lesson_plan_dict['lesson_plan_key']))
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ---------- A Lesson Plan uploaded -------------'+str(lesson_plan_dict['lesson_plan_key']))
 
 		class_info_8B1B22E72AE_dict = self.get_class_info_8B1B22E72AE()
 		response = class_info_service.add_or_update_class_info(class_info_8B1B22E72AE_dict)
-		print(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  Class info for 8B1B22E72AE uploaded  ------------- ')
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  Class info for 8B1B22E72AE uploaded  ------------- ')
 
 		class_info_8B1B22E72AY_dict = self.get_class_info_8B1B22E72AY()
 		response = class_info_service.add_or_update_class_info(class_info_8B1B22E72AY_dict)
-		print(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  Class info for 8B1B22E72AY uploaded  ------------- ')
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  Class info for 8B1B22E72AY uploaded  ------------- ')
 
 		
 
@@ -77,7 +77,7 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 				self.assertEqual(updated_lesson_plan.resources,expected_lesson_plan.resources)
 				self.check_topics(updated_lesson_plan.topics,expected_lesson_plan.topics)
 
-		print(" <<<-------------------------------- INTEGRATION TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------>>> ")
+		gclogger.info(" <<<-------------------------------- INTEGRATION TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------>>> ")
 
 	def check_topics(self,updated_lesson_plan_topics,expected_lesson_plan_topics):
 		for index in range(0,len(updated_lesson_plan_topics)) :
@@ -118,32 +118,32 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 		holiday_calender_list = calendar_service.get_all_calendars('test-school-1','CLASS-DIV')
 		for calendar in holiday_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
-			print("--------------- A Holiday class calendar deleted " + calendar.calendar_key+" -----------------")
+			gclogger.info("--------------- A Holiday class calendar deleted " + calendar.calendar_key+" -----------------")
 
 		teacher_calender_list = calendar_service.get_all_calendars('test-school-1','SCHOOL')
 		for calendar in teacher_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
-			print("--------------- A Holiday School calendar deleted " + calendar.calendar_key+" -----------------")
+			gclogger.info("--------------- A Holiday School calendar deleted " + calendar.calendar_key+" -----------------")
 
 
 		timetable_service.delete_timetable(timetable.time_table_key)
-		print("--------------- Test Timetable deleted  " + timetable.time_table_key+"  -----------------")
+		gclogger.info("--------------- Test Timetable deleted  " + timetable.time_table_key+"  -----------------")
 		academic_service.delete_academic_config(academic_configuration.academic_config_key)
-		print("---------------Test Academic Configuration deleted  " + academic_configuration.academic_config_key + "-----------------")
+		gclogger.info("---------------Test Academic Configuration deleted  " + academic_configuration.academic_config_key + "-----------------")
 		generated_lesson_plan_list = lessonplan_service.get_lesson_plan_list('8B1B22E72AE','A')
 		for generated_lesson_plan in generated_lesson_plan_list :
 			lessonplan_service.delete_lessonplan(generated_lesson_plan.lesson_plan_key)
-			print("---------------Test Lesson Plan deleted  " + generated_lesson_plan.lesson_plan_key + "-----------------")
+			gclogger.info("---------------Test Lesson Plan deleted  " + generated_lesson_plan.lesson_plan_key + "-----------------")
 
 		generated_lesson_plan_list = lessonplan_service.get_lesson_plan_list('8B1B22E72AE','B')
 		for generated_lesson_plan in generated_lesson_plan_list :
 			lessonplan_service.delete_lessonplan(generated_lesson_plan.lesson_plan_key)
-			print("---------------Test Lesson Plan deleted  " + generated_lesson_plan.lesson_plan_key + "-----------------")
+			gclogger.info("---------------Test Lesson Plan deleted  " + generated_lesson_plan.lesson_plan_key + "-----------------")
 
 		generated_lesson_plan_list = lessonplan_service.get_lesson_plan_list('8B1B22E72AY','B')
 		for generated_lesson_plan in generated_lesson_plan_list :
 			lessonplan_service.delete_lessonplan(generated_lesson_plan.lesson_plan_key)
-			print("---------------Test Lesson Plan deleted  " + generated_lesson_plan.lesson_plan_key + "-----------------")
+			gclogger.info("---------------Test Lesson Plan deleted  " + generated_lesson_plan.lesson_plan_key + "-----------------")
 
 
 	def get_academic_yr_from_calendar(calendar) :

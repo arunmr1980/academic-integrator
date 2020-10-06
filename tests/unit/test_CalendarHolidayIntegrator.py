@@ -23,7 +23,7 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 		holiday_calendars = self.get_holiday_calendars()
 		calendar = self.get_holiday_calendar(calendar_key,holiday_calendars)
 		event = self.get_event_from_calendar(calendar,event_code)
-		print("EVENT START TIME AND END TIME ----------------->",event.from_time,event.to_time)
+		gclogger.info("EVENT START TIME AND END TIME -----------------> " + str(event.from_time) + str(event.to_time))
 		day_code = findDay(calendar.calendar_date).upper()[0:3]
 		subscriber_key = calendar.subscriber_key
 		class_key = subscriber_key[:-2]
