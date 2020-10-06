@@ -23,12 +23,18 @@ pp = pprint.PrettyPrinter(indent=4)
 class CalendarHolidayIntegratorTest(unittest.TestCase):
 	
 	def setUp(self) :
-		school_dict = self.get_school()
-		response = school_service.add_or_update_school(school_dict)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  School Uploaded ' + str(school_dict['school_id']) + '  ------------- ')
-		timetable = self.get_timetable_from_json()
-		response = timetable_service.create_timetable(timetable)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -----------  time table uploaded  ---------- '+str(timetable['time_table_key']))
+		test_timetable_one = self.get_test_timetable_one_from_json()
+		response = timetable_service.create_timetable(test_timetable_one)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -----------  time table one uploaded  ---------- '+str(test_timetable_one['time_table_key']))
+
+		test_timetable_two = self.get_test_timetable_two_from_json()
+		response = timetable_service.create_timetable(test_timetable_two)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -----------  time table two uploaded  ---------- '+str(test_timetable_two['time_table_key']))
+
+		test_timetable_three = self.get_test_timetable_three_from_json()
+		response = timetable_service.create_timetable(test_timetable_three)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -----------  time table three uploaded  ---------- '+str(test_timetable_three['time_table_key']))
+
 		academic_configuration = self.get_academic_config_from_json()
 		response = academic_service.create_academic_config(academic_configuration)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  Academic configuration uploaded  ------------- '+str(academic_configuration['academic_config_key']))
@@ -44,15 +50,15 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 			lesson_plan = lessonplan.LessonPlan(None)
 			lesson_plan_dict = lesson_plan.make_lessonplan_dict(current_lesson_plan)
 			response = lessonplan_service.create_lessonplan(lesson_plan_dict)
-			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ---------- A Lesson Plan uploaded -------------'+str(lesson_plan_dict['lesson_plan_key']))
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ---------- A Lesson Plan uploaded ------------- '+str(lesson_plan_dict['lesson_plan_key']))
 
-		class_info_8B1B22E72AE_dict = self.get_class_info_8B1B22E72AE()
-		response = class_info_service.add_or_update_class_info(class_info_8B1B22E72AE_dict)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  Class info for 8B1B22E72AE uploaded  ------------- ')
+		class_info_one_dict = self.get_class_info_one()
+		response = class_info_service.add_or_update_class_info(class_info_one_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for uploaded --------- ' +str(class_info_one_dict['class_info_key']) )
 
-		class_info_8B1B22E72AY_dict = self.get_class_info_8B1B22E72AY()
-		response = class_info_service.add_or_update_class_info(class_info_8B1B22E72AY_dict)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  Class info for 8B1B22E72AY uploaded  ------------- ')
+		class_info_two_dict = self.get_class_info_two()
+		response = class_info_service.add_or_update_class_info(class_info_two_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for uploaded -------------- ' +str(class_info_one_dict['class_info_key']) )
 
 		
 
@@ -111,8 +117,10 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 
 	@classmethod
 	def tearDown(self):
-		timetable = timetable_service.get_time_table('test-time-table-1')
-		school_key = timetable.school_key
+		test_timetable_one = timetable_service.get_time_table('test-time-table-1')
+		test_timetable_two = timetable_service.get_time_table('test-time-table-2')
+		test_timetable_three = timetable_service.get_time_table('test-time-table-3')
+		school_key = test_timetable_one.school_key
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
 
 		holiday_calender_list = calendar_service.get_all_calendars('test-school-1','CLASS-DIV')
@@ -126,8 +134,13 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 			gclogger.info("--------------- A Holiday School calendar deleted " + calendar.calendar_key+" -----------------")
 
 
-		timetable_service.delete_timetable(timetable.time_table_key)
-		gclogger.info("--------------- Test Timetable deleted  " + timetable.time_table_key+"  -----------------")
+		timetable_service.delete_timetable(test_timetable_one.time_table_key)
+		gclogger.info("--------------- Test Timetable deleted  " + test_timetable_one.time_table_key+"  -----------------")
+		timetable_service.delete_timetable(test_timetable_two.time_table_key)
+		gclogger.info("--------------- Test Timetable deleted  " + test_timetable_two.time_table_key+"  -----------------")
+		timetable_service.delete_timetable(test_timetable_three.time_table_key)
+		gclogger.info("--------------- Test Timetable deleted  " + test_timetable_three.time_table_key+"  -----------------")
+
 		academic_service.delete_academic_config(academic_configuration.academic_config_key)
 		gclogger.info("---------------Test Academic Configuration deleted  " + academic_configuration.academic_config_key + "-----------------")
 		generated_lesson_plan_list = lessonplan_service.get_lesson_plan_list('8B1B22E72AE','A')
@@ -146,8 +159,7 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 			gclogger.info("---------------Test Lesson Plan deleted  " + generated_lesson_plan.lesson_plan_key + "-----------------")
 
 
-	def get_academic_yr_from_calendar(calendar) :
-		pass
+	
 
 	def get_lesson_plan_after_remove_all_shedules(self,current_lessonplan) :
 		for main_topic in current_lessonplan.topics :
@@ -237,8 +249,18 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 			timetable = json.load(timetable)
 		return ttable.TimeTable(timetable)
 
-	def get_timetable_from_json(self) :
-		with open('tests/unit/fixtures/timetable.json', 'r') as calendar_list:
+	def get_test_timetable_one_from_json(self) :
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/test_timetable_one.json', 'r') as calendar_list:
+			timetable = json.load(calendar_list)
+		return timetable
+
+	def get_test_timetable_two_from_json(self) :
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/test_timetable_two.json', 'r') as calendar_list:
+			timetable = json.load(calendar_list)
+		return timetable
+
+	def get_test_timetable_three_from_json(self) :
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/test_timetable_three.json', 'r') as calendar_list:
 			timetable = json.load(calendar_list)
 		return timetable
 
@@ -257,20 +279,16 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 			current_lesson_plan_list.append(lessonplan.LessonPlan(current_lessonplan_dict))
 		return current_lesson_plan_list
 
-	def get_class_info_8B1B22E72AE(self) :
-		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/class_info_8B1B22E72AE.json', 'r') as class_info_8B1B22E72AE:
-			class_info_8B1B22E72AE_dict = json.load(class_info_8B1B22E72AE)
-		return class_info_8B1B22E72AE_dict
+	def get_class_info_one(self) :
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/class_info_one.json', 'r') as class_info_one:
+			class_info_one_dict = json.load(class_info_one)
+		return class_info_one_dict
 
-	def get_school(self) :
-		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/school.json', 'r') as school:
-			school_dict = json.load(school)
-		return school_dict
 
-	def get_class_info_8B1B22E72AY(self) :
-		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/class_info_8B1B22E72AY.json', 'r') as class_info_8B1B22E72AY:
-			class_info_8B1B22E72AY_dict = json.load(class_info_8B1B22E72AY)
-		return class_info_8B1B22E72AY_dict
+	def get_class_info_two(self) :
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/class_info_two.json', 'r') as class_info_two:
+			class_info_two_dict = json.load(class_info_two)
+		return class_info_two_dict
 
 
 	def get_expected_lesson_plan_list(self) :

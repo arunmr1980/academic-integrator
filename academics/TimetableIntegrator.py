@@ -153,7 +153,6 @@ def generate_holiday_period_list(calendar,academic_configuration,timetable,day_c
 
 
 def get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,date) :
-
 	partial_holiday_period_list =[]
 	if hasattr(academic_configuration.time_table_configuration ,'time_table_schedules') :
 		for time_table_schedule in academic_configuration.time_table_configuration.time_table_schedules :
@@ -164,7 +163,6 @@ def get_holiday_period_list(start_time,end_time,day_code,academic_configuration,
 								for period in day_table.periods :
 									standard_start_time = get_standard_time(period.start_time,date)
 									standard_end_time = get_standard_time(period.end_time,date)
-									# print(standard_start_time,standard_end_time,"period start time and end time--------->")
 									if check_holiday_time_conflict(start_time,end_time,standard_start_time,standard_end_time) :
 										partial_holiday_period_list.append(period)
 

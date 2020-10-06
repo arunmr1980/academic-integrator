@@ -7,7 +7,7 @@ from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as calendar
 import academics.lessonplan.LessonPlan as lessonplan
 from academics.calendar.CalendarLessonPlanIntegrator import integrate_calendar_to_lesson_plan
-from academics.lessonplan.LessonplanIntegrator import holiday_calendar_to_lessonplan_integrator
+from academics.lessonplan.LessonplanIntegrator import cancelled_holiday_calendar_to_lessonplan_integrator
 import operator
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -18,22 +18,22 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 	def test_lessonplan(self) :
 		timetable=self.get_time_table()
 		academic_configuration=self.get_academic_configuration()
-		event_code = 'event-1'
-		calendar_key ='test-key-5'
-		holiday_calendars = self.get_holiday_calendars()
-		calendar = self.get_holiday_calendar(calendar_key,holiday_calendars)
-		event = self.get_event_from_calendar(calendar,event_code)
-		gclogger.info("EVENT START TIME AND END TIME -----------------> " + str(event.from_time) + str(event.to_time))
+		calendar_key ='test-key'
+		holiday_cancel_calendars = self.get_holiday_cancel_calendars()
+		calendar = self.get_holiday_cancelled_calendar(calendar_key,holiday_cancel_calendars)
+		events_list = calendar.events
 		day_code = findDay(calendar.calendar_date).upper()[0:3]
 		subscriber_key = calendar.subscriber_key
 		class_key = subscriber_key[:-2]
 		division = subscriber_key[-1:]
 		current_lesson_plan_list = self.get_current_lesson_plan_list()
 		expected_lesson_plan_list = self.get_expected_lesson_plan_list()
+
 		if calendar.subscriber_type == 'CLASS-DIV' :
 			for current_lessonplan in current_lesson_plan_list :
 				if current_lessonplan.class_key == class_key and current_lessonplan.division == division :
-					updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
+					updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,event_list,calendar,academic_configuration,timetable,day_code)
+					
 					self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 		else :
 			for current_lessonplan in current_lesson_plan_list :
@@ -51,7 +51,7 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 				self.assertEqual(updated_lesson_plan.resources,expected_lesson_plan.resources)
 				self.check_topics(updated_lesson_plan.topics,expected_lesson_plan.topics)
 
-		gclogger.info(" <<<-------------------------------- UNIT TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------>>> ")
+		print(" <<<-------------------------------- UNIT TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------>>> ")
 
 	def check_topics(self,updated_lesson_plan_topics,expected_lesson_plan_topics):
 		for index in range(0,len(updated_lesson_plan_topics)) :
@@ -121,7 +121,7 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 
 	def get_current_lesson_plan_list(self) :
 		current_lesson_plan_list = []
-		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/current_lesson_plan.json', 'r') as current_lessonplan:
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/current_lessonplan.json', 'r') as current_lessonplan:
 			current_lessonplan_dict_list = json.load(current_lessonplan)
 		for current_lessonplan_dict in current_lessonplan_dict_list :
 			current_lesson_plan_list.append(lessonplan.LessonPlan(current_lessonplan_dict))
@@ -136,23 +136,20 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 		return expected_lesson_plan_list
 
 
-	def get_event_from_calendar(self,calendar,event_code) :
-		for event in calendar.events :
-			if event.event_code == event_code :
-				return event
 
-	def get_holiday_calendar(self,calendar_key,holiday_calendars) :
+
+	def get_holiday_cancelled_calendar(self,calendar_key,holiday_calendars) :
 		for calendar in holiday_calendars :
 			if calendar.calendar_key == calendar_key :
 				return calendar
 
-	def get_holiday_calendars(self):
+	def get_holiday_cancel_calendars(self):
 		holiday_calendars_list = []
-		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/holiday_calendars.json', 'r') as calendars:
-			holiday_calendars = json.load(calendars)
-		for cal in holiday_calendars :
-			holiday_calendars_list.append(calendar.Calendar(cal))
-		return holiday_calendars_list
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/holiday_cancel_calendars.json', 'r') as calendars:
+			holiday_cancel_calendars = json.load(calendars)
+		for cal in holiday_cancel_calendars :
+			holiday_cancel_calendars_list.append(calendar.Calendar(cal))
+		return holiday_cancel_calendars_list
 
 
 
