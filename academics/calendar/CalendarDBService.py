@@ -60,6 +60,26 @@ def get_all_calendars(institution_key, subscriber_type):
     calendars.sort(key = operator.itemgetter('calendar_date'))
     return make_caendar_obj(calendars)
 
+def get_all_class_calendars(subscriber_key, subscriber_type):
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table(CALENDAR_TBL)
+    calendars = []
+    response = table.query(
+        IndexName='subscriber_key-subscriber_type-index',
+        KeyConditionExpression=Key('subscriber_key').eq(subscriber_key) & Key('subscriber_type').eq(subscriber_type)
+    )
+    add_calendars_from_response(response, calendars)
+    logger.debug('Intermediary calendars count - ' + str(len(calendars)))
+    while 'LastEvaluatedKey' in response:
+        response = table.query(
+            IndexName='subscriber_key-subscriber_type-index',
+           KeyConditionExpression=Key('subscriber_key').eq(subscriber_key) & Key('subscriber_type').eq(subscriber_type)
+        )
+        add_calendars_from_response(response, calendars)
+        logger.debug('Intermediary calendars count - ' + str(len(calendars)))
+    calendars.sort(key = operator.itemgetter('calendar_date'))
+    return make_caendar_obj(calendars)
+
 def add_calendars_from_response(response, calendars):
     for item in response['Items']:
         calendars.append(item)

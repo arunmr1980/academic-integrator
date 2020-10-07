@@ -44,7 +44,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 		school_key = timetable.school_key
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
 		generate_and_save_calenders(timetable.time_table_key,academic_configuration.academic_year)
-		class_calender_list = calendar_service.get_all_calendars('test-school-1','CLASS-DIV')
+		class_calender_list = calendar_service.get_all_class_calendars('8B1B22E72AE-A','CLASS-DIV')
 
 		for class_calendar in class_calender_list :
 			calendar_date = class_calendar.calendar_date
@@ -124,7 +124,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 		timetable = timetable_service.get_time_table('test-time-table-1')
 		school_key = timetable.school_key
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
-		class_calender_list = calendar_service.get_all_calendars('test-school-1','CLASS-DIV')
+		class_calender_list = calendar_service.get_all_class_calendars('8B1B22E72AE-A','CLASS-DIV')
 		for calendar in class_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- Class calendar deleted " + calendar.calendar_key+" -----------------")

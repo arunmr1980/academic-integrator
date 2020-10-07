@@ -4,13 +4,13 @@ from boto3.dynamodb.conditions import Key
 from academics.timetable.TimeTable import TimeTable
 from academics.logger import GCLogger as logger
 
-TIME_TABLE_TBL = 'TimeTable'
+TIMETABLE_TBL = 'TimeTable'
 
 
 
 def get_time_table(time_table_key):
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(TIME_TABLE_TBL)
+    table = dynamodb.Table(TIMETABLE_TBL)
     response = table.get_item(
                 Key={
                     'time_table_key':time_table_key
@@ -21,7 +21,7 @@ def get_time_table(time_table_key):
 
 def create_timetable(timetable):
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(TIME_TABLE_TBL)
+    table = dynamodb.Table(TIMETABLE_TBL)
     response = table.put_item(
         Item = timetable
     )
@@ -29,7 +29,7 @@ def create_timetable(timetable):
 
 def get_school_timetables(school_key, academic_year):
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(TIMETABLE_TABLE)
+    table = dynamodb.Table(TIMETABLE_TBL)
     timetables = []
     response = table.query(
         IndexName='school_key-academic_year-index',
@@ -56,7 +56,7 @@ def add_timetables_from_response(response, timetables):
 
 def delete_timetables(timetables):
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(TIMETABLE_TABLE)
+    table = dynamodb.Table(TIMETABLE_TBL)
 
     for timetable in timetables:
         logger.debug('deleting timetable' + timetable.time_table_key)
@@ -72,7 +72,7 @@ def delete_timetables(timetables):
 
 def update_timetable(timetable):
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(TIMETABLE_TABLE)
+    table = dynamodb.Table(TIMETABLE_TBL)
 
     item = {
         'academic_year': timetable.academic_year,
@@ -175,7 +175,7 @@ def get_day_tables_dict(day_tables):
 
 def get_timetable_entry(class_key, division):
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(TIMETABLE_TABLE)
+    table = dynamodb.Table(TIMETABLE_TBL)
     response = table.query(
         IndexName='class_key-division-index',
         KeyConditionExpression=Key('class_key').eq(class_key) & Key('division').eq(division)
@@ -187,7 +187,7 @@ def get_timetable_entry(class_key, division):
 
 def get_timetable_entry_by_employee(employee_key, academic_year):
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(TIMETABLE_TABLE)
+    table = dynamodb.Table(TIMETABLE_TBL)
     response = table.query(
         IndexName='employee_key-academic_year-index',
         KeyConditionExpression=Key('employee_key').eq(employee_key) & Key('academic_year').eq(academic_year)
@@ -199,7 +199,7 @@ def get_timetable_entry_by_employee(employee_key, academic_year):
 
 def delete_timetable(time_table_key) :
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(TIME_TABLE_TBL)
+    table = dynamodb.Table(TIMETABLE_TBL)
     response=table.delete_item(
       Key={ 
         'time_table_key':time_table_key

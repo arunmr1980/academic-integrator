@@ -2,9 +2,18 @@ import academics.lessonplan.LessonPlan as lessonplan
 from academics.logger import GCLogger as logger
 import academics.calendar.CalendarDBService as calendar_service
 from academics.lessonplan import LessonplanDBService as lessonplan_service
+import academics.timetable.TimeTableDBService as timetable_service
 
 
+def calendars_lesson_plan_integration(subscriber_key) :
+	class_calender_list = calendar_service.get_all_class_calendars(subscriber_key,'CLASS-DIV')
+	integrate_calendars_to_lesson_plan(class_calender_list)
 
+def calendars_lesson_plan_integration_from_timetable(timetable_key, academic_year) :
+	timetable = timetable_service.get_time_table(timetable_key)
+	subscriber_key = timetable.class_key + "-" + timetable.division
+	class_calender_list = calendar_service.get_all_class_calendars(subscriber_key,'CLASS-DIV')
+	integrate_calendars_to_lesson_plan(class_calender_list)
 
 def integrate_calendar(calendar_key):
 	current_calendar = calendar_service.get_calendar(calendar_key)
@@ -12,7 +21,8 @@ def integrate_calendar(calendar_key):
 	current_lesson_plan_list = []
 	current_lesson_plan_list = get_all_lesson_plan_list(current_calendar, current_lesson_plan_list)
 	current_lesson_plan_list = integrate_calendar_to_lesson_plan(generated_class_calendar,current_lesson_plan_list)
-	return current_lesson_plan_list
+	generated_lesson_plan_dict_list = get_generated_lesson_plan_dict_list(current_lesson_plan_list)
+	update_lesson_plan(generated_lesson_plan_dict_list)
 
 
 def integrate_calendars_to_lesson_plan(generated_class_calendar_list):
@@ -20,8 +30,22 @@ def integrate_calendars_to_lesson_plan(generated_class_calendar_list):
 	for generated_class_calendar in generated_class_calendar_list :
 		current_lesson_plan_list = get_all_lesson_plan_list(generated_class_calendar, current_lesson_plan_list)
 		current_lesson_plan_list = integrate_calendar_to_lesson_plan(generated_class_calendar, current_lesson_plan_list)
-	return current_lesson_plan_list
+	generated_lesson_plan_dict_list = get_generated_lesson_plan_dict_list(current_lesson_plan_list)
+	logger.info('---Generated lesson plan count--- '+str(len(generated_lesson_plan_dict_list)))
+	update_lesson_plan(generated_lesson_plan_dict_list)
 
+def update_lesson_plan(generated_lesson_plan_dict_list) :
+	for lesson_plan in generated_lesson_plan_dict_list :
+		response = lessonplan_service.create_lessonplan(lesson_plan)
+		logger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Generated lesson plan uploaded '+str(lesson_plan['lesson_plan_key']))
+
+def get_generated_lesson_plan_dict_list(generated_lesson_plan_list) :
+	generated_lesson_plan_dict_list = []
+	for generated_lesson_plan in generated_lesson_plan_list :
+		generated_lesson_plan_dict = lessonplan.LessonPlan(None)
+		generated_lesson_plan_dict = generated_lesson_plan_dict.make_lessonplan_dict(generated_lesson_plan)
+		generated_lesson_plan_dict_list.append(generated_lesson_plan_dict)
+	return generated_lesson_plan_dict_list
 
 def integrate_calendar_to_lesson_plan(generated_class_calendar,current_lesson_plan_list):
 	if hasattr(generated_class_calendar ,'events') :
@@ -48,9 +72,11 @@ def get_all_lesson_plan_list(current_calendar, current_lesson_plan_list):
 	class_div = current_calendar.subscriber_key[-1:]
 
 	if is_lesson_plan_exist(current_lesson_plan_list, class_key, class_div):
+		logger.info(' ---lesson plan exist in list ---')
 		return current_lesson_plan_list
 	else:
 		lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,class_div)
+		logger.info(' ---getting lesson plan list from DB ---')
 		for lesson_plan in lesson_plan_list:
 			current_lesson_plan_list.append(lesson_plan)
 		return current_lesson_plan_list
@@ -81,7 +107,6 @@ def get_lesson_plan(subject_code,current_lesson_plan_list) :
 def get_subject_code(event) :
 	if hasattr(event, 'params') :
 		for param in event.params :
-			# print(param.value)
 			if param.key == 'subject_key' :
 				return param.value
 	else :

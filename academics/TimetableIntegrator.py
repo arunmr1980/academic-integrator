@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 import datetime
+from datetime import datetime as dt
 import calendar as cal
 import academics.timetable.TimeTableDBService as timetable_service
 from academics.logger import GCLogger as gclogger
@@ -12,32 +13,21 @@ import academics.calendar.CalendarDBService as calendar_service
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-
 def generate_and_save_calenders(time_table_key,academic_year):
 	gclogger.info("Generating for timetable " + time_table_key + " academic_year " + academic_year)
 	timetable = timetable_service.get_time_table(time_table_key)
 	school_key = timetable.school_key
 	academic_configuration = academic_service.get_academig(school_key,academic_year)
-
-	### TODO - Getting all calendars cause too many reads and use up memory. Change to class based querying
-	existing_class_calendar_list = calendar_service.get_all_calendars(timetable.school_key,'CLASS-DIV')
-	gclogger.info("Existing class calendar list size " + str(len(existing_class_calendar_list)))
-	# TODO Limit school calendar access to particular academic year
-	existing_school_calendar_list = calendar_service.get_all_calendars(timetable.school_key,'SCHOOL')
-	gclogger.info("Existing school calendar list size " + str(len(existing_school_calendar_list)))
-
-	generated_class_calendar_dict = integrate_class_timetable(timetable,academic_configuration,existing_class_calendar_list,existing_school_calendar_list)
+	school_calendars_list = []
+	class_calendars_list = []
+	generated_class_calendar_dict = integrate_class_timetable(timetable,academic_configuration, class_calendars_list, school_calendars_list)
 	gclogger.info("Number of class calendars generated " + str(len(generated_class_calendar_dict)))
 	class_calendar_list = generated_class_calendar_dict.values()
-	# for generated_class_calendar in generated_class_calendar_dict.values() :
-	# 	class_calendar_list.append(generated_class_calendar)
 
 	generated_teacher_calendar_dict = integrate_teacher_timetable(class_calendar_list)
 	gclogger.info("Number of teacher calendars generated " + str(len(generated_teacher_calendar_dict)))
 
 	teacher_calendar_list = generated_teacher_calendar_dict.values()
-	# for generated_teacher_calendar in generated_teacher_calendar_dict.values() :
-	# 	teacher_calendar_list.append(generated_teacher_calendar)
 
 	save_or_update_calendars(class_calendar_list, teacher_calendar_list)
 
@@ -59,8 +49,7 @@ def save_or_update_calendars(class_calendar_list, teacher_calendar_list):
 
 
 
-
-def integrate_class_timetable(timetable, academic_configuration,existing_class_calendar_list,existing_school_calendar_list):
+def integrate_class_timetable(timetable, academic_configuration, class_calendars_list, school_calendars_list):
 	class_calendar_dict = {}
 	start_date = academic_configuration.start_date
 	end_date = academic_configuration.end_date
@@ -73,8 +62,10 @@ def integrate_class_timetable(timetable, academic_configuration,existing_class_c
 			gclogger.debug(' date - ' + date)
 			gclogger.debug(' date - ' + date)
 			day_code = findDay(date).upper()
-			existing_class_calendar = is_class_calendar_exist(date,existing_class_calendar_list)
-			existing_school_calendar = is_school_calendar_exist(date,existing_school_calendar_list)
+			set_school_calendar_list(school_calendars_list, timetable, date)
+			set_class_calendar_list(class_calendars_list, timetable, date)
+			existing_class_calendar = get_class_calendar(date,class_calendars_list)
+			existing_school_calendar = get_school_calendar(date,school_calendars_list)
 			if existing_school_calendar is not None :
 				gclogger.info('School calendar exist for the date ---------->' + date)
 				holiday_period_list = generate_holiday_period_list(existing_school_calendar,academic_configuration,timetable,day_code[0:3])
@@ -101,72 +92,42 @@ def integrate_class_timetable(timetable, academic_configuration,existing_class_c
 				gclogger.info("Class calendar generated for " + date + ' claendar key ' + generated_class_calendar.calendar_key)
 	return class_calendar_dict
 
-def update_existing_class_calendar(day_code,timetable,date,timetable_configuration,holiday_period_list,generated_class_calendar,existing_school_calendar) :
-	timetable_configuration_periods = None
-	if hasattr(timetable_configuration , 'time_table_schedules'):
-		if hasattr(timetable_configuration.time_table_schedules[0],'day_tables'):
-			for day in timetable_configuration.time_table_schedules[0].day_tables :
-				if (day.day_code == day_code) :
-					timetable_configuration_periods = day.periods
+
+
+def set_school_calendar_list(school_calendars_list, timetable, date) :
+	gclogger.info("Getting School calendar -------------------------------------------------------------")
+	if get_school_calendar(date,school_calendars_list) is None :
+		subscriber_key = timetable.school_key
+		school_cal = calendar_service.get_calendar_by_date_and_key(date,subscriber_key)
+		if school_cal is not None:
+			school_calendars_list.append(school_cal)
+			gclogger.info("School calendar - Existing in DB "+ date)
 	else:
-		gclogger.warn("Time table schedules not present in configuration. Can not process")
-		return
-
-	if hasattr(timetable, 'timetable') and timetable.timetable is not None :
-		class_key=timetable.class_key
-		division=timetable.division
-		if hasattr(timetable.timetable,'day_tables') and len(timetable.timetable.day_tables) > 0 :
-			for day in timetable.timetable.day_tables :
-				periods = day.periods
-				for time_table_period in periods :
-					if not period_exist_or_not(time_table_period,holiday_period_list):
-						if timetable_configuration_periods is not None:
-							event = get_event(time_table_period,timetable_configuration_periods,date)
-							if event is not None :
-								generated_class_calendar.events.append(event)
-								gclogger.info('Event to be added on existing class calendar is ' + str(event.params[0].value))
+		gclogger.info("School calendar - calendar present in Dict")
 
 
-
-	gclogger.info("Updated class calendar generated on date " + date)
-	c = calendar.Calendar(None)
-	class_calendar_dict = c.make_calendar_dict(generated_class_calendar)
-	return generated_class_calendar
-
-
-def get_start_time_and_end_time(academic_configuration,day_code,timetable) :
-	start_time_end_time = {}
-	time_table_schedule = get_time_table_shedule(academic_configuration,timetable)
-	if time_table_schedule :
-		day_tables = time_table_schedule.day_tables
-		for day_table in day_tables :
-			if day_table.day_code == day_code :
-				start_time_end_time['start_time'] = day_table.periods[0].start_time
-				start_time_end_time['end_time'] = day_table.periods[-1].end_time
-				return start_time_end_time
+def set_class_calendar_list(class_calendars_list, timetable, date) :
+	gclogger.info("Getting Class calendar -------------------------------------------------------------")
+	if get_class_calendar(date,class_calendars_list) is None :
+		subscriber_key = timetable.class_key+"-"+timetable.division
+		class_cal = calendar_service.get_calendar_by_date_and_key(date,subscriber_key)
+		if class_cal is not None:
+			class_calendars_list.append(class_cal)
+			gclogger.info("Class calendar - Existing in DB "+ date)
+	else:
+		gclogger.info("Class calendar - calendar present in Dict")
 
 
-def get_time_table_shedule(academic_configuration,timetable) :
-	if hasattr(academic_configuration.time_table_configuration ,'time_table_schedules') :
-		for time_table_schedule in academic_configuration.time_table_configuration.time_table_schedules :
-			if hasattr(time_table_schedule,'applied_classes') :
-				for class_key in time_table_schedule.applied_classes :
-					if class_key == timetable.class_key :
-						return time_table_schedule
-
-
-def is_class_calendar_exist(date,existing_class_calendar_list) :
-	for class_calendar in existing_class_calendar_list :
+def get_class_calendar(date,class_calendars_list) :
+	for class_calendar in class_calendars_list :
 		if class_calendar.calendar_date == date :
 			return class_calendar
 
 
-def is_school_calendar_exist(date,existing_school_calendar_list) :
-	for school_calendar in existing_school_calendar_list :
+def get_school_calendar(date,school_calendars_list) :
+	for school_calendar in school_calendars_list :
 		if school_calendar.calendar_date == date :
 			return school_calendar
-
-
 
 
 def is_class(param) :
@@ -192,7 +153,6 @@ def generate_holiday_period_list(calendar,academic_configuration,timetable,day_c
 
 
 def get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,date) :
-
 	partial_holiday_period_list =[]
 	if hasattr(academic_configuration.time_table_configuration ,'time_table_schedules') :
 		for time_table_schedule in academic_configuration.time_table_configuration.time_table_schedules :
@@ -210,31 +170,81 @@ def get_holiday_period_list(start_time,end_time,day_code,academic_configuration,
 
 
 def check_holiday_time_conflict(event_start_time,event_end_time,standard_start_time,standard_end_time) :
-	is_conflict = False
+	is_conflict = None
+	event_start_time_year = int(event_start_time[:4])
+	event_start_time_month = int(event_start_time[5:7])
+	event_start_time_day = int(event_start_time[8:10])
+	event_start_time_hour = int(event_start_time[11:13])
+	event_start_time_min = int(event_start_time[14:16])
+	event_start_time_sec = int(event_start_time[-2:])
 
-	off_time_start_hr =  int(event_start_time.split(':',2)[0][-2:])
-	off_time_end_hr = int(event_end_time.split(':',2)[0][-2:])
-	off_time_start_min = int(event_start_time.split(':',2)[1])
-	off_time_end_min = int(event_end_time.split(':',2)[1])
+	event_end_time_year = int(event_end_time[:4])
+	event_end_time_month = int(event_end_time[5:7])
+	event_end_time_day = int(event_end_time[8:10])
+	event_end_time_hour = int(event_end_time[11:13])
+	event_end_time_min = int(event_end_time[14:16])
+	event_end_time_sec = int(event_end_time[-2:])
 
-	standard_start_hr = int(standard_start_time.split(':',2)[0][-2:])
-	standard_end_hr =  int(standard_end_time.split(':',2)[0][-2:])
-	standard_start_min = int(standard_start_time.split(':',2)[1])
-	standard_end_min =  int(standard_end_time.split(':',2)[1])
+	standard_start_time_year = int(standard_start_time[:4])
+	standard_start_time_month = int(standard_start_time[5:7])
+	standard_start_time_day = int(standard_start_time[8:10])
+	standard_start_time_hour = int(standard_start_time[11:13])
+	standard_start_time_min = int(standard_start_time[14:16])
+	standard_start_time_sec = int(standard_start_time[-2:])
 
-	if event_start_time == standard_start_time :
-		is_conflict = True
-	elif event_end_time == standard_end_time :
-		is_conflict = True
-	elif off_time_start_hr < standard_start_hr and off_time_end_hr >= standard_end_hr :
-		is_conflict = True
-	elif off_time_start_hr <= standard_start_hr and off_time_end_hr > standard_end_hr :
-		is_conflict = True
-	elif off_time_start_hr == standard_start_hr and off_time_start_min <  standard_start_min and off_time_end_hr == standard_end_hr and off_time_end_min > standard_end_min:
-		is_conflict = True
-	else:
-		is_conflict = False
+	standard_end_time_year = int(standard_end_time[:4])
+	standard_end_time_month = int(standard_end_time[5:7])
+	standard_end_time_day = int(standard_end_time[8:10])
+	standard_end_time_hour = int(standard_end_time[11:13])
+	standard_end_time_min = int(standard_end_time[14:16])
+	standard_end_time_sec = int(standard_end_time[-2:])
+
+	standard_start_time = dt(standard_start_time_year, standard_start_time_month, standard_start_time_day, standard_start_time_hour, standard_start_time_min, standard_start_time_sec, 000000)
+	standard_end_time = dt(standard_end_time_year, standard_end_time_month, standard_end_time_day, standard_end_time_hour, standard_end_time_min, standard_end_time_sec, 000000)
+	event_start_time = dt(event_start_time_year, event_start_time_month, event_start_time_day, event_start_time_hour, event_start_time_min, event_start_time_sec, 000000)
+	event_end_time = dt(event_end_time_year, event_end_time_month, event_end_time_day, event_end_time_hour, event_end_time_min, event_end_time_sec, 000000)
+
+	delta = max(event_start_time,standard_start_time) - min(event_end_time,standard_end_time)
+	if delta.days < 0 :
+	    is_conflict = True
+	else :
+	    is_conflict = False
+
 	return is_conflict
+
+	# is_conflict = False
+	# off_time_start_hr =  int(event_start_time.split(':',2)[0][-2:])
+	# off_time_end_hr = int(event_end_time.split(':',2)[0][-2:])
+	# off_time_start_min = int(event_start_time.split(':',2)[1])
+	# off_time_end_min = int(event_end_time.split(':',2)[1])
+	#
+	# standard_start_hr = int(standard_start_time.split(':',2)[0][-2:])
+	# standard_end_hr =  int(standard_end_time.split(':',2)[0][-2:])
+	# standard_start_min = int(standard_start_time.split(':',2)[1])
+	# standard_end_min =  int(standard_end_time.split(':',2)[1])
+	#
+	# if event_start_time == standard_start_time :
+	# 	is_conflict = True
+	# 	print(is_conflict,"--1--")
+	# elif event_end_time == standard_end_time :
+	# 	is_conflict = True
+	# 	print(is_conflict,"--2--")
+	# elif (off_time_start_hr <= standard_start_hr and off_time_end_hr >= standard_end_hr and off_time_end_min != standard_start_min) :
+	# 	is_conflict = True
+	# 	print(is_conflict,"--3--")
+	# elif (off_time_start_hr <standard_start_hr and off_time_end_hr > standard_end_hr) :
+	# 	is_conflict = True
+	# 	print(is_conflict,"--4--")
+	# elif off_time_start_hr == standard_start_hr and off_time_start_min <  standard_start_min and off_time_end_hr == standard_end_hr and off_time_end_min > standard_end_min:
+	# 	is_conflict = True
+	# 	print(is_conflict,"--5--")
+	# elif off_time_start_hr == standard_start_hr and off_time_end_hr >= standard_end_hr :
+	# 	is_conflict = True
+	# 	print(is_conflict,"--6--")
+	#
+	# else:
+	# 	is_conflict = False
+	# return is_conflict
 
 
 
@@ -371,16 +381,16 @@ def integrate_teacher_timetable(class_calendar_list) :
 	for class_calendar in class_calendar_list :
 		for event in class_calendar.events :
 			employee_key = get_employee_key(event.params)
+			if employee_key is not None :
+				set_teacher_calendar_dict(teacher_calendars_dict,employee_key,class_calendar)
+				key = class_calendar.calendar_date + employee_key
+				teacher_calendar = teacher_calendars_dict[key]
 
-			set_teacher_calendar_dict(teacher_calendars_dict,employee_key,class_calendar)
-			key = class_calendar.calendar_date + employee_key
-			teacher_calendar = teacher_calendars_dict[key]
-
-			event_object = calendar.Event(None)
-			event_object.event_code = event.event_code
-			event_object.ref_calendar_key = class_calendar.calendar_key
-			teacher_calendar.events.append(event_object)
-			gclogger.info("Adding event " + event_object.event_code + " to teacher calendar " + teacher_calendar.calendar_key)
+				event_object = calendar.Event(None)
+				event_object.event_code = event.event_code
+				event_object.ref_calendar_key = class_calendar.calendar_key
+				teacher_calendar.events.append(event_object)
+				gclogger.info("Adding event " + event_object.event_code + " to teacher calendar " + teacher_calendar.calendar_key)
 
 	return teacher_calendars_dict
 
@@ -401,7 +411,7 @@ def period_exist_or_not(time_table_period,partial_holiday_period_list) :
 	return period_exist
 
 
-def set_teacher_calendar_dict(teacher_calendars_dict,employee_key, class_calendar) :
+def set_teacher_calendar_dict(teacher_calendars_dict,employee_key,class_calendar) :
 	gclogger.info("Getting Teacher calendar -------------------------------------------------------------")
 	key = class_calendar.calendar_date + employee_key
 	if key not in teacher_calendars_dict:

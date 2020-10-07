@@ -1,5 +1,6 @@
 from academics.logger import GCLogger as logger
-
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 class Calendar:
 
@@ -12,30 +13,34 @@ class Calendar:
             self.calendar_date = None
             self.institution_key = None
         else:
+
             self.calendar_key = item["calendar_key"]
             self.subscriber_key = item["subscriber_key"]
             self.subscriber_type = item["subscriber_type"]
             self.calendar_date = item["calendar_date"]
-            self.institution_key = item["institution_key"]
             self.events = []
+            self.institution_key = None
             try:
                 events = item['events']
                 for event in events :
                     self.events.append(Event(event))
-
-
             except KeyError as ke:
                 logger.debug ('[WARN] - KeyError in Calendar -events not present'.format (str (ke)))
+            try:
+                self.institution_key = item["institution_key"]
+            except KeyError as ke:
+                logger.debug ('[WARN] - KeyError in Calendar -institution_key not present'.format (str (ke)))
 
     def make_calendar_dict(self, calendar):
         if calendar is not None:
             item = {
-                'institution_key' : calendar.institution_key,
                 'calendar_key': calendar.calendar_key,
                 'subscriber_type': calendar.subscriber_type,
                 'calendar_date': str (calendar.calendar_date),
                 'subscriber_key': calendar.subscriber_key
             }
+        if calendar.institution_key is not None:
+            item['institution_key'] = calendar.institution_key
         if calendar.events is not None:
             item['events'] = self.get_calendar_event_list(calendar.events)
         return item
@@ -44,9 +49,9 @@ class Calendar:
         collection_list = []
         for event in event_list:
             item = {
-                'event_code': event.event_code,
+                'event_code': event.event_code
             }
-            if event.event_type is not None :
+            if hasattr(event,'event_type') and event.event_type is not None :
                 item['event_type'] = event.event_type
             if hasattr(event,'from_time') and event.from_time is not None :
                 item['from_time'] = event.from_time
