@@ -74,7 +74,7 @@ def holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,
 	holiday_period_list = generate_holiday_period_list(event,calendar,academic_configuration,timetable,day_code)
 	for holiday_period in holiday_period_list :
 		gclogger.info("---------- Holiday Period----  " + str(holiday_period.period_code)+' -----------------')
-	schedules = find_schedules(current_lessonplan.topics[0].topics,holiday_period_list,calendar.calendar_date)
+	schedules = find_schedules(current_lessonplan,holiday_period_list,calendar.calendar_date)
 	gclogger.info("---------- Schedule to remove is   -----------------")
 	for schedule in schedules :
 		gclogger.info("---------- " + str(holiday_period.period_code) + " ---------")
@@ -151,23 +151,25 @@ def get_schedule(holiday_period_list,schedule,date) :
 		if standard_start_time == schedule.start_time and standard_end_time ==schedule.end_time :
 			return schedule
 
-def find_schedules(topics,holiday_period_list,date) :
+def find_schedules(current_lessonplan,holiday_period_list,date) :
 	schedule_list = []
-	for topic in topics :
-		for session in topic.sessions :
-			schedule = get_schedule(holiday_period_list,session.schedule,date)
-			if schedule is not None :
-				schedule_list.append(schedule)
+	for main_topic in current_lessonplan.topics :
+		for topic in main_topic.topics :
+			for session in topic.sessions :
+				schedule = get_schedule(holiday_period_list,session.schedule,date)
+				if schedule is not None :
+					schedule_list.append(schedule)
 	return schedule_list
 
 def remove_shedules(schedules,current_lessonplan) :
 	for schedule in schedules :
 		schedule_start_time = schedule.start_time
 		schedule_end_time = schedule.end_time
-		for topic in current_lessonplan.topics[0].topics :
-			for session in topic.sessions :
-				if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
-					del session.schedule
+		for main_topic in current_lessonplan.topics :
+			for topic in main_topic.topics :
+				for session in topic.sessions :
+					if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
+						del session.schedule
 	return current_lessonplan
 
 
