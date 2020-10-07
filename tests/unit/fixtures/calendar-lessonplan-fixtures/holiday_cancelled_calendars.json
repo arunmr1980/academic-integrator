@@ -4,7 +4,7 @@
      "calendar_key": "test-key",
      "calendar_date": "2020-08-04",
      "subscriber_key": "8B1B22E72AE-A",
-     "subscriber_type": "CLASS-DIV",
+     "subscriber_type": "SCHOOL",
      "events": [{
          "event_code": "event-1",
          "event_type": "CLASS_SESSION",

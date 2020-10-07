@@ -14,7 +14,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 
-class CalendarHolidayIntegratorTest(unittest.TestCase):
+class CalendarHolidayCancellIntegratorTest(unittest.TestCase):
 	def test_lessonplan(self) :
 		timetable=self.get_time_table()
 		academic_configuration=self.get_academic_configuration()
@@ -32,12 +32,12 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 		if calendar.subscriber_type == 'CLASS-DIV' :
 			for current_lessonplan in current_lesson_plan_list :
 				if current_lessonplan.class_key == class_key and current_lessonplan.division == division :
-					updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,event_list,calendar,academic_configuration,timetable,day_code)
+					updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events_list,calendar,academic_configuration,timetable,day_code)
 					
 					self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 		else :
 			for current_lessonplan in current_lesson_plan_list :
-				updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
+				updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events_list,calendar,academic_configuration,timetable,day_code)
 				self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 
 
@@ -51,7 +51,7 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 				self.assertEqual(updated_lesson_plan.resources,expected_lesson_plan.resources)
 				self.check_topics(updated_lesson_plan.topics,expected_lesson_plan.topics)
 
-		print(" <<<-------------------------------- UNIT TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------>>> ")
+		gclogger.info(" <<<-------------------------------- UNIT TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------>>> ")
 
 	def check_topics(self,updated_lesson_plan_topics,expected_lesson_plan_topics):
 		for index in range(0,len(updated_lesson_plan_topics)) :
@@ -129,7 +129,7 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 
 	def get_expected_lesson_plan_list(self) :
 		expected_lesson_plan_list = []
-		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/expected_lesson_plan.json', 'r') as expected_lessonplan:
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/expected_lessonplan.json', 'r') as expected_lessonplan:
 			expected_lessonplan_dict_list = json.load(expected_lessonplan)
 		for expected_lessonplan_dict in expected_lessonplan_dict_list :
 			expected_lesson_plan_list.append(lessonplan.LessonPlan(expected_lessonplan_dict))
@@ -144,12 +144,12 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 				return calendar
 
 	def get_holiday_cancel_calendars(self):
-		holiday_calendars_list = []
-		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/holiday_cancel_calendars.json', 'r') as calendars:
+		holiday_cancelled_calendars_list = []
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/holiday_cancelled_calendars.json', 'r') as calendars:
 			holiday_cancel_calendars = json.load(calendars)
 		for cal in holiday_cancel_calendars :
-			holiday_cancel_calendars_list.append(calendar.Calendar(cal))
-		return holiday_cancel_calendars_list
+			holiday_cancelled_calendars_list.append(calendar.Calendar(cal))
+		return holiday_cancelled_calendars_list
 
 
 

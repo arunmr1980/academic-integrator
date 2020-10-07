@@ -51,8 +51,8 @@
               "schedule": {
                 "calendar_key": "test-key",
                 "event_code": "event-1",
-                "start_time": "2020-08-04T11:30:00",
-                "end_time": "2020-08-04T12:10:00"
+                "start_time": "2020-08-05T10:00:00",
+                "end_time": "2020-08-05T10:40:00"
               },
               "resources": [
 
@@ -67,8 +67,8 @@
               "schedule": {
                 "calendar_key": "test-key",
                 "event_code": "event-1",
-                "start_time": "2020-08-05T10:00:00",
-                "end_time": "2020-08-05T10:40:00"
+                "start_time": "2020-08-05T11:30:00",
+                "end_time": "2020-08-05T12:10:00"
               },
               "resources": [
 
@@ -97,8 +97,8 @@
               "schedule": {
                 "calendar_key": "test-key",
                 "event_code": "event-1",
-                "start_time": "2020-08-05T11:30:00",
-                "end_time": "2020-08-05T12:10:00"
+                "start_time": "2020-08-08T10:00:00",
+                "end_time": "2020-08-08T10:40:00"
               },
               "resources": [
 
@@ -114,8 +114,8 @@
               "schedule": {
                 "calendar_key": "test-key",
                 "event_code": "event-1",
-                "start_time": "2020-08-08T10:00:00",
-                "end_time": "2020-08-08T10:40:00"
+                "start_time": "2020-08-10T10:00:00",
+                "end_time": "2020-08-10T10:40:00"
               },
               "resources": [
 
@@ -127,13 +127,7 @@
               "completion_status": true,
               "description": "session2",
               "name": "Session 3",
-              "order_index": 3,
-              "schedule": {
-                "calendar_key": "test-key",
-                "event_code": "event-1",
-                "start_time": "2020-08-10T10:00:00",
-                "end_time": "2020-08-10T10:40:00"
-              },
+              "order_index": 3, 
               "resources": [
 
               ]
@@ -191,11 +185,11 @@
               "completion_status": false,
               "name": "Session 2",
               "order_index": 2,
-              "schedule": {
+               "schedule": {
                 "calendar_key": "test-key",
                 "event_code": "event-1",
-                "start_time": "2020-08-04T10:00:00",
-                "end_time": "2020-08-04T10:40:00"
+                "start_time": "2020-08-08T10:40:00",
+                "end_time": "2020-08-008T11:20:00"
               },
               "resources": [
 
@@ -207,11 +201,11 @@
               "completion_status": false,
               "name": "Session 2",
               "order_index": 3,
-              "schedule": {
+             "schedule": {
                 "calendar_key": "test-key",
                 "event_code": "event-1",
-                "start_time": "2020-08-08T10:40:00",
-                "end_time": "2020-08-008T11:20:00"
+                "start_time": "2020-08-05T10:40:00",
+                "end_time": "2020-08-05T11:20:00"
               },
               "resources": [
 
@@ -240,8 +234,8 @@
               "schedule": {
                 "calendar_key": "test-key",
                 "event_code": "event-1",
-                "start_time": "2020-08-05T10:40:00",
-                "end_time": "2020-08-05T11:20:00"
+                "start_time": "2020-08-10T10:40:00",
+                "end_time": "2020-08-10T11:20:00"
               },
               "resources": [
 
@@ -253,13 +247,7 @@
               "completion_status": true,
               "description": "session2",
               "name": "Session 2",
-              "order_index": 2,
-              "schedule": {
-                "calendar_key": "test-key",
-                "event_code": "event-1",
-                "start_time": "2020-08-10T10:40:00",
-                "end_time": "2020-08-10T11:20:00"
-              },
+              "order_index": 2,    
               "resources": [
 
               ]
@@ -315,11 +303,11 @@
               "completion_status": false,
               "name": "Session 2",
               "order_index": 1,
-              "schedule": {
+             "schedule": {
                 "calendar_key": "test-key",
                 "event_code": "event-1",
-                "start_time": "2020-08-04T10:00:00",
-                "end_time": "2020-08-04T10:40:00"
+                "start_time": "2020-08-08T10:40:00",
+                "end_time": "2020-08-008T11:20:00"
               },
               "resources": [
 
@@ -334,8 +322,8 @@
               "schedule": {
                 "calendar_key": "test-key",
                 "event_code": "event-1",
-                "start_time": "2020-08-08T10:40:00",
-                "end_time": "2020-08-008T11:20:00"
+                "start_time": "2020-08-05T10:40:00",
+                "end_time": "2020-08-05T11:20:00"
               },
               "resources": [
 
@@ -364,8 +352,8 @@
               "schedule": {
                 "calendar_key": "test-key",
                 "event_code": "event-1",
-                "start_time": "2020-08-05T10:40:00",
-                "end_time": "2020-08-05T11:20:00"
+                "start_time": "2020-08-10T10:40:00",
+                "end_time": "2020-08-10T11:20:00"
               },
               "resources": [
 
@@ -377,13 +365,7 @@
               "completion_status": true,
               "description": "session2",
               "name": "Session 2",
-              "order_index": 2,
-              "schedule": {
-                "calendar_key": "test-key",
-                "event_code": "event-1",
-                "start_time": "2020-08-10T10:40:00",
-                "end_time": "2020-08-10T11:20:00"
-              },
+              "order_index": 2,    
               "resources": [
 
               ]
