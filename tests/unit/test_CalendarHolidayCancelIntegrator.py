@@ -16,8 +16,6 @@ pp = pprint.PrettyPrinter(indent=4)
 
 class CalendarHolidayCancellIntegratorTest(unittest.TestCase):
 	def test_lessonplan(self) :
-		timetable=self.get_time_table()
-		academic_configuration=self.get_academic_configuration()
 		calendar_key ='test-key'
 		holiday_cancel_calendars = self.get_holiday_cancel_calendars()
 		calendar = self.get_holiday_cancelled_calendar(calendar_key,holiday_cancel_calendars)
@@ -32,12 +30,12 @@ class CalendarHolidayCancellIntegratorTest(unittest.TestCase):
 		if calendar.subscriber_type == 'CLASS-DIV' :
 			for current_lessonplan in current_lesson_plan_list :
 				if current_lessonplan.class_key == class_key and current_lessonplan.division == division :
-					updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events_list,calendar,academic_configuration,timetable,day_code)
+					updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events_list,calendar,day_code)
 					
 					self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 		else :
 			for current_lessonplan in current_lesson_plan_list :
-				updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events_list,calendar,academic_configuration,timetable,day_code)
+				updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events_list,calendar,day_code)
 				self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 
 

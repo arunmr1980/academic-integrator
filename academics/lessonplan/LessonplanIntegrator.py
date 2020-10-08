@@ -89,13 +89,13 @@ def integrate_cancelled_holiday_lessonplan(calendar_key) :
 				for div in class_info.divisions :
 					division = div.name
 					class_key = class_info.class_info_key
-					timetable = timetable_service.get_timetable_entry(class_key, division)
+					# timetable = timetable_service.get_timetable_entry(class_key, division)
 
 					gclogger.info("class keyyyy------> " + str(class_key))
 					gclogger.info("Division---------> " + str(division))
 					current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 					for current_lessonplan in current_lesson_plan_list :
-						updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events_list,calendar,academic_configuration,timetable,day_code)
+						updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events_list,calendar,day_code)
 						lp = lessonplan.LessonPlan(None)
 						updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 						response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
@@ -138,28 +138,17 @@ def holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,
 	current_lessonplan = get_updated_lesson_plan(shedule_list,current_lessonplan)
 	return current_lessonplan
 
-def cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events,calendar,academic_configuration,timetable,day_code) :	
+def cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events,calendar,day_code) :	
 	after_calendar_date_schedules_list = []
-	# gclogger.info("LESSON PLAN KEY ------------------->  " + str(current_lessonplan.lesson_plan_key))
+	gclogger.info("LESSON PLAN KEY ------------------->  " + str(current_lessonplan.lesson_plan_key))
 	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,calendar.calendar_date,after_calendar_date_schedules_list)
 	current_lessonplan = add_calendar_schedules_to_lesson_plan(current_lessonplan,events,calendar)
-	# print("--------------------------------- Schedule to be added ----------------------------------------")
-	# for schedule in after_calendar_date_schedules_list :
-	# 	print(schedule.start_time,'-------',schedule.end_time)
-
 	current_lessonplan = add_shedule_after_calendar_date(after_calendar_date_schedules_list,current_lessonplan)
-
-
-	# print("--------------updated lesson plannnnnnnnnnn -------(4)---------")
-	lp = lessonplan.LessonPlan(None)
-	updated_lessonplan_dict = lp.make_lessonplan_dict(current_lessonplan)
-	pp.pprint(updated_lessonplan_dict)
-	# print("--------------updated lesson plannnnnnnnnnn -------(4)---------")
-
 	return current_lessonplan
 
 
 def add_shedule_after_calendar_date(shedule_list,current_lessonplan) :
+	gclogger.info('Adding schedules after calendar date -------------')
 	index = -1
 	for main_topic in current_lessonplan.topics :
 		for topic in main_topic.topics :
@@ -168,6 +157,7 @@ def add_shedule_after_calendar_date(shedule_list,current_lessonplan) :
 					if not hasattr(session , 'schedule') :
 						index += 1
 						session.schedule = shedule_list[index]
+						gclogger.info('A schedule is added ' + str(shedule_list[index].start_time) + ' --- ' + str(shedule_list[index].start_time) )
 	return current_lessonplan
 
 def add_schedule_to_lessonplan(current_lessonplan,schedule) :
@@ -180,7 +170,7 @@ def add_schedule_to_lessonplan(current_lessonplan,schedule) :
 						if not hasattr(session , 'schedule') :
 							session.schedule = schedule	
 							schedule_added = True
-							# print(' ------------- schedule added for lessonplan ' + str(current_lessonplan.lesson_plan_key) + ' -------------')
+							gclogger.info(' ------------- schedule added for lessonplan ' + str(current_lessonplan.lesson_plan_key) + ' -------------')
 
 	return current_lessonplan
 
@@ -212,6 +202,7 @@ def get_subject_code(event) :
 
 
 def remove_schedule_after_calendar_date(current_lessonplan,calendar_date,after_calendar_date_schedules_list) :
+	gclogger.info('Schedules to remove is ----------------------------')
 	for main_topic in current_lessonplan.topics :
 		for topic in main_topic.topics :
 			for session in topic.sessions :
@@ -219,7 +210,10 @@ def remove_schedule_after_calendar_date(current_lessonplan,calendar_date,after_c
 					schedule_date = get_schedule_date(session.schedule)
 					if is_calendar_date_after_schdule_date(schedule_date,calendar_date) :
 						after_calendar_date_schedules_list.append(session.schedule)
+						gclogger.info("The schedule " + str(session.schedule.start_time) +' --- '+str(session.schedule.end_time) +' -------')
 						del session.schedule
+						
+
 
 	return current_lessonplan
 
