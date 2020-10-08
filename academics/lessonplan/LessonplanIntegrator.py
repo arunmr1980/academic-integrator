@@ -1,4 +1,4 @@
-import datetime 
+import datetime
 from academics.TimetableIntegrator import *
 import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.lessonplan.LessonplanDBService as lessonplan_service
@@ -19,7 +19,7 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 	day_code = findDay(calendar.calendar_date).upper()[0:3]
 	subscriber_key = calendar.subscriber_key
 	gclogger.info("subscriber_key------------------->>>>" + str(subscriber_key))
-	
+
 	if calendar.subscriber_type == 'CLASS-DIV' :
 		class_key = subscriber_key[:-2]
 		division = subscriber_key[-1:]
@@ -37,27 +37,28 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 				gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(current_lesson_plan_dict['lesson_plan_key']))
 				updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
 				updated_lessonplan_list.append(updated_lessonplan)
-				
+
 	else :
-		class_info_list = class_info_service.get_classinfo_list(school_key,academic_year)	
+		class_info_list = class_info_service.get_classinfo_list(school_key,academic_year)
 		for class_info in class_info_list :
 			if hasattr(class_info, 'divisions') :
 				for div in class_info.divisions :
 					division = div.name
 					class_key = class_info.class_info_key
-					timetable = timetable_service.get_timetable_entry(class_key, division)
+					if division != 'NONE':
+						timetable = timetable_service.get_timetable_entry(class_key, division)
 
-					gclogger.info("class keyyyy------> " + str(class_key))
-					gclogger.info("Division---------> " + str(division))
-					current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
-					for current_lessonplan in current_lesson_plan_list :
-						updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
-						lp = lessonplan.LessonPlan(None)
-						updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-						response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-						gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
-						updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
-						updated_lessonplan_list.append(updated_lessonplan)
+						gclogger.info("class keyyyy------> " + str(class_key))
+						gclogger.info("Division---------> " + str(division))
+						current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+						for current_lessonplan in current_lesson_plan_list :
+							updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
+							lp = lessonplan.LessonPlan(None)
+							updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+							response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
+							gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
+							updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
+							updated_lessonplan_list.append(updated_lessonplan)
 	return updated_lessonplan_list
 
 def integrate_cancelled_holiday_lessonplan(calendar_key) :
@@ -66,16 +67,15 @@ def integrate_cancelled_holiday_lessonplan(calendar_key) :
 	school_key = calendar.institution_key
 	academic_configuration = academic_service.get_academic_year(school_key, calendar.calendar_date)
 	academic_year = academic_configuration.academic_year
-	events_list = calendar.events
 	day_code = findDay(calendar.calendar_date).upper()[0:3]
 	if calendar.subscriber_type == 'CLASS-DIV' :
 		class_key = subscriber_key[:-2]
 		division = subscriber_key[-1:]
-		timetable = timetable_service.get_timetable_entry(class_key, division)
+		# timetable = timetable_service.get_timetable_entry(class_key, division)
 		current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 		for current_lessonplan in current_lesson_plan_list :
 			if current_lessonplan.class_key == class_key and current_lessonplan.division == division :
-				updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events_list,calendar,academic_configuration,timetable,day_code)
+				updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calendar,day_code)
 				lp = lessonplan.LessonPlan(None)
 				updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 				response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
@@ -83,30 +83,31 @@ def integrate_cancelled_holiday_lessonplan(calendar_key) :
 				updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
 				updated_lessonplan_list.append(updated_lessonplan)
 	else :
-		class_info_list = class_info_service.get_classinfo_list(school_key,academic_year)	
+		class_info_list = class_info_service.get_classinfo_list(school_key,academic_year)
 		for class_info in class_info_list :
 			if hasattr(class_info, 'divisions') :
 				for div in class_info.divisions :
 					division = div.name
 					class_key = class_info.class_info_key
-					# timetable = timetable_service.get_timetable_entry(class_key, division)
+					if division != 'NONE':
+						# timetable = timetable_service.get_timetable_entry(class_key, division)
 
-					gclogger.info("class keyyyy------> " + str(class_key))
-					gclogger.info("Division---------> " + str(division))
-					current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
-					for current_lessonplan in current_lesson_plan_list :
-						updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events_list,calendar,day_code)
-						lp = lessonplan.LessonPlan(None)
-						updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-						response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-						gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
-						updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
-						updated_lessonplan_list.append(updated_lessonplan)
+						gclogger.info("class keyyyy------> " + str(class_key))
+						gclogger.info("Division---------> " + str(division))
+						current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+						for current_lessonplan in current_lesson_plan_list :
+							updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calendar,day_code)
+							lp = lessonplan.LessonPlan(None)
+							updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+							response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
+							gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
+							updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
+							updated_lessonplan_list.append(updated_lessonplan)
 	return updated_lessonplan_list
 
 
-				
-					
+
+
 
 
 
@@ -122,7 +123,7 @@ def get_event_from_calendar(calendar,event_code) :
 				return event
 
 
-def holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code) :	
+def holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code) :
 	gclogger.info("LESSON PLAN KEY------------------->  " + str(current_lessonplan.lesson_plan_key))
 	holiday_period_list = generate_holiday_period_list(event,calendar,academic_configuration,timetable,day_code)
 	for holiday_period in holiday_period_list :
@@ -138,14 +139,21 @@ def holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,
 	current_lessonplan = get_updated_lesson_plan(shedule_list,current_lessonplan)
 	return current_lessonplan
 
-def cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events,calendar,day_code) :	
+def cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calendar,day_code) :
 	after_calendar_date_schedules_list = []
+	events = get_class_session_events(calendar.events)
 	gclogger.info("LESSON PLAN KEY ------------------->  " + str(current_lessonplan.lesson_plan_key))
 	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,calendar.calendar_date,after_calendar_date_schedules_list)
 	current_lessonplan = add_calendar_schedules_to_lesson_plan(current_lessonplan,events,calendar)
 	current_lessonplan = add_shedule_after_calendar_date(after_calendar_date_schedules_list,current_lessonplan)
 	return current_lessonplan
 
+def get_class_session_events(events) :
+	event_list = []
+	for event in events:
+		if event.event_type == 'CLASS_SESSION':
+			event_list.append(event)
+	return event_list
 
 def add_shedule_after_calendar_date(shedule_list,current_lessonplan) :
 	gclogger.info('Adding schedules after calendar date -------------')
@@ -168,7 +176,7 @@ def add_schedule_to_lessonplan(current_lessonplan,schedule) :
 				for session in topic.sessions :
 					if schedule_added == False :
 						if not hasattr(session , 'schedule') :
-							session.schedule = schedule	
+							session.schedule = schedule
 							schedule_added = True
 							gclogger.info(' ------------- schedule added for lessonplan ' + str(current_lessonplan.lesson_plan_key) + ' -------------')
 
@@ -212,7 +220,7 @@ def remove_schedule_after_calendar_date(current_lessonplan,calendar_date,after_c
 						after_calendar_date_schedules_list.append(session.schedule)
 						gclogger.info("The schedule " + str(session.schedule.start_time) +' --- '+str(session.schedule.end_time) +' -------')
 						del session.schedule
-						
+
 
 
 	return current_lessonplan
@@ -240,9 +248,9 @@ def is_calendar_date_after_schdule_date(schedule_date,calendar_date) :
 
 
 
-					
+
 def get_schedule_date(schedule) :
-	schedule_date = schedule.start_time[0:10]	
+	schedule_date = schedule.start_time[0:10]
 	return schedule_date
 
 def generate_holiday_period_list(event,calendar,academic_configuration,timetable,day_code) :
@@ -312,5 +320,3 @@ def get_updated_lesson_plan(shedule_list,current_lessonplan) :
 				if index < len(shedule_list) :
 					session.schedule = shedule_list[index]
 	return current_lessonplan
-
-

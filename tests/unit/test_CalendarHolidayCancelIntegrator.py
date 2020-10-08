@@ -19,7 +19,6 @@ class CalendarHolidayCancellIntegratorTest(unittest.TestCase):
 		calendar_key ='test-key'
 		holiday_cancel_calendars = self.get_holiday_cancel_calendars()
 		calendar = self.get_holiday_cancelled_calendar(calendar_key,holiday_cancel_calendars)
-		events_list = calendar.events
 		day_code = findDay(calendar.calendar_date).upper()[0:3]
 		subscriber_key = calendar.subscriber_key
 		class_key = subscriber_key[:-2]
@@ -30,12 +29,12 @@ class CalendarHolidayCancellIntegratorTest(unittest.TestCase):
 		if calendar.subscriber_type == 'CLASS-DIV' :
 			for current_lessonplan in current_lesson_plan_list :
 				if current_lessonplan.class_key == class_key and current_lessonplan.division == division :
-					updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events_list,calendar,day_code)
-					
+					updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calendar,day_code)
+
 					self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 		else :
 			for current_lessonplan in current_lesson_plan_list :
-				updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,events_list,calendar,day_code)
+				updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calendar,day_code)
 				self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 
 
@@ -83,15 +82,15 @@ class CalendarHolidayCancellIntegratorTest(unittest.TestCase):
 
 
 
-	
-
-	
-
-	
 
 
 
-	
+
+
+
+
+
+
 
 
 	def get_schedule(self,holiday_period_list,schedule,date) :
