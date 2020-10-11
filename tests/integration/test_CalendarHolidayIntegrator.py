@@ -21,7 +21,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 class CalendarHolidayIntegratorTest(unittest.TestCase):
-	
+
 	def setUp(self) :
 		test_timetable_one = self.get_test_timetable_one_from_json()
 		response = timetable_service.create_timetable(test_timetable_one)
@@ -60,7 +60,7 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 		response = class_info_service.add_or_update_class_info(class_info_two_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for uploaded -------------- ' +str(class_info_one_dict['class_info_key']) )
 
-		
+
 
 	def test_lessonplan(self) :
 		expected_lesson_plan_list = self.get_expected_lesson_plan_list()
@@ -70,7 +70,7 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 		for updated_lessonplan in updated_lessonplan_list :
 			self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 
-		
+
 
 	def check_lesson_plans(self,updated_lesson_plan,expected_lesson_plan_list) :
 		for expected_lesson_plan in expected_lesson_plan_list :
@@ -123,12 +123,12 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 		school_key = test_timetable_one.school_key
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
 
-		holiday_calender_list = calendar_service.get_all_calendars('test-school-1','CLASS-DIV')
+		holiday_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','CLASS-DIV')
 		for calendar in holiday_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- A Holiday class calendar deleted " + calendar.calendar_key+" -----------------")
 
-		teacher_calender_list = calendar_service.get_all_calendars('test-school-1','SCHOOL')
+		teacher_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','SCHOOL')
 		for calendar in teacher_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- A Holiday School calendar deleted " + calendar.calendar_key+" -----------------")
@@ -159,7 +159,7 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 			gclogger.info("---------------Test Lesson Plan deleted  " + generated_lesson_plan.lesson_plan_key + "-----------------")
 
 
-	
+
 
 	def get_lesson_plan_after_remove_all_shedules(self,current_lessonplan) :
 		for main_topic in current_lessonplan.topics :

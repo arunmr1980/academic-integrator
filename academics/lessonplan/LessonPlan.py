@@ -11,6 +11,7 @@ class LessonPlan:
             self.topics = []
             self.resources = []
             self.assignments = []
+            # self.sessions = []
         else:
             self.lesson_plan_key = item['lesson_plan_key']
             self.class_key = item['class_key']
@@ -19,6 +20,13 @@ class LessonPlan:
             self.topics = []
             self.resources = []
             self.assignments = []
+            self.sessions = []
+            # try :
+            #     sessions = item['sessions']
+            #     for session in sessions :
+            #         self.sessions.append(Session(session))
+            # except KeyError as ke:
+            #     logger.debug('[WARN] - KeyError in LessonPlan - sessions not present'.format(str (ke)))
             try:
                 topics = item["topics"]
                 for topic in topics :

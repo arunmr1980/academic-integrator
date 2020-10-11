@@ -6,7 +6,7 @@ CALENDAR_TBL = 'Calendar'
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-def get_all_calendars(institution_key, subscriber_type):
+def get_all_calendars_by_school_key_and_type(institution_key, subscriber_type):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(CALENDAR_TBL)
     response = table.query(
@@ -17,14 +17,14 @@ def get_all_calendars(institution_key, subscriber_type):
 
 
 def clean_up_class_calendars():
-    calendar_list = get_all_calendars("1e4d12bc2b58050ff084f8da","CLASS-DIV")
+    calendar_list = get_all_calendars_by_school_key_and_type("1e4d12bc2b58050ff084f8da","CLASS-DIV")
     print(len(calendar_list))
     for calendar in calendar_list:
         calendar_service.delete_calendar(calendar['calendar_key'])
         print("-----class calendar deleted-----" + calendar['calendar_key'])
 
 def clean_up_employee_calendars():
-    calendar_list = get_all_calendars("1e4d12bc2b58050ff084f8da","EMPLOYEE")
+    calendar_list = get_all_calendars_by_school_key_and_type("1e4d12bc2b58050ff084f8da","EMPLOYEE")
     print(len(calendar_list))
     for calendar in calendar_list:
         calendar_service.delete_calendar(calendar['calendar_key'])

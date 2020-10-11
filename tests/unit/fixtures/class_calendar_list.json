@@ -10,8 +10,8 @@
              "from_time": "2020-08-03T09:00:00",
              "params": [
                   {
-                     "key": "is_class_flag",
-                   "value": "false"
+                     "key": "cancel_class_flag",
+                   "value": "true"
                   }
             ],
              "to_time": "2020-08-03T12:01:00"
@@ -28,7 +28,7 @@
          {   "event_code": "event-1",
              "event_type": "HOLIDAY",
              "from_time": "2020-08-04T10:40:00",
-             "params": [{"key": "is_class_flag", "value": "false"}],
+             "params": [{"key": "cancel_class_flag", "value": "true"}],
              "to_time": "2020-08-04T11:20:00"
           },
          {   "event_code": "5e5a27",

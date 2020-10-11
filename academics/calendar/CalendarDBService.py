@@ -40,7 +40,7 @@ def get_calendar(calendar_key) :
         return cal.Calendar(response['Item'])
 
 
-def get_all_calendars(institution_key, subscriber_type):
+def get_all_calendars_by_school_key_and_type(institution_key, subscriber_type):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(CALENDAR_TBL)
     calendars = []
@@ -60,7 +60,7 @@ def get_all_calendars(institution_key, subscriber_type):
     calendars.sort(key = operator.itemgetter('calendar_date'))
     return make_caendar_obj(calendars)
 
-def get_all_class_calendars(subscriber_key, subscriber_type):
+def get_all_calendars_by_key_and_type(subscriber_key, subscriber_type):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(CALENDAR_TBL)
     calendars = []

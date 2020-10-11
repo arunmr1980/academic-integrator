@@ -146,6 +146,7 @@ def cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calen
 	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,calendar.calendar_date,after_calendar_date_schedules_list)
 	current_lessonplan = add_calendar_schedules_to_lesson_plan(current_lessonplan,events,calendar)
 	current_lessonplan = add_shedule_after_calendar_date(after_calendar_date_schedules_list,current_lessonplan)
+	# print(after_calendar_date_schedules_list,"sessions to add on rooot =============<<<<<>>>>>>>>>>")
 	return current_lessonplan
 
 def get_class_session_events(events) :
@@ -165,6 +166,7 @@ def add_shedule_after_calendar_date(shedule_list,current_lessonplan) :
 					if not hasattr(session , 'schedule') :
 						index += 1
 						session.schedule = shedule_list[index]
+						# shedule_list.remove(shedule_list[index])
 						gclogger.info('A schedule is added ' + str(shedule_list[index].start_time) + ' --- ' + str(shedule_list[index].start_time) )
 	return current_lessonplan
 

@@ -44,7 +44,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 		school_key = timetable.school_key
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
 		generate_and_save_calenders(timetable.time_table_key,academic_configuration.academic_year)
-		class_calender_list = calendar_service.get_all_class_calendars('8B1B22E72AE-A','CLASS-DIV')
+		class_calender_list = calendar_service.get_all_calendars_by_key_and_type('8B1B22E72AE-A','CLASS-DIV')
 
 		for class_calendar in class_calender_list :
 			calendar_date = class_calendar.calendar_date
@@ -101,7 +101,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 			calendar_date = expected_teacher_calendar.calendar_date
 			expected_teacher_calendars_dict[calendar_date + subscriber_key] = expected_teacher_calendar
 
-		teacher_calender_list = calendar_service.get_all_calendars('test-school-1','EMPLOYEE')
+		teacher_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
 		for teacher_calender in teacher_calender_list :
 			subscriber_key = teacher_calender.subscriber_key
 			calendar_date = teacher_calender.calendar_date
@@ -124,18 +124,18 @@ class TimetableIntegratorTest(unittest.TestCase):
 		timetable = timetable_service.get_time_table('test-time-table-1')
 		school_key = timetable.school_key
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
-		class_calender_list = calendar_service.get_all_class_calendars('8B1B22E72AE-A','CLASS-DIV')
+		class_calender_list = calendar_service.get_all_calendars_by_key_and_type('8B1B22E72AE-A','CLASS-DIV')
 		for calendar in class_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- Class calendar deleted " + calendar.calendar_key+" -----------------")
 
 
-		teacher_calender_list = calendar_service.get_all_calendars('test-school-1','EMPLOYEE')
+		teacher_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
 		for calendar in teacher_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- Teacher calendar deleted " + calendar.calendar_key+" -----------------")
 
-		school_calender_list = calendar_service.get_all_calendars('test-school-1','SCHOOL')
+		school_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','SCHOOL')
 		for calendar in school_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- School calendar deleted " + calendar.calendar_key+" -----------------")

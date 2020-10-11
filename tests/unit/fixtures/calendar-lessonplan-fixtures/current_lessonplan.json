@@ -87,7 +87,8 @@
           "resources": [
 
           ],
-          "sessions": [{
+          "sessions": [
+            {
               "code": "SES1y944",
               "completion_datetime": "NA",
               "completion_status": false,

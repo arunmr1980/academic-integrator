@@ -132,7 +132,7 @@ def get_school_calendar(date,school_calendars_list) :
 
 def is_class(param) :
 	is_class = None
-	if param.key == 'is_class_flag' and param.value == 'false' :
+	if param.key == 'cancel_class_flag' and param.value == 'true' :
 		is_class = False
 	else :
 		is_class = True
@@ -211,43 +211,6 @@ def check_holiday_time_conflict(event_start_time,event_end_time,standard_start_t
 	    is_conflict = False
 
 	return is_conflict
-
-	# is_conflict = False
-	# off_time_start_hr =  int(event_start_time.split(':',2)[0][-2:])
-	# off_time_end_hr = int(event_end_time.split(':',2)[0][-2:])
-	# off_time_start_min = int(event_start_time.split(':',2)[1])
-	# off_time_end_min = int(event_end_time.split(':',2)[1])
-	#
-	# standard_start_hr = int(standard_start_time.split(':',2)[0][-2:])
-	# standard_end_hr =  int(standard_end_time.split(':',2)[0][-2:])
-	# standard_start_min = int(standard_start_time.split(':',2)[1])
-	# standard_end_min =  int(standard_end_time.split(':',2)[1])
-	#
-	# if event_start_time == standard_start_time :
-	# 	is_conflict = True
-	# 	print(is_conflict,"--1--")
-	# elif event_end_time == standard_end_time :
-	# 	is_conflict = True
-	# 	print(is_conflict,"--2--")
-	# elif (off_time_start_hr <= standard_start_hr and off_time_end_hr >= standard_end_hr and off_time_end_min != standard_start_min) :
-	# 	is_conflict = True
-	# 	print(is_conflict,"--3--")
-	# elif (off_time_start_hr <standard_start_hr and off_time_end_hr > standard_end_hr) :
-	# 	is_conflict = True
-	# 	print(is_conflict,"--4--")
-	# elif off_time_start_hr == standard_start_hr and off_time_start_min <  standard_start_min and off_time_end_hr == standard_end_hr and off_time_end_min > standard_end_min:
-	# 	is_conflict = True
-	# 	print(is_conflict,"--5--")
-	# elif off_time_start_hr == standard_start_hr and off_time_end_hr >= standard_end_hr :
-	# 	is_conflict = True
-	# 	print(is_conflict,"--6--")
-	#
-	# else:
-	# 	is_conflict = False
-	# return is_conflict
-
-
-
 
 
 def get_event(time_table_period,timetable_configuration_periods,date):
