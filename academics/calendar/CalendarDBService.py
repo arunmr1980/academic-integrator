@@ -58,7 +58,8 @@ def get_all_calendars_by_school_key_and_type(institution_key, subscriber_type):
         add_calendars_from_response(response, calendars)
         logger.debug('Intermediary calendars count - ' + str(len(calendars)))
     calendars.sort(key = operator.itemgetter('calendar_date'))
-    return make_caendar_obj(calendars)
+    return make_calendar_obj(calendars)
+
 
 def get_all_calendars_by_key_and_type(subscriber_key, subscriber_type):
     dynamodb = boto3.resource('dynamodb')
@@ -78,13 +79,15 @@ def get_all_calendars_by_key_and_type(subscriber_key, subscriber_type):
         add_calendars_from_response(response, calendars)
         logger.debug('Intermediary calendars count - ' + str(len(calendars)))
     calendars.sort(key = operator.itemgetter('calendar_date'))
-    return make_caendar_obj(calendars)
+    return make_calendar_obj(calendars)
+
+
 
 def add_calendars_from_response(response, calendars):
     for item in response['Items']:
         calendars.append(item)
 
-def make_caendar_obj(calendars):
+def make_calendar_obj(calendars):
     cal_obj_list = []
     for item in calendars:
         calendar = cal.Calendar(item)

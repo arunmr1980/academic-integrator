@@ -15,23 +15,32 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 class CalendarIntegratorTest(unittest.TestCase):
-	def test_class_calendar(self) :
-		current_class_calendars = self.get_current_class_calendars()
-		expected_class_calendars_list = self.get_expected_class_calendars()
+	def test_calendars(self) :
 		event_code = 'event-1'
 		calendar_key ='test-key-12'
-		holiday_calendars = self.get_holiday_calendars()
-		calendar = self.get_holiday_calendar(calendar_key,holiday_calendars)
 		current_class_calendars = self.get_current_class_calendars()
-		class_calendars = get_class_calendars_on_calendar_date(calendar,current_class_calendars)
+		current_teacher_calendars = self.get_current_teacher_calendars()
+		expected_class_calendars_list = self.get_expected_class_calendars()
+		expected_teacher_calendars_list = self.get_expected_teacher_calendars()
+		holiday_calendars = self.get_holiday_calendars()
 		
-		if calendar.subscriber_type == 'SCHOOL' and is_class(calendar.events[0].params[0]) == False :		
+		calendar = self.get_holiday_calendar(calendar_key,holiday_calendars)
+		class_calendars = get_class_calendars_on_calendar_date(calendar,current_class_calendars)
+		teacher_calendars = get_teacher_calendars_on_calendar_date(calendar,current_teacher_calendars)
+		event = self.get_event_from_calendar(event_code,calendar)
+
+		if calendar.subscriber_type == 'SCHOOL' and is_class(event.params[0]) == False :	
+			events_to_remove_list = get_all_events_to_remove(class_calendars,event)	
 			for class_calendar in class_calendars :
 				updated_class_calendar = update_class_calendar(class_calendar,calendar)
-				self.check_calendars(updated_class_calendar,expected_class_calendars_list)
-				gclogger.info("-----[UnitTest] Class calendar test passed -----------------" + updated_class_calendar.calendar_key + "-----------------")
+				self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
+				gclogger.info("-----[UnitTest] Class calendar test passed ----------------- " + updated_class_calendar.calendar_key + "-----------------")
+			for teacher_calendar in teacher_calendars :
+				updated_teacher_calendar = update_teacher_calendar(events_to_remove_list,teacher_calendar)	
+				self.check_teacher_calendar(updated_teacher_calendar,expected_teacher_calendars_list)
+				gclogger.info("-----[UnitTest] Teacher calendar test passed ----------------- " + updated_teacher_calendar.calendar_key + "-----------------")
 								
-	def check_calendars(self,updated_class_calendar,expected_class_calendars_list) :
+	def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
 		for expected_class_calendar in expected_class_calendars_list :
 			if updated_class_calendar.calendar_key == expected_class_calendar.calendar_key :
 				self.assertEqual(expected_class_calendar.institution_key,updated_class_calendar.institution_key )
@@ -52,24 +61,7 @@ class CalendarIntegratorTest(unittest.TestCase):
 		for index in range(0,len(expected_class_calendar_event_params) - 1) :
 			self.assertEqual(expected_class_calendar_event_params[index].key,generated_class_calendar_event_params[index].key)
 			self.assertEqual(expected_class_calendar_event_params[index].value,generated_class_calendar_event_params[index].value)
-
-	def test_teacher_calendar(self) :
-		expected_teacher_calendars_list = self.get_expected_teacher_calendars()
-		current_class_calendars = self.get_current_class_calendars()
-		event_code = 'event-1'
-		calendar_key ='test-key-12'
-		holiday_calendars = self.get_holiday_calendars()
-		calendar = self.get_holiday_calendar(calendar_key,holiday_calendars)
-		current_class_calendars = self.get_current_class_calendars()
-		class_calendars = get_class_calendars_on_calendar_date(calendar,current_class_calendars)
-		current_teacher_calendars = self.get_current_teacher_calendars()
-		teacher_calendars = get_teacher_calendars_on_calendar_date(calendar,current_teacher_calendars)
-		if calendar.subscriber_type == 'SCHOOL' and is_class(calendar.events[0].params[0]) == False :	
-			events_to_remove_list = get_all_events_to_remove(class_calendars,calendar)
-			for teacher_calendar in teacher_calendars :
-				updated_teacher_calendar = update_teacher_calendar(events_to_remove_list,teacher_calendar)
-				self.check_teacher_calendar(updated_teacher_calendar,expected_teacher_calendars_list)
-				gclogger.info("-----[UnitTest] Teacher calendar test passed -----------------" + updated_teacher_calendar.calendar_key + "-----------------")
+	
 					
 					
 	def check_teacher_calendar(self,updated_teacher_calendar,expected_teacher_calendars_list) :
@@ -88,7 +80,12 @@ class CalendarIntegratorTest(unittest.TestCase):
 		for index in range(0,len(expected_teacher_calendar_events) - 1) :
 			self.assertEqual(expected_teacher_calendar_events[index].event_code , updated_teacher_calendar_events[index].event_code)
 			self.assertEqual(expected_teacher_calendar_events[index].ref_calendar_key , updated_teacher_calendar_events[index].ref_calendar_key)
-			
+		
+
+	def get_event_from_calendar(self,event_code,calendar) :
+		for event in calendar.events :
+			if event.event_code == event_code :
+				return event 
 
 
 
@@ -163,10 +160,10 @@ def do_remove_event(event,events_to_remove_list) :
 			return True
 
 
-def get_all_events_to_remove(class_calendars,calendar) :
-	event = calendar.events[0]	
+def get_all_events_to_remove(class_calendars,event) :	
 	events_to_remove_list = []
 	for class_calendar in class_calendars :
+		gclogger.info(" Updating calendar" + class_calendar.calendar_key +'--------------')
 		events_list = get_events_to_remove(class_calendar,event)
 		events_to_remove_list = events_to_remove_list + events_list
 	return events_to_remove_list
@@ -226,7 +223,6 @@ def get_events_to_remove(class_calendar,event) :
 	events_to_remove_list = []
 	calendar_event_start_time = event.from_time
 	calendar_event_end_time = event.to_time
-	gclogger.info(" Updating calendar" + class_calendar.calendar_key +'--------------')
 	gclogger.info('Holiday calendar event ------------------')
 	gclogger.info('START ' + calendar_event_start_time)
 	gclogger.info('END ' + calendar_event_end_time)
@@ -238,7 +234,7 @@ def get_events_to_remove(class_calendar,event) :
 			gclogger.info("----------THIS EVENT NEED TO REMOVE ----------" +event.event_code + '----')
 			events_to_remove_list.append(event)
 		else :
-			gclogger.info("----------NO CONFLICT WITH THIS EVENT ----------" + event.event_code+ '----')
+			gclogger.info("----------THIS EVENT  NOT NEED TO REMOVE ----------" + event.event_code+ '----')
 	return events_to_remove_list
 
 

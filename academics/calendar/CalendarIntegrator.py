@@ -2,34 +2,47 @@ import academics.calendar.CalendarDBService as calendar_service
 import academics.calendar.Calendar as cldr
 from datetime import datetime as dt
 from academics.logger import GCLogger as gclogger
+import academics.academic.AcademicDBService as academic_service
+import academics.classinfo.ClassInfoDBService as class_info_service
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 
-def integrate_class_calendars(event_code,calendar_key) :
-	updated_class_calendar_list = []
-	calendar = calendar_service.get_calendar(calendar_key)	
-	current_class_calendars = calendar_service.get_all_calendars_by_school_key_and_type(calendar.institution_key,'CLASS-DIV')
-	class_calendars = get_class_calendars_on_calendar_date(calendar,current_class_calendars)
-	if calendar.subscriber_type == 'SCHOOL' and is_class(calendar.events[0].params[0]) == False :
-		for class_calendar in class_calendars :
-			updated_class_calendar = update_class_calendar(class_calendar,calendar)
-			updated_class_calendar_list.append(updated_class_calendar)
-	return updated_class_calendar_list
-
-def integrate_teacher_calendars(event_code,calendar_key) :
-	updated_teacher_calendar_list = []
+def integrate_calendars(event_code,calendar_key) :
+	updated_calendars_list = []
 	calendar = calendar_service.get_calendar(calendar_key)
-	current_class_calendars = calendar_service.get_all_calendars_by_school_key_and_type(calendar.institution_key,'CLASS-DIV')
-	class_calendars = get_class_calendars_on_calendar_date(calendar,current_class_calendars)
-	current_teacher_calendars = calendar_service.get_all_calendars_by_school_key_and_type(calendar.institution_key,'EMPLOYEE')
-	teacher_calendars = get_teacher_calendars_on_calendar_date(calendar,current_teacher_calendars)
-	if calendar.subscriber_type == 'SCHOOL' and is_class(calendar.events[0].params[0]) == False :	
-			events_to_remove_list = get_all_events_to_remove(class_calendars,calendar)
-			for teacher_calendar in teacher_calendars :
-				updated_teacher_calendar = update_teacher_calendar(events_to_remove_list,teacher_calendar)
-				updated_teacher_calendar_list.append(updated_teacher_calendar)
-	return updated_teacher_calendar_list
+	school_key = calendar.institution_key
+	calendar_date = calendar.calendar_date
+	academic_configuration = academic_service.get_academic_year(school_key,calendar_date)
+	academic_year = academic_configuration.academic_year
+	event = get_event_from_calendar(calendar,event_code)
+
+	gclogger.info("EVENT START TIME AND END TIME ----------------->" + str(event.from_time) + str(event.to_time))
+	class_info_list = class_info_service.get_classinfo_list(school_key,academic_year)
+	class_calendars = get_class_calendars(class_info_list,calendar_date) 
+	teacher_calendars_list =[]
+	if calendar.subscriber_type == 'SCHOOL' and is_class(event.params[0]) == False :
+		for class_calendar in class_calendars :
+			updated_calendars = update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_calendars_list)	
+			updated_calendars_list.extend(updated_calendars)
+	return updated_calendars_list
+
+def get_class_calendars(class_info_list,calendar_date) :
+	class_calendars = []
+	for class_info in class_info_list :
+		if hasattr(class_info, 'divisions') :
+			for div in class_info.divisions :
+				subscriber_key = str(class_info.class_info_key +'-'+ div.name)
+				current_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,subscriber_key)
+				if current_class_calendar is not None :
+					class_calendars.append(current_class_calendar)
+					
+	return class_calendars
+
+def get_event_from_calendar(calendar,event_code) :
+	for event in calendar.events :
+		if event.event_code == event_code :
+			return event 
 
 
 def update_teacher_calendar(events_to_remove_list,teacher_calendar) :
@@ -42,7 +55,7 @@ def get_updated_teacher_event(events_to_remove_list,teacher_calendar) :
 	events_list = []
 	for teacher_event in teacher_calendar.events :
 		if not do_remove_event(teacher_event,events_to_remove_list) == True :
-			gclogger.info("THIS EVENT IS NOT NEEDED TO REMOVE ---" + teacher_event.event_code)
+			gclogger.info("---THIS EVENT IS NOT NEEDED TO REMOVE ---" + teacher_event.event_code)
 			events_list.append(teacher_event)
 	return events_list
 
@@ -67,11 +80,34 @@ def get_teacher_calendars_on_calendar_date(calendar,current_teacher_calendars) :
 			teacher_calendars.append(current_teacher_calendar)
 	return teacher_calendars
 
-def update_class_calendar(class_calendar,calendar) :
-	event = calendar.events[0]		
+def update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_calendars_list) :
+	updated_calendars = []
+	calendar_date = class_calendar.calendar_date
 	events_to_remove_list = get_events_to_remove(class_calendar,event)
 	updated_class_calendar = remove_events_from_class_calendar(events_to_remove_list,class_calendar)
-	return updated_class_calendar
+	updated_calendars.append(updated_class_calendar)
+	for event in events_to_remove_list :
+		employee_code = get_employee_code(event) 
+		teacher_calendar = get_teacher_calendar(teacher_calendars_list,employee_code,calendar_date)
+		updated_teacher_calendar = update_teacher_calendar(events_to_remove_list,teacher_calendar)
+		updated_calendars.append(updated_teacher_calendar)
+	return updated_calendars
+
+
+def get_teacher_calendar(teacher_calendars_list,employee_code,calendar_date) :
+	for teacher_calendar in teacher_calendars_list :
+		if teacher_calendar.subscriber_key == employee_code and teacher_calendar.calendar_date == calendar_date :
+			return teacher_calendar
+	else :
+		teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,employee_code)
+		teacher_calendars_list.append(teacher_calendar)
+		return teacher_calendar
+
+
+def get_employee_code(event) :
+	for param in event.params :
+		if param.key == 'teacher_emp_key' :
+			return param.value
 
 def get_all_events_to_remove(class_calendars,calendar) :
 	event = calendar.events[0]	
