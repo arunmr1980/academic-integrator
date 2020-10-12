@@ -16,7 +16,10 @@
       "calendar_date":"2020-08-10",
       "calendar_key":"teacher-sample-2",
       "events":[
-         
+         {
+            "event_code":"b19d7a",
+            "ref_calendar_key":"test-key-3"
+         }
       ],
       "institution_key":"test-school-1",
       "subscriber_key":"employee-1",
@@ -26,7 +29,10 @@
       "calendar_date":"2020-08-10",
       "calendar_key":"teacher-sample-3",
       "events":[
-         
+         {
+            "event_code":"lklk788",
+            "ref_calendar_key":"test-key-4"
+         }
       ],
       "institution_key":"test-school-1",
       "subscriber_key":"employee-2",

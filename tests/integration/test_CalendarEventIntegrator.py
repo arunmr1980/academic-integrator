@@ -89,20 +89,20 @@ class CalendarIntegratorTest(unittest.TestCase):
 
 
 	def check_teacher_calendars(self,updated_teacher_calendar,expected_teacher_calendars_list) :
-			for expected_teacher_calendar in expected_teacher_calendars_list :
-				if updated_teacher_calendar.calendar_key == expected_teacher_calendar.calendar_key :
-					print("------------------KEY MATCH TEACHER CLDR------------------")
-					self.assertEqual(expected_teacher_calendar.institution_key,updated_teacher_calendar.institution_key )
-					self.assertEqual(expected_teacher_calendar.calendar_date,updated_teacher_calendar.calendar_date )
-					self.assertEqual(expected_teacher_calendar.subscriber_key,updated_teacher_calendar.subscriber_key )
-					self.assertEqual(expected_teacher_calendar.subscriber_type,updated_teacher_calendar.subscriber_type )
-					self.check_events_teacher_calendar(expected_teacher_calendar.events,updated_teacher_calendar.events) 
+		for expected_teacher_calendar in expected_teacher_calendars_list :
+			if updated_teacher_calendar.calendar_key == expected_teacher_calendar.calendar_key :
+				self.assertEqual(expected_teacher_calendar.institution_key,updated_teacher_calendar.institution_key )
+				self.assertEqual(expected_teacher_calendar.calendar_date,updated_teacher_calendar.calendar_date )
+				self.assertEqual(expected_teacher_calendar.subscriber_key,updated_teacher_calendar.subscriber_key )
+				self.assertEqual(expected_teacher_calendar.subscriber_type,updated_teacher_calendar.subscriber_type )
+				self.check_events_teacher_calendar(expected_teacher_calendar.events,updated_teacher_calendar.events) 
 
 
 	def check_events_teacher_calendar(self,expected_teacher_calendar_events,updated_teacher_calendar_events) :
-			for index in range(0,len(expected_teacher_calendar_events)) :
-				self.assertEqual(expected_teacher_calendar_events[index].event_code , updated_teacher_calendar_events[index].event_code)
-				self.assertEqual(expected_teacher_calendar_events[index].ref_calendar_key , updated_teacher_calendar_events[index].ref_calendar_key)
+		for index in range(0,len(expected_teacher_calendar_events)) :
+			self.assertEqual(expected_teacher_calendar_events[index].event_code , updated_teacher_calendar_events[index].event_code)
+			self.assertEqual(expected_teacher_calendar_events[index].ref_calendar_key , updated_teacher_calendar_events[index].ref_calendar_key)
+				
 			
 
 	def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
