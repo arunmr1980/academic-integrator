@@ -24,39 +24,10 @@ def integrate_holiday_cancell_calendars(calendar_key) :
 			subscriber_key = existing_class_calendar.subscriber_key
 			update_class_calendars_teacher_calendars(subscriber_key,existing_class_calendar,calendar,academic_configuration,updated_calendars_list,day_code,calendar_date)
 
-
-
-			# class_key = subscriber_key[:-2]
-			# division = subscriber_key[-1:]
-			# timetable = timetable_service.get_timetable_by_class_key_and_division(class_key,division)
-			# holiday_period_list = generate_holiday_period_list(calendar,academic_configuration,timetable,day_code)
-			# updated_class_calendar = generate_class_calendar(day_code,timetable,calendar_date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)		
-			# updated_calendars_list.append(updated_class_calendar)
-			# updated_class_calendar_events = updated_class_calendar.events
-			# employee_key_list = get_employee_key_list(updated_class_calendar_events)
-			# for employee_key in employee_key_list :
-			# 	teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,employee_key)
-			# 	updated_teacher_calendar = update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar)
-			# 	updated_calendars_list.append(updated_teacher_calendar)
-
 	else :
 		if calendar.subscriber_type == 'CLASS-DIV' :
 			subscriber_key = calendar.subscriber_key
 			existing_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
-
-
-			# class_key = subscriber_key[:-2]
-			# division = subscriber_key[-1:]
-			# timetable = timetable_service.get_timetable_by_class_key_and_division(class_key,division)
-			# holiday_period_list = generate_holiday_period_list(calendar,academic_configuration,timetable,day_code)
-			# updated_class_calendar = generate_class_calendar(day_code,timetable,calendar_date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)
-			# updated_calendars_list.append(updated_class_calendar)
-			# updated_class_calendar_events = updated_class_calendar.events
-			# employee_key_list = get_employee_key_list(updated_class_calendar_events)
-			# for employee_key in employee_key_list :
-			# 	teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,employee_key)
-			# 	updated_teacher_calendar = update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar)
-			# 	updated_calendars_list.append(updated_teacher_calendar)
 			update_class_calendars_teacher_calendars(subscriber_key,existing_class_calendar,calendar,academic_configuration,updated_calendars_list,day_code,calendar_date)
 
 
@@ -80,10 +51,6 @@ def update_class_calendars_teacher_calendars(subscriber_key,existing_class_calen
 		updated_teacher_calendar = update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar)
 		updated_calendars_list.append(updated_teacher_calendar)
 
-
-
-	
-	
 	
 
 def update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar) :
@@ -182,10 +149,15 @@ def update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_ca
 	for event in events_to_remove_list :
 		employee_key = get_employee_key(event) 
 		teacher_calendar = get_teacher_calendar(teacher_calendars_list,employee_key,calendar_date)
-		updated_teacher_calendar = update_teacher_calendar(events_to_remove_list,teacher_calendar)
+		updated_teacher_calendar = Update_teacher_calendar(events_to_remove_list,teacher_calendar)
 		updated_calendars.append(updated_teacher_calendar)
 	return updated_calendars
 
+def Update_teacher_calendar(events_to_remove_list,teacher_calendar) :
+	event_list = get_updated_teacher_event(events_to_remove_list,teacher_calendar)
+	del teacher_calendar.events
+	teacher_calendar.events = event_list
+	return teacher_calendar
 
 def get_teacher_calendar(teacher_calendars_list,employee_key,calendar_date) :
 	for teacher_calendar in teacher_calendars_list :
