@@ -93,7 +93,6 @@ def integrate_class_timetable(timetable, academic_configuration, class_calendars
 	return class_calendar_dict
 
 
-
 def set_school_calendar_list(school_calendars_list, timetable, date) :
 	gclogger.info("Getting School calendar -------------------------------------------------------------")
 	if get_school_calendar(date,school_calendars_list) is None :
@@ -139,7 +138,7 @@ def is_class(param) :
 	return is_class
 
 
-def generate_holiday_period_list(calendar,academic_configuration,timetable,day_code) :
+def generate_holiday_period_list(calendar,academic_configuration,timetable,day_code) :	
 	holiday_period_list =[]
 	for event in calendar.events :
 		if is_class(event.params[0]) == False :
@@ -148,7 +147,6 @@ def generate_holiday_period_list(calendar,academic_configuration,timetable,day_c
 			partial_holiday_periods = get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
 			for partial_holiday_period in partial_holiday_periods :
 				holiday_period_list.append(partial_holiday_period)
-
 	return holiday_period_list
 
 
@@ -297,10 +295,11 @@ def generate_class_calendar(day_code,time_table,date,timetable_configuration,par
 				events_list = []
 				for time_table_period in periods :
 					if not period_exist_or_not(time_table_period,partial_holiday_period_list):
+						
 						if timetable_configuration_periods is not None:
-							event = get_event(time_table_period,timetable_configuration_periods,date)
-
+							event = get_event(time_table_period,timetable_configuration_periods,date)	
 							events_list.append(event)
+
 				if (day.day_code == day_code):
 					if existing_class_calendar is not None :
 						for event in events_list :

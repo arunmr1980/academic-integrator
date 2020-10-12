@@ -87,24 +87,24 @@ def update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_ca
 	updated_class_calendar = remove_events_from_class_calendar(events_to_remove_list,class_calendar)
 	updated_calendars.append(updated_class_calendar)
 	for event in events_to_remove_list :
-		employee_code = get_employee_code(event) 
-		teacher_calendar = get_teacher_calendar(teacher_calendars_list,employee_code,calendar_date)
+		employee_key = get_employee_key(event) 
+		teacher_calendar = get_teacher_calendar(teacher_calendars_list,employee_key,calendar_date)
 		updated_teacher_calendar = update_teacher_calendar(events_to_remove_list,teacher_calendar)
 		updated_calendars.append(updated_teacher_calendar)
 	return updated_calendars
 
 
-def get_teacher_calendar(teacher_calendars_list,employee_code,calendar_date) :
+def get_teacher_calendar(teacher_calendars_list,employee_key,calendar_date) :
 	for teacher_calendar in teacher_calendars_list :
-		if teacher_calendar.subscriber_key == employee_code and teacher_calendar.calendar_date == calendar_date :
+		if teacher_calendar.subscriber_key == employee_key and teacher_calendar.calendar_date == calendar_date :
 			return teacher_calendar
 	else :
-		teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,employee_code)
+		teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,employee_key)
 		teacher_calendars_list.append(teacher_calendar)
 		return teacher_calendar
 
 
-def get_employee_code(event) :
+def get_employee_key(event) :
 	for param in event.params :
 		if param.key == 'teacher_emp_key' :
 			return param.value

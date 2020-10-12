@@ -1,5 +1,6 @@
 from academics.logger import GCLogger as logger
-
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 class TimeTable:
 

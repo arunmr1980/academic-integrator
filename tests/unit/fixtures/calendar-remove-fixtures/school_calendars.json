@@ -1,0 +1,38 @@
+[
+   {  "institution_key" :"test-school-1",
+      "calendar_key":"test-key-10",
+      "calendar_date":"2020-08-05",
+      "subscriber_key":"test-school-1",
+      "subscriber_type":"SCHOOL",
+      "events":[
+           
+      ]
+   },
+   {
+      "institution_key" :"test-school-1",
+      "calendar_key":"test-key-11",
+      "calendar_date":"2020-08-10",
+      "subscriber_key":"test-school-1",
+      "subscriber_type":"SCHOOL",
+      "events":[
+         {
+            "event_code":"event-1",
+            "event_type":"HOLIDAY",
+            "from_time":"2020-08-10T10:45:00",  
+            "to_time":"2020-08-10T15:00:00",
+            "params": [
+               {
+                  "key" :"cancel_class_flag",
+                  "value" : "true"
+               }
+            ] 
+         }      
+      ]
+   }
+
+]
+
+
+
+
+
