@@ -19,7 +19,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 	def setUpClass(self) :
 		gclogger.info(" ")
 		gclogger.info(" Setting up timetable integrator test......")
-		timetable= self.get_timetable_from_json(self)
+		timetable = self.get_timetable_from_json(self)
 		response = timetable_service.create_timetable(timetable)
 		academic_configuration = self.get_academic_config_from_json(self)
 		response = academic_service.create_academic_config(academic_configuration)

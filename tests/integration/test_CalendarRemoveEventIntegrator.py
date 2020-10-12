@@ -9,6 +9,9 @@ import academics.lessonplan.LessonPlan as lessonplan
 from academics.calendar.CalendarLessonPlanIntegrator import integrate_calendar_to_lesson_plan
 from academics.lessonplan.LessonplanIntegrator import holiday_calendar_to_lessonplan_integrator
 from academics.TimetableIntegrator import generate_holiday_period_list,generate_class_calendar,integrate_teacher_timetable
+import academics.timetable.TimeTable as ttable
+import academics.timetable.TimeTableDBService as timetable_service
+from academics.calendar.CalendarIntegrator import integrate_holiday_cancell_calendars
 import operator
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -16,104 +19,86 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 class CalendarIntegratorTest(unittest.TestCase):
-	def test_calendars(self) :
-		updated_class_calendars = []
-		updated_teacher_calendars = []
-		calendar_key ='test-key-12'
-		academic_configuration=self.get_academic_configuration()
-		timetables=self.get_timetables()
+
+	def setUp(self) :
+		timetables = self.get_timetables()
+		for timetable in timetables :
+			t = ttable.TimeTable(None)
+			timetable_dict = t.make_timetable_dict(timetable)
+			response = timetable_service.create_timetable(timetable_dict)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Time table uploaded --------- '+str(timetable_dict['time_table_key']))
+
+		academic_configuration = self.get_academic_config_from_json()
+		response = academic_service.create_academic_config(academic_configuration)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  Academic configuration uploaded  ------------- '+str(academic_configuration['academic_config_key']))
 
 		current_class_calendars = self.get_current_class_calendars()
+		for current_class_calendar in current_class_calendars :
+			cal = calendar.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(current_class_calendar)
+			response = calendar_service.add_or_update_calendar(calendar_dict)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Class calendar uploaded --------- '+str(calendar_dict['calendar_key']))
+
 		current_teacher_calendars = self.get_current_teacher_calendars()
+		for current_teacher_calendar in current_teacher_calendars :
+			cal = calendar.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(current_teacher_calendar)
+			response = calendar_service.add_or_update_calendar(calendar_dict)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Teacher calendar uploaded --------- '+str(calendar_dict['calendar_key']))
+
+		holiday_removed_calendars = self.get_holiday_removed_calendars()
+		for holiday_removed_calendar in holiday_removed_calendars :
+			cal = calendar.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(holiday_removed_calendar)
+			response = calendar_service.add_or_update_calendar(calendar_dict)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Holiday cancelled calendar uploaded --------- '+str(calendar_dict['calendar_key']))
+
+	def test_calendars(self) :
 		expected_class_calendars_list = self.get_expected_class_calendars()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars()
-		holiday_removed_calendars = self.get_holiday_removed_calendars()
-		
-		calendar = self.get_holiday_removed_calendar(calendar_key,holiday_removed_calendars)
-		date = calendar.calendar_date
-		day_code = findDay(calendar.calendar_date).upper()[0:3]
-		if calendar.subscriber_type == 'SCHOOL' :
-			class_calendars = get_class_calendars_on_calendar_date(calendar,current_class_calendars)
-			for existing_class_calendar in class_calendars :
-				self.update_class_calendars_and_teacher_calendars(existing_class_calendar,timetables,calendar,academic_configuration,updated_class_calendars,updated_teacher_calendars,day_code,date,current_teacher_calendars)
-		else :
-			if calendar.subscriber_type == 'CLASS-DIV' :	
-				existing_class_calendar = self.get_class_calendar_by_subscriber_key_and_date(calendar.subscriber_key,date,current_class_calendars)
-				self.update_class_calendars_and_teacher_calendars(existing_class_calendar,timetables,calendar,academic_configuration,updated_class_calendars,updated_teacher_calendars,day_code,date,current_teacher_calendars)
+		calendar_key ='test-key-11'
+		updated_calendars_list = integrate_holiday_cancell_calendars(calendar_key)
+		updated_class_calendar_list = self.get_updated_class_calendars(updated_calendars_list)
+		updated_teacher_calendar_list = self.get_updated_teacher_calendars(updated_calendars_list)
 
-		for updated_class_calendar in updated_class_calendars :
+		for updated_class_calendar in updated_class_calendar_list :
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
-			gclogger.info("-----[UnitTest] Class calendar test passed ----------------- " + updated_class_calendar.calendar_key + "-----------------")
+			# print('------- Classs -------')
+			# cal = calendar.Calendar(None)
+			# calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+			# pp.pprint(calendar_dict)
+			# print('')
+			gclogger.info("-----[Integration Test] Class calendar test passed for ----" + updated_class_calendar.calendar_key + "-----------------")
 
-			cal = cldr.Calendar(None)
-			calendar_dict = cal.make_calendar_dict(updated_class_calendar)
-			pp.pprint(calendar_dict)
+		for updated_teacher_calendar in updated_teacher_calendar_list :
+			# print('-------- Teacher -------')
+			# cal = calendar.Calendar(None)
+			# calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+			# pp.pprint(calendar_dict)
+			# print('')
+			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
+			gclogger.info("-----[Integration Test] Teacher calendar test passed for ----" + updated_teacher_calendar.calendar_key + "-----------------")
+		
+		
+		
+		
+	def get_updated_class_calendars(self,updated_calendars_list) :
+		updated_class_calendar_list = []
+		for updated_calendar in updated_calendars_list :
+			if updated_calendar.subscriber_type == 'CLASS-DIV' :
+				updated_class_calendar_list.append(updated_calendar)
+		return updated_class_calendar_list
 
-		for updated_teacher_calendar in updated_teacher_calendars :
-			self.check_teacher_calendar(updated_teacher_calendar,expected_teacher_calendars_list)
-			gclogger.info("-----[UnitTest] Teacher calendar test passed ----------------- " + updated_teacher_calendar.calendar_key + "-----------------")
-
-			cal = cldr.Calendar(None)
-			calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
-			pp.pprint(calendar_dict)
-
-	def update_class_calendars_and_teacher_calendars(self,existing_class_calendar,timetables,calendar,academic_configuration,updated_class_calendars,updated_teacher_calendars,day_code,date,current_teacher_calendars) :
-		timetable = self.get_timetable_by_subscriber_key(existing_class_calendar.subscriber_key,timetables)
-		holiday_period_list = generate_holiday_period_list(calendar,academic_configuration,timetable,day_code)
-		updated_class_calendar = generate_class_calendar(day_code,timetable,date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)
-		updated_class_calendars.append(updated_class_calendar)
-		updated_class_calendar_events = updated_class_calendar.events
-		employee_key_list = self.get_employee_key_list(updated_class_calendar_events)
-		for employee_key in employee_key_list :
-			teacher_calendar = self.get_teacher_calendar_by_emp_key_and_date(date,employee_key,current_teacher_calendars)
-			updated_teacher_calendar = self.update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar)
-			updated_teacher_calendars.append(updated_teacher_calendar)
-
-
-	def get_class_calendar_by_subscriber_key_and_date(self,subscriber_key,date,current_class_calendars)	:
-		for current_class_calendar in current_class_calendars :
-			if current_class_calendar.subscriber_key == subscriber_key and current_class_calendar.calendar_date == date :
-				return current_class_calendar
-
-
-
-	
-	def update_teacher_calendar(self,teacher_calendar,updated_class_calendar_events,existing_class_calendar) :
-		for event in updated_class_calendar_events :
-			employee_key = self.get_employee_key(event)
-			if employee_key == teacher_calendar.subscriber_key :
-				event_object = cldr.Event(None)
-				event_object.event_code = event.event_code
-				event_object.ref_calendar_key = existing_class_calendar.calendar_key
-				teacher_calendar.events.append(event_object)
-		return teacher_calendar
-
-
-	
-
-	def get_teacher_calendar_by_emp_key_and_date(self,date,employee_key,current_teacher_calendars) :
-		for current_teacher_calendar in current_teacher_calendars :
-			if current_teacher_calendar.calendar_date == date and current_teacher_calendar.subscriber_key == employee_key :
-				return current_teacher_calendar
-
-
-	def get_employee_key_list(self,updated_class_calendar_events) :
-		employee_key_list = []
-		for event in updated_class_calendar_events :
-			employee_key = self.get_employee_key(event)
-			if employee_key not in employee_key_list :
-				employee_key_list.append(employee_key)
-		return employee_key_list
+	def get_updated_teacher_calendars(self,updated_calendars_list) :
+		updated_teacher_calendar_list = []
+		for updated_calendar in updated_calendars_list :
+			if updated_calendar.subscriber_type == 'EMPLOYEE' :
+				updated_teacher_calendar_list.append(updated_calendar)
+		return updated_teacher_calendar_list
 
 
 
-	def get_employee_key(self,event) :
-		for param in event.params :
-			if param.key == 'teacher_emp_key' :
-				return param.value
-
-
-	# return holiday_period_list			
+			
 	def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
 		for expected_class_calendar in expected_class_calendars_list :
 			if updated_class_calendar.calendar_key == expected_class_calendar.calendar_key :
@@ -138,36 +123,18 @@ class CalendarIntegratorTest(unittest.TestCase):
 	
 					
 					
-	def check_teacher_calendar(self,updated_teacher_calendar,expected_teacher_calendars_list) :
+	def check_teacher_calendars(self,updated_teacher_calendar,expected_teacher_calendars_list) :
 		for expected_teacher_calendar in expected_teacher_calendars_list :
 			if updated_teacher_calendar.calendar_key == expected_teacher_calendar.calendar_key :
 				self.assertEqual(expected_teacher_calendar.institution_key,updated_teacher_calendar.institution_key )
 				self.assertEqual(expected_teacher_calendar.calendar_date,updated_teacher_calendar.calendar_date )
 				self.assertEqual(expected_teacher_calendar.subscriber_key,updated_teacher_calendar.subscriber_key )
 				self.assertEqual(expected_teacher_calendar.subscriber_type,updated_teacher_calendar.subscriber_type )
-				self.check_events_teacher_calendar(expected_teacher_calendar.events,updated_teacher_calendar.events) 
+				self.check_events_teacher_calendars(expected_teacher_calendar.events,updated_teacher_calendar.events) 
 				
-
-	def get_timetable_by_subscriber_key(self,subscriber_key,timetables) :
-		class_key = subscriber_key[:-2]
-		division = subscriber_key[-1:]
-		for timetable in timetables :
-			if timetable.class_key ==  class_key and timetable.division == division :
-				return timetable
-
-
-	def check_events_teacher_calendar(self,expected_teacher_calendar_events,updated_teacher_calendar_events) :
-		for index in range(0,len(expected_teacher_calendar_events) - 1) :
-			self.assertEqual(expected_teacher_calendar_events[index].event_code , updated_teacher_calendar_events[index].event_code)
+	def check_events_teacher_calendars(self,expected_teacher_calendar_events,updated_teacher_calendar_events) :
+		for index in range(0,len(expected_teacher_calendar_events)) :
 			self.assertEqual(expected_teacher_calendar_events[index].ref_calendar_key , updated_teacher_calendar_events[index].ref_calendar_key)
-		
-
-	def get_event_from_calendar(self,event_code,calendar) :
-		for event in calendar.events :
-			if event.event_code == event_code :
-
-				return event 
-
 
 	def get_timetables(self) :
 		t = []
@@ -183,6 +150,11 @@ class CalendarIntegratorTest(unittest.TestCase):
 		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configuration:
 			academic_configuration_dict = json.load(academic_configuration)
 			academic_configuration = academic_config.AcademicConfiguration(academic_configuration_dict)
+		return academic_configuration
+
+	def get_academic_config_from_json(self) :
+		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configure:
+			academic_configuration = json.load(academic_configure)
 		return academic_configuration
 
 	def get_current_class_calendars(self) :

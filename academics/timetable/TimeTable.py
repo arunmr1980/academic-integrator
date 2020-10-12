@@ -93,6 +93,7 @@ class TimeTable:
 
             if hasattr(timetable, 'generation_logs') and timetable.generation_logs is not None and len(timetable.generation_logs) > 0:
                 item['generation_logs'] = self.get_generation_logs_dict(timetable.generation_logs)
+            return item
 
 
     def get_timetable_dict(self,timetable):
