@@ -20,4 +20,4 @@ from academics.calendar.CalendarIntegrator import add_event_integrate_calendars,
 calendar_key = '001600758691097412A5D9BEDB-A46D-4383-8994-E3F65E1F90CE-342236257'
 event_code = "o5nobm-yrio63"
 
-add_event_integrate_calendars(calendar_key,event_code)
+add_event_integrate_calendars(event_code,calendar_key)
