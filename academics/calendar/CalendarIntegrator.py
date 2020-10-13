@@ -41,15 +41,16 @@ def update_class_calendars_teacher_calendars(subscriber_key,existing_class_calen
 	class_key = subscriber_key[:-2]
 	division = subscriber_key[-1:]
 	timetable = timetable_service.get_timetable_by_class_key_and_division(class_key,division)
-	holiday_period_list = generate_holiday_period_list(calendar,academic_configuration,timetable,day_code)
-	updated_class_calendar = generate_class_calendar(day_code,timetable,calendar_date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)
-	updated_calendars_list.append(updated_class_calendar)
-	updated_class_calendar_events = updated_class_calendar.events
-	employee_key_list = get_employee_key_list(updated_class_calendar_events)
-	for employee_key in employee_key_list :
-		teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,employee_key)
-		updated_teacher_calendar = update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar)
-		updated_calendars_list.append(updated_teacher_calendar)
+	if timetable is not None :
+		holiday_period_list = generate_holiday_period_list(calendar,academic_configuration,timetable,day_code)
+		updated_class_calendar = generate_class_calendar(day_code,timetable,calendar_date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)
+		updated_calendars_list.append(updated_class_calendar)
+		updated_class_calendar_events = updated_class_calendar.events
+		employee_key_list = get_employee_key_list(updated_class_calendar_events)
+		for employee_key in employee_key_list :
+			teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,employee_key)
+			updated_teacher_calendar = update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar)
+			updated_calendars_list.append(updated_teacher_calendar)
 
 
 
