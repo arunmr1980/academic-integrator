@@ -275,9 +275,10 @@ def find_schedules(current_lessonplan,holiday_period_list,date) :
 	for main_topic in current_lessonplan.topics :
 		for topic in main_topic.topics :
 			for session in topic.sessions :
-				schedule = get_schedule(holiday_period_list,session.schedule,date)
-				if schedule is not None :
-					schedule_list.append(schedule)
+				if hasattr (session,'schedule') :
+					schedule = get_schedule(holiday_period_list,session.schedule,date)
+					if schedule is not None :
+						schedule_list.append(schedule)
 	return schedule_list
 
 def remove_shedules(schedules,current_lessonplan) :
