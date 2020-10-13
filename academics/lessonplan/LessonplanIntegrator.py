@@ -63,9 +63,9 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 	upload_updated_lessonplans(updated_lessonplan_list)
 
 def upload_updated_lessonplans(updated_lessonplan_list) :
-	for lessonplan in updated_lessonplan_list :
+	for lesson_plan in updated_lessonplan_list :
 		lp = lessonplan.LessonPlan(None)
-		lessonplan_dict = lp.make_lessonplan_dict(lessonplan)
+		lessonplan_dict = lp.make_lessonplan_dict(lesson_plan)
 		response = lessonplan_service.create_lessonplan(lessonplan_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated lesson plan uploaded '+str(lessonplan_dict['lesson_plan_key']))
 

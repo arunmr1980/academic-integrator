@@ -3,6 +3,7 @@ import boto3
 
 from academics.TimetableIntegrator import generate_and_save_calenders
 from academics.calendar.CalendarLessonPlanIntegrator import calendars_lesson_plan_integration, calendars_lesson_plan_integration_from_timetable
+from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars
 import academics.logger.GCLogger as logger
 
 def lambda_handler(event, context):
