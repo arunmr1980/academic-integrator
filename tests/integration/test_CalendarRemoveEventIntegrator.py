@@ -34,21 +34,21 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 
 		current_class_calendars = self.get_current_class_calendars()
 		for current_class_calendar in current_class_calendars :
-			cal = calendar.Calendar(None)
+			cal = cldr.Calendar(None)
 			calendar_dict = cal.make_calendar_dict(current_class_calendar)
 			response = calendar_service.add_or_update_calendar(calendar_dict)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Class calendar uploaded --------- '+str(calendar_dict['calendar_key']))
 
 		current_teacher_calendars = self.get_current_teacher_calendars()
 		for current_teacher_calendar in current_teacher_calendars :
-			cal = calendar.Calendar(None)
+			cal = cldr.Calendar(None)
 			calendar_dict = cal.make_calendar_dict(current_teacher_calendar)
 			response = calendar_service.add_or_update_calendar(calendar_dict)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Teacher calendar uploaded --------- '+str(calendar_dict['calendar_key']))
 
 		holiday_removed_calendars = self.get_holiday_removed_calendars()
 		for holiday_removed_calendar in holiday_removed_calendars :
-			cal = calendar.Calendar(None)
+			cal = cldr.Calendar(None)
 			calendar_dict = cal.make_calendar_dict(holiday_removed_calendar)
 			response = calendar_service.add_or_update_calendar(calendar_dict)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Holiday cancelled calendar uploaded --------- '+str(calendar_dict['calendar_key']))
@@ -57,25 +57,20 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 		expected_class_calendars_list = self.get_expected_class_calendars()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars()
 		calendar_key ='test-key-11'
-		updated_calendars_list = remove_event_integrate_calendars(calendar_key)
+		calendar = calendar_service.get_calendar(calendar_key)
+		school_key = calendar.institution_key
+		calendar_date = calendar.calendar_date
+		remove_event_integrate_calendars(calendar_key)
+		updated_calendars_list = calendar_service.get_all_calendars_by_school_key_and_date(school_key,calendar_date)
+		
 		updated_class_calendar_list = self.get_updated_class_calendars(updated_calendars_list)
 		updated_teacher_calendar_list = self.get_updated_teacher_calendars(updated_calendars_list)
 
 		for updated_class_calendar in updated_class_calendar_list :
-			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
-			# print('------- Classs -------')
-			# cal = calendar.Calendar(None)
-			# calendar_dict = cal.make_calendar_dict(updated_class_calendar)
-			# pp.pprint(calendar_dict)
-			# print('')
+			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)	
 			gclogger.info("-----[Integration Test] Class calendar test passed for ----" + updated_class_calendar.calendar_key + "-----------------")
 
 		for updated_teacher_calendar in updated_teacher_calendar_list :
-			# print('-------- Teacher -------')
-			# cal = calendar.Calendar(None)
-			# calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
-			# pp.pprint(calendar_dict)
-			# print('')
 			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
 			gclogger.info("-----[Integration Test] Teacher calendar test passed for ----" + updated_teacher_calendar.calendar_key + "-----------------")
 

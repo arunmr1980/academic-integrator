@@ -60,8 +60,28 @@ def get_all_calendars_by_school_key_and_type(institution_key, subscriber_type):
     calendars.sort(key = operator.itemgetter('calendar_date'))
     return make_calendar_obj(calendars)
 
+def get_all_calendars_by_school_key_and_date(institution_key, calendar_date):
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table(CALENDAR_TBL)
+    calendars = []
+    response = table.query(
+        IndexName='institution_key-calendar_date-index',
+        KeyConditionExpression=Key('institution_key').eq(institution_key) & Key('calendar_date').eq(calendar_date)
+    )
+    add_calendars_from_response(response, calendars)
+    logger.debug('Intermediary calendars count - ' + str(len(calendars)))
+    while 'LastEvaluatedKey' in response:
+        response = table.query(
+            IndexName='institution_key-calendar_date-index',
+           KeyConditionExpression=Key('institution_key').eq(institution_key) & Key('calendar_date').eq(calendar_date)
+        )
+        add_calendars_from_response(response, calendars)
+        logger.debug('Intermediary calendars count - ' + str(len(calendars)))
+    calendars.sort(key = operator.itemgetter('calendar_date'))
+    return make_calendar_obj(calendars)
 
-def get_all_calendars_by_key_and_type(subscriber_key, subscriber_type):
+
+def get_all_calendars_by_key_and_type(subscriber_key, calendar_date):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(CALENDAR_TBL)
     calendars = []

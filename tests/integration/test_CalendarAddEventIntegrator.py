@@ -4,11 +4,12 @@ from academics.TimetableIntegrator import *
 from academics.timetable import AcademicConfiguration as academic_config
 import academics.timetable.TimeTable as ttable
 from academics.logger import GCLogger as gclogger
-import academics.calendar.Calendar as calendar
+import academics.calendar.Calendar as cldr
 import academics.lessonplan.LessonPlan as lessonplan
 from academics.calendar.CalendarLessonPlanIntegrator import integrate_calendar_to_lesson_plan
 from academics.lessonplan.LessonplanIntegrator import holiday_calendar_to_lessonplan_integrator
 from academics.calendar.CalendarIntegrator import add_event_integrate_calendars
+import academics.calendar.CalendarDBService as calendar_service
 
 import operator
 import pprint
@@ -48,26 +49,21 @@ class CalendarAddEventIntegratorTest(unittest.TestCase):
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars()
 		event_code = 'event-1'
 		calendar_key ='test-key-12'
-		updated_calendars_list = add_event_integrate_calendars(event_code,calendar_key)
+		calendar = calendar_service.get_calendar(calendar_key)
+		school_key = calendar.institution_key
+		calendar_date = calendar.calendar_date
+		add_event_integrate_calendars(event_code,calendar_key)
+		updated_calendars_list = calendar_service.get_all_calendars_by_school_key_and_date(school_key,calendar_date)
 
 		updated_class_calendar_list = self.get_updated_class_calendars(updated_calendars_list)
 		updated_teacher_calendar_list = self.get_updated_teacher_calendars(updated_calendars_list)
 
 		for updated_class_calendar in updated_class_calendar_list :
-			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
-			# print('------- Classs -------')
-			# cal = calendar.Calendar(None)
-			# calendar_dict = cal.make_calendar_dict(updated_class_calendar)
-			# pp.pprint(calendar_dict)
-			# print('')
+			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)			
 			gclogger.info("-----[Integration Test] Class calendar test passed for ----" + updated_class_calendar.calendar_key + "-----------------")
 
 		for updated_teacher_calendar in updated_teacher_calendar_list :
-			# print('-------- Teacher -------')
-			# cal = calendar.Calendar(None)
-			# calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
-			# pp.pprint(calendar_dict)
-			# print('')
+			print('-------- Teacher -------')
 			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
 			gclogger.info("-----[Integration Test] Teacher calendar test passed for ----" + updated_teacher_calendar.calendar_key + "-----------------")
 

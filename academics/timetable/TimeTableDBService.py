@@ -29,7 +29,6 @@ def get_time_table(time_table_key):
  
 
 def create_timetable(timetable):
-    print(timetable)
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(TIMETABLE_TBL)
     response = table.put_item(

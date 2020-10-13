@@ -66,7 +66,12 @@ class CalendarHolidayLessonPlanIntegratorTest(unittest.TestCase):
 		expected_lesson_plan_list = self.get_expected_lesson_plan_list()
 		event_code = 'event-1'
 		calendar_key ='test-key-5'
-		updated_lessonplan_list = integrate_holiday_lessonplan(event_code,calendar_key)
+		calendar = calendar_service.get_calendar(calendar_key)
+		subscriber_key = calendar.subscriber_key
+		class_key = subscriber_key[:-2]
+		division = subscriber_key[-1:]
+		integrate_holiday_lessonplan(event_code,calendar_key)
+		updated_lessonplan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 		for updated_lessonplan in updated_lessonplan_list :
 			self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 

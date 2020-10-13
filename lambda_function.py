@@ -18,9 +18,33 @@ def lambda_handler(event, context):
               timetable_to_calendar_integration(request)
           if request_type == 'CALENDAR_TO_LESSON_PLAN_GEN':
               calendar_to_lessonplan_integration(request)
+          if request_type == 'HOLIDAY_LESSONPLAN_SYNC':
+              add_event_calendar_lessonplan_integration(request)
+          if request_type == 'REMOVE_EVENT_LESSONPLAN_SYNC':
+              remove_event_calendar_lessonplan_integration(request)
        except:
           logger.info("Unexpected error ...")
           send_response(400,"unexpected error")
+
+
+
+def add_event_calendar_lessonplan_integration(request) :
+  try :
+    calendar_key = request['calendar_key']
+    event_code = request['event_code']
+    add_event_integrate_calendars(event_code,calendar_key)
+  except KeyError as ke:
+        logger.info("Error in input. event_code or calendar_key not present")
+        send_response(400,"input validation error")
+
+
+def remove_event_calendar_lessonplan_integration(request) :
+  try :
+    calendar_key = request['calendar_key']
+    remove_event_integrate_calendars(calendar_key)
+  except KeyError as ke:
+        logger.info("Error in input. calendar_key not present")
+        send_response(400,"input validation error")
 
 
 def timetable_to_calendar_and_lessonplan_integration(request):

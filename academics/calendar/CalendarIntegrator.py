@@ -6,6 +6,7 @@ import academics.academic.AcademicDBService as academic_service
 import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.timetable.TimeTableDBService as timetable_service
 from academics.TimetableIntegrator import *
+from academics.lessonplan.LessonplanIntegrator import integrate_holiday_lessonplan,integrate_cancelled_holiday_lessonplan
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -31,7 +32,9 @@ def remove_event_integrate_calendars(calendar_key) :
 			existing_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
 			update_class_calendars_teacher_calendars(subscriber_key,existing_class_calendar,calendar,academic_configuration,updated_calendars_list,day_code,calendar_date)
 
-	return updated_calendars_list
+	upload_updated_calendars(updated_calendars_list)
+	integrate_cancelled_holiday_lessonplan(calendar_key)
+
 
 
 def update_class_calendars_teacher_calendars(subscriber_key,existing_class_calendar,calendar,academic_configuration,updated_calendars_list,day_code,calendar_date) :
@@ -87,7 +90,9 @@ def add_event_integrate_calendars(event_code,calendar_key) :
 		for class_calendar in class_calendars :
 			updated_calendars = update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_calendars_list)
 			updated_calendars_list.extend(updated_calendars)
-	return updated_calendars_list
+	upload_updated_calendars(updated_calendars_list)
+	integrate_holiday_lessonplan(event_code,calendar_key)
+
 
 def get_class_calendars(class_info_list,calendar_date) :
 	class_calendars = []
@@ -106,7 +111,12 @@ def get_event_from_calendar(calendar,event_code) :
 		if event.event_code == event_code :
 			return event
 
-
+def upload_updated_calendars(updated_calendars_list) :
+	for calendar in updated_calendars_list :
+		cal = cldr.Calendar(None)
+		calendar_dict = cal.make_calendar_dict(calendar)
+		response = calendar_service.add_or_update_calendar(calendar_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Class calendar uploaded --------- '+str(calendar_dict['calendar_key']))
 
 
 def get_updated_teacher_event(events_to_remove_list,teacher_calendar) :

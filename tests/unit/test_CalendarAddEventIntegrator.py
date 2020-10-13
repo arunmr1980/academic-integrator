@@ -7,6 +7,7 @@ from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as cldr
 import academics.lessonplan.LessonPlan as lessonplan
 from academics.calendar.CalendarLessonPlanIntegrator import integrate_calendar_to_lesson_plan
+import academics.calendar.CalendarDBService as calendar_service
 from academics.lessonplan.LessonplanIntegrator import holiday_calendar_to_lessonplan_integrator
 import operator
 import pprint
@@ -26,7 +27,7 @@ class CalendarAddEventIntegratorTest(unittest.TestCase):
 
 		calendar = self.get_holiday_calendar(calendar_key,holiday_calendars)
 		class_calendars = get_class_calendars_on_calendar_date(calendar,current_class_calendars)
-		teacher_calendars = get_teacher_calendars_on_calendar_date(calendar,current_teacher_calendars)
+		teacher_calendars = calendar_service.get_teacher_calendars_on_calendar_date(calendar,current_teacher_calendars)
 		event = self.get_event_from_calendar(event_code,calendar)
 
 		if calendar.subscriber_type == 'SCHOOL' and is_class(event.params[0]) == False :
