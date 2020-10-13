@@ -24,19 +24,20 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 		class_key = subscriber_key[:-2]
 		division = subscriber_key[-1:]
 		timetable = timetable_service.get_timetable_entry(class_key, division)
-		gclogger.info("school key--------------->" + str(school_key))
-		gclogger.info("class keyyyy------>" + str(class_key))
-		gclogger.info("Division--------->" + str(division))
-		current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
-		for current_lessonplan in current_lesson_plan_list :
-			if current_lessonplan.class_key == class_key and current_lessonplan.division == division :
-				updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
-				lp = lessonplan.LessonPlan(None)
-				updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-				response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-				gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(current_lesson_plan_dict['lesson_plan_key']))
-				updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
-				updated_lessonplan_list.append(updated_lessonplan)
+		if timetable is not None :
+			gclogger.info("school key--------------->" + str(school_key))
+			gclogger.info("class keyyyy------>" + str(class_key))
+			gclogger.info("Division--------->" + str(division))
+			current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+			for current_lessonplan in current_lesson_plan_list :
+				if current_lessonplan.class_key == class_key and current_lessonplan.division == division :
+					updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
+					lp = lessonplan.LessonPlan(None)
+					updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+					response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
+					gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(current_lesson_plan_dict['lesson_plan_key']))
+					updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
+					updated_lessonplan_list.append(updated_lessonplan)
 
 	else :
 		class_info_list = class_info_service.get_classinfo_list(school_key,academic_year)
@@ -47,18 +48,18 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 					class_key = class_info.class_info_key
 					if division != 'NONE':
 						timetable = timetable_service.get_timetable_entry(class_key, division)
-
-						gclogger.info("class keyyyy------> " + str(class_key))
-						gclogger.info("Division---------> " + str(division))
-						current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
-						for current_lessonplan in current_lesson_plan_list :
-							updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
-							lp = lessonplan.LessonPlan(None)
-							updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-							response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-							gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
-							updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
-							updated_lessonplan_list.append(updated_lessonplan)
+						if timetable is not None :
+							gclogger.info("class keyyyy------> " + str(class_key))
+							gclogger.info("Division---------> " + str(division))
+							current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+							for current_lessonplan in current_lesson_plan_list :
+								updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
+								lp = lessonplan.LessonPlan(None)
+								updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+								response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
+								gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
+								updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
+								updated_lessonplan_list.append(updated_lessonplan)
 	# return updated_lessonplan_list
 	upload_updated_lessonplans(updated_lessonplan_list)
 
