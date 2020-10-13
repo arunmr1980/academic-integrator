@@ -289,8 +289,9 @@ def remove_shedules(schedules,current_lessonplan) :
 		for main_topic in current_lessonplan.topics :
 			for topic in main_topic.topics :
 				for session in topic.sessions :
-					if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
-						del session.schedule
+					if hasattr (session,'schedule') :
+						if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
+							del session.schedule
 	return current_lessonplan
 
 
