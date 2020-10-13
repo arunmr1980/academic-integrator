@@ -9,7 +9,8 @@ from academics.TimetableIntegrator import *
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-def integrate_holiday_cancell_calendars(calendar_key) :
+# Remove event calendar integration
+def remove_event_integrate_calendars(calendar_key) :
 	updated_calendars_list = []
 	calendar = calendar_service.get_calendar(calendar_key)
 	school_key = calendar.institution_key
@@ -18,7 +19,7 @@ def integrate_holiday_cancell_calendars(calendar_key) :
 	academic_year = academic_configuration.academic_year
 	day_code = findDay(calendar.calendar_date).upper()[0:3]
 	class_info_list = class_info_service.get_classinfo_list(school_key,academic_year)
-	class_calendars = get_class_calendars(class_info_list,calendar_date) 
+	class_calendars = get_class_calendars(class_info_list,calendar_date)
 	if calendar.subscriber_type == 'SCHOOL' :
 		for existing_class_calendar in class_calendars :
 			subscriber_key = existing_class_calendar.subscriber_key
@@ -29,10 +30,6 @@ def integrate_holiday_cancell_calendars(calendar_key) :
 			subscriber_key = calendar.subscriber_key
 			existing_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
 			update_class_calendars_teacher_calendars(subscriber_key,existing_class_calendar,calendar,academic_configuration,updated_calendars_list,day_code,calendar_date)
-
-
-
-
 
 	return updated_calendars_list
 
@@ -51,7 +48,7 @@ def update_class_calendars_teacher_calendars(subscriber_key,existing_class_calen
 		updated_teacher_calendar = update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar)
 		updated_calendars_list.append(updated_teacher_calendar)
 
-	
+
 
 def update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar) :
 	for event in updated_class_calendar_events :
@@ -61,7 +58,7 @@ def update_teacher_calendar(teacher_calendar,updated_class_calendar_events,exist
 			event_object.event_code = event.event_code
 			event_object.ref_calendar_key = existing_class_calendar.calendar_key
 			teacher_calendar.events.append(event_object)
-	return teacher_calendar	
+	return teacher_calendar
 
 def get_employee_key_list(updated_class_calendar_events) :
 	employee_key_list = []
@@ -72,7 +69,8 @@ def get_employee_key_list(updated_class_calendar_events) :
 	return employee_key_list
 
 
-def integrate_calendars(event_code,calendar_key) :
+# Add event calendar integration
+def add_event_integrate_calendars(event_code,calendar_key) :
 	updated_calendars_list = []
 	calendar = calendar_service.get_calendar(calendar_key)
 	school_key = calendar.institution_key
@@ -83,11 +81,11 @@ def integrate_calendars(event_code,calendar_key) :
 
 	gclogger.info("EVENT START TIME AND END TIME ----------------->" + str(event.from_time) + str(event.to_time))
 	class_info_list = class_info_service.get_classinfo_list(school_key,academic_year)
-	class_calendars = get_class_calendars(class_info_list,calendar_date) 
+	class_calendars = get_class_calendars(class_info_list,calendar_date)
 	teacher_calendars_list =[]
 	if calendar.subscriber_type == 'SCHOOL' and is_class(event.params[0]) == False :
 		for class_calendar in class_calendars :
-			updated_calendars = update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_calendars_list)	
+			updated_calendars = update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_calendars_list)
 			updated_calendars_list.extend(updated_calendars)
 	return updated_calendars_list
 
@@ -100,13 +98,13 @@ def get_class_calendars(class_info_list,calendar_date) :
 				current_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,subscriber_key)
 				if current_class_calendar is not None :
 					class_calendars.append(current_class_calendar)
-					
+
 	return class_calendars
 
 def get_event_from_calendar(calendar,event_code) :
 	for event in calendar.events :
 		if event.event_code == event_code :
-			return event 
+			return event
 
 
 
@@ -147,7 +145,7 @@ def update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_ca
 	updated_class_calendar = remove_events_from_class_calendar(events_to_remove_list,class_calendar)
 	updated_calendars.append(updated_class_calendar)
 	for event in events_to_remove_list :
-		employee_key = get_employee_key(event) 
+		employee_key = get_employee_key(event)
 		teacher_calendar = get_teacher_calendar(teacher_calendars_list,employee_key,calendar_date)
 		updated_teacher_calendar = Update_teacher_calendar(events_to_remove_list,teacher_calendar)
 		updated_calendars.append(updated_teacher_calendar)
@@ -175,7 +173,7 @@ def get_employee_key(event) :
 			return param.value
 
 def get_all_events_to_remove(class_calendars,calendar) :
-	event = calendar.events[0]	
+	event = calendar.events[0]
 	events_to_remove_list = []
 	for class_calendar in class_calendars :
 		events_list = get_events_to_remove(class_calendar,event)
@@ -184,14 +182,14 @@ def get_all_events_to_remove(class_calendars,calendar) :
 
 def get_updated_event(class_calendar,events_to_remove_list) :
 	event_list = []
-	for event in class_calendar.events :	
+	for event in class_calendar.events :
 		if not event in events_to_remove_list :
 			event_list.append(event)
 	return event_list
 
 def is_class(param) :
 	is_class = False
-	if param.key == 'cancel_class_flag' and param.value == 'true' :		
+	if param.key == 'cancel_class_flag' and param.value == 'true' :
 		is_class = False
 	else :
 		is_class = True
@@ -208,7 +206,7 @@ def get_events_to_remove(class_calendar,event) :
 	gclogger.info('')
 	for event in class_calendar.events :
 		class_calendar_event_start_time = event.from_time
-		class_calendar_event_end_time = event.to_time	
+		class_calendar_event_end_time = event.to_time
 		if check_events_conflict(calendar_event_start_time,calendar_event_end_time,class_calendar_event_start_time,class_calendar_event_end_time) :
 			gclogger.info("-----------NEED TO REMOVE THE EVENT  ----------" +event.event_code + '----')
 			events_to_remove_list.append(event)
@@ -263,4 +261,4 @@ def check_events_conflict(event_start_time,event_end_time,class_calendar_event_s
 		is_conflict = True
 	else :
 		is_conflict = False
-	return is_conflict		
+	return is_conflict

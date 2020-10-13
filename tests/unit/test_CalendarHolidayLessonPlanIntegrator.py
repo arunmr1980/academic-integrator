@@ -14,7 +14,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 
-class CalendarHolidayIntegratorTest(unittest.TestCase):
+class CalendarHolidayLessonPlanIntegratorTest(unittest.TestCase):
 	def test_lessonplan(self) :
 		timetable=self.get_time_table()
 		academic_configuration=self.get_academic_configuration()
@@ -85,15 +85,15 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 
 
 
-	
-
-	
-
-	
 
 
 
-	
+
+
+
+
+
+
 
 
 	def get_schedule(self,holiday_period_list,schedule,date) :

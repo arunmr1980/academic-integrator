@@ -14,7 +14,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 
-class CalendarHolidayCancellIntegratorTest(unittest.TestCase):
+class CalendarHolidayCancelLesssonPlanlIntegratorTest(unittest.TestCase):
 	def test_lessonplan(self) :
 		calendar_key ='test-key'
 		holiday_cancel_calendars = self.get_holiday_cancel_calendars()

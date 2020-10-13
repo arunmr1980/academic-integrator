@@ -20,7 +20,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 
-class CalendarHolidayCancelIntegratorTest(unittest.TestCase):
+class CalendarHolidayCancelLessonPlanIntegratorTest(unittest.TestCase):
 
 	def setUp(self) :
 		test_timetable_one = self.get_test_timetable_one_from_json()

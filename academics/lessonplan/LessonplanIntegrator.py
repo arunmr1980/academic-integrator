@@ -108,15 +108,6 @@ def integrate_cancelled_holiday_lessonplan(calendar_key) :
 
 
 
-
-
-
-
-
-
-
-
-
 def get_event_from_calendar(calendar,event_code) :
 		for event in calendar.events :
 			if event.event_code == event_code :
@@ -243,10 +234,6 @@ def is_calendar_date_after_schdule_date(schedule_date,calendar_date) :
 	if calendar_date <= schedule_date :
 		is_delete = True
 	return is_delete
-
-
-
-
 
 
 
