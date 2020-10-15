@@ -4,7 +4,7 @@ from academics.TimetableIntegrator import *
 from academics.timetable import AcademicConfiguration as academic_config
 import academics.timetable.TimeTable as ttable
 from academics.logger import GCLogger as gclogger
-import academics.calendar.Calendar as calendar
+import academics.calendar.Calendar as cldr
 import academics.lessonplan.LessonPlan as lessonplan
 from academics.calendar.CalendarLessonPlanIntegrator import integrate_calendar_to_lesson_plan
 import academics.calendar.CalendarDBService as calendar_service
@@ -60,18 +60,34 @@ class CalendarHolidayCancelLessonPlanIntegratorTest(unittest.TestCase):
 		response = class_info_service.add_or_update_class_info(class_info_two_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for uploaded -------------- ' +str(class_info_one_dict['class_info_key']) )
 
+		current_class_calendars = self.get_current_class_calendars()
+		for current_class_calendar in current_class_calendars :
+			cal = cldr.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(current_class_calendar)
+			response = calendar_service.add_or_update_calendar(calendar_dict)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Class calendar uploaded --------- '+str(calendar_dict['calendar_key']))
+
 
 
 	def test_lessonplan(self) :
 		expected_lesson_plan_list = self.get_expected_lesson_plan_list()
 		calendar_key ='test-key'
-		calendar = calendar_service.get_calendar(calendar_key)
-		subscriber_key = calendar.subscriber_key
-		class_key = subscriber_key[:-2]
-		division = subscriber_key[-1:]
-		integrate_holiday_lessonplan(event_code,calendar_key)
-		updated_lessonplan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+		updated_lessonplan_list = []
 		integrate_cancelled_holiday_lessonplan(calendar_key)
+		calendar = calendar_service.get_calendar(calendar_key)
+		school_key = calendar.institution_key
+		academic_configuration = academic_service.get_academic_year(school_key, calendar.calendar_date)
+		academic_year = academic_configuration.academic_year
+		class_info_list = class_info_service.get_classinfo_list(school_key,academic_year)
+		for class_info in class_info_list :
+			if hasattr(class_info, 'divisions') :
+				for div in class_info.divisions :
+					division = div.name
+					class_key = class_info.class_info_key
+					if division != 'NONE':
+						lessonplan_list = lessonplan_service.get_lesson_plan_list(class_key, division)
+						for lesson_plan in lessonplan_list :
+							updated_lessonplan_list.append(lesson_plan)
 		for updated_lessonplan in updated_lessonplan_list :
 			self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 
@@ -293,6 +309,14 @@ class CalendarHolidayCancelLessonPlanIntegratorTest(unittest.TestCase):
 			class_info_two_dict = json.load(class_info_two)
 		return class_info_two_dict
 
+
+	def get_current_class_calendars(self) :
+		class_calendars_list = []
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/class_cls_session_calendars.json', 'r') as calendars:
+			class_calendars = json.load(calendars)
+		for cal in class_calendars :
+			class_calendars_list.append(calendar.Calendar(cal))
+		return class_calendars_list
 
 	def get_expected_lesson_plan_list(self) :
 		expected_lesson_plan_list = []

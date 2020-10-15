@@ -21,12 +21,12 @@ class CalendarHolidayCancelLesssonPlanlIntegratorTest(unittest.TestCase):
 		calendar = self.get_holiday_cancelled_calendar(calendar_key,holiday_cancel_calendars)
 		day_code = findDay(calendar.calendar_date).upper()[0:3]
 		subscriber_key = calendar.subscriber_key
-		class_key = subscriber_key[:-2]
-		division = subscriber_key[-1:]
 		current_lesson_plan_list = self.get_current_lesson_plan_list()
 		expected_lesson_plan_list = self.get_expected_lesson_plan_list()
 
 		if calendar.subscriber_type == 'CLASS-DIV' :
+			class_key = subscriber_key[:-2]
+			division = subscriber_key[-1:]
 			for current_lessonplan in current_lesson_plan_list :
 				if current_lessonplan.class_key == class_key and current_lessonplan.division == division :
 					updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calendar,day_code)

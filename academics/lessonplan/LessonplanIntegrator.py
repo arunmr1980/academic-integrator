@@ -101,18 +101,20 @@ def integrate_cancelled_holiday_lessonplan(calendar_key) :
 					class_key = class_info.class_info_key
 					if division != 'NONE':
 						# timetable = timetable_service.get_timetable_entry(class_key, division)
-
-						gclogger.info("class keyyyy------> " + str(class_key))
-						gclogger.info("Division---------> " + str(division))
-						current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
-						for current_lessonplan in current_lesson_plan_list :
-							updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calendar,day_code)
-							lp = lessonplan.LessonPlan(None)
-							updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-							response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-							gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
-							updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
-							updated_lessonplan_list.append(updated_lessonplan)
+						class_subscriber_key = class_key+ '-' +division
+						class_calendar = calendar_service.get_calendar_by_date_and_key(calendar.calendar_date,class_subscriber_key)
+						if class_calendar is not None :
+							gclogger.info("class keyyyy------> " + str(class_key))
+							gclogger.info("Division---------> " + str(division))
+							current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+							for current_lessonplan in current_lesson_plan_list :
+								updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,class_calendar,day_code)
+								lp = lessonplan.LessonPlan(None)
+								updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+								response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
+								gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
+								updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
+								updated_lessonplan_list.append(updated_lessonplan)
 	# return updated_lessonplan_list
 	upload_updated_lessonplans(updated_lessonplan_list)
 
@@ -167,9 +169,10 @@ def add_shedule_after_calendar_date(shedule_list,current_lessonplan) :
 				if index < len(shedule_list) :
 					if not hasattr(session , 'schedule') :
 						index += 1
-						session.schedule = shedule_list[index]
-						# shedule_list.remove(shedule_list[index])
-						gclogger.info('A schedule is added ' + str(shedule_list[index].start_time) + ' --- ' + str(shedule_list[index].start_time) )
+						if index < len(shedule_list) :
+							session.schedule = shedule_list[index]
+							# shedule_list.remove(shedule_list[index])
+							gclogger.info('A schedule is added ' + str(shedule_list[index].start_time) + ' --- ' + str(shedule_list[index].start_time) )
 	return current_lessonplan
 
 def add_schedule_to_lessonplan(current_lessonplan,schedule) :

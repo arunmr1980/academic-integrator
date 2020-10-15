@@ -118,12 +118,17 @@ class LessonPlan:
         comments_list =[]
         for comment in comments :
             item = {
-                'comment' : comment.comment,
-                'date_time' : comment.date_time,
-                'employee_key' : comment.employee_key,
-                'employee_name' : comment.employee_name,
-                'type' : comment.type
             }
+            if hasattr(comment,'comment') :
+                item['comment'] = comment.comment
+            if hasattr(comment,'employee_key') :
+                item['employee_key'] = comment.employee_key
+            if hasattr(comment,'date_time') :
+                item['date_time'] = comment.date_time
+            if hasattr(comment,'employee_name') :
+                item['employee_name'] = comment.employee_name
+            if hasattr(comment,'type') :
+                item['type'] = comment.type
             comments_list.append(item)
         return comments_list
 

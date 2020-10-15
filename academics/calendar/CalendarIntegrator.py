@@ -48,9 +48,11 @@ def update_class_calendars_teacher_calendars(subscriber_key,existing_class_calen
 		updated_class_calendar_events = updated_class_calendar.events
 		employee_key_list = get_employee_key_list(updated_class_calendar_events)
 		for employee_key in employee_key_list :
-			teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,employee_key)
-			updated_teacher_calendar = update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar)
-			updated_calendars_list.append(updated_teacher_calendar)
+			if employee_key is not None :
+				teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,employee_key)
+				if teacher_calendar is not None :
+					updated_teacher_calendar = update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar)
+					updated_calendars_list.append(updated_teacher_calendar)
 
 
 
@@ -117,7 +119,7 @@ def upload_updated_calendars(updated_calendars_list) :
 		cal = cldr.Calendar(None)
 		calendar_dict = cal.make_calendar_dict(calendar)
 		response = calendar_service.add_or_update_calendar(calendar_dict)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Class calendar uploaded --------- '+str(calendar_dict['calendar_key']))
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A calendar uploaded --------- ' +str(calendar_dict['subscriber_type']) + '-' + str(calendar_dict['calendar_key']))
 
 
 def get_updated_teacher_event(events_to_remove_list,teacher_calendar) :
