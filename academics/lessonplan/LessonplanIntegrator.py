@@ -101,12 +101,14 @@ def integrate_cancelled_holiday_lessonplan(calendar_key) :
 					class_key = class_info.class_info_key
 					if division != 'NONE':
 						# timetable = timetable_service.get_timetable_entry(class_key, division)
+						class_subscriber_key = class_key+ '-' +division
+						class_calendar = calendar_service.get_calendar_by_date_and_key(calendar.calendar_date,class_subscriber_key)
 
 						gclogger.info("class keyyyy------> " + str(class_key))
 						gclogger.info("Division---------> " + str(division))
 						current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 						for current_lessonplan in current_lesson_plan_list :
-							updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calendar,day_code)
+							updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,class_calendar,day_code)
 							lp = lessonplan.LessonPlan(None)
 							updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 							response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
