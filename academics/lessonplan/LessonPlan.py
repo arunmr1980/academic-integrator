@@ -480,7 +480,6 @@ class Session :
             except KeyError as ke:
                 logger.debug('[WARN] - KeyError in Session - schedule not present'.format(str (ke)))
 
-
 class Schedule :
     def __init__(self, item):
         if item is None:
