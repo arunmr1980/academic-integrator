@@ -129,6 +129,12 @@
               "description": "session2",
               "name": "Session 3",
               "order_index": 3,
+              "schedule": {
+                "calendar_key": "test-key",
+                "event_code": "EXTRAAA",
+                "start_time": "2020-08-10T11:30:00",
+                "end_time": "2020-08-10T12:10:00"
+              },
               "resources": [
 
               ]
@@ -250,6 +256,12 @@
               "description": "session2",
               "name": "Session 2",
               "order_index": 2,
+              "schedule": {
+                "calendar_key": "test-key",
+                "event_code": "EXTRAAA",
+                "start_time": "2020-08-10T11:30:00",
+                "end_time": "2020-08-10T12:10:00"
+              },
               "resources": [
 
               ]
@@ -368,6 +380,12 @@
               "description": "session2",
               "name": "Session 2",
               "order_index": 2,
+              "schedule": {
+                "calendar_key": "test-key",
+                "event_code": "EXTRAAA",
+                "start_time": "2020-08-10T11:30:00",
+                "end_time": "2020-08-10T12:10:00"
+              },
               "resources": [
 
               ]

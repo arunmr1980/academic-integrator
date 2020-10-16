@@ -89,6 +89,9 @@ class CalendarHolidayCancelLessonPlanIntegratorTest(unittest.TestCase):
 						for lesson_plan in lessonplan_list :
 							updated_lessonplan_list.append(lesson_plan)
 		for updated_lessonplan in updated_lessonplan_list :
+			lp = lessonplan.LessonPlan(None)
+			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+			pp.pprint(updated_lessonplan_dict)
 			self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 
 

@@ -18,6 +18,7 @@ class CalendarHolidayCancelLesssonPlanlIntegratorTest(unittest.TestCase):
 	def test_lessonplan(self) :
 		calendar_key ='test-key'
 		holiday_cancel_calendars = self.get_holiday_cancel_calendars()
+		class_cls_session_calendars = self.get_class_cls_session_calendars()
 		calendar = self.get_holiday_cancelled_calendar(calendar_key,holiday_cancel_calendars)
 		day_code = findDay(calendar.calendar_date).upper()[0:3]
 		subscriber_key = calendar.subscriber_key
@@ -27,20 +28,28 @@ class CalendarHolidayCancelLesssonPlanlIntegratorTest(unittest.TestCase):
 		if calendar.subscriber_type == 'CLASS-DIV' :
 			class_key = subscriber_key[:-2]
 			division = subscriber_key[-1:]
+			class_calendar = self.get_class_calendar_by_subscriber_key(subscriber_key,class_cls_session_calendars)
 			for current_lessonplan in current_lesson_plan_list :
 				if current_lessonplan.class_key == class_key and current_lessonplan.division == division :
-					updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calendar,day_code)
+
+					updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,class_calendar,day_code)
 
 					self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 		else :
 			for current_lessonplan in current_lesson_plan_list :
-				updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calendar,day_code)
+				subscriber_key = current_lessonplan.class_key + '-' + current_lessonplan.division
+				class_calendar = self.get_class_calendar_by_subscriber_key(subscriber_key,class_cls_session_calendars)
+				updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,class_calendar,day_code)
+				lp = lessonplan.LessonPlan(None)
+				updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+				pp.pprint(updated_lessonplan_dict)
 				self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 
 
 	def check_lesson_plans(self,updated_lesson_plan,expected_lesson_plan_list) :
 		for expected_lesson_plan in expected_lesson_plan_list :
 			if expected_lesson_plan.lesson_plan_key == updated_lesson_plan.lesson_plan_key :
+				self.check_root_sessions(updated_lesson_plan.sessions,expected_lesson_plan.sessions)
 				self.assertEqual(updated_lesson_plan.lesson_plan_key,expected_lesson_plan.lesson_plan_key)
 				self.assertEqual(updated_lesson_plan.class_key,expected_lesson_plan.class_key)
 				self.assertEqual(updated_lesson_plan.division,expected_lesson_plan.division)
@@ -58,7 +67,7 @@ class CalendarHolidayCancelLesssonPlanlIntegratorTest(unittest.TestCase):
 			self.check_topic(updated_lesson_plan_topics[index].topics,expected_lesson_plan_topics[index].topics)
 
 	def check_topic(self,updated_lesson_plan_topic,expected_lesson_plan_topic):
-		for index in range(0,len(updated_lesson_plan_topic) - 1 ) :
+		for index in range(0,len(updated_lesson_plan_topic)) :
 			self.assertEqual(updated_lesson_plan_topic[index].code,expected_lesson_plan_topic[index].code)
 			self.assertEqual(updated_lesson_plan_topic[index].description,expected_lesson_plan_topic[index].description)
 			self.assertEqual(updated_lesson_plan_topic[index].name,expected_lesson_plan_topic[index].name)
@@ -67,27 +76,21 @@ class CalendarHolidayCancelLesssonPlanlIntegratorTest(unittest.TestCase):
 			self.check_sessions(updated_lesson_plan_topic[index].sessions,expected_lesson_plan_topic[index].sessions)
 
 	def check_sessions(self,updated_lesson_plan_sessions,expected_lesson_plan_sessions) :
-		for index in range(len(updated_lesson_plan_sessions) - 1) :
+		for index in range(len(updated_lesson_plan_sessions)) :
 			self.assertEqual(updated_lesson_plan_sessions[index].code,expected_lesson_plan_sessions[index].code)
 			self.assertEqual(updated_lesson_plan_sessions[index].completion_datetime,expected_lesson_plan_sessions[index].completion_datetime)
 			self.assertEqual(updated_lesson_plan_sessions[index].completion_status,expected_lesson_plan_sessions[index].completion_status)
 			self.assertEqual(updated_lesson_plan_sessions[index].name,expected_lesson_plan_sessions[index].name)
 			self.assertEqual(updated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
 			self.check_schedule(updated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
+	def check_root_sessions(self,updated_lesson_plan_sessions,expected_lesson_plan_sessions) :
+		for index in range(len(updated_lesson_plan_sessions)) :
+			self.assertEqual(updated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
+			self.check_schedule(updated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
 
 	def check_schedule(self,updated_lesson_plan_shedule,expected_lesson_plan_shedule) :
 		self.assertEqual(updated_lesson_plan_shedule.start_time,expected_lesson_plan_shedule.start_time)
 		self.assertEqual(updated_lesson_plan_shedule.end_time,expected_lesson_plan_shedule.end_time)
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -101,6 +104,10 @@ class CalendarHolidayCancelLesssonPlanlIntegratorTest(unittest.TestCase):
 				return schedule
 
 
+	def get_class_calendar_by_subscriber_key(self,subscriber_key,class_cls_session_calendars) :
+		for class_calendar in class_cls_session_calendars :
+			if class_calendar.subscriber_key == subscriber_key :
+				return class_calendar
 
 
 	def get_time_table(self):
@@ -148,8 +155,15 @@ class CalendarHolidayCancelLesssonPlanlIntegratorTest(unittest.TestCase):
 			holiday_cancelled_calendars_list.append(calendar.Calendar(cal))
 		return holiday_cancelled_calendars_list
 
+	def get_class_cls_session_calendars(self):
+		class_cls_session_calendars_list = []
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/class_cls_session_calendars.json', 'r') as calendars:
+			class_cls_session_calendars = json.load(calendars)
+		for cal in class_cls_session_calendars :
+			class_cls_session_calendars_list.append(calendar.Calendar(cal))
+		return class_cls_session_calendars_list
 
 
 
 if __name__ == '__main__':
-    unittest.main()
+	unittest.main()

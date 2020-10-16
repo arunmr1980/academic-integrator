@@ -3,7 +3,9 @@ from academics.logger import GCLogger as logger
 import academics.calendar.CalendarDBService as calendar_service
 from academics.lessonplan import LessonplanDBService as lessonplan_service
 import academics.timetable.TimeTableDBService as timetable_service
-
+import academics.timetable.KeyGeneration as key
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 def calendars_lesson_plan_integration(subscriber_key) :
 	class_calender_list = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
@@ -30,6 +32,12 @@ def integrate_calendars_to_lesson_plan(generated_class_calendar_list):
 	for generated_class_calendar in generated_class_calendar_list :
 		current_lesson_plan_list = get_all_lesson_plan_list(generated_class_calendar, current_lesson_plan_list)
 		current_lesson_plan_list = integrate_calendar_to_lesson_plan(generated_class_calendar, current_lesson_plan_list)
+		# for l in current_lesson_plan_list :
+		# 	lp = lessonplan.LessonPlan(None)
+		# 	updated_lessonplan_dict = lp.make_lessonplan_dict(l)
+		# 	pp.pprint(updated_lessonplan_dict)
+
+
 	generated_lesson_plan_dict_list = get_generated_lesson_plan_dict_list(current_lesson_plan_list)
 	logger.info('---Generated lesson plan count--- '+str(len(generated_lesson_plan_dict_list)))
 	update_lesson_plan(generated_lesson_plan_dict_list)
@@ -64,7 +72,38 @@ def integrate_calendar_to_lesson_plan(generated_class_calendar,current_lesson_pl
 										session.schedule = schedule
 										schedule_added = True
 										logger.info(' ---schedule added for lessonplan ' + str(current_lesson_plan.lesson_plan_key) + ' ---')
+							else :
+								if schedule_added == False: 
+									add_sessions_on_root(current_lesson_plan,event,generated_class_calendar)
+
 	return current_lesson_plan_list
+
+def add_sessions_on_root(current_lesson_plan,event,generated_class_calendar) :
+	schedule = create_schedule(event,generated_class_calendar)
+	if hasattr(current_lesson_plan,'sessions') :
+		session_order_index = len(current_lesson_plan.sessions) + 1
+		session = create_session(schedule,session_order_index)
+		current_lesson_plan.sessions.append(session)
+
+
+def create_session(schedule,session_order_index) :
+	session = lessonplan.Session(None)
+	session.schedule = schedule
+	session.order_index = session_order_index
+	session.code = key.generate_key(4)
+	return session
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def get_all_lesson_plan_list(current_calendar, current_lesson_plan_list):

@@ -6,6 +6,7 @@ import academics.lessonplan.LessonplanDBService as lessonplan_service
 import academics.school.SchoolDBService as school_service
 import academics.lessonplan.LessonPlan as lessonplan
 import academics.academic.AcademicDBService as academic_service
+import academics.timetable.KeyGeneration as key
 
 
 def integrate_holiday_lessonplan(event_code,calendar_key) :
@@ -150,8 +151,27 @@ def cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calen
 	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,calendar.calendar_date,after_calendar_date_schedules_list)
 	current_lessonplan = add_calendar_schedules_to_lesson_plan(current_lessonplan,events,calendar)
 	current_lessonplan = add_shedule_after_calendar_date(after_calendar_date_schedules_list,current_lessonplan)
-	# print(after_calendar_date_schedules_list,"sessions to add on rooot =============<<<<<>>>>>>>>>>")
+	current_lessonplan = create_remaining_sessions_on_root(after_calendar_date_schedules_list,current_lessonplan)
 	return current_lessonplan
+
+
+def create_remaining_sessions_on_root(after_calendar_date_schedules_list,current_lessonplan) :	
+	for schedule in after_calendar_date_schedules_list :
+		session_order_index = after_calendar_date_schedules_list.index(schedule) + 1
+		session = create_session(schedule,session_order_index)
+		if hasattr(current_lessonplan,'sessions') :
+			current_lessonplan.sessions.append(session)
+	return current_lessonplan
+
+
+
+
+def create_session(schedule,session_order_index) :
+	session = lessonplan.Session(None)
+	session.schedule = schedule
+	session.order_index = session_order_index
+	session.code = key.generate_key(4)
+	return session
 
 def get_class_session_events(events) :
 	event_list = []
@@ -160,19 +180,17 @@ def get_class_session_events(events) :
 			event_list.append(event)
 	return event_list
 
-def add_shedule_after_calendar_date(shedule_list,current_lessonplan) :
+def add_shedule_after_calendar_date(schedule_list,current_lessonplan) :
 	gclogger.info('Adding schedules after calendar date -------------')
-	index = -1
 	for main_topic in current_lessonplan.topics :
 		for topic in main_topic.topics :
 			for session in topic.sessions :
-				if index < len(shedule_list) :
-					if not hasattr(session , 'schedule') :
-						index += 1
-						if index < len(shedule_list) :
-							session.schedule = shedule_list[index]
-							# shedule_list.remove(shedule_list[index])
-							gclogger.info('A schedule is added ' + str(shedule_list[index].start_time) + ' --- ' + str(shedule_list[index].start_time) )
+				if not hasattr(session , 'schedule') :						
+					session.schedule = schedule_list[0]
+					gclogger.info('A schedule is added ' + str(schedule_list[0].start_time) + ' --- ' + str(schedule_list[0].start_time) )
+					schedule_list.remove(schedule_list[0])
+
+
 	return current_lessonplan
 
 def add_schedule_to_lessonplan(current_lessonplan,schedule) :
@@ -316,7 +334,6 @@ def get_lesson_plan_after_remove_all_shedules(current_lessonplan) :
 	return current_lessonplan
 
 def get_updated_lesson_plan(shedule_list,current_lessonplan) :
-
 	index = -1
 	for main_topic in current_lessonplan.topics :
 		for topic in main_topic.topics :

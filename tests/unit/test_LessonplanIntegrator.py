@@ -27,6 +27,11 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		for expected_lesson_plan in expected_lesson_plan_list :
 			lesson_plan_key = expected_lesson_plan.lesson_plan_key
 			generated_lesson_plan = generated_lesson_plans_dict[lesson_plan_key]
+
+			lp = lessonplan.LessonPlan(None)
+			updated_lessonplan_dict = lp.make_lessonplan_dict(generated_lesson_plan)
+			pp.pprint(updated_lessonplan_dict)
+
 			self.assertEqual(generated_lesson_plan.lesson_plan_key,expected_lesson_plan.lesson_plan_key)
 			self.assertEqual(generated_lesson_plan.class_key,expected_lesson_plan.class_key)
 			self.assertEqual(generated_lesson_plan.division,expected_lesson_plan.division)
@@ -36,6 +41,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		gclogger.info('--Unit test of calender-lessonplan integration is passed--')
 
 	def check_topics(self,generated_lesson_plan_topics,expected_lesson_plan_topics):
+		
 		for index in range(0,len(generated_lesson_plan_topics)) :
 			self.assertEqual(generated_lesson_plan_topics[index].code,expected_lesson_plan_topics[index].code)
 			self.assertEqual(generated_lesson_plan_topics[index].name,expected_lesson_plan_topics[index].name)
@@ -43,7 +49,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 			self.check_topic(generated_lesson_plan_topics[index].topics,expected_lesson_plan_topics[index].topics)
 
 	def check_topic(self,generated_lesson_plan_topic,expected_lesson_plan_topic):
-		for index in range(0,len(generated_lesson_plan_topic) - 1 ) :
+		for index in range(0,len(generated_lesson_plan_topic)) :
 			self.assertEqual(generated_lesson_plan_topic[index].code,expected_lesson_plan_topic[index].code)
 			self.assertEqual(generated_lesson_plan_topic[index].description,expected_lesson_plan_topic[index].description)
 			self.assertEqual(generated_lesson_plan_topic[index].name,expected_lesson_plan_topic[index].name)
@@ -52,13 +58,14 @@ class LessonplanIntegratorTest(unittest.TestCase):
 			self.check_sessions(generated_lesson_plan_topic[index].sessions,expected_lesson_plan_topic[index].sessions)
 
 	def check_sessions(self,generated_lesson_plan_sessions,expected_lesson_plan_sessions) :
-		for index in range(len(generated_lesson_plan_sessions) - 1) :
+		for index in range(len(generated_lesson_plan_sessions)) :
 			self.assertEqual(generated_lesson_plan_sessions[index].code,expected_lesson_plan_sessions[index].code)
 			self.assertEqual(generated_lesson_plan_sessions[index].completion_datetime,expected_lesson_plan_sessions[index].completion_datetime)
 			self.assertEqual(generated_lesson_plan_sessions[index].completion_status,expected_lesson_plan_sessions[index].completion_status)
 			self.assertEqual(generated_lesson_plan_sessions[index].name,expected_lesson_plan_sessions[index].name)
 			self.assertEqual(generated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
-			self.check_schedule(generated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
+			if hasattr(generated_lesson_plan_sessions[index],'schedule') :
+				self.check_schedule(generated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
 
 	def check_schedule(self,generated_lesson_plan_shedule,expected_lesson_plan_shedule) :
 		self.assertEqual(generated_lesson_plan_shedule.start_time,expected_lesson_plan_shedule.start_time)
@@ -76,7 +83,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 
 	def get_expected_lesson_plan_list(self) :
 		expected_lesson_plan_list =[]
-		with open('tests/unit/fixtures/expected_lesson_plan.json', 'r') as lesson_plan_list:
+		with open('tests/unit/fixtures/expected_lesson_plan_single_cal.json', 'r') as lesson_plan_list:
 			expected_lessonplan_json_list = json.load(lesson_plan_list)
 			for expected_lesson_plan in expected_lessonplan_json_list :
 				expected_lesson_plan_list.append(lessonplan.LessonPlan(expected_lesson_plan))
@@ -85,7 +92,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 
 	def get_current_lesson_plan_list(self) :
 		current_lesson_plan_list =[]
-		with open('tests/unit/fixtures/current_lesson_plan.json', 'r') as lesson_plan_list:
+		with open('tests/unit/fixtures/current_lesson_plan_single_session.json', 'r') as lesson_plan_list:
 			current_lessonplan_json_list = json.load(lesson_plan_list)
 			for current_lesson_plan in current_lessonplan_json_list :
 				current_lesson_plan_list.append(lessonplan.LessonPlan(current_lesson_plan))

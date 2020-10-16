@@ -1,47 +1,68 @@
 [
   {
     "assignments":[
-
+      
     ],
     "class_key":"8B1B22E72AE",
     "division":"A",
     "lesson_plan_key":"test-lessonplan-1",
+    "sessions":[
+      
+        {
+          "code":"37adc3f7",
+          "comments":[
+            
+          ],
+          "name":"None",
+          "order_index":1,
+          "resources":[
+            
+          ],
+          "schedule":{
+            "calendar_key":"test-key",
+            "end_time":"2020-08-10T12:10:00",
+            "event_code":"EXTRAAA",
+            "start_time":"2020-08-10T11:30:00"
+          }
+        }
+      
+    ],
     "resources":[
-
+      
     ],
     "subject_code":"bio1",
     "topics":[
       {
         "code":"TOP3x0jkt-bio1",
         "comments":[
-
+          
         ],
         "name":"chapter 1",
         "order_index":1,
         "topics":[
           {
             "assignments":[
-
+              
             ],
             "code":"CHAP1-TOP1",
             "description":"edited",
             "name":"topic 1",
             "order_index":1,
             "resources":[
-
+              
             ],
             "sessions":[
               {
                 "code":"SESgy0567",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":false,
                 "name":"Session 1",
                 "order_index":1,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -53,14 +74,14 @@
               {
                 "code":"SESyy555",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":false,
                 "name":"Session 2",
                 "order_index":2,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -72,14 +93,14 @@
               {
                 "code":"SESyy555",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":false,
                 "name":"Session 3",
                 "order_index":3,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -92,20 +113,20 @@
           },
           {
             "assignments":[
-
+              
             ],
             "code":"CHAP1-TOP2",
             "description":"ghgdhhh",
             "name":"topic 2",
             "order_index":2,
             "resources":[
-
+              
             ],
             "sessions":[
               {
                 "code":"SES1y944",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":false,
@@ -113,7 +134,7 @@
                 "name":"Session 1",
                 "order_index":1,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -125,7 +146,7 @@
               {
                 "code":"SESff4278",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":true,
@@ -133,7 +154,7 @@
                 "name":"Session 2",
                 "order_index":2,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -145,7 +166,7 @@
               {
                 "code":"SESff4278",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":true,
@@ -153,7 +174,7 @@
                 "name":"Session 3",
                 "order_index":3,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -170,47 +191,66 @@
   },
   {
     "assignments":[
-
+      
     ],
     "class_key":"8B1B22E72AE",
     "division":"A",
     "lesson_plan_key":"test-lessonplan-2",
+    "sessions":[
+      {
+        "code":"a97ceb94",
+        "comments":[
+          
+        ],
+        "name":"None",
+        "order_index":1,
+        "resources":[
+          
+        ],
+        "schedule":{
+          "calendar_key":"test-key",
+          "end_time":"2020-08-10T12:10:00",
+          "event_code":"EXTRAAA",
+          "start_time":"2020-08-10T11:30:00"
+        }
+      }
+    ],
     "resources":[
-
+      
     ],
     "subject_code":"bio2",
     "topics":[
       {
         "code":"TOP3x0jkt-bio2",
         "comments":[
-
+          
         ],
         "name":"chapter 2",
         "order_index":1,
         "topics":[
           {
             "assignments":[
-
+              
             ],
             "code":"CHAP2-TOP1",
             "description":"edited",
             "name":"topic 1",
             "order_index":1,
             "resources":[
-
+              
             ],
             "sessions":[
               {
                 "code":"SESgy087",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":false,
                 "name":"Session 1",
                 "order_index":1,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -222,14 +262,14 @@
               {
                 "code":"SESyy178",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":false,
                 "name":"Session 2",
                 "order_index":2,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -241,14 +281,14 @@
               {
                 "code":"SESyy178",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":false,
                 "name":"Session 2",
                 "order_index":3,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -261,20 +301,20 @@
           },
           {
             "assignments":[
-
+              
             ],
             "code":"CHAP2-TOP2",
             "description":"ghgdhhh",
             "name":"topic 2",
             "order_index":2,
             "resources":[
-
+              
             ],
             "sessions":[
               {
                 "code":"SES1ycv45",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":false,
@@ -282,7 +322,7 @@
                 "name":"Session 1",
                 "order_index":1,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -294,7 +334,7 @@
               {
                 "code":"SESff456",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":true,
@@ -302,7 +342,7 @@
                 "name":"Session 2",
                 "order_index":2,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -319,47 +359,66 @@
   },
   {
     "assignments":[
-
+      
     ],
     "class_key":"8B1B22E72AY",
     "division":"B",
     "lesson_plan_key":"test-lessonplan-3",
+    "sessions":[
+      {
+        "code":"62c92546",
+        "comments":[
+          
+        ],
+        "name":"None",
+        "order_index":1,
+        "resources":[
+          
+        ],
+        "schedule":{
+          "calendar_key":"test-key",
+          "end_time":"2020-08-10T12:10:00",
+          "event_code":"EXTRAAA",
+          "start_time":"2020-08-10T11:30:00"
+        }
+      }
+    ],
     "resources":[
-
+      
     ],
     "subject_code":"bio2",
     "topics":[
       {
         "code":"TOP3x0jkt-bio2",
         "comments":[
-
+          
         ],
         "name":"chapter 2",
         "order_index":1,
         "topics":[
           {
             "assignments":[
-
+              
             ],
             "code":"CHAP2-TOP1",
             "description":"edited",
             "name":"topic 1",
             "order_index":1,
             "resources":[
-
+              
             ],
             "sessions":[
               {
                 "code":"SESgy087",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":false,
                 "name":"Session 1",
                 "order_index":1,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -371,14 +430,14 @@
               {
                 "code":"SESyy178",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":false,
                 "name":"Session 2",
                 "order_index":1,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -390,14 +449,14 @@
               {
                 "code":"SESyy178",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":false,
                 "name":"Session 2",
                 "order_index":1,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -410,20 +469,20 @@
           },
           {
             "assignments":[
-
+              
             ],
             "code":"CHAP2-TOP2",
             "description":"ghgdhhh",
             "name":"topic 2",
             "order_index":2,
             "resources":[
-
+              
             ],
             "sessions":[
               {
                 "code":"SES1ycv45",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":false,
@@ -431,7 +490,7 @@
                 "name":"Session 1",
                 "order_index":1,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",
@@ -443,7 +502,7 @@
               {
                 "code":"SESff456",
                 "comments":[
-
+                  
                 ],
                 "completion_datetime":"NA",
                 "completion_status":true,
@@ -451,7 +510,7 @@
                 "name":"Session 2",
                 "order_index":2,
                 "resources":[
-
+                  
                 ],
                 "schedule":{
                   "calendar_key":"test-key",

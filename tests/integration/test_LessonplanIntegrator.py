@@ -41,14 +41,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		generate_and_save_calenders(timetable.time_table_key,academic_configuration.academic_year)
 		class_calender_list = calendar_service.get_all_calendars_by_key_and_type('8B1B22E72AE-A','CLASS-DIV')
 		expected_lesson_plan_list = self.get_expected_lesson_plan_list()
-		# generated_class_calendar_dict = integrate_class_timetable(timetable,academic_configuration)
 		integrate_calendars_to_lesson_plan(class_calender_list)
-
-		# generated_lesson_plan_dict_list = self.get_generated_lesson_plan_dict_list(updated_lesson_plan_list)
-		# for generated_lesson_plan_dict in generated_lesson_plan_dict_list :
-		# 	response = lessonplan_service.create_lessonplan(generated_lesson_plan_dict)
-		# 	gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Generated lesson plan uploaded '+str(generated_lesson_plan_dict['lesson_plan_key']))
-
 		generated_lesson_plan_list = lessonplan_service.get_lesson_plan_list('8B1B22E72AE','A')
 		generated_lesson_plans_dict = self.get_generated_lesson_plans_dict(generated_lesson_plan_list)
 		self.check_lesson_plan(expected_lesson_plan_list, generated_lesson_plans_dict)
@@ -61,14 +54,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		gclogger.info('A class calendar uploaded for '+ calendar_obj.calendar_key)
 		expected_lesson_plan_list = self.get_expected_lesson_plan_single_calendar()
 		integrate_calendar(calendar_obj.calendar_key)
-		# generated_lesson_plan_dict_list = self.get_generated_lesson_plan_dict_list(updated_lesson_plan_list)
-		#
-		# for generated_lesson_plan_dict in generated_lesson_plan_dict_list :
-		# 	response = lessonplan_service.create_lessonplan(generated_lesson_plan_dict)
-		# 	gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Generated lesson plan uploaded '+str(generated_lesson_plan_dict['lesson_plan_key']))
-
 		generated_lesson_plan_list = lessonplan_service.get_lesson_plan_list('single-8B1B22E','A')
-
 		generated_lesson_plans_dict = self.get_generated_lesson_plans_dict(generated_lesson_plan_list)
 		self.check_lesson_plan(expected_lesson_plan_list, generated_lesson_plans_dict)
 
@@ -144,8 +130,6 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		for generated_lesson_plan in generated_lesson_plan_list :
 			lessonplan_service.delete_lessonplan(generated_lesson_plan.lesson_plan_key)
 			gclogger.info("---------------Test Lesson Plan deleted  " + generated_lesson_plan.lesson_plan_key + "-----------------")
-
-
 
 
 	def get_generated_lesson_plan_dict_list(self,generated_lesson_plan_list) :

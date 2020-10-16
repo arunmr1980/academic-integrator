@@ -81,7 +81,7 @@ def get_all_calendars_by_school_key_and_date(institution_key, calendar_date):
     return make_calendar_obj(calendars)
 
 
-def get_all_calendars_by_key_and_type(subscriber_key, calendar_date):
+def get_all_calendars_by_key_and_type(subscriber_key, subscriber_type):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(CALENDAR_TBL)
     calendars = []
