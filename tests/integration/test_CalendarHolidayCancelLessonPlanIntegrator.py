@@ -98,14 +98,14 @@ class CalendarHolidayCancelLessonPlanIntegratorTest(unittest.TestCase):
 
 	def check_lesson_plans(self,updated_lesson_plan,expected_lesson_plan_list) :
 		for expected_lesson_plan in expected_lesson_plan_list :
-			if expected_lesson_plan.lesson_plan_key == updated_lesson_plan.lesson_plan_key :
-
+			if expected_lesson_plan.lesson_plan_key == updated_lesson_plan.lesson_plan_key :	
 				self.assertEqual(updated_lesson_plan.lesson_plan_key,expected_lesson_plan.lesson_plan_key)
 				self.assertEqual(updated_lesson_plan.class_key,expected_lesson_plan.class_key)
 				self.assertEqual(updated_lesson_plan.division,expected_lesson_plan.division)
 				self.assertEqual(updated_lesson_plan.subject_code,expected_lesson_plan.subject_code)
 				self.assertEqual(updated_lesson_plan.resources,expected_lesson_plan.resources)
 				self.check_topics(updated_lesson_plan.topics,expected_lesson_plan.topics)
+				self.check_root_sessions(updated_lesson_plan.sessions,expected_lesson_plan.sessions)
 
 		gclogger.info(" <<<-------------------------------- INTEGRATION TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------>>> ")
 
@@ -131,6 +131,11 @@ class CalendarHolidayCancelLessonPlanIntegratorTest(unittest.TestCase):
 			self.assertEqual(updated_lesson_plan_sessions[index].completion_datetime,expected_lesson_plan_sessions[index].completion_datetime)
 			self.assertEqual(updated_lesson_plan_sessions[index].completion_status,expected_lesson_plan_sessions[index].completion_status)
 			self.assertEqual(updated_lesson_plan_sessions[index].name,expected_lesson_plan_sessions[index].name)
+			self.assertEqual(updated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
+			self.check_schedule(updated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
+
+	def check_root_sessions(self,updated_lesson_plan_sessions,expected_lesson_plan_sessions) :
+		for index in range(len(updated_lesson_plan_sessions)) :
 			self.assertEqual(updated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
 			self.check_schedule(updated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
 

@@ -64,6 +64,11 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		for expected_lesson_plan in expected_lesson_plan_list :
 			lesson_plan_key = expected_lesson_plan.lesson_plan_key
 			generated_lesson_plan = generated_lesson_plans_dict[lesson_plan_key]
+
+			# lp = lessonplan.LessonPlan(None)
+			# updated_lessonplan_dict = lp.make_lessonplan_dict(generated_lesson_plan)
+			# pp.pprint(updated_lessonplan_dict)
+			self.check_root_sessions(generated_lesson_plan.sessions,expected_lesson_plan.sessions)
 			self.assertEqual(generated_lesson_plan.lesson_plan_key,expected_lesson_plan.lesson_plan_key)
 			self.assertEqual(generated_lesson_plan.class_key,expected_lesson_plan.class_key)
 			self.assertEqual(generated_lesson_plan.division,expected_lesson_plan.division)
@@ -101,6 +106,10 @@ class LessonplanIntegratorTest(unittest.TestCase):
 			self.assertEqual(generated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
 			self.check_schedule(generated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
 
+	def check_root_sessions(self,updated_lesson_plan_sessions,expected_lesson_plan_sessions) :
+		for index in range(len(updated_lesson_plan_sessions)) :
+			self.assertEqual(updated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
+			self.check_schedule(updated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
 
 	def check_schedule(self,generated_lesson_plan_shedule,expexted_lesson_plan_shedule) :
 		self.assertEqual(generated_lesson_plan_shedule.start_time,expexted_lesson_plan_shedule.start_time)

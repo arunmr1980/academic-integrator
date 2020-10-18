@@ -1,109 +1,163 @@
 [
    {
+      "assignments":[
+         
+      ],
       "class_key":"8B1B22E72AE",
       "division":"A",
       "lesson_plan_key":"test-lessonplan-1",
       "resources":[
-
+         
+      ],
+      "sessions":[
+         {
+            "code":"1ede62f4",
+            "comments":[
+               
+            ],
+            "name":"None",
+            "order_index":1,
+            "resources":[
+               
+            ],
+            "schedule":{
+               "calendar_key":"8b2ac1b5c5d096a732ab4078130998e3",
+               "end_time":"2020-08-05T12:10:00",
+               "event_code":"90b307",
+               "start_time":"2020-08-05T11:30:00"
+            }
+         },
+         {
+            "code":"6c779993",
+            "comments":[
+               
+            ],
+            "name":"None",
+            "order_index":2,
+            "resources":[
+               
+            ],
+            "schedule":{
+               "calendar_key":"fc50b182d7d108b6c76664dc68986200",
+               "end_time":"2020-08-10T10:40:00",
+               "event_code":"537f59",
+               "start_time":"2020-08-10T10:00:00"
+            }
+         }
       ],
       "subject_code":"bio1",
       "topics":[
          {
             "code":"TOP3x0jkt-bio1",
+            "comments":[
+               
+            ],
             "name":"chapter 1",
             "order_index":1,
             "topics":[
                {
                   "assignments":[
-
+                     
                   ],
                   "code":"CHAP1-TOP1",
                   "description":"edited",
                   "name":"topic 1",
                   "order_index":1,
                   "resources":[
-
+                     
                   ],
                   "sessions":[
                      {
                         "code":"SESgy0567",
+                        "comments":[
+                           
+                        ],
                         "completion_datetime":"NA",
                         "completion_status":false,
                         "name":"Session 1",
                         "order_index":1,
-                        "schedule":{
-                           "calendar_key":"test-key",
-                           "event_code":"event-1",
-                           "start_time":"2020-08-03T10:00:00",
-                           "end_time":"2020-08-03T10:40:00"
-                        },
                         "resources":[
-
-                        ]
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"626784665af822edd0877db94808a069",
+                           "end_time":"2020-08-03T10:40:00",
+                           "event_code":"cc5f7e",
+                           "start_time":"2020-08-03T10:00:00"
+                        }
                      },
                      {
                         "code":"SESyy555",
+                        "comments":[
+                           
+                        ],
                         "completion_datetime":"NA",
                         "completion_status":false,
                         "name":"Session 2",
                         "order_index":1,
-                        "schedule":{
-                           "calendar_key":"test-key",
-                           "event_code":"event-1",
-                           "start_time":"2020-08-04T11:30:00",
-                           "end_time":"2020-08-04T12:10:00"
-                        },
                         "resources":[
-
-                        ]
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"cdf8d8dd46ab3b9807f58624da7f545c",
+                           "end_time":"2020-08-04T12:10:00",
+                           "event_code":"f3b741",
+                           "start_time":"2020-08-04T11:30:00"
+                        }
                      }
                   ]
                },
                {
                   "assignments":[
-
+                     
                   ],
                   "code":"CHAP1-TOP2",
                   "description":"ghgdhhh",
                   "name":"topic 2",
                   "order_index":2,
                   "resources":[
-
+                     
                   ],
                   "sessions":[
                      {
                         "code":"SES1y944",
+                        "comments":[
+                           
+                        ],
                         "completion_datetime":"NA",
                         "completion_status":false,
                         "description":"session1",
                         "name":"Session 1",
                         "order_index":1,
-                        "schedule":{
-                           "calendar_key":"test-key",
-                           "event_code":"event-1",
-                           "start_time":"2020-08-05T11:30:00",
-                           "end_time":"2020-08-05T12:10:00"
-                        },
                         "resources":[
-
-                        ]
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"8b2ac1b5c5d096a732ab4078130998e3",
+                           "end_time":"2020-08-05T12:10:00",
+                           "event_code":"90b307",
+                           "start_time":"2020-08-05T11:30:00"
+                        }
                      },
                      {
                         "code":"SESff4278",
+                        "comments":[
+                           
+                        ],
                         "completion_datetime":"NA",
                         "completion_status":true,
                         "description":"session2",
                         "name":"Session 2",
                         "order_index":2,
-                        "schedule":{
-                           "calendar_key":"test-key",
-                           "event_code":"event-1",
-                           "start_time":"2020-08-10T10:00:00",
-                           "end_time":"2020-08-10T10:40:00"
-                        },
                         "resources":[
-
-                        ]
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"fc50b182d7d108b6c76664dc68986200",
+                           "end_time":"2020-08-10T10:40:00",
+                           "event_code":"537f59",
+                           "start_time":"2020-08-10T10:00:00"
+                        }
                      }
                   ]
                }
@@ -112,110 +166,164 @@
       ]
    },
    {
+      "assignments":[
+         
+      ],
       "class_key":"8B1B22E72AE",
       "division":"A",
       "lesson_plan_key":"test-lessonplan-2",
       "resources":[
-
+         
+      ],
+      "sessions":[
+         {
+            "code":"631fa63e",
+            "comments":[
+               
+            ],
+            "name":"None",
+            "order_index":1,
+            "resources":[
+               
+            ],
+            "schedule":{
+               "calendar_key":"8b2ac1b5c5d096a732ab4078130998e3",
+               "end_time":"2020-08-05T11:20:00",
+               "event_code":"cb399a",
+               "start_time":"2020-08-05T10:40:00"
+            }
+         },
+         {
+            "code":"d7641559",
+            "comments":[
+               
+            ],
+            "name":"None",
+            "order_index":2,
+            "resources":[
+               
+            ],
+            "schedule":{
+               "calendar_key":"fc50b182d7d108b6c76664dc68986200",
+               "end_time":"2020-08-10T11:20:00",
+               "event_code":"dc7a9c",
+               "start_time":"2020-08-10T10:40:00"
+            }
+         }
       ],
       "subject_code":"bio2",
       "topics":[
          {
             "code":"TOP3x0jkt-bio2",
+            "comments":[
+               
+            ],
             "name":"chapter 2",
             "order_index":1,
             "topics":[
                {
                   "assignments":[
-
+                     
                   ],
                   "code":"CHAP2-TOP1",
                   "description":"edited",
                   "name":"topic 1",
                   "order_index":1,
                   "resources":[
-
+                     
                   ],
                   "sessions":[
                      {
                         "code":"SESgy087",
+                        "comments":[
+                           
+                        ],
                         "completion_datetime":"NA",
                         "completion_status":false,
                         "name":"Session 1",
                         "order_index":1,
-                        "schedule":{
-                           "calendar_key":"test-key",
-                           "event_code":"event-1",
-                           "start_time":"2020-08-03T10:40:00",
-                           "end_time":"2020-08-03T11:20:00"
-                        },
                         "resources":[
-
-                        ]
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"626784665af822edd0877db94808a069",
+                           "end_time":"2020-08-03T11:20:00",
+                           "event_code":"dbf420",
+                           "start_time":"2020-08-03T10:40:00"
+                        }
                      },
                      {
                         "code":"SESyy178",
+                        "comments":[
+                           
+                        ],
                         "completion_datetime":"NA",
                         "completion_status":false,
                         "name":"Session 2",
                         "order_index":1,
-                        "schedule":{
-                           "calendar_key":"test-key",
-                           "event_code":"event-1",
-                           "start_time":"2020-08-04T10:00:00",
-                           "end_time":"2020-08-04T10:40:00"
-                        },
                         "resources":[
-
-                        ]
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"cdf8d8dd46ab3b9807f58624da7f545c",
+                           "end_time":"2020-08-04T10:40:00",
+                           "event_code":"1d5760",
+                           "start_time":"2020-08-04T10:00:00"
+                        }
                      }
                   ]
                },
                {
                   "assignments":[
-
+                     
                   ],
                   "code":"CHAP2-TOP2",
                   "description":"ghgdhhh",
                   "name":"topic 2",
                   "order_index":2,
                   "resources":[
-
+                     
                   ],
                   "sessions":[
                      {
                         "code":"SES1ycv45",
+                        "comments":[
+                           
+                        ],
                         "completion_datetime":"NA",
                         "completion_status":false,
                         "description":"session1",
                         "name":"Session 1",
                         "order_index":1,
-                        "schedule":{
-                           "calendar_key":"test-key",
-                           "event_code":"event-1",
-                           "start_time":"2020-08-05T10:40:00",
-                           "end_time":"2020-08-05T11:20:00"
-                        },
                         "resources":[
-
-                        ]
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"8b2ac1b5c5d096a732ab4078130998e3",
+                           "end_time":"2020-08-05T11:20:00",
+                           "event_code":"cb399a",
+                           "start_time":"2020-08-05T10:40:00"
+                        }
                      },
                      {
                         "code":"SESff456",
+                        "comments":[
+                           
+                        ],
                         "completion_datetime":"NA",
                         "completion_status":true,
                         "description":"session2",
                         "name":"Session 2",
                         "order_index":2,
-                        "schedule":{
-                           "calendar_key":"test-key",
-                           "event_code":"event-1",
-                           "start_time":"2020-08-10T10:40:00",
-                           "end_time":"2020-08-10T11:20:00"
-                        },
                         "resources":[
-
-                        ]
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"fc50b182d7d108b6c76664dc68986200",
+                           "end_time":"2020-08-10T11:20:00",
+                           "event_code":"dc7a9c",
+                           "start_time":"2020-08-10T10:40:00"
+                        }
                      }
                   ]
                }
@@ -224,110 +332,164 @@
       ]
    },
    {
+      "assignments":[
+         
+      ],
       "class_key":"8B1B22E72AE",
       "division":"A",
       "lesson_plan_key":"test-lessonplan-3",
       "resources":[
-
+         
+      ],
+      "sessions":[
+         {
+            "code":"9577b5ff",
+            "comments":[
+               
+            ],
+            "name":"None",
+            "order_index":1,
+            "resources":[
+               
+            ],
+            "schedule":{
+               "calendar_key":"8b2ac1b5c5d096a732ab4078130998e3",
+               "end_time":"2020-08-05T10:40:00",
+               "event_code":"e40736",
+               "start_time":"2020-08-05T10:00:00"
+            }
+         },
+         {
+            "code":"32733341",
+            "comments":[
+               
+            ],
+            "name":"None",
+            "order_index":2,
+            "resources":[
+               
+            ],
+            "schedule":{
+               "calendar_key":"fc50b182d7d108b6c76664dc68986200",
+               "end_time":"2020-08-10T12:10:00",
+               "event_code":"02548b",
+               "start_time":"2020-08-10T11:30:00"
+            }
+         }
       ],
       "subject_code":"bio3",
       "topics":[
          {
             "code":"TOP3x0jkt-bio3",
+            "comments":[
+               
+            ],
             "name":"chapter 1",
             "order_index":1,
             "topics":[
                {
                   "assignments":[
-
+                     
                   ],
                   "code":"CHAP3-TOP1",
                   "description":"edited",
                   "name":"topic 1",
                   "order_index":1,
                   "resources":[
-
+                     
                   ],
                   "sessions":[
                      {
                         "code":"SESgy022",
+                        "comments":[
+                           
+                        ],
                         "completion_datetime":"NA",
                         "completion_status":false,
                         "name":"Session 1",
                         "order_index":1,
-                        "schedule":{
-                           "calendar_key":"test-key",
-                           "event_code":"event-1",
-                           "start_time":"2020-08-03T11:30:00",
-                           "end_time":"2020-08-03T12:10:00"
-                        },
                         "resources":[
-
-                        ]
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"626784665af822edd0877db94808a069",
+                           "end_time":"2020-08-03T12:10:00",
+                           "event_code":"816800",
+                           "start_time":"2020-08-03T11:30:00"
+                        }
                      },
                      {
                         "code":"SESyy22",
+                        "comments":[
+                           
+                        ],
                         "completion_datetime":"NA",
                         "completion_status":false,
                         "name":"Session 2",
                         "order_index":1,
-                        "schedule":{
-                           "calendar_key":"test-key",
-                           "event_code":"event-1",
-                           "start_time":"2020-08-04T10:40:00",
-                           "end_time":"2020-08-04T11:20:00"
-                        },
                         "resources":[
-
-                        ]
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"cdf8d8dd46ab3b9807f58624da7f545c",
+                           "end_time":"2020-08-04T11:20:00",
+                           "event_code":"0266cd",
+                           "start_time":"2020-08-04T10:40:00"
+                        }
                      }
                   ]
                },
                {
                   "assignments":[
-
+                     
                   ],
                   "code":"CHAP3-TOP2",
                   "description":"ghgdhhh",
                   "name":"topic 2",
                   "order_index":2,
                   "resources":[
-
+                     
                   ],
                   "sessions":[
                      {
                         "code":"SES1yc33",
+                        "comments":[
+                           
+                        ],
                         "completion_datetime":"NA",
                         "completion_status":false,
                         "description":"session1",
                         "name":"Session 1",
                         "order_index":1,
-                        "schedule":{
-                           "calendar_key":"test-key",
-                           "event_code":"event-1",
-                           "start_time":"2020-08-05T10:00:00",
-                           "end_time":"2020-08-05T10:40:00"
-                        },
                         "resources":[
-
-                        ]
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"8b2ac1b5c5d096a732ab4078130998e3",
+                           "end_time":"2020-08-05T10:40:00",
+                           "event_code":"e40736",
+                           "start_time":"2020-08-05T10:00:00"
+                        }
                      },
                      {
                         "code":"SESff33",
+                        "comments":[
+                           
+                        ],
                         "completion_datetime":"NA",
                         "completion_status":true,
                         "description":"session2",
                         "name":"Session 2",
                         "order_index":2,
-                        "schedule":{
-                           "calendar_key":"test-key",
-                           "event_code":"event-1",
-                           "start_time":"2020-08-10T11:30:00",
-                           "end_time":"2020-08-10T12:10:00"
-                        },
                         "resources":[
-
-                        ]
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"fc50b182d7d108b6c76664dc68986200",
+                           "end_time":"2020-08-10T12:10:00",
+                           "event_code":"02548b",
+                           "start_time":"2020-08-10T11:30:00"
+                        }
                      }
                   ]
                }

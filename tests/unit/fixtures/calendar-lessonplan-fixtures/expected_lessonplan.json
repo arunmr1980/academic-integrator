@@ -21,7 +21,7 @@
           "schedule":{
             "calendar_key":"test-key",
             "end_time":"2020-08-10T12:10:00",
-            "event_code":"EXTRAAA",
+            "event_code":"TO-BE-PLAN",
             "start_time":"2020-08-10T11:30:00"
           }
         }
@@ -210,7 +210,7 @@
         "schedule":{
           "calendar_key":"test-key",
           "end_time":"2020-08-10T12:10:00",
-          "event_code":"EXTRAAA",
+          "event_code":"TO-BE-PLAN",
           "start_time":"2020-08-10T11:30:00"
         }
       }
@@ -378,7 +378,7 @@
         "schedule":{
           "calendar_key":"test-key",
           "end_time":"2020-08-10T12:10:00",
-          "event_code":"EXTRAAA",
+          "event_code":"TO-BE-PLAN",
           "start_time":"2020-08-10T11:30:00"
         }
       }
