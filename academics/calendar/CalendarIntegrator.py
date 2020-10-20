@@ -35,7 +35,11 @@ def remove_event_integrate_calendars(calendar_key) :
 	upload_updated_calendars(updated_calendars_list)
 	integrate_cancelled_holiday_lessonplan(calendar_key)
 
-
+def integrate_update_periods_class_calendars(period_code,time_table_key) :
+	updated_calendars_list =[]
+	updated_timetable = timetable_service.get_time_table(time_table_key)
+	
+	
 
 def update_class_calendars_teacher_calendars(subscriber_key,existing_class_calendar,calendar,academic_configuration,updated_calendars_list,day_code,calendar_date) :
 	class_key = subscriber_key[:-2]

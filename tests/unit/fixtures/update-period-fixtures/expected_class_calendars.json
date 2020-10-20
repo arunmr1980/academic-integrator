@@ -37,7 +37,7 @@
 				"to_time":"2020-08-04T11:20:00"
 			},
 			{
-				"event_code":"c0cd4e",
+				"event_code":"event-2",
 				"event_type":"CLASS_SESSION",
 				"from_time":"2020-08-04T11:30:00",
 				"params":[
