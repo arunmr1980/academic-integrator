@@ -65,7 +65,7 @@
        {
          "event_code": "event-1",
          "event_type": "CLASS_SESSION",
-         "from_time": "2020-08-03T11:30:00",
+         "from_time": "2020-08-03T12:40:00",
          "params": [{
              "key": "period_code",
              "value": "MON-4"
@@ -79,11 +79,11 @@
              "value": "employee-1"
            }
          ],
-         "to_time": "2020-08-03T12:10:00"
+         "to_time": "2020-08-03T01:30:00"
        },{
          "event_code": "event-1",
          "event_type": "CLASS_SESSION",
-         "from_time": "2020-08-03T11:30:00",
+         "from_time": "2020-08-03T01:30:00",
          "params": [{
              "key": "period_code",
              "value": "MON-5"
@@ -97,11 +97,11 @@
              "value": "employee-1"
            }
          ],
-         "to_time": "2020-08-03T12:10:00"
+         "to_time": "2020-08-03T02:10:00"
        },{
          "event_code": "event-1",
          "event_type": "CLASS_SESSION",
-         "from_time": "2020-08-03T11:30:00",
+         "from_time": "2020-08-03T02:10:00",
          "params": [{
              "key": "period_code",
              "value": "MON-6"
@@ -115,12 +115,12 @@
              "value": "employee-1"
            }
          ],
-         "to_time": "2020-08-03T12:10:00"
+         "to_time": "2020-08-03T02:40:00"
        },
        {
          "event_code": "event-1",
          "event_type": "CLASS_SESSION",
-         "from_time": "2020-08-03T11:30:00",
+         "from_time": "2020-08-03T03:30:00",
          "params": [{
              "key": "period_code",
              "value": "MON-7"
@@ -134,7 +134,7 @@
              "value": "employee-1"
            }
          ],
-         "to_time": "2020-08-03T12:10:00"
+         "to_time": "2020-08-03T04:10:00"
        }
      ]
    }

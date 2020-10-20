@@ -19,7 +19,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 	def test_lessonplan(self) :
 		expected_lesson_plan_list = self.get_expected_lesson_plan_list()
 		current_lesson_plan_list = self.get_current_lesson_plan_list()
-		class_calendar_dict= self.get_calendar()
+		class_calendar_dict= self.get_current_class_calendar()
 		class_calendar_dict_obj = calendar.Calendar(class_calendar_dict)
 		generated_lesson_plan_list = integrate_calendar_to_lesson_plan(class_calendar_dict_obj,current_lesson_plan_list)
 
@@ -117,8 +117,8 @@ class LessonplanIntegratorTest(unittest.TestCase):
 			class_calendar_obj_list.append(calendar.Calendar(class_cal))
 		return class_calendar_obj_list
 
-	def get_calendar(self) :
-	    with open('tests/unit/fixtures/class_calendar.json', 'r') as calendar:
+	def get_current_class_calendar(self) :
+	    with open('tests/unit/fixtures/current_class_calendar.json', 'r') as calendar:
 		    class_calendar_dict = json.load(calendar)
 	    return class_calendar_dict
 

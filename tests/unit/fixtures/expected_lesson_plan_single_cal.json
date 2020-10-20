@@ -11,7 +11,7 @@
       ],
       "sessions":[
          {
-            "code":"620192f7",
+            "code":"ed003e56",
             "comments":[
                
             ],
@@ -22,13 +22,13 @@
             ],
             "schedule":{
                "calendar_key":"test-key",
-               "end_time":"2020-08-03T12:10:00",
+               "end_time":"2020-08-03T01:30:00",
                "event_code":"event-1",
-               "start_time":"2020-08-03T11:30:00"
+               "start_time":"2020-08-03T12:40:00"
             }
          },
          {
-            "code":"ab019d39",
+            "code":"0e0374a8",
             "comments":[
                
             ],
@@ -39,9 +39,9 @@
             ],
             "schedule":{
                "calendar_key":"test-key",
-               "end_time":"2020-08-03T12:10:00",
+               "end_time":"2020-08-03T04:10:00",
                "event_code":"event-1",
-               "start_time":"2020-08-03T11:30:00"
+               "start_time":"2020-08-03T03:30:00"
             }
          }
       ],
@@ -104,7 +104,7 @@
       ],
       "sessions":[
          {
-            "code":"bce0c104",
+            "code":"9b030c4a",
             "comments":[
                
             ],
@@ -115,9 +115,9 @@
             ],
             "schedule":{
                "calendar_key":"test-key",
-               "end_time":"2020-08-03T12:10:00",
+               "end_time":"2020-08-03T02:10:00",
                "event_code":"event-1",
-               "start_time":"2020-08-03T11:30:00"
+               "start_time":"2020-08-03T01:30:00"
             }
          }
       ],
@@ -180,7 +180,7 @@
       ],
       "sessions":[
          {
-            "code":"dbd45d64",
+            "code":"8492b33b",
             "comments":[
                
             ],
@@ -191,9 +191,9 @@
             ],
             "schedule":{
                "calendar_key":"test-key",
-               "end_time":"2020-08-03T12:10:00",
+               "end_time":"2020-08-03T02:40:00",
                "event_code":"event-1",
-               "start_time":"2020-08-03T11:30:00"
+               "start_time":"2020-08-03T02:10:00"
             }
          }
       ],

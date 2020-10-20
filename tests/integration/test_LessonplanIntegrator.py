@@ -48,7 +48,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 
 
 	def test_lessonplan_with_calendar(self) :
-		class_calendar_json_dict = self.get_calendar()
+		class_calendar_json_dict = self.get_current_class_calendar()
 		calendar_service.add_or_update_calendar(class_calendar_json_dict)
 		calendar_obj = calendar.Calendar(class_calendar_json_dict)
 		gclogger.info('A class calendar uploaded for '+ calendar_obj.calendar_key)
@@ -65,9 +65,10 @@ class LessonplanIntegratorTest(unittest.TestCase):
 			lesson_plan_key = expected_lesson_plan.lesson_plan_key
 			generated_lesson_plan = generated_lesson_plans_dict[lesson_plan_key]
 
-			# lp = lessonplan.LessonPlan(None)
-			# updated_lessonplan_dict = lp.make_lessonplan_dict(generated_lesson_plan)
-			# pp.pprint(updated_lessonplan_dict)
+			lp = lessonplan.LessonPlan(None)
+			updated_lessonplan_dict = lp.make_lessonplan_dict(generated_lesson_plan)
+			pp.pprint(updated_lessonplan_dict)
+
 			self.check_root_sessions(generated_lesson_plan.sessions,expected_lesson_plan.sessions)
 			self.assertEqual(generated_lesson_plan.lesson_plan_key,expected_lesson_plan.lesson_plan_key)
 			self.assertEqual(generated_lesson_plan.class_key,expected_lesson_plan.class_key)
@@ -193,8 +194,8 @@ class LessonplanIntegratorTest(unittest.TestCase):
 			class_calendar_dict_list = json.load(calendar_list)
 		return class_calendar_dict_list
 
-	def get_calendar(self) :
-	    with open('tests/unit/fixtures/class_calendar.json', 'r') as calendar:
+	def get_current_class_calendar(self) :
+	    with open('tests/unit/fixtures/current_class_calendar.json', 'r') as calendar:
 		    class_calendar_dict = json.load(calendar)
 	    return class_calendar_dict
 

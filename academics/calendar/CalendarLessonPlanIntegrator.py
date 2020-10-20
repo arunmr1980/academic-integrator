@@ -32,11 +32,6 @@ def integrate_calendars_to_lesson_plan(generated_class_calendar_list):
 	for generated_class_calendar in generated_class_calendar_list :
 		current_lesson_plan_list = get_all_lesson_plan_list(generated_class_calendar, current_lesson_plan_list)
 		current_lesson_plan_list = integrate_calendar_to_lesson_plan(generated_class_calendar, current_lesson_plan_list)
-		# for l in current_lesson_plan_list :
-		# 	lp = lessonplan.LessonPlan(None)
-		# 	updated_lessonplan_dict = lp.make_lessonplan_dict(l)
-		# 	pp.pprint(updated_lessonplan_dict)
-
 
 	generated_lesson_plan_dict_list = get_generated_lesson_plan_dict_list(current_lesson_plan_list)
 	logger.info('---Generated lesson plan count--- '+str(len(generated_lesson_plan_dict_list)))
@@ -56,8 +51,15 @@ def get_generated_lesson_plan_dict_list(generated_lesson_plan_list) :
 	return generated_lesson_plan_dict_list
 
 def integrate_calendar_to_lesson_plan(generated_class_calendar,current_lesson_plan_list):
+	print(generated_class_calendar.calendar_key,'CALENDAR KEY---------->>>>')
+
 	if hasattr(generated_class_calendar ,'events') :
 		for event in generated_class_calendar.events :
+			print(event.from_time,'<---------------------  FROM TIMEEEE')
+			print(event.to_time,'<---------------------  TO TIMEEEE')
+			print(event.params[1].value,"<<-----------------SUBJECT")
+			print(event.params[0].value,"<<---------------PERIOD CODE")
+			print('-------------------------------------')
 			schedule_added = False
 			subject_code = get_subject_code(event)
 			current_lesson_plan = get_lesson_plan(subject_code,current_lesson_plan_list)
@@ -72,18 +74,21 @@ def integrate_calendar_to_lesson_plan(generated_class_calendar,current_lesson_pl
 										session.schedule = schedule
 										schedule_added = True
 										logger.info(' ---schedule added for lessonplan ' + str(current_lesson_plan.lesson_plan_key) + ' ---')
-							else :
-								if schedule_added == False: 
-									add_sessions_on_root(current_lesson_plan,event,generated_class_calendar)
+				else :
+					if schedule_added == False : 
+						add_sessions_on_root(current_lesson_plan,event,generated_class_calendar,schedule_added)
 
 	return current_lesson_plan_list
 
-def add_sessions_on_root(current_lesson_plan,event,generated_class_calendar) :
+def add_sessions_on_root(current_lesson_plan,event,generated_class_calendar,schedule_added) :
 	schedule = create_schedule(event,generated_class_calendar)
 	if hasattr(current_lesson_plan,'sessions') :
 		session_order_index = len(current_lesson_plan.sessions) + 1
 		session = create_session(schedule,session_order_index)
-		current_lesson_plan.sessions.append(session)
+		if schedule not in current_lesson_plan.sessions :
+			current_lesson_plan.sessions.append(session)
+			schedule_added = True
+
 
 
 def create_session(schedule,session_order_index) :
