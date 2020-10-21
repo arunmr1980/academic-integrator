@@ -28,7 +28,7 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 			# calendar_dict = cal.make_calendar_dict(updated_class_calendar)
 			# pp.pprint(calendar_dict)
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars)
-			print("-----[UnitTest] Classcalendar test passed -----------------")
+			
 
 
 
@@ -64,11 +64,11 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 				# calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
 				# pp.pprint(calendar_dict)
 
-				self.assertEqual(expected_teacher_calendar.institution_key,teacher_calendar.institution_key )
-				self.assertEqual(expected_teacher_calendar.calendar_date,teacher_calendar.calendar_date )
-				self.assertEqual(expected_teacher_calendar.subscriber_key,teacher_calendar.subscriber_key )
-				self.assertEqual(expected_teacher_calendar.subscriber_type,teacher_calendar.subscriber_type )
-		print("-----[UnitTest] Teacher calendar test passed -----------------")
+				self.assertEqual(expected_teacher_calendar.institution_key,updated_teacher_calendar.institution_key )
+				self.assertEqual(expected_teacher_calendar.calendar_date,updated_teacher_calendar.calendar_date )
+				self.assertEqual(expected_teacher_calendar.subscriber_key,updated_teacher_calendar.subscriber_key )
+				self.assertEqual(expected_teacher_calendar.subscriber_type,updated_teacher_calendar.subscriber_type )
+				gclogger.info("-----[UnitTest] Teacher calendar test passed ----------------- "+ str(updated_teacher_calendar.calendar_key)+" ------------------------------ ")
 
 	def test_lessonplans(self) :
 		updated_lessonplan_list = []
@@ -137,7 +137,7 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 						for session in topic.sessions :
 							if hasattr(session,'schedule') :
 								if(self.is_remove_schedules(current_lessonplan,session.schedule,current_class_calendars)) == True :
-									print("----- A schedule removed ---" + session.schedule.start_time + '---' + session.schedule.end_time +'------')
+									gclogger.info("----- A schedule removed ---" + session.schedule.start_time + '---' + session.schedule.end_time +'------')
 									del session.schedule
 
 		return current_lessonplan
@@ -207,7 +207,7 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 							if not hasattr(session , 'schedule') :
 								session.schedule = schedule
 								schedule_added = True
-								print(' ------------- schedule added for lessonplan ' + str(current_lessonplan.lesson_plan_key) + ' -------------')
+								gclogger.info(' ------------- schedule added for lessonplan ' + str(current_lessonplan.lesson_plan_key) + ' -------------')
 
 		return current_lessonplan						
 
@@ -409,7 +409,7 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 				self.assertEqual(updated_lesson_plan.resources,expected_lesson_plan.resources)
 				self.check_topics(updated_lesson_plan.topics,expected_lesson_plan.topics)
 
-		print(" <<<-------------------------------- UNIT TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------>>> ")
+		gclogger.info(" <<<-------------------------------- UNIT TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------ ")
 
 	def check_topics(self,updated_lesson_plan_topics,expected_lesson_plan_topics):
 		for index in range(0,len(updated_lesson_plan_topics)) :
@@ -454,6 +454,7 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 				self.assertEqual(expected_class_calendar.subscriber_key,updated_class_calendar.subscriber_key )
 				self.assertEqual(expected_class_calendar.subscriber_type,updated_class_calendar.subscriber_type )
 				self.check_events(expected_class_calendar.events,updated_class_calendar.events)
+				gclogger.info("-----[UnitTest] class calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
 
 	def check_events(self,expected_class_calendar_events,generated_class_calendar_events) :
 		for index in range(0,len(expected_class_calendar_events)) :

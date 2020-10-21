@@ -4,9 +4,262 @@ import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.lessonplan.LessonplanDBService as lessonplan_service
 import academics.lessonplan.LessonplanDBService as lessonplan_service
 import academics.school.SchoolDBService as school_service
-import academics.lessonplan.LessonPlan as lessonplan
+import academics.lessonplan.LessonPlan as lpnr
 import academics.academic.AcademicDBService as academic_service
 import academics.timetable.KeyGeneration as key
+import copy 
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
+
+
+def integrate_update_periods_lessonplans(period_code,time_table_key) :
+	updated_lessonplan_list = []
+	updated_class_calendar_subject_key_list = []
+	updated_timetable = timetable_service.get_time_table(time_table_key)
+	class_key = updated_timetable.class_key
+	division = updated_timetable.division
+	subscriber_key = class_key + '-' + division
+	current_class_calendars = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
+	current_lessonplans = lessonplan_service.get_lesson_plan_list(class_key,division)
+	current_class_cals = copy.deepcopy(current_class_calendars)
+	current_class_calendars_with_day_code = get_current_class_calendars_with_day_code(period_code[:3],current_class_calendars)
+	updated_period = get_updated_period_from_timetable(period_code,updated_timetable)
+	for current_class_calendar in current_class_calendars_with_day_code :
+		updated_class_calendar = update_current_class_calendar_with_day_code(period_code,updated_timetable,current_class_calendar,updated_period)
+		updated_class_calendar_events = Get_class_session_events(updated_class_calendar)
+		sub_key_list = get_subject_key_list(updated_class_calendar_events)
+		updated_class_calendar_subject_key_list.extend(sub_key_list)
+		for subject_key in updated_class_calendar_subject_key_list :
+			current_lessonplan = get_current_lesson_plan_with_subject_key(current_lessonplans,subject_key) 
+			updated_lessonplan = update_lessonplan(current_lessonplan,updated_class_calendar_events,updated_class_calendar)
+			if updated_lessonplan is not None :
+				updated_lessonplan_list.append(updated_lessonplan)
+				# lp = lpnr.LessonPlan(None)
+				# updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+				# pp.pprint(updated_lessonplan_dict)
+	current_class_calendars_event_list = get_current_class_calendars_event_list(current_class_cals)
+	current_class_calendars_subject_key_list = get_subject_key_from_current_class_calendars(current_class_calendars_event_list)
+	remaining_subject_key_list = list_difference(updated_class_calendar_subject_key_list,current_class_calendars_subject_key_list)
+	for subject_key in remaining_subject_key_list :
+		current_lessonplan = get_current_lesson_plan_with_subject_key(current_lessonplans,subject_key) 
+		updated_lessonplan = Update_lessonplan(current_lessonplan,current_class_calendars)
+		if updated_lessonplan is not None :
+			updated_lessonplan_list.append(updated_lessonplan)
+		# lp = lpnr.LessonPlan(None)
+		# updated_lessonplan_dict = lp.make_lessonplan_dict(current_lessonplan)
+		# pp.pprint(updated_lessonplan_dict)
+
+	for updated_lessonplan in updated_lessonplan_list :
+		lp = lpnr.LessonPlan(None)
+		updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+		response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Current lesson plan uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
+
+
+def is_subject_code_exist_in_event(params,subject_code) :
+	for param in params :
+		if param.key == 'subject_key' and param.value == subject_code:
+			return True
+	else :
+		return False
+
+
+def get_event_from_calendar(calendar,event_code) :
+	for event in calendar.events :
+		if event.event_code == event_code :
+			return event
+
+def get_updated_class_calendar(current_class_calendars,calendar_key) :
+	for current_class_calendar in current_class_calendars :
+		if current_class_calendar.calendar_key == calendar_key :
+			return current_class_calendar
+
+
+
+def is_remove_schedules(current_lessonplan,schedule,current_class_calendars) :
+	is_remove = False
+	calendar_key = schedule.calendar_key
+	event_code = schedule.event_code
+	subject_code = current_lessonplan.subject_code
+	updated_class_calendar = get_updated_class_calendar(current_class_calendars,calendar_key)
+	event = get_event_from_calendar(updated_class_calendar,event_code)
+	if (is_subject_code_exist_in_event(event.params,subject_code)) == False :
+		is_remove = True
+	return is_remove
+
+
+def get_subject_key(params) :
+	for param in params :
+		if param.key == 'subject_key' :
+			return param.value
+
+def get_subject_key_list(updated_class_calendars_events) :
+		subject_key_list =[]
+		for event in updated_class_calendars_events :
+			if event.event_type =='CLASS_SESSION':
+				subject_key = get_subject_key(event.params)
+				if subject_key is not None and subject_key not in subject_key_list :
+					subject_key_list.append(subject_key)
+		return subject_key_list
+
+def Get_class_session_events(updated_class_calendar) :
+	class_session_events = []
+	if hasattr(updated_class_calendar,'events') :
+		for event in updated_class_calendar.events :
+			if event.event_type == 'CLASS_SESSION' :
+				class_session_events.append(event)
+	return class_session_events
+
+def update_current_class_calendar_with_day_code(period_code,updated_timetable,current_class_calendar,updated_period) :
+		current_class_calendar = update_current_class_calendar(updated_period,current_class_calendar,period_code)
+		return current_class_calendar
+
+def update_current_class_calendar(updated_period,current_class_calendar,period_code) :
+	if hasattr(current_class_calendar,'events') :
+		for event in current_class_calendar.events :
+			if is_need_update_parms(event,period_code) == True :
+				updated_params = update_params(event.params,current_class_calendar,updated_period)
+				del event.params
+				event.params = updated_params
+	return current_class_calendar
+
+
+def is_need_update_parms(event,period_code) :
+		for param in event.params :
+			if(param.key == 'period_code') and param.value == period_code :
+				return True		
+
+def update_params(params,current_class_calendar,updated_period) :
+	period_code = updated_period.period_code
+	subject_key = updated_period.subject_key
+	employee_key = updated_period.employee_key
+	params = []
+	period_info = calendar.Param(None)
+	period_info.key = 'period_code'
+	period_info.value = period_code
+	params.append(period_info)
+
+	subject_info = calendar.Param(None)
+	subject_info.key = 'subject_key'
+	subject_info.value = subject_key
+	params.append(subject_info)
+
+	employee_info = calendar.Param(None)
+	employee_info.key = 'teacher_emp_key'
+	employee_info.value = employee_key
+	params.append(employee_info)
+	return params
+
+
+def get_updated_period_from_timetable(period_code,updated_timetable) :
+	if hasattr(updated_timetable, 'timetable') and updated_timetable.timetable is not None :
+		if hasattr(updated_timetable.timetable,'day_tables') and len(updated_timetable.timetable.day_tables) > 0 :
+			for day in updated_timetable.timetable.day_tables :
+				if hasattr(day,'periods') and len(day.periods) > 0 :
+					for period in day.periods :
+						if period.period_code == period_code :
+							return period
+				else :
+					gclogger.warn('Periods not existing')
+
+		else:
+			gclogger.warn('Days_table not existing')
+
+	else:
+		gclogger.warn('Time table not existing')
+
+def get_day_code_from_calendar(current_class_calendar,period_code) :
+	for event in current_class_calendar.events :
+		if event.params[0].key == 'period_code' and event.params[0].value[:3] == period_code :
+			return True
+
+def get_current_class_calendars_with_day_code(day_code,current_current_class_calendars) :
+	current_class_calendars_with_day_code = []
+	for current_class_calendar in current_current_class_calendars :
+		if (get_day_code_from_calendar(current_class_calendar,day_code) ) == True :
+			current_class_calendars_with_day_code.append(current_class_calendar)
+	return current_class_calendars_with_day_code
+
+def list_difference(list1,list2):
+	return (list(list(set(list1) - set(list2)) + list(set(list2) - set(list1))))
+
+def get_subject_key_from_current_class_calendars(current_class_calendar_event_list) :	
+	subject_key_list = get_subject_key_list(current_class_calendar_event_list)
+	return subject_key_list
+
+def get_current_lesson_plan_with_subject_key(current_lessonplans,subject_key) :
+	for current_lessonplan in current_lessonplans :
+		if current_lessonplan.subject_code == subject_key :
+			return current_lessonplan
+
+
+def Update_lessonplan(current_lessonplan,current_class_calendars) :
+	if  hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :	
+			for main_topic in current_lessonplan.topics :
+				for topic in main_topic.topics :
+					for session in topic.sessions :
+						if hasattr(session,'schedule') :
+							if(is_remove_schedules(current_lessonplan,session.schedule,current_class_calendars)) == True :
+								gclogger.info("----- A schedule removed ---" + session.schedule.start_time + '---' + session.schedule.end_time +'------')
+								del session.schedule
+
+	return current_lessonplan
+
+
+def update_lessonplan(current_lessonplan,updated_class_calendar_events,updated_class_calendar) :
+	if  hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :	
+			for main_topic in current_lessonplan.topics :
+				for topic in main_topic.topics :
+					for session in topic.sessions :
+						if hasattr(session , 'schedule') :
+							current_lessonplan = add_schedules(updated_class_calendar_events,current_lessonplan,updated_class_calendar)
+	return current_lessonplan
+
+
+
+def add_schedules(updated_class_calendar_events,current_lessonplan,updated_class_calendar) :
+	for event in updated_class_calendar_events :
+		subject_key = get_subject_key(event.params)
+		if subject_key == current_lessonplan.subject_code :
+			schedule = create_schedule(event,updated_class_calendar)
+			current_lessonplan = add_schedule_to_lessonplan(current_lessonplan,schedule)
+	return current_lessonplan
+
+
+def create_schedule(event,calendar) :
+	schedule = lpnr.Schedule(None)
+	schedule.calendar_key = calendar.calendar_key
+	schedule.event_code = event.event_code
+	schedule.start_time = event.from_time
+	schedule.end_time = event.to_time
+	return schedule
+
+def add_schedule_to_lessonplan(current_lessonplan,schedule) :
+	schedule_added = False
+	for main_topic in current_lessonplan.topics :
+		for topic in main_topic.topics :
+			if schedule_added == False :
+				for session in topic.sessions :
+					if schedule_added == False :
+						if not hasattr(session , 'schedule') :
+							session.schedule = schedule
+							schedule_added = True
+							gclogger.info(' ------------- schedule added for lessonplan ' + str(current_lessonplan.lesson_plan_key) + ' -------------')
+	return current_lessonplan
+
+
+def get_current_class_calendars_event_list(current_class_cals) :
+	current_class_calendars_event_list = [] 
+	for current_class_cal in current_class_cals :
+		if hasattr(current_class_cal,'events') :
+			for event in current_class_cal.events :
+				if len(event.params)> 1:
+					if event.event_type == 'CLASS_SESSION' :
+						current_class_calendars_event_list.append(event) 
+	return current_class_calendars_event_list
+
+
+
 
 
 def integrate_holiday_lessonplan(event_code,calendar_key) :
@@ -209,7 +462,7 @@ def add_schedule_to_lessonplan(current_lessonplan,schedule) :
 
 
 def create_schedule(event,calendar) :
-	schedule = lessonplan.Schedule(None)
+	schedule = lpnr.Schedule(None)
 	schedule.calendar_key = calendar.calendar_key
 	schedule.event_code = event.event_code
 	schedule.start_time = event.from_time
