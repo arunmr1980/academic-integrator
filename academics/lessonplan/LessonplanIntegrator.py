@@ -7,7 +7,7 @@ import academics.school.SchoolDBService as school_service
 import academics.lessonplan.LessonPlan as lnpr
 import academics.academic.AcademicDBService as academic_service
 import academics.timetable.KeyGeneration as key
-import copy 
+import copy
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -32,12 +32,11 @@ def get_updated_class_calendar(current_class_calendars,calendar_key) :
 
 
 
-def is_remove_schedules(current_lessonplan,schedule,current_class_calendars) :
+def is_remove_schedules(current_lessonplan,schedule,updated_class_calendar) :
 	is_remove = False
 	calendar_key = schedule.calendar_key
 	event_code = schedule.event_code
 	subject_code = current_lessonplan.subject_code
-	updated_class_calendar = get_updated_class_calendar(current_class_calendars,calendar_key)
 	event = get_event_from_calendar(updated_class_calendar,event_code)
 	if (is_subject_code_exist_in_event(event.params,subject_code)) == False :
 		is_remove = True
@@ -83,7 +82,7 @@ def update_current_class_calendar(updated_period,current_class_calendar,period_c
 def is_need_update_parms(event,period_code) :
 		for param in event.params :
 			if(param.key == 'period_code') and param.value == period_code :
-				return True		
+				return True
 
 def update_params(params,current_class_calendar,updated_period) :
 	period_code = updated_period.period_code
@@ -139,7 +138,7 @@ def get_current_class_calendars_with_day_code(day_code,current_current_class_cal
 def list_difference(list1,list2):
 	return (list(list(set(list1) - set(list2)) + list(set(list2) - set(list1))))
 
-def get_subject_key_from_current_class_calendars(current_class_calendar_event_list) :	
+def get_subject_key_from_current_class_calendars(current_class_calendar_event_list) :
 	subject_key_list = get_subject_key_list(current_class_calendar_event_list)
 	return subject_key_list
 
@@ -149,13 +148,13 @@ def get_current_lesson_plan_with_subject_key(current_lessonplans,subject_key) :
 			return current_lessonplan
 
 
-def Update_lessonplan(current_lessonplan,current_class_calendars) :
-	if  hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :	
+def Update_lessonplan(current_lessonplan,updated_class_calendar) :
+	if  hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :
 			for main_topic in current_lessonplan.topics :
 				for topic in main_topic.topics :
 					for session in topic.sessions :
 						if hasattr(session,'schedule') :
-							if(is_remove_schedules(current_lessonplan,session.schedule,current_class_calendars)) == True :
+							if(is_remove_schedules(current_lessonplan,session.schedule,updated_class_calendar)) == True :
 								gclogger.info("----- A schedule removed ---" + session.schedule.start_time + '---' + session.schedule.end_time +'------')
 								del session.schedule
 
@@ -163,7 +162,7 @@ def Update_lessonplan(current_lessonplan,current_class_calendars) :
 
 
 def update_lessonplan(current_lessonplan,updated_class_calendar_events,updated_class_calendar) :
-	if  hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :	
+	if  hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :
 			for main_topic in current_lessonplan.topics :
 				for topic in main_topic.topics :
 					for session in topic.sessions :
@@ -214,8 +213,8 @@ def Add_schedule_to_lessonplan(current_lessonplan,schedule,calendar,event) :
 							schedule_added = True
 							gclogger.info(' ------------- schedule added for lessonplan ' + str(current_lessonplan.lesson_plan_key) + ' -------------')
 	else :
-		if schedule_added == False : 
-			add_sessions_on_root(current_lessonplan,event,calendar,schedule_added)					
+		if schedule_added == False :
+			add_sessions_on_root(current_lessonplan,event,calendar,schedule_added)
 	return current_lessonplan
 
 
@@ -257,12 +256,12 @@ def add_schedule_to_lessonplan(current_lessonplan,schedule) :
 
 
 def get_current_class_calendars_event_list(current_class_cals) :
-	current_class_calendars_event_list = [] 
+	current_class_calendars_event_list = []
 	for current_class_cal in current_class_cals :
 		if hasattr(current_class_cal,'events') :
 			for event in current_class_cal.events :
 				if event.event_type == 'CLASS_SESSION' :
-					current_class_calendars_event_list.append(event) 
+					current_class_calendars_event_list.append(event)
 	return current_class_calendars_event_list
 
 
@@ -415,7 +414,7 @@ def cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calen
 	return current_lessonplan
 
 
-def create_remaining_sessions_on_root(after_calendar_date_schedules_list,current_lessonplan) :	
+def create_remaining_sessions_on_root(after_calendar_date_schedules_list,current_lessonplan) :
 	for schedule in after_calendar_date_schedules_list :
 		session_order_index = after_calendar_date_schedules_list.index(schedule) + 1
 		session = create_session(schedule,session_order_index)
@@ -445,7 +444,7 @@ def add_shedule_after_calendar_date(schedule_list,current_lessonplan) :
 	for main_topic in current_lessonplan.topics :
 		for topic in main_topic.topics :
 			for session in topic.sessions :
-				if not hasattr(session , 'schedule') :						
+				if not hasattr(session , 'schedule') :
 					session.schedule = schedule_list[0]
 					gclogger.info('A schedule is added ' + str(schedule_list[0].start_time) + ' --- ' + str(schedule_list[0].start_time) )
 					schedule_list.remove(schedule_list[0])

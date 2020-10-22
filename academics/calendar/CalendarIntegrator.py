@@ -49,60 +49,92 @@ def integrate_update_period_calendars_and_lessonplans(period_code,time_table_key
 	division = updated_timetable.division
 	subscriber_key = class_key + '-' + division
 	current_class_calendars = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
+
 	current_lessonplans = lessonplan_service.get_lesson_plan_list(class_key,division)
 	current_class_cals = copy.deepcopy(current_class_calendars)
-	current_teacher_calendars = calendar_service.get_all_calendars_by_school_key_and_type(school_key,'EMPLOYEE')
-	current_class_calendars_with_day_code = get_current_class_calendars_with_day_code(period_code[:3],current_class_calendars)
-	updated_period = get_updated_period_from_timetable(period_code,updated_timetable)
-	for current_class_calendar in current_class_calendars_with_day_code :
-		updated_class_calendar = update_current_class_calendar_with_day_code(period_code,updated_timetable,current_class_calendar,updated_period)
-		updated_calendars_list.append(updated_class_calendar)
-		updated_class_calendar_events = get_class_session_events(updated_class_calendar)
-		update_lessonplans_with_subject_key_in_updated_class_calendar(updated_class_calendar_events,updated_lessonplan_list,current_lessonplans,updated_class_calendar,updated_class_calendar_subject_key_list)
-		update_teacher_calendar_with_employee_key_in_updated_class_calendar(updated_class_calendar_events,current_teacher_calendars,updated_class_calendar,updated_calendars_list) 
-	update_lessonplans_with_subject_key_in_current_class_calendars(current_class_cals,updated_class_calendar_subject_key_list,current_lessonplans,current_class_calendars,updated_lessonplan_list) 
 
-	
+	current_class_calendars_with_day_code = get_current_class_calendars_with_day_code(period_code[:3],current_class_calendars)
+	current_class_calendars_with_day_code_copy = copy.deepcopy(current_class_calendars_with_day_code)
+	updated_timetable_period = get_updated_period_from_timetable(period_code,updated_timetable)
+
+
+	for current_class_calendar in current_class_calendars_with_day_code :
+		updated_class_calendar = update_current_class_calendar(updated_timetable_period,current_class_calendar,period_code)
+		if updated_class_calendar is not None :
+			updated_calendars_list.append(updated_class_calendar)
+
+		updated_previous_teacher_calendar = update_previous_teacher_calendar(current_class_calendar)
+		if updated_previous_teacher_calendar is not None :
+			updated_calendars_list.append(updated_previous_teacher_calendar)
+
+		updated_new_teacher_calendar = update_new_teacher_calendar(updated_class_calendar,period_code)
+		if updated_new_teacher_calendar is not None :
+			updated_calendars_list.append(updated_new_teacher_calendar)
+
+		updated_previous_subject_lessonplan = update_previous_subject_lessonplan(current_lessonplans, updated_class_calendar)
+		if updated_previous_subject_lessonplan is not None :
+			updated_lessonplan_list.append(updated_previous_subject_lessonplan)
+
+		updated_new_subject_lessonplan = update_new_subject_lessonplan(updated_timetable_period, current_lessonplans, updated_class_calendar)
+		if updated_new_subject_lessonplan is not None :
+			updated_lessonplan_list.append(updated_new_subject_lessonplan)
+
 
 	for updated_calendar in updated_calendars_list :
 		cal = cldr.Calendar(None)
 		calendar_dict = cal.make_calendar_dict(updated_calendar)
 		response = calendar_service.add_or_update_calendar(calendar_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated calendar-- ( '+str(calendar_dict['subscriber_type'])+' )  uploaded --------- '+str(calendar_dict['calendar_key']))
-			
+
 	for updated_lessonplan in updated_lessonplan_list :
 		lp = lpnr.LessonPlan(None)
 		updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 		response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated lessonplan uploaded -------- '+str(updated_lessonplan_dict['lesson_plan_key']))
 
-def update_lessonplans_with_subject_key_in_current_class_calendars(current_class_cals,updated_class_calendar_subject_key_list,current_lessonplans,updated_class_calendars,updated_lessonplan_list) :
-	current_class_calendars_event_list = get_current_class_calendars_event_list(current_class_cals)
-	current_class_calendars_subject_key_list = get_subject_key_from_current_class_calendars(current_class_calendars_event_list)
-	remaining_subject_key_list = list_difference(updated_class_calendar_subject_key_list,current_class_calendars_subject_key_list)
-	for subject_key in remaining_subject_key_list :
-		current_lessonplan = get_current_lesson_plan_with_subject_key(current_lessonplans,subject_key) 
-		updated_lessonplan = Update_lessonplan(current_lessonplan,updated_class_calendars) 
-		if updated_lessonplan is not None :
-			updated_lessonplan_list.append(updated_lessonplan)
+def update_previous_subject_lessonplan(current_lessonplans, updated_class_calendar) :
+	subject_key = get_subject_key(existing_event.params)
+	current_lessonplan = get_current_lesson_plan_with_subject_key(current_lessonplans,subject_key)
+	updated_lessonplan = Update_lessonplan(current_lessonplan,updated_class_calendar)
+	return updated_lessonplan
 
-def update_teacher_calendar_with_employee_key_in_updated_class_calendar(updated_class_calendar_events,current_teacher_calendars,updated_class_calendar,updated_calendars_list) :
-	employee_key_list = get_employee_key_list(updated_class_calendar_events)
-	for employee_key in employee_key_list :
-		teacher_calendar = Get_teacher_calendar(employee_key,current_teacher_calendars,updated_class_calendar)
-		del teacher_calendar.events
-		updated_teacher_calendar = get_updated_teacher_calendar(teacher_calendar,updated_class_calendar_events,updated_class_calendar)
-		updated_calendars_list.append(updated_teacher_calendar)	
 
-def update_lessonplans_with_subject_key_in_updated_class_calendar(updated_class_calendar_events,updated_lessonplan_list,current_lessonplans,updated_class_calendar,updated_class_calendar_subject_key_list) :
-	sub_key_list = get_subject_key_list(updated_class_calendar_events)
-	updated_class_calendar_subject_key_list.extend(sub_key_list)
-	for subject_key in updated_class_calendar_subject_key_list :
-		current_lessonplan = get_current_lesson_plan_with_subject_key(current_lessonplans,subject_key) 
-		if current_lessonplan is not None :
-			updated_lessonplan = add_schedules(updated_class_calendar_events,current_lessonplan,updated_class_calendar)
-			if updated_lessonplan is not None :
-				updated_lessonplan_list.append(updated_lessonplan)
+def update_new_teacher_calendar(updated_class_calendar, period_code) :
+	updated_class_calendar_events = get_period_code_events(updated_class_calendar, period_code)
+	subscriber_key = get_employee_key(updated_class_calendar_events[0].params)
+	new_teacher_calendar = Get_teacher_calendar(updated_class_calendar.calendar_date,subscriber_key)
+	updated_new_teacher_calendar = update_teacher_calendar_with_new_event(new_teacher_calendar,updated_class_calendar_events[0],updated_class_calendar)
+	return updated_new_teacher_calendar
+
+
+def update_previous_teacher_calendar(current_class_calendar) :
+	subscriber_key = get_employee_key(existing_event.params)
+	previous_teacher_calendar = calendar_service.get_calendar_by_date_and_key(current_class_calendar.calendar_date,subscriber_key)
+	updated_previous_teacher_calendar = update_current_teacher_calendar(previous_teacher_calendar,current_class_calendar)
+	return updated_previous_teacher_calendar
+
+
+def update_current_teacher_calendar(previous_teacher_calendar,current_class_calendar) :
+	for event in previous_teacher_calendar.events :
+		if event.event_code == existing_event.event_code and event.ref_calendar_key == current_class_calendar.calendar_key :
+			previous_teacher_calendar.events.remove(event)
+	return previous_teacher_calendar
+
+
+def update_new_subject_lessonplan(updated_timetable_period, current_lessonplans, updated_class_calendar) :
+	updated_class_calendar_events = get_period_code_events(updated_class_calendar, updated_timetable_period.period_code)
+	current_lessonplan = get_current_lesson_plan_with_subject_key(current_lessonplans,updated_timetable_period.subject_key)
+	if current_lessonplan is not None :
+		updated_lessonplan = add_schedules(updated_class_calendar_events,current_lessonplan,updated_class_calendar)
+		return updated_lessonplan
+
+
+def update_teacher_calendar_with_new_event(new_teacher_calendar,calendar_event,updated_class_calendar) :
+	if hasattr(new_teacher_calendar, 'events') :
+		event_object = cldr.Event(None)
+		event_object.event_code = calendar_event.event_code
+		event_object.ref_calendar_key = updated_class_calendar.calendar_key
+		new_teacher_calendar.events.append(event_object)
 
 
 def get_updated_teacher_calendar(teacher_calendar,updated_class_calendar_events,updated_class_calendar) :
@@ -126,21 +158,22 @@ def generate_employee_calendar(employee_key,updated_class_calendar) :
 	employee_calendar.events = []
 	return employee_calendar
 
-def Get_teacher_calendar(employee_key,current_teacher_calendars,updated_class_calendar) :
-	for current_teacher_calendar in current_teacher_calendars :
-		if current_teacher_calendar.subscriber_key == employee_key :
-			return current_teacher_calendar
+def Get_teacher_calendar(calendar_date,subscriber_key) :
+	existing_teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,subscriber_key)
+	if existing_teacher_calendar is not None :
+		return existing_teacher_calendar
 	else :
 		employee_calendar = generate_employee_calendar(employee_key,updated_class_calendar)
 		return employee_calendar
 
-def get_class_session_events(updated_class_calendar) :
-	class_session_events = []
+def get_period_code_events(updated_class_calendar, period_code) :
+	event_list = []
 	if hasattr(updated_class_calendar,'events') :
 		for event in updated_class_calendar.events :
-			if event.event_type == 'CLASS_SESSION' :
-				class_session_events.append(event)
-	return class_session_events
+			if event.event_type == 'CLASS_SESSION' and is_match_period_code(event, period_code) == True :
+				event_list.append(event)
+	return event_list
+
 
 
 def get_employee_key_list(updated_class_calendar_events) :
@@ -156,16 +189,20 @@ def get_employee_key(params) :
 			if param.key == 'teacher_emp_key' :
 				return param.value
 
+def is_match_period_code(event,period_code) :
+		for param in event.params :
+			if(param.key == 'period_code') and param.value == period_code :
+				return True
 
-def update_current_class_calendar_with_day_code(period_code,updated_timetable,current_class_calendar,updated_period) :
-		current_class_calendar = update_current_class_calendar(updated_period,current_class_calendar,period_code)
-		return current_class_calendar
 
-def update_current_class_calendar(updated_period,current_class_calendar,period_code) :
+def update_current_class_calendar(updated_timetable_period,current_class_calendar,period_code) :
+	global existing_event
 	if hasattr(current_class_calendar,'events') :
 		for event in current_class_calendar.events :
 			if is_need_update_parms(event,period_code) == True :
-				updated_params = update_params(event.params,current_class_calendar,updated_period)
+				updated_params = update_params(event.params,current_class_calendar,updated_timetable_period)
+				existing_event = copy.deepcopy(event)
+				print("existing_event-------------",existing_event.event_code)
 				del event.params
 				event.params = updated_params
 	return current_class_calendar
@@ -174,12 +211,12 @@ def update_current_class_calendar(updated_period,current_class_calendar,period_c
 def is_need_update_parms(event,period_code) :
 		for param in event.params :
 			if(param.key == 'period_code') and param.value == period_code :
-				return True		
+				return True
 
-def update_params(params,current_class_calendar,updated_period) :
-	period_code = updated_period.period_code
-	subject_key = updated_period.subject_key
-	employee_key = updated_period.employee_key
+def update_params(params,current_class_calendar,updated_timetable_period) :
+	period_code = updated_timetable_period.period_code
+	subject_key = updated_timetable_period.subject_key
+	employee_key = updated_timetable_period.employee_key
 	params = []
 	period_info = calendar.Param(None)
 	period_info.key = 'period_code'
@@ -228,7 +265,7 @@ def get_updated_period_from_timetable(period_code,updated_timetable) :
 	else:
 		gclogger.warn('Time table not existing')
 
-	
+
 
 def update_class_calendars_teacher_calendars(subscriber_key,existing_class_calendar,calendar,academic_configuration,updated_calendars_list,day_code,calendar_date) :
 	class_key = subscriber_key[:-2]
