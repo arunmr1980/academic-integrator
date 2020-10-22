@@ -92,9 +92,9 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 				updated_lessonplan = self.update_lessonplan(current_lessonplan,updated_class_calendar_events,updated_class_calendar)
 				if updated_lessonplan is not None :
 					updated_lessonplan_list.append(updated_lessonplan)
-					# lp = lpnr.LessonPlan(None)
-					# updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-					# pp.pprint(updated_lessonplan_dict)
+					lp = lpnr.LessonPlan(None)
+					updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+					pp.pprint(updated_lessonplan_dict)
 		current_class_calendars_event_list = self.get_current_class_calendars_event_list(current_class_cals)
 		current_class_calendar_subject_key_list = self.get_subject_key_from_current_class_calendar(current_class_calendars_event_list)
 		remaining_subject_key_list = self.list_difference(updated_class_calendar_subject_key_list,current_class_calendar_subject_key_list)
@@ -180,7 +180,7 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 				for main_topic in current_lessonplan.topics :
 					for topic in main_topic.topics :
 						for session in topic.sessions :
-							if hasattr(session , 'schedule') :
+							if not hasattr(session ,'schedule') :
 								current_lessonplan = self.add_schedules(updated_class_calendar_events,current_lessonplan,updated_class_calendar)
 		return current_lessonplan
 								

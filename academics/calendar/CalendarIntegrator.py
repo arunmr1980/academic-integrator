@@ -6,9 +6,11 @@ import academics.academic.AcademicDBService as academic_service
 import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.timetable.TimeTableDBService as timetable_service
 from academics.TimetableIntegrator import *
-from academics.lessonplan.LessonplanIntegrator import integrate_holiday_lessonplan,integrate_cancelled_holiday_lessonplan
+from academics.lessonplan.LessonplanIntegrator import *
+import academics.lessonplan.LessonPlan as lpnr
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
+import copy
 
 # Remove event calendar integration
 def remove_event_integrate_calendars(calendar_key) :
@@ -37,51 +39,71 @@ def remove_event_integrate_calendars(calendar_key) :
 
 
 
-def integrate_update_periods_class_calendars(period_code,time_table_key) :
-	updated_class_calendars_list =[]
-	updated_timetable = timetable_service.get_time_table(time_table_key)
-	class_key = updated_timetable.class_key
-	division = updated_timetable.division
-	subscriber_key = class_key + '-' + division
-	current_class_calendars = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
-	current_class_calendars_with_day_code = get_current_class_calendars_with_day_code(period_code[:3],current_class_calendars)
-	updated_period = get_updated_period_from_timetable(period_code,updated_timetable)
-	for current_class_calendar in current_class_calendars_with_day_code :
-		updated_class_calendar = update_current_class_calendar_with_day_code(period_code,updated_timetable,current_class_calendar,updated_period)
-		updated_class_calendars_list.append(updated_class_calendar)
-	for updated_class_calendar in updated_class_calendars_list :
-		cal = cldr.Calendar(None)
-		calendar_dict = cal.make_calendar_dict(updated_class_calendar)
-		response = calendar_service.add_or_update_calendar(calendar_dict)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated class calendar uploaded --------- '+str(calendar_dict['calendar_key']))
-
-
-def integrate_update_periods_teacher_calendars(period_code,time_table_key) :
-	updated_teacher_calendars_list =[]
+def integrate_update_period_calendars_and_lessonplans(period_code,time_table_key) :
+	updated_calendars_list =[]
+	updated_lessonplan_list = []
+	updated_class_calendar_subject_key_list = []
 	updated_timetable = timetable_service.get_time_table(time_table_key)
 	school_key = updated_timetable.school_key
 	class_key = updated_timetable.class_key
 	division = updated_timetable.division
 	subscriber_key = class_key + '-' + division
 	current_class_calendars = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
+	current_lessonplans = lessonplan_service.get_lesson_plan_list(class_key,division)
+	current_class_cals = copy.deepcopy(current_class_calendars)
 	current_teacher_calendars = calendar_service.get_all_calendars_by_school_key_and_type(school_key,'EMPLOYEE')
 	current_class_calendars_with_day_code = get_current_class_calendars_with_day_code(period_code[:3],current_class_calendars)
 	updated_period = get_updated_period_from_timetable(period_code,updated_timetable)
 	for current_class_calendar in current_class_calendars_with_day_code :
 		updated_class_calendar = update_current_class_calendar_with_day_code(period_code,updated_timetable,current_class_calendar,updated_period)
+		updated_calendars_list.append(updated_class_calendar)
 		updated_class_calendar_events = get_class_session_events(updated_class_calendar)
-		employee_key_list = get_employee_key_list(updated_class_calendar_events)
-		for employee_key in employee_key_list :
-			teacher_calendar = Get_teacher_calendar(employee_key,current_teacher_calendars,updated_class_calendar)
-			del teacher_calendar.events
-			updated_teacher_calendar = get_updated_teacher_calendar(teacher_calendar,updated_class_calendar_events,updated_class_calendar)
-			updated_teacher_calendars_list.append(updated_teacher_calendar)		
-	for updated_teacher_calendar in updated_teacher_calendars_list :
+		update_lessonplans_with_subject_key_in_updated_class_calendar(updated_class_calendar_events,updated_lessonplan_list,current_lessonplans,updated_class_calendar,updated_class_calendar_subject_key_list)
+		update_teacher_calendar_with_employee_key_in_updated_class_calendar(updated_class_calendar_events,current_teacher_calendars,updated_class_calendar,updated_calendars_list) 
+	update_lessonplans_with_subject_key_in_current_class_calendars(current_class_cals,updated_class_calendar_subject_key_list,current_lessonplans,current_class_calendars,updated_lessonplan_list) 
+
+	
+
+	for updated_calendar in updated_calendars_list :
 		cal = cldr.Calendar(None)
-		calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+		calendar_dict = cal.make_calendar_dict(updated_calendar)
 		response = calendar_service.add_or_update_calendar(calendar_dict)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated teacher calendar uploaded --------- '+str(calendar_dict['calendar_key']))
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated calendar-- ( '+str(calendar_dict['subscriber_type'])+' )  uploaded --------- '+str(calendar_dict['calendar_key']))
 			
+	for updated_lessonplan in updated_lessonplan_list :
+		lp = lpnr.LessonPlan(None)
+		updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+		response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated lessonplan uploaded -------- '+str(updated_lessonplan_dict['lesson_plan_key']))
+
+def update_lessonplans_with_subject_key_in_current_class_calendars(current_class_cals,updated_class_calendar_subject_key_list,current_lessonplans,updated_class_calendars,updated_lessonplan_list) :
+	current_class_calendars_event_list = get_current_class_calendars_event_list(current_class_cals)
+	current_class_calendars_subject_key_list = get_subject_key_from_current_class_calendars(current_class_calendars_event_list)
+	remaining_subject_key_list = list_difference(updated_class_calendar_subject_key_list,current_class_calendars_subject_key_list)
+	for subject_key in remaining_subject_key_list :
+		current_lessonplan = get_current_lesson_plan_with_subject_key(current_lessonplans,subject_key) 
+		updated_lessonplan = Update_lessonplan(current_lessonplan,updated_class_calendars) 
+		if updated_lessonplan is not None :
+			updated_lessonplan_list.append(updated_lessonplan)
+
+def update_teacher_calendar_with_employee_key_in_updated_class_calendar(updated_class_calendar_events,current_teacher_calendars,updated_class_calendar,updated_calendars_list) :
+	employee_key_list = get_employee_key_list(updated_class_calendar_events)
+	for employee_key in employee_key_list :
+		teacher_calendar = Get_teacher_calendar(employee_key,current_teacher_calendars,updated_class_calendar)
+		del teacher_calendar.events
+		updated_teacher_calendar = get_updated_teacher_calendar(teacher_calendar,updated_class_calendar_events,updated_class_calendar)
+		updated_calendars_list.append(updated_teacher_calendar)	
+
+def update_lessonplans_with_subject_key_in_updated_class_calendar(updated_class_calendar_events,updated_lessonplan_list,current_lessonplans,updated_class_calendar,updated_class_calendar_subject_key_list) :
+	sub_key_list = get_subject_key_list(updated_class_calendar_events)
+	updated_class_calendar_subject_key_list.extend(sub_key_list)
+	for subject_key in updated_class_calendar_subject_key_list :
+		current_lessonplan = get_current_lesson_plan_with_subject_key(current_lessonplans,subject_key) 
+		if current_lessonplan is not None :
+			updated_lessonplan = add_schedules(updated_class_calendar_events,current_lessonplan,updated_class_calendar)
+			if updated_lessonplan is not None :
+				updated_lessonplan_list.append(updated_lessonplan)
+
 
 def get_updated_teacher_calendar(teacher_calendar,updated_class_calendar_events,updated_class_calendar) :
 	teacher_calendar.events = []

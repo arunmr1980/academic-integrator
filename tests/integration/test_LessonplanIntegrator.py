@@ -60,7 +60,6 @@ class LessonplanIntegratorTest(unittest.TestCase):
 
 
 	def check_lesson_plan(self,expected_lesson_plan_list, generated_lesson_plans_dict) :
-
 		for expected_lesson_plan in expected_lesson_plan_list :
 			lesson_plan_key = expected_lesson_plan.lesson_plan_key
 			generated_lesson_plan = generated_lesson_plans_dict[lesson_plan_key]

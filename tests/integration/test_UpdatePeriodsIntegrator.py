@@ -5,11 +5,10 @@ from academics.timetable import AcademicConfiguration as academic_config
 import academics.timetable.TimeTable as ttable
 from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as calendar
-from academics.calendar.CalendarIntegrator import integrate_update_periods_class_calendars,integrate_update_periods_teacher_calendars
+from academics.calendar.CalendarIntegrator import integrate_update_period_calendars_and_lessonplans
 import academics.timetable.TimeTableDBService as timetable_service
 import academics.calendar.CalendarDBService as calendar_service
 from academics.lessonplan import LessonplanDBService as lessonplan_service
-from academics.lessonplan.LessonplanIntegrator import integrate_update_periods_lessonplans
 import academics.lessonplan.LessonPlan as lpnr
 import pprint
 import academics.timetable.KeyGeneration as key
@@ -40,44 +39,27 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 
 
 
-	def test_class_calenders(self) :
-		period_code = 'MON-3'
-		time_table_key = "test-time-table-1"
-		integrate_update_periods_class_calendars(period_code,time_table_key)
-		updated_timetable = timetable_service.get_time_table(time_table_key)
-		class_key = updated_timetable.class_key
-		division = updated_timetable.division
-		subscriber_key = class_key + '-' + division
-		updated_class_calendars = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
-		expected_class_calendars = self.get_expected_class_calendar_list()
-		for updated_class_calendar in updated_class_calendars :
-
-			# cal = calendar.Calendar(None)
-			# calendar_dict = cal.make_calendar_dict(updated_class_calendar)
-			# pp.pprint(calendar_dict)
-
-			self.check_class_calendars(updated_class_calendar,expected_class_calendars)	
-			gclogger.info("-----[ Integration Test ] Class calendar test passed for ----" + updated_class_calendar.calendar_key + "-----------------")
-
-
-
-	def test_teacher_calendars(self) :
+	def test_calendars_and_lessonplans(self) :
 		period_code = 'MON-3'
 		time_table_key = "test-time-table-1"	
-		integrate_update_periods_teacher_calendars(period_code,time_table_key)
+		integrate_update_period_calendars_and_lessonplans(period_code,time_table_key)
 		updated_timetable = timetable_service.get_time_table(time_table_key)
 		class_key = updated_timetable.class_key
 		division = updated_timetable.division
 		school_key = updated_timetable.school_key 
 		subscriber_key = class_key + '-' + division
-		updated_teacher_calendars = calendar_service.get_all_calendars_by_school_key_and_type(school_key,'EMPLOYEE')	
+		updated_teacher_calendars = calendar_service.get_all_calendars_by_school_key_and_type(school_key,'EMPLOYEE')
+		updated_class_calendars = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
+		updated_lessonplan_list = lessonplan_service.get_lesson_plan_list(class_key,division)	
 		expected_teacher_calendars = self.get_expected_teacher_calendar_list()
+		expected_class_calendars = self.get_expected_class_calendar_list()
+		expected_lessonplans = self.get_expected_lessonplan_list()
 		expected_teacher_calendars_dict = self.make_expected_teacher_calendars_dict(expected_teacher_calendars)
 		for updated_teacher_calendar in updated_teacher_calendars :
 
-			# cal = calendar.Calendar(None)
-			# calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
-			# pp.pprint(calendar_dict)
+			cal = calendar.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+			pp.pprint(calendar_dict)
 
 			calendar_date = updated_teacher_calendar.calendar_date
 			subscriber_key = updated_teacher_calendar.subscriber_key
@@ -89,18 +71,23 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 			self.assertEqual(expected_teacher_calendar.subscriber_type,updated_teacher_calendar.subscriber_type )
 			gclogger.info("-----[ Integration Test ] Teacher calendar test passed for ------" + updated_teacher_calendar.calendar_key + "-----------------")
 
+		for updated_class_calendar in updated_class_calendars :
 
-	def test_lessonplans(self) :
-		period_code = 'MON-3'
-		time_table_key = "test-time-table-1"
-		updated_timetable = timetable_service.get_time_table(time_table_key)
-		class_key = updated_timetable.class_key
-		division = updated_timetable.division
-		expected_lessonplans = self.get_expected_lessonplan_list()
-		integrate_update_periods_lessonplans(period_code,time_table_key)
-		updated_lessonplan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+			cal = calendar.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+			pp.pprint(calendar_dict)
+
+			self.check_class_calendars(updated_class_calendar,expected_class_calendars)	
+			gclogger.info("-----[ Integration Test ] Class calendar test passed for ----" + updated_class_calendar.calendar_key + "-----------------")
+
 		for updated_lessonplan in updated_lessonplan_list :
+
+			lp = lpnr.LessonPlan(None)
+			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+			pp.pprint(updated_lessonplan_dict)
+
 			self.check_lesson_plans(updated_lessonplan,expected_lessonplans)
+
 
 
 
@@ -115,7 +102,7 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 				self.assertEqual(updated_lesson_plan.resources,expected_lessonplan.resources)
 				self.check_topics(updated_lesson_plan.topics,expected_lessonplan.topics)
 
-		gclogger.info(" <<<-------------------------------- INTEGRATION TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------>>> ")
+		gclogger.info(" -------------------------------- INTEGRATION TEST PASSED FOR LESSONPLAN -----"+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------ ")
 
 	def check_topics(self,updated_lesson_plan_topics,expected_lesson_plan_topics):
 		for index in range(0,len(updated_lesson_plan_topics)) :
