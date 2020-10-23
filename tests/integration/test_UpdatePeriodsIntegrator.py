@@ -36,9 +36,6 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Current lesson plan uploaded '+str(current_lessonplan['lesson_plan_key']))
 
 		
-
-
-
 	def test_calendars_and_lessonplans(self) :
 		period_code = 'MON-3'
 		time_table_key = "test-time-table-1"	
@@ -134,8 +131,29 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 		self.assertEqual(updated_lesson_plan_shedule.end_time,expected_lesson_plan_shedule.end_time)
 
 
+	def tearDown(self) :
+		updated_timetable = timetable_service.get_time_table("test-time-table-1")
+		class_key = updated_timetable.class_key
+		division = updated_timetable.division
+		school_key = updated_timetable.school_key 
+		subscriber_key = class_key + '-' + division
+		updated_class_calendars = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
+		for updated_calendar in updated_class_calendars :
+			response = calendar_service.delete_calendar(updated_calendar.calendar_key)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated class calendar deleted --------- '+str(updated_calendar.calendar_key))
 
+		updated_teacher_calendars = calendar_service.get_all_calendars_by_school_key_and_type(school_key,'EMPLOYEE')
+		for updated_calendar in updated_teacher_calendars :
+			response = calendar_service.delete_calendar(updated_calendar.calendar_key)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated teacher calendar deleted --------- '+str(updated_calendar.calendar_key))
 
+		updated_lessonplan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+		for updated_lessonplan in updated_lessonplan_list :
+			lessonplan_service.delete_lessonplan(updated_lessonplan.lesson_plan_key)
+			gclogger.info("--------------- Test Lesson Plan deleted --------- " + updated_lessonplan.lesson_plan_key + "-----------------")
+
+		timetable_service.delete_timetable(updated_timetable.time_table_key)
+		gclogger.info("--------------- Test Timetable deleted  " + updated_timetable.time_table_key+"  -----------------")
 
 
 	

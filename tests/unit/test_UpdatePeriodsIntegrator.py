@@ -14,27 +14,11 @@ pp = pprint.PrettyPrinter(indent=4)
 class UpdatePeriodsIntegratorTest(unittest.TestCase):
 
 
-	def test_class_calenders(self) :
-		period_code = 'MON-3'
-		updated_timetable=self.get_updated_timetable()
-		current_class_calendars = self.get_current_class_calendar_list()
-		current_teacher_calendars = self.get_current_teacher_calendar_list()
-		expected_class_calendars = self.get_expected_class_calendar_list()
-		current_class_calendars_with_day_code = self.get_current_class_calendars_with_day_code(period_code[:3],current_class_calendars)
-		updated_period = self.get_updated_period_from_timetable(period_code,updated_timetable)
-		for current_class_calendar in current_class_calendars_with_day_code :
-			updated_class_calendar = self.update_current_class_calendar_with_day_code(period_code,updated_timetable,current_class_calendar,updated_period)
-			# cal = calendar.Calendar(None)
-			# calendar_dict = cal.make_calendar_dict(updated_class_calendar)
-			# pp.pprint(calendar_dict)
-			self.check_class_calendars(updated_class_calendar,expected_class_calendars)
-			
+	
 
 
 
-
-
-	def test_teacher_calendars(self) :
+	def test_calendars(self) :
 		expected_teacher_calendars_dict = {}
 		period_code = 'MON-3'
 		updated_timetable = self.get_updated_timetable()
@@ -51,6 +35,12 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 		updated_period = self.get_updated_period_from_timetable(period_code,updated_timetable)
 		for current_class_calendar in current_class_calendars_with_day_code :
 			updated_class_calendar = self.update_current_class_calendar_with_day_code(period_code,updated_timetable,current_class_calendar,updated_period)
+			# cal = calendar.Calendar(None)
+			# calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+			# pp.pprint(calendar_dict)
+			self.check_class_calendars(updated_class_calendar,expected_class_calendars)
+
+
 			updated_class_calendar_events = self.get_class_session_events(updated_class_calendar)
 			employee_key_list = self.get_employee_key_list(updated_class_calendar_events)
 			for employee_key in employee_key_list :
@@ -92,9 +82,9 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 				updated_lessonplan = self.update_lessonplan(current_lessonplan,updated_class_calendar_events,updated_class_calendar)
 				if updated_lessonplan is not None :
 					updated_lessonplan_list.append(updated_lessonplan)
-					lp = lpnr.LessonPlan(None)
-					updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-					pp.pprint(updated_lessonplan_dict)
+					# lp = lpnr.LessonPlan(None)
+					# updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+					# pp.pprint(updated_lessonplan_dict)
 		current_class_calendars_event_list = self.get_current_class_calendars_event_list(current_class_cals)
 		current_class_calendar_subject_key_list = self.get_subject_key_from_current_class_calendar(current_class_calendars_event_list)
 		remaining_subject_key_list = self.list_difference(updated_class_calendar_subject_key_list,current_class_calendar_subject_key_list)
@@ -103,9 +93,9 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 			updated_lessonplan = self.Update_lessonplan(current_lessonplan,current_class_calendars)
 			if updated_lessonplan is not None :
 				updated_lessonplan_list.append(updated_lessonplan)
-			# lp = lpnr.LessonPlan(None)
-			# updated_lessonplan_dict = lp.make_lessonplan_dict(current_lessonplan)
-			# pp.pprint(updated_lessonplan_dict)
+				# lp = lpnr.LessonPlan(None)
+				# updated_lessonplan_dict = lp.make_lessonplan_dict(current_lessonplan)
+				# pp.pprint(updated_lessonplan_dict)
 		for updated_lessonplan in updated_lessonplan_list :
 			self.check_lesson_plans(updated_lessonplan,expected_lessonplans)
 

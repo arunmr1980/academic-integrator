@@ -32,15 +32,16 @@ def get_updated_class_calendar(current_class_calendars,calendar_key) :
 
 
 
-def is_remove_schedules(current_lessonplan,schedule,updated_class_calendar) :
+def need_remove_schedules(current_lessonplan,schedule,updated_class_calendar) :
 	is_remove = False
 	calendar_key = schedule.calendar_key
 	event_code = schedule.event_code
 	subject_code = current_lessonplan.subject_code
 	event = get_event_from_calendar(updated_class_calendar,event_code)
-	if (is_subject_code_exist_in_event(event.params,subject_code)) == False :
-		is_remove = True
-	return is_remove
+	if hasattr(event,'params') :
+		if (is_subject_code_exist_in_event(event.params,subject_code)) == False :
+			is_remove = True
+		return is_remove
 
 
 def get_subject_key(params) :
@@ -154,11 +155,22 @@ def Update_lessonplan(current_lessonplan,updated_class_calendar) :
 				for topic in main_topic.topics :
 					for session in topic.sessions :
 						if hasattr(session,'schedule') :
-							if(is_remove_schedules(current_lessonplan,session.schedule,updated_class_calendar)) == True :
+							if(need_remove_schedules(current_lessonplan,session.schedule,updated_class_calendar)) == True :
 								gclogger.info("----- A schedule removed ---" + session.schedule.start_time + '---' + session.schedule.end_time +'------')
 								del session.schedule
-
+	current_lessonplan = adjust_lessonplan_after_remove_schedule(current_lessonplan)
 	return current_lessonplan
+
+def adjust_lessonplan_after_remove_schedule(current_lessonplan) :
+	shedule_list = get_all_remaining_schedules(current_lessonplan)
+	current_lessonplan = get_lesson_plan_after_remove_all_shedules(current_lessonplan)
+	current_lessonplan = get_updated_lesson_plan(shedule_list,current_lessonplan)
+	return current_lessonplan
+
+
+
+
+
 
 
 def update_lessonplan(current_lessonplan,updated_class_calendar_events,updated_class_calendar) :

@@ -102,7 +102,7 @@ def update_previous_subject_lessonplan(current_lessonplans, updated_class_calend
 def update_new_teacher_calendar(updated_class_calendar, period_code) :
 	updated_class_calendar_events = get_period_code_events(updated_class_calendar, period_code)
 	subscriber_key = get_employee_key(updated_class_calendar_events[0].params)
-	new_teacher_calendar = Get_teacher_calendar(updated_class_calendar.calendar_date,subscriber_key)
+	new_teacher_calendar = Get_teacher_calendar(updated_class_calendar,subscriber_key)
 	updated_new_teacher_calendar = update_teacher_calendar_with_new_event(new_teacher_calendar,updated_class_calendar_events[0],updated_class_calendar)
 	return updated_new_teacher_calendar
 
@@ -135,6 +135,7 @@ def update_teacher_calendar_with_new_event(new_teacher_calendar,calendar_event,u
 		event_object.event_code = calendar_event.event_code
 		event_object.ref_calendar_key = updated_class_calendar.calendar_key
 		new_teacher_calendar.events.append(event_object)
+	return new_teacher_calendar
 
 
 def get_updated_teacher_calendar(teacher_calendar,updated_class_calendar_events,updated_class_calendar) :
@@ -158,12 +159,12 @@ def generate_employee_calendar(employee_key,updated_class_calendar) :
 	employee_calendar.events = []
 	return employee_calendar
 
-def Get_teacher_calendar(calendar_date,subscriber_key) :
-	existing_teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,subscriber_key)
+def Get_teacher_calendar(updated_class_calendar,subscriber_key) :
+	existing_teacher_calendar = calendar_service.get_calendar_by_date_and_key(updated_class_calendar.calendar_date,subscriber_key)
 	if existing_teacher_calendar is not None :
 		return existing_teacher_calendar
 	else :
-		employee_calendar = generate_employee_calendar(employee_key,updated_class_calendar)
+		employee_calendar = generate_employee_calendar(subscriber_key,updated_class_calendar)
 		return employee_calendar
 
 def get_period_code_events(updated_class_calendar, period_code) :
@@ -202,7 +203,6 @@ def update_current_class_calendar(updated_timetable_period,current_class_calenda
 			if is_need_update_parms(event,period_code) == True :
 				updated_params = update_params(event.params,current_class_calendar,updated_timetable_period)
 				existing_event = copy.deepcopy(event)
-				print("existing_event-------------",existing_event.event_code)
 				del event.params
 				event.params = updated_params
 	return current_class_calendar
