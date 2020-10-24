@@ -59,11 +59,13 @@ def integrate_update_period_calendars_and_lessonplans(period_code,time_table_key
 
 
 	for current_class_calendar in current_class_calendars_with_day_code :
-		updated_class_calendar = update_current_class_calendar(updated_timetable_period,current_class_calendar,period_code)
+		event = get_event_with_period_code(current_class_calendar,period_code)
+		existing_event = copy.deepcopy(event)
+		updated_class_calendar = update_event(event,current_class_calendar,updated_timetable_period) 
 		if updated_class_calendar is not None :
 			updated_calendars_list.append(updated_class_calendar)
 
-		updated_previous_teacher_calendar = update_previous_teacher_calendar(current_class_calendar)
+		updated_previous_teacher_calendar = update_previous_teacher_calendar(existing_event,updated_class_calendar)
 		if updated_previous_teacher_calendar is not None :
 			updated_calendars_list.append(updated_previous_teacher_calendar)
 
@@ -71,7 +73,7 @@ def integrate_update_period_calendars_and_lessonplans(period_code,time_table_key
 		if updated_new_teacher_calendar is not None :
 			updated_calendars_list.append(updated_new_teacher_calendar)
 
-		updated_previous_subject_lessonplan = update_previous_subject_lessonplan(current_lessonplans, updated_class_calendar)
+		updated_previous_subject_lessonplan = update_previous_subject_lessonplan(existing_event,current_lessonplans, updated_class_calendar)
 		if updated_previous_subject_lessonplan is not None :
 			updated_lessonplan_list.append(updated_previous_subject_lessonplan)
 
@@ -92,7 +94,7 @@ def integrate_update_period_calendars_and_lessonplans(period_code,time_table_key
 		response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated lessonplan uploaded -------- '+str(updated_lessonplan_dict['lesson_plan_key']))
 
-def update_previous_subject_lessonplan(current_lessonplans, updated_class_calendar) :
+def update_previous_subject_lessonplan(existing_event,current_lessonplans, updated_class_calendar) :
 	subject_key = get_subject_key(existing_event.params)
 	current_lessonplan = get_current_lesson_plan_with_subject_key(current_lessonplans,subject_key)
 	updated_lessonplan = Update_lessonplan(current_lessonplan,updated_class_calendar)
@@ -107,14 +109,16 @@ def update_new_teacher_calendar(updated_class_calendar, period_code) :
 	return updated_new_teacher_calendar
 
 
-def update_previous_teacher_calendar(current_class_calendar) :
+def update_previous_teacher_calendar(existing_event,current_class_calendar) :
+
 	subscriber_key = get_employee_key(existing_event.params)
 	previous_teacher_calendar = calendar_service.get_calendar_by_date_and_key(current_class_calendar.calendar_date,subscriber_key)
-	updated_previous_teacher_calendar = update_current_teacher_calendar(previous_teacher_calendar,current_class_calendar)
+	
+	updated_previous_teacher_calendar = update_current_teacher_calendar(existing_event,previous_teacher_calendar,current_class_calendar)
 	return updated_previous_teacher_calendar
 
 
-def update_current_teacher_calendar(previous_teacher_calendar,current_class_calendar) :
+def update_current_teacher_calendar(existing_event,previous_teacher_calendar,current_class_calendar) :
 	for event in previous_teacher_calendar.events :
 		if event.event_code == existing_event.event_code and event.ref_calendar_key == current_class_calendar.calendar_key :
 			previous_teacher_calendar.events.remove(event)
@@ -196,22 +200,25 @@ def is_match_period_code(event,period_code) :
 				return True
 
 
-def update_current_class_calendar(updated_timetable_period,current_class_calendar,period_code) :
-	global existing_event
+def get_event_with_period_code(current_class_calendar,period_code) :
 	if hasattr(current_class_calendar,'events') :
 		for event in current_class_calendar.events :
-			if is_need_update_parms(event,period_code) == True :
-				updated_params = update_params(event.params,current_class_calendar,updated_timetable_period)
-				existing_event = copy.deepcopy(event)
-				del event.params
-				event.params = updated_params
-	return current_class_calendar
+			if is_need_update_parms(event,period_code) == True :		
+				gclogger.info(event.event_code + "EXISTING EVENT UPDATED---------")	
+				return event
 
 
 def is_need_update_parms(event,period_code) :
 		for param in event.params :
 			if(param.key == 'period_code') and param.value == period_code :
 				return True
+
+def update_event(event,current_class_calendar,updated_timetable_period) :
+	updated_params = update_params(event.params,current_class_calendar,updated_timetable_period)
+	del event.params
+	event.params = updated_params
+	return current_class_calendar
+
 
 def update_params(params,current_class_calendar,updated_timetable_period) :
 	period_code = updated_timetable_period.period_code
