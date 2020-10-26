@@ -205,7 +205,6 @@ def get_event_with_period_code(current_class_calendar,period_code) :
 	if hasattr(current_class_calendar,'events') :
 		for event in current_class_calendar.events :
 			if is_need_update_parms(event,period_code) == True :
-				gclogger.info(event.event_code + "EXISTING EVENT UPDATED---------")
 				return event
 
 
