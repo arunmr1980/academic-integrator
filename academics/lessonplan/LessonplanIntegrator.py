@@ -304,7 +304,7 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 			for current_lessonplan in current_lesson_plan_list :
 				if current_lessonplan.class_key == class_key and current_lessonplan.division == division :
 					updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
-					lp = lessonplan.LessonPlan(None)
+					lp = lnpr.LessonPlan(None)
 					updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 					response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
 					gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(current_lesson_plan_dict['lesson_plan_key']))
@@ -326,7 +326,7 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 							current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 							for current_lessonplan in current_lesson_plan_list :
 								updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
-								lp = lessonplan.LessonPlan(None)
+								lp = lnpr.LessonPlan(None)
 								updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 								response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
 								gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
@@ -337,7 +337,7 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 
 def upload_updated_lessonplans(updated_lessonplan_list) :
 	for lesson_plan in updated_lessonplan_list :
-		lp = lessonplan.LessonPlan(None)
+		lp = lnpr.LessonPlan(None)
 		lessonplan_dict = lp.make_lessonplan_dict(lesson_plan)
 		response = lessonplan_service.create_lessonplan(lessonplan_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated lesson plan uploaded '+str(lessonplan_dict['lesson_plan_key']))
@@ -358,7 +358,7 @@ def integrate_cancelled_holiday_lessonplan(calendar_key) :
 		for current_lessonplan in current_lesson_plan_list :
 			if current_lessonplan.class_key == class_key and current_lessonplan.division == division :
 				updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calendar,day_code)
-				lp = lessonplan.LessonPlan(None)
+				lp = lnpr.LessonPlan(None)
 				updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 				response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
 				gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(current_lesson_plan_dict['lesson_plan_key']))
@@ -381,7 +381,7 @@ def integrate_cancelled_holiday_lessonplan(calendar_key) :
 							current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 							for current_lessonplan in current_lesson_plan_list :
 								updated_lessonplan = cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,class_calendar,day_code)
-								lp = lessonplan.LessonPlan(None)
+								lp = lnpr.LessonPlan(None)
 								updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 								response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
 								gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
