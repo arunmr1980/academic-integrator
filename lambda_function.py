@@ -3,7 +3,7 @@ import boto3
 
 from academics.TimetableIntegrator import generate_and_save_calenders
 from academics.calendar.CalendarLessonPlanIntegrator import calendars_lesson_plan_integration, calendars_lesson_plan_integration_from_timetable
-from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars
+from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars, integrate_update_period_calendars_and_lessonplans
 import academics.logger.GCLogger as logger
 
 def lambda_handler(event, context):
@@ -23,6 +23,8 @@ def lambda_handler(event, context):
               add_event_calendar_lessonplan_integration(request)
           if request_type == 'REMOVE_EVENT_LESSONPLAN_SYNC':
               remove_event_calendar_lessonplan_integration(request)
+          if request_type == 'PERIOD_UPDATE_SYNC':
+              update_period_calendar_lessonplan_integration(request)
        except:
           logger.info("Unexpected error ...")
           send_response(400,"unexpected error")
@@ -43,6 +45,15 @@ def remove_event_calendar_lessonplan_integration(request) :
   try :
     calendar_key = request['calendar_key']
     remove_event_integrate_calendars(calendar_key)
+  except KeyError as ke:
+        logger.info("Error in input. calendar_key not present")
+        send_response(400,"input validation error")
+
+def update_period_calendar_lessonplan_integration(request) :
+  try :
+    time_table_key = request['time_table_key']
+    period_code = request['period_code']
+    integrate_update_period_calendars_and_lessonplans(period_code, time_table_key)
   except KeyError as ke:
         logger.info("Error in input. calendar_key not present")
         send_response(400,"input validation error")
