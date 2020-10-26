@@ -457,9 +457,10 @@ def add_shedule_after_calendar_date(schedule_list,current_lessonplan) :
 		for topic in main_topic.topics :
 			for session in topic.sessions :
 				if not hasattr(session , 'schedule') :
-					session.schedule = schedule_list[0]
-					gclogger.info('A schedule is added ' + str(schedule_list[0].start_time) + ' --- ' + str(schedule_list[0].start_time) )
-					schedule_list.remove(schedule_list[0])
+					if len(schedule_list) > 0 :
+						session.schedule = schedule_list[0]
+						gclogger.info('A schedule is added ' + str(schedule_list[0].start_time) + ' --- ' + str(schedule_list[0].start_time) )
+						schedule_list.remove(schedule_list[0])
 
 
 	return current_lessonplan
