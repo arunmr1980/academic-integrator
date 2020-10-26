@@ -1,0 +1,82 @@
+[
+  {
+    "academic_year": "2020-2021",
+    "employee_key": "employee-1",
+    "school_key": "1e4d12bc2b58050ff084f8da",
+    "time_table_key": "8c9c99fb96857af80089dd76e77e5c38",
+    "timetable": {
+      "day_tables": [
+        {
+          "day_code": "MON",
+          "order_index": 1,
+          "periods": [
+            {
+              "class_info_key":"8B1B22E72AE",
+              "division_code": "A",
+              "employee_key": "employee-1",
+              "order_index": 1,
+              "period_code": "MON-1",
+              "subject_key": "bio1"
+            },
+            {
+              "class_info_key":"8B1B22E72AE",
+              "division_code": "A",
+              "employee_key": "employee-1",
+              "order_index": 2,
+              "period_code": "MON-2",
+              "subject_key": "bio2"
+            },
+            {
+              "class_info_key":null,
+              "division_code": null,
+              "employee_key": null,
+              "order_index": 3,
+              "period_code": null,
+              "subject_key": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "academic_year": "2020-2021",
+    "employee_key": "employee-2",
+    "school_key": "1e4d12bc2b58050ff084f8da",
+    "time_table_key": "8c9c99fb96857af80089dd76e77e5c38",
+    "timetable": {
+      "day_tables": [
+        {
+          "day_code": "MON",
+          "order_index": 1,
+          "periods": [
+            {
+              "class_info_key":"8B1B22E72AE",
+              "division_code": "A",
+              "employee_key": "employee-2",
+              "order_index": 1,
+              "period_code": "MON-1",
+              "subject_key": "bio1"
+            },
+            {
+              "class_info_key":"8B1B22E72AE",
+              "division_code": "A",
+              "employee_key": "employee-2",
+              "order_index": 2,
+              "period_code": "MON-2",
+              "subject_key": "bio2"
+            },
+            {
+              "class_info_key":"8B1B22E72AE",
+              "division_code": "A",
+              "employee_key":"employee-2",
+              "order_index": 3,
+              "period_code": "MON-3",
+              "subject_key": "bio3"
+            }
+          ]
+        }
+      ]
+    }
+  },
+]
