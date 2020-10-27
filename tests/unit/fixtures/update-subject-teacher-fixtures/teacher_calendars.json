@@ -1,0 +1,34 @@
+[
+   {
+      "calendar_date":"2020-08-04",
+      "calendar_key":"teacher-sample-1",
+      "events":[
+         {
+            "event_code":"event-1",
+            "ref_calendar_key":"test-key-2"
+         }
+      ],
+      "institution_key":"test-school-1",
+      "subscriber_key":"employee-1",
+      "subscriber_type":"EMPLOYEE"
+   },
+   {
+      "calendar_date":"2020-08-10",
+      "calendar_key":"teacher-sample-2",
+      "events":[
+         {
+            "event_code":"event-3",
+            "ref_calendar_key":"test-key-3"
+         },
+         {
+            "event_code":"event-4",
+            "ref_calendar_key":"test-key-3"
+         }     
+      ],
+      "institution_key":"test-school-1",
+      "subscriber_key":"employee-1",
+      "subscriber_type":"EMPLOYEE"
+   }
+   
+   
+]

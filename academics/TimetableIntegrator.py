@@ -9,9 +9,199 @@ import academics.timetable.KeyGeneration as key
 import academics.calendar.Calendar as calendar
 import academics.academic.AcademicDBService as academic_service
 import academics.calendar.CalendarDBService as calendar_service
+import academics.timetable.KeyGeneration as key
 
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
+
+def get_updated_class_calendars(current_class_calendars_list,period_list) :
+	updated_class_calendars = []
+	for period in period_list :	
+		for current_class_calendar in current_class_calendars_list :
+			for event in current_class_calendar.events :
+				subject_code = get_subject_code(event)	
+				period_code = get_period_code(event)
+				if subject_code == period.subject_key and period_code == period.period_code :
+					updated_params = update_params(current_class_calendar,period)	
+					del event.params
+					event.params = updated_params
+					updated_class_calendars.append(current_class_calendar)
+	return updated_class_calendars
+
+def update_params(current_class_calendar,period) :
+	period_code = period.period_code
+	subject_key = period.subject_key
+	employee_key = period.employee_key
+	params = []
+	period_info = calendar.Param(None)
+	period_info.key = 'period_code'
+	period_info.value = period_code
+	params.append(period_info)
+
+	subject_info = calendar.Param(None)
+	subject_info.key = 'subject_key'
+	subject_info.value = subject_key
+	params.append(subject_info)
+
+	employee_info = calendar.Param(None)
+	employee_info.key = 'teacher_emp_key'
+	employee_info.value = employee_key
+	params.append(employee_info)
+	return params
+	
+
+
+def get_subject_code(event) :
+	if hasattr(event, 'params') :
+		for param in event.params :
+			if param.key == 'subject_key' :
+				return param.value
+
+def get_period_code(event) :
+	if hasattr(event, 'params') :
+		for param in event.params :
+			if param.key == 'period_code' :
+				return param.value
+
+
+def update_new_teacher_timetable(new_teacher_timetable,period_list) :
+	period_list = updated_employee_key(period_list,new_teacher_timetable)
+	for period in period_list :
+		if hasattr(period,'order_index') :	
+			new_teacher_timetable = add_period_on_new_teacher_timetable(period,new_teacher_timetable)
+	return new_teacher_timetable
+
+def updated_employee_key(period_list,new_teacher_timetable) :
+	new_employee_key = new_teacher_timetable.employee_key
+	for period in period_list :
+		period.employee_key = new_employee_key
+	return period_list
+
+def add_period_on_new_teacher_timetable(period,new_teacher_timetable) :
+	if hasattr(new_teacher_timetable.timetable,'day_tables') :
+		day_code = period.period_code[:3]
+		for day in new_teacher_timetable.timetable.day_tables :
+			if day_code == day.day_code :
+				add_or_update_period(day.periods,period)
+	return new_teacher_timetable
+
+
+def add_or_update_period(existing_periods,period) :
+	order_index = period.order_index
+	for existing_period in existing_periods :
+		if existing_period.order_index == order_index :
+			existing_periods.remove(existing_period)
+			existing_periods.append(period)
+		# else :
+		# 	existing_periods.append(period)
+
+
+
+
+def update_previous_teacher_timetable(previous_teacher_timetable,subject_code,period_list) :
+	if hasattr(previous_teacher_timetable.timetable,'day_tables') :
+		for day in previous_teacher_timetable.timetable.day_tables :
+			for period in day.periods :
+				if period.subject_key == subject_code :
+					period_list.append(period)
+					day.periods.remove(period)
+	return previous_teacher_timetable
+
+
+
+
+def reset_periods(timetable,updated_employee_key,subject_code) :
+	if hasattr(timetable ,'day_tables') :
+		for day in timetable.day_tables :
+			for period in day.periods :
+				period.class_info_key = None
+				period.division_code = None
+				period.employee_key = None
+				period.subject_key = None
+				period.period_code = None
+	return timetable
+
+def get_timetable_from_updated_class_timetable(updated_class_timetable) :
+	if hasattr(updated_class_timetable,'timetable') :
+		return updated_class_timetable.timetable
+
+def generate_teacher_timetable(updated_employee_key,timetable,updated_class_timetable) :
+	teacher_timetable = ttable.TimeTable(None)
+	teacher_timetable.academic_year = updated_class_timetable.academic_year
+	teacher_timetable.employee_key = updated_employee_key
+	teacher_timetable.school_key = updated_class_timetable.school_key
+	teacher_timetable.time_table_key = key.generate_key(16)
+	teacher_timetable.timetable = timetable
+	return teacher_timetable
+
+
+# def update_new_teacher_timetable(current_teacher_timetables_list,updated_employee_key,subject_code) :
+# 	pass
+
+def update_current_class_timetable(current_class_timetable,subject_code,updated_employee_key) :
+	if hasattr(current_class_timetable, 'timetable') and current_class_timetable.timetable is not None :
+		if hasattr(current_class_timetable.timetable,'day_tables') and len(current_class_timetable.timetable.day_tables) > 0 :
+			for day in current_class_timetable.timetable.day_tables :
+				if hasattr(day,'periods') and len(day.periods) > 0 :
+					for period in day.periods :
+						if period.subject_key == subject_code :
+							period.employee_key = updated_employee_key
+				else :
+					gclogger.warn('Periods not existing')
+		else:
+			gclogger.warn('Days_table not existing')
+	else:
+		gclogger.warn('Time table not existing')
+
+	return current_class_timetable
+
+	
+
+
+	
+def get_previous_employee_key(subject_code,current_class_timetable) :
+	if hasattr(current_class_timetable, 'timetable') and current_class_timetable.timetable is not None :
+		if hasattr(current_class_timetable.timetable,'day_tables') and len(current_class_timetable.timetable.day_tables) > 0 :
+			for day in current_class_timetable.timetable.day_tables :
+				if hasattr(day,'periods') and len(day.periods) > 0 :
+					for period in day.periods :
+						if period.subject_key == subject_code :
+							return period.employee_key
+				else :
+					gclogger.warn('Periods not existing')
+		else:
+			gclogger.warn('Days_table not existing')
+	else:
+		gclogger.warn('Time table not existing')
+
+	return current_class_timetable
+
+
+
+def get_updated_employee_key(subject_code,class_info,class_key,division) :
+	if hasattr(class_info,"divisions") :
+		for div in class_info.divisions :
+			if div.code == division and len(div.subject_teachers) > 0:
+				for subject_teacher in div.subject_teachers :
+					if subject_teacher.subject_code == subject_code :
+						return subject_teacher.teacher_employee_key 
+
+
+
+
+
+
+#---------------------------------issue-9---------------------------------#
+
+
+
+
+
+
+
+
+
+
 
 def generate_and_save_calenders(time_table_key,academic_year):
 	gclogger.info("Generating for timetable " + time_table_key + " academic_year " + academic_year)

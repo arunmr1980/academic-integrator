@@ -164,7 +164,9 @@ def Update_lessonplan(current_lessonplan,updated_class_calendar) :
 def adjust_lessonplan_after_remove_schedule(current_lessonplan) :
 	shedule_list = get_all_remaining_schedules(current_lessonplan)
 	current_lessonplan = get_lesson_plan_after_remove_all_shedules(current_lessonplan)
+	#add root schedule to schedule list and delete all root sessions
 	current_lessonplan = get_updated_lesson_plan(shedule_list,current_lessonplan)
+	#create remaining  schedule  on root sesions
 	return current_lessonplan
 
 
@@ -412,7 +414,9 @@ def holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,
 	current_lessonplan = remove_shedules(schedules,current_lessonplan)
 	shedule_list = get_all_remaining_schedules(current_lessonplan)
 	current_lessonplan = get_lesson_plan_after_remove_all_shedules(current_lessonplan)
+	#add root schedule to schedule list and delete all root sessions
 	current_lessonplan = get_updated_lesson_plan(shedule_list,current_lessonplan)
+
 	return current_lessonplan
 
 def cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calendar,day_code) :
@@ -457,6 +461,7 @@ def add_shedule_after_calendar_date(schedule_list,current_lessonplan) :
 		for topic in main_topic.topics :
 			for session in topic.sessions :
 				if not hasattr(session , 'schedule') :
+
 					session.schedule = schedule_list[0]
 					gclogger.info('A schedule is added ' + str(schedule_list[0].start_time) + ' --- ' + str(schedule_list[0].start_time) )
 					schedule_list.remove(schedule_list[0])
@@ -502,6 +507,10 @@ def remove_schedule_after_calendar_date(current_lessonplan,calendar_date,after_c
 						after_calendar_date_schedules_list.append(session.schedule)
 						gclogger.info("The schedule " + str(session.schedule.start_time) +' --- '+str(session.schedule.end_time) +' -------')
 						del session.schedule
+
+	#check is there sessions and schedule if there append to  after_calendar_date_schedules_list and delete root sessions
+
+
 
 
 
