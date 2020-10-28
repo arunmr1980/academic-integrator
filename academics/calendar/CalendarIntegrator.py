@@ -396,9 +396,10 @@ def update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_ca
 	updated_calendars.append(updated_class_calendar)
 	for event in events_to_remove_list :
 		employee_key = get_employee_key(event.params)
-		teacher_calendar = get_teacher_calendar(teacher_calendars_list,employee_key,calendar_date)
-		updated_teacher_calendar = Update_teacher_calendar(events_to_remove_list,teacher_calendar)
-		updated_calendars.append(updated_teacher_calendar)
+		if employee_key is not None :
+			teacher_calendar = get_teacher_calendar(teacher_calendars_list,employee_key,calendar_date)
+			updated_teacher_calendar = Update_teacher_calendar(events_to_remove_list,teacher_calendar)
+			updated_calendars.append(updated_teacher_calendar)
 	return updated_calendars
 
 def Update_teacher_calendar(events_to_remove_list,teacher_calendar) :

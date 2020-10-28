@@ -17,8 +17,8 @@ from academics.calendar.CalendarIntegrator import add_event_integrate_calendars,
 # timetable_key = '0016006874968973003B532C32-C856-4D0D-9393-4842E439FFF51699906267'
 # calendars_lesson_plan_integration_from_timetable(timetable_key,'2020-2021')
 
-calendar_key = '001603694577711100D40E09F9-9474-4D26-9518-CA35E9EC89C5952450226'
-event_code = "1xra74-1x20oq"
+calendar_key = '001603784927191327F09C269F-29AE-46F5-A349-28F4BF7F4709649111504'
+event_code = "bl16j6-1dwkya"
 add_event_integrate_calendars(event_code,calendar_key)
 # remove_event_integrate_calendars(calendar_key)
 
