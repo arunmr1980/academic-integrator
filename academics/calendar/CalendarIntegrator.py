@@ -413,6 +413,7 @@ def get_teacher_calendar(teacher_calendars_list,employee_key,calendar_date) :
 		if teacher_calendar.subscriber_key == employee_key and teacher_calendar.calendar_date == calendar_date :
 			return teacher_calendar
 	else :
+		print("calndar date emo key", employee_key , calendar_date)
 		teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,employee_key)
 		teacher_calendars_list.append(teacher_calendar)
 		return teacher_calendar
