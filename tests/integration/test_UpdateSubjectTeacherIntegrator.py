@@ -8,6 +8,7 @@ import academics.calendar.Calendar as calendar
 import academics.lessonplan.LessonPlan as lpnr
 from academics.calendar.CalendarIntegrator import *
 import academics.classinfo.ClassInfo as classinfo
+import academics.classinfo.ClassInfoDBService as class_info_service
 import pprint
 import copy 
 import academics.timetable.KeyGeneration as key
@@ -15,56 +16,85 @@ pp = pprint.PrettyPrinter(indent=4)
 
 class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 
+	def setUp(self) :
+		current_class_timetables_list = self.get_current_class_timetables_list_json()
+		for current_class_timetable in current_class_timetables_list :
+			response = timetable_service.create_timetable(current_class_timetable)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + '--------- A class time table uploaded -------- '+str(current_class_timetable['time_table_key']))
+
+		current_teacher_timetables_list= self.get_current_teacher_timetables_list_json()
+		for current_teacher_timetable in current_teacher_timetables_list :
+			response = timetable_service.create_timetable(current_teacher_timetable)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + '--------- A teacher time table uploaded -------- '+str(current_teacher_timetable['time_table_key']))
+
+		current_class_calendars = self.get_current_class_calendars_list_json()
+		for current_calendar in current_class_calendars :
+			response = calendar_service.add_or_update_calendar(current_calendar)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A class calendar uploaded --------- '+str(current_calendar['calendar_key']))
+
+		class_info_list = self.get_class_info_list_json()
+		for class_info in class_info_list :
+			response = class_info_service.add_or_update_class_info(class_info)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for uploaded --------- ' +str(class_info['class_info_key']) )
+
 		
 	def test_timetables_and_calendars(self) :
-		period_list = []
-		updated_class_timetables_list = []
-		updated_teacher_timetables_list =[]
-		current_class_timetables_list = self.get_current_class_timetables_list()
-		expected_teacher_timetables_list = self.get_expected_teacher_timetables_list()
-		expected_class_timetables_list = self.get_expected_class_timetables_list()
-		current_teacher_timetables_list = self.get_current_teacher_timetables_list()
-		current_class_calendars_list = self.get_current_class_calendars_list()
-		expected_class_calendars_list = self.get_expected_class_calendars_list()
-		class_info_list = self.get_class_info_list()
-		division = "A"
+		division = 'A'
 		class_info_key = '8B1B22E72AE'	
 		subject_code = 'bio3'
-		class_info = self.get_class_info(class_info_key,class_info_list)
-		current_class_timetable = self.get_class_timetable(class_info_key,division,current_class_timetables_list)
-		if current_class_timetable is not None :
-			gclogger.info("class key------> " + str(class_info_key))
-			gclogger.info("Division---------> " + str(division))
-			updated_employee_key = get_updated_employee_key(subject_code,class_info,class_info_key,division)
-			previous_employee_key = get_previous_employee_key(subject_code,current_class_timetable)
-			updated_class_timetable = update_current_class_timetable(current_class_timetable,subject_code,updated_employee_key)
-			updated_class_timetables_list.append(updated_class_timetable)
-			previous_teacher_timetable = self.get_previous_teacher_timetable(current_teacher_timetables_list,subject_code,previous_employee_key)
-			updated_previous_teacher_timetable = update_previous_teacher_timetable(previous_teacher_timetable,subject_code,period_list)
-			updated_teacher_timetables_list.append(updated_previous_teacher_timetable)
-			new_teacher_timetable = self.get_new_teacher_timetable(current_teacher_timetables_list,updated_employee_key,subject_code,updated_class_timetable)
-			updated_new_teacher_timetable = update_new_teacher_timetable(new_teacher_timetable,period_list) 
-			updated_teacher_timetables_list.append(updated_new_teacher_timetable)
-			updated_class_calendars = get_updated_class_calendars(current_class_calendars_list,period_list)
-			for i in updated_teacher_timetables_list :
-				t = ttable.TimeTable(None)
-				calendar_dict = t.make_timetable_dict(i)
-				pp.pprint(calendar_dict)
-		for updated_class_timetable in updated_class_timetables_list :
-			self.check_class_timetables(updated_class_timetable,expected_class_timetables_list)
-			gclogger.info("-----[UnitTest] class timetable test passed ----------------- "+ str(updated_class_timetable.time_table_key)+" ------------------------------ ")
-		for updated_teacher_timetable in current_teacher_timetables_list :
-			self.check_teacher_timetables(updated_teacher_timetable,expected_teacher_timetables_list)
-			gclogger.info("-----[UnitTest] teacher timetable test passed ----------------- "+ str(updated_teacher_timetable.time_table_key)+" ------------------------------ ")
-		for updated_class_calendar in updated_class_calendars :
+		subscriber_key = class_info_key + '-' + division
+		current_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
+		academic_year = current_class_timetable.academic_year
+		current_cls_timetable = copy.deepcopy(current_class_timetable)
+		update_subject_teacher_integrator(division,class_info_key,subject_code)
+
+		expected_teacher_timetables_list = self.get_expected_teacher_timetables_list()
+		expected_class_calendars_list = self.get_expected_class_calendars_list()
+		expected_class_timetables_list = self.get_expected_class_timetables_list()
+
+		class_info = class_info_service.get_classinfo(class_info_key)
+		updated_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
+		previous_employee_key = get_previous_employee_key(subject_code,current_cls_timetable)
+		updated_previous_teacher_timetable = timetable_service.get_timetable_entry_by_employee(previous_employee_key,academic_year)
+		updated_employee_key = get_updated_employee_key(subject_code,class_info,class_info_key,division)
+		updated_new_teacher_timetable = timetable_service.get_timetable_entry_by_employee(updated_employee_key,academic_year)
+		updated_class_calendars_list = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
+
+		self.check_class_timetables(updated_class_timetable,expected_class_timetables_list)
+		gclogger.info("-----[UnitTest] class timetable test passed ----------------- "+ str(updated_class_timetable.time_table_key)+" ------------------------------ ")
+
+		for updated_class_calendar in updated_class_calendars_list :
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
+			gclogger.info("-----[UnitTest] class calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
+
+		self.check_teacher_timetables(updated_previous_teacher_timetable,expected_teacher_timetables_list)
+		gclogger.info("-----[UnitTest] teacher timetable test passed ----------------- "+ str(updated_previous_teacher_timetable.time_table_key)+" ------------------------------ ")
+		self.check_teacher_timetables(updated_new_teacher_timetable,expected_teacher_timetables_list)
+		gclogger.info("-----[UnitTest] teacher timetable test passed ----------------- "+ str(updated_new_teacher_timetable.time_table_key)+" ------------------------------ ")
+		
+		
+	def tearDown(self) :
+		division = 'A'
+		class_info_key = '8B1B22E72AE'	
+		subject_code = 'bio3'
+		subscriber_key = class_info_key + '-' + division
+		updated_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
+		timetable_service.delete_timetable(updated_class_timetable.time_table_key)
+		gclogger.info("--------------- A updated class timetable deleted  " + updated_class_timetable.time_table_key+"  -----------------")
+
+		current_teacher_timetables_list = self.get_current_teacher_timetables_list_json()
+		for current_teacher_timetable in current_teacher_timetables_list :
+			timetable_service.delete_timetable(current_teacher_timetable["time_table_key"])
+			gclogger.info("--------------- A updated teacher Timetable deleted  " + current_teacher_timetable["time_table_key"]+"  -----------------")
+
+		updated_class_calendars_list = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
+		for updated_class_calendar in updated_class_calendars_list :
+			calendar_service.delete_calendar(updated_class_calendar.calendar_key)
+			gclogger.info("--------------- A updated class calendar deleted " + updated_class_calendar.calendar_key+" -----------------")
+
 
 
 					
-	def get_class_info(self,class_info_key,class_info_list) :
-		for class_info in class_info_list :
-			if class_info.class_info_key == class_info_key :
-				return class_info
 
 
 	def get_previous_teacher_timetable(self,current_teacher_timetables_list,subject_code,previous_employee_key) :
@@ -84,9 +114,9 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			return teacher_time_table
 
 
-	def get_class_timetable(self,class_info_key,division,current_class_timetables_list) :
+	def get_class_timetable(self,class_key,division,current_class_timetables_list) :
 		for current_class_timetable in current_class_timetables_list :
-			if current_class_timetable.class_key == class_info_key and current_class_timetable.division == division :
+			if current_class_timetable.class_key == class_key and current_class_timetable.division == division :
 				return current_class_timetable
 
 	def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
@@ -97,7 +127,6 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 				self.assertEqual(expected_class_calendar.subscriber_key,updated_class_calendar.subscriber_key )
 				self.assertEqual(expected_class_calendar.subscriber_type,updated_class_calendar.subscriber_type )
 				self.check_events(expected_class_calendar.events,updated_class_calendar.events)
-				gclogger.info("-----[UnitTest] class calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
 
 	def check_events(self,expected_class_calendar_events,generated_class_calendar_events) :
 		for index in range(0,len(expected_class_calendar_events)) :
@@ -160,6 +189,15 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			if day.day_code == day_code :
 				return day
 
+	def get_expected_teacher_timetables_list(self) :
+		expected_teacher_timetables = []
+		with open('tests/unit/fixtures/update-subject-teacher-fixtures/expected_teacher_timetables.json', 'r') as timetables_list:
+			teacher_timetables_dict = json.load(timetables_list)
+		for current_teacher_timetable in teacher_timetables_dict :
+			expected_teacher_timetables.append(ttable.TimeTable(current_teacher_timetable))
+		return expected_teacher_timetables
+
+
 	def get_expected_class_calendars_list(self) :
 		expected_class_calendars = []
 		with open('tests/unit/fixtures/update-subject-teacher-fixtures/expected_class_calendars.json', 'r') as calendar_list:
@@ -168,13 +206,18 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			expected_class_calendars.append(calendar.Calendar(class_cal))
 		return expected_class_calendars
 
-	def get_current_class_calendars_list(self) :
-		current_class_calendars = []
-		with open('tests/unit/fixtures/update-subject-teacher-fixtures/current_class_calendars.json', 'r') as calendar_list:
+	def get_expected_class_calendars_list(self) :
+		expected_class_calendars = []
+		with open('tests/unit/fixtures/update-subject-teacher-fixtures/expected_class_calendars.json', 'r') as calendar_list:
 			class_calendars_dict = json.load(calendar_list)
 		for class_cal in class_calendars_dict :
-			current_class_calendars.append(calendar.Calendar(class_cal))
-		return current_class_calendars
+			expected_class_calendars.append(calendar.Calendar(class_cal))
+		return expected_class_calendars
+
+	def get_current_class_calendars_list_json(self) :
+		with open('tests/unit/fixtures/update-subject-teacher-fixtures/current_class_calendars.json', 'r') as calendar_list:
+			class_calendars_dict = json.load(calendar_list)
+		return class_calendars_dict
 
 	def get_expected_class_timetables_list(self) :
 		expected_class_timetables = []
@@ -192,29 +235,21 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			expected_teacher_timetables.append(ttable.TimeTable(current_teacher_timetable))
 		return expected_teacher_timetables
 
-	def get_class_info_list(self) :
-		class_info_list = []
+	def get_class_info_list_json(self) :
 		with open('tests/unit/fixtures/update-subject-teacher-fixtures/class_info_list.json', 'r') as class_infos:
 			class_info_list_dict = json.load(class_infos)
-		for class_info in class_info_list_dict :
-			class_info_list.append(classinfo.ClassInfo(class_info))
-		return class_info_list
+		return class_info_list_dict
 
-	def get_current_class_timetables_list(self) :
-		current_class_timetables_list = []
+	def get_current_class_timetables_list_json(self) :
 		with open('tests/unit/fixtures/update-subject-teacher-fixtures/current_class_timetables.json', 'r') as current_class_timetables:
 			current_class_timetables_dict = json.load(current_class_timetables)
-			for current_class_timetable in current_class_timetables_dict :
-				current_class_timetables_list.append(ttable.TimeTable(current_class_timetable))
-		return current_class_timetables_list
+		return current_class_timetables_dict
+			
 
-	def get_current_teacher_timetables_list(self) :
-		current_teacher_timetable_list = []
+	def get_current_teacher_timetables_list_json(self) :
 		with open('tests/unit/fixtures/update-subject-teacher-fixtures/current_teacher_timetables.json', 'r') as current_teacher_timetables:
 			current_teacher_timetables_dict = json.load(current_teacher_timetables)
-			for current_teacher_timetable in current_teacher_timetables_dict :
-				current_teacher_timetable_list.append(ttable.TimeTable(current_teacher_timetable))
-		return current_teacher_timetable_list
+		return current_teacher_timetables_dict
 
 if __name__ == '__main__':
 	unittest.main()
