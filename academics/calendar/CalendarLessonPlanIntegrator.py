@@ -55,11 +55,6 @@ def integrate_calendar_to_lesson_plan(generated_class_calendar,current_lesson_pl
 
 	if hasattr(generated_class_calendar ,'events') :
 		for event in generated_class_calendar.events :
-			print(event.from_time,'<---------------------  FROM TIMEEEE')
-			print(event.to_time,'<---------------------  TO TIMEEEE')
-			print(event.params[1].value,"<<-----------------SUBJECT")
-			print(event.params[0].value,"<<---------------PERIOD CODE")
-			print('-------------------------------------')
 			schedule_added = False
 			subject_code = get_subject_code(event)
 			current_lesson_plan = get_lesson_plan(subject_code,current_lesson_plan_list)
@@ -85,9 +80,7 @@ def add_sessions_on_root(current_lesson_plan,event,generated_class_calendar,sche
 	if hasattr(current_lesson_plan,'sessions') :
 		session_order_index = len(current_lesson_plan.sessions) + 1
 		session = create_session(schedule,session_order_index)
-		if schedule not in current_lesson_plan.sessions :
-			current_lesson_plan.sessions.append(session)
-			schedule_added = True
+		current_lesson_plan.sessions.append(session)
 
 
 

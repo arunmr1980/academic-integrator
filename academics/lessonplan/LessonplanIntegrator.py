@@ -440,7 +440,7 @@ def cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calen
 	events = get_class_session_events(calendar.events)
 	gclogger.info("LESSON PLAN KEY ------------------->  " + str(current_lessonplan.lesson_plan_key))
 	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,calendar.calendar_date,after_calendar_date_schedules_list)
-	current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,after_calendar_date_schedules_list)
+	# current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,after_calendar_date_schedules_list)
 	current_lessonplan = add_calendar_schedules_to_lesson_plan(current_lessonplan,events,calendar)
 	current_lessonplan = add_shedule_after_calendar_date(after_calendar_date_schedules_list,current_lessonplan)
 	current_lessonplan = create_remaining_sessions_on_root(after_calendar_date_schedules_list,current_lessonplan)
