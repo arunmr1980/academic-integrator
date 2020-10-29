@@ -17,11 +17,11 @@ from academics.calendar.CalendarIntegrator import add_event_integrate_calendars,
 # timetable_key = '0016006874968973003B532C32-C856-4D0D-9393-4842E439FFF51699906267'
 # calendars_lesson_plan_integration_from_timetable(timetable_key,'2020-2021')
 
-# calendar_key = '001600758691097412A5D9BEDB-A46D-4383-8994-E3F65E1F90CE-342236257'
-# event_code = "o5nobm-yrio63"
-# add_event_integrate_calendars(event_code,calendar_key)
+calendar_key = '001603784927191327F09C269F-29AE-46F5-A349-28F4BF7F4709649111504'
+event_code = "bl16j6-1dwkya"
+add_event_integrate_calendars(event_code,calendar_key)
 # remove_event_integrate_calendars(calendar_key)
 
-time_table_key = '001600758904519334F80F12C9-087F-4A68-A332-9C5F928ED0FF169892635'
-period_code = "MON-3"
-integrate_update_period_calendars_and_lessonplans(period_code, time_table_key)
+# time_table_key = '001600758904519334F80F12C9-087F-4A68-A332-9C5F928ED0FF169892635'
+# period_code = "MON-3"
+# integrate_update_period_calendars_and_lessonplans(period_code, time_table_key)

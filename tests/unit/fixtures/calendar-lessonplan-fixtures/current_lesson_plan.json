@@ -3,6 +3,56 @@
     "class_key":"8B1B22E72AE",
     "division":"A",
     "lesson_plan_key":"test-lessonplan-1",
+    "sessions":[
+              {
+                "code":"one",
+                "completion_datetime":"NA",
+                "completion_status":false,
+                "name":"Session 1",
+                "order_index":1,
+                "schedule":{
+                  "calendar_key":"test-key",
+                  "event_code":"event-100",
+                  "start_time":"2020-08-03T10:00:00",
+                  "end_time":"2020-08-03T10:40:00"
+                },
+                "resources":[
+                  
+                ]
+              },
+              {
+                "code":"two",
+                "completion_datetime":"NA",
+                "completion_status":false,
+                "name":"Session 2",
+                "order_index":2,
+                "schedule":{
+                  "calendar_key":"test-key",
+                  "event_code":"event-1000",
+                  "start_time":"2020-08-04T11:30:00",
+                  "end_time":"2020-08-04T12:10:00"
+                },
+                "resources":[
+                  
+                ]
+              },
+              {
+                "code":"three",
+                "completion_datetime":"NA",
+                "completion_status":false,
+                "name":"Session 3",
+                "order_index":3,
+                "schedule":{
+                  "calendar_key":"test-key",
+                  "event_code":"event-10000",
+                  "start_time":"2020-08-05T10:00:00",
+                  "end_time":"2020-08-05T10:40:00"
+                },
+                "resources":[
+                  
+                ]
+              }
+            ],
     "resources":[
       
     ],
@@ -279,6 +329,56 @@
     "resources":[
       
     ],
+    "sessions":[
+              {
+                "code":"one",
+                "completion_datetime":"NA",
+                "completion_status":false,
+                "name":"Session 1",
+                "order_index":1,
+                "schedule":{
+                  "calendar_key":"test-key",
+                  "event_code":"event-100",
+                  "start_time":"2020-08-03T10:00:00",
+                  "end_time":"2020-08-03T10:40:00"
+                },
+                "resources":[
+                  
+                ]
+              },
+              {
+                "code":"two",
+                "completion_datetime":"NA",
+                "completion_status":false,
+                "name":"Session 2",
+                "order_index":2,
+                "schedule":{
+                  "calendar_key":"test-key",
+                  "event_code":"event-1000",
+                  "start_time":"2020-08-04T11:30:00",
+                  "end_time":"2020-08-04T12:10:00"
+                },
+                "resources":[
+                  
+                ]
+              },
+              {
+                "code":"three",
+                "completion_datetime":"NA",
+                "completion_status":false,
+                "name":"Session 3",
+                "order_index":3,
+                "schedule":{
+                  "calendar_key":"test-key",
+                  "event_code":"event-10000",
+                  "start_time":"2020-08-05T10:00:00",
+                  "end_time":"2020-08-05T10:40:00"
+                },
+                "resources":[
+                  
+                ]
+              }
+            ],
     "subject_code":"bio2",
     "topics":[
       {

@@ -16,7 +16,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 class CalendarHolidayLessonPlanIntegratorTest(unittest.TestCase):
 	def test_lessonplan(self) :
-		timetable=self.get_time_table()
+		timetable = self.get_time_table()
 		academic_configuration=self.get_academic_configuration()
 		event_code = 'event-1'
 		calendar_key ='test-key-5'
@@ -38,6 +38,9 @@ class CalendarHolidayLessonPlanIntegratorTest(unittest.TestCase):
 		else :
 			for current_lessonplan in current_lesson_plan_list :
 				updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
+				lp = lessonplan.LessonPlan(None)
+				updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+				pp.pprint(updated_lessonplan_dict)
 				self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 
 
