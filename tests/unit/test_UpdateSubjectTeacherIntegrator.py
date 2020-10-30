@@ -20,6 +20,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		period_list = []
 		updated_class_timetables_list = []
 		updated_teacher_timetables_list =[]
+		updated_class_calendars_list = []
 		current_class_timetables_list = self.get_current_class_timetables_list()
 		expected_teacher_timetables_list = self.get_expected_teacher_timetables_list()
 		expected_class_timetables_list = self.get_expected_class_timetables_list()
@@ -35,28 +36,29 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		if current_class_timetable is not None :
 			gclogger.info("class key------> " + str(class_info_key))
 			gclogger.info("Division---------> " + str(division))
-			updated_employee_key = get_updated_employee_key(subject_code,class_info,class_info_key,division)
-			previous_employee_key = get_previous_employee_key(subject_code,current_class_timetable)
-			updated_class_timetable = update_current_class_timetable(current_class_timetable,subject_code,updated_employee_key)
-			updated_class_timetables_list.append(updated_class_timetable)
-			previous_teacher_timetable = self.get_previous_teacher_timetable(current_teacher_timetables_list,subject_code,previous_employee_key)
-			updated_previous_teacher_timetable = update_previous_teacher_timetable(previous_teacher_timetable,subject_code,period_list)
-			updated_teacher_timetables_list.append(updated_previous_teacher_timetable)
-			new_teacher_timetable = self.get_new_teacher_timetable(current_teacher_timetables_list,updated_employee_key,subject_code,updated_class_timetable)
-			updated_new_teacher_timetable = update_new_teacher_timetable(new_teacher_timetable,period_list) 
-			updated_teacher_timetables_list.append(updated_new_teacher_timetable)
-			updated_class_calendars = get_updated_class_calendars(current_class_calendars_list,period_list)
-			for i in updated_teacher_timetables_list :
-				t = ttable.TimeTable(None)
-				calendar_dict = t.make_timetable_dict(i)
-				pp.pprint(calendar_dict)
+			academic_year = None
+			integrate_update_subject_teacher(updated_teacher_timetables_list,updated_class_calendars_list,updated_class_timetables_list,current_teacher_timetables_list,academic_year,subject_code,class_info,class_info_key,division,current_class_timetable,period_list,current_class_calendars_list) 
+
 		for updated_class_timetable in updated_class_timetables_list :
+			t = ttable.TimeTable(None)
+			calendar_dict = t.make_timetable_dict(updated_class_timetable)
+			pp.pprint(calendar_dict)
+			print("------------------ UPDATED CLASS TIME TABLE --------------")
+
 			self.check_class_timetables(updated_class_timetable,expected_class_timetables_list)
 			gclogger.info("-----[UnitTest] class timetable test passed ----------------- "+ str(updated_class_timetable.time_table_key)+" ------------------------------ ")
-		for updated_teacher_timetable in current_teacher_timetables_list :
+		for updated_teacher_timetable in updated_teacher_timetables_list :
+			t = ttable.TimeTable(None)
+			calendar_dict = t.make_timetable_dict(updated_teacher_timetable)
+			pp.pprint(calendar_dict)
+			print("------------------ UPDATED TEACHER TIME TABLE --------------")
 			self.check_teacher_timetables(updated_teacher_timetable,expected_teacher_timetables_list)
 			gclogger.info("-----[UnitTest] teacher timetable test passed ----------------- "+ str(updated_teacher_timetable.time_table_key)+" ------------------------------ ")
-		for updated_class_calendar in updated_class_calendars :
+		for updated_class_calendar in updated_class_calendars_list :
+			cal = calendar.Calendar(None)
+			class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+			pp.pprint(class_calendar_dict)
+			print("------------------ UPDATED CLASS CALENDAR --------------")
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
 
 
@@ -65,23 +67,6 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		for class_info in class_info_list :
 			if class_info.class_info_key == class_info_key :
 				return class_info
-
-
-	def get_previous_teacher_timetable(self,current_teacher_timetables_list,subject_code,previous_employee_key) :
-		for current_teacher_timetable in current_teacher_timetables_list :
-			if current_teacher_timetable.employee_key == previous_employee_key :
-				return current_teacher_timetable
-
-
-	def get_new_teacher_timetable(self,current_teacher_timetables_list,updated_employee_key,subject_code,updated_class_timetable) :
-		for current_teacher_timetable in current_teacher_timetables_list :
-			if current_teacher_timetable.employee_key == updated_employee_key :
-				return current_teacher_timetable
-		else :
-			timetable = get_timetable_from_updated_class_timetable(updated_class_timetable)
-			timetable = reset_periods(timetable,updated_employee_key,subject_code)
-			teacher_time_table = generate_teacher_timetable(updated_employee_key,timetable,updated_class_timetable)
-			return teacher_time_table
 
 
 	def get_class_timetable(self,class_info_key,division,current_class_timetables_list) :

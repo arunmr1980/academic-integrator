@@ -61,16 +61,16 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		updated_class_calendars_list = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
 
 		self.check_class_timetables(updated_class_timetable,expected_class_timetables_list)
-		gclogger.info("-----[UnitTest] class timetable test passed ----------------- "+ str(updated_class_timetable.time_table_key)+" ------------------------------ ")
+		gclogger.info("-----[IntegrationTest] class timetable test passed ----------------- "+ str(updated_class_timetable.time_table_key)+" ------------------------------ ")
 
 		for updated_class_calendar in updated_class_calendars_list :
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
-			gclogger.info("-----[UnitTest] class calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
+			gclogger.info("-----[IntegrationTest] class calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
 
 		self.check_teacher_timetables(updated_previous_teacher_timetable,expected_teacher_timetables_list)
-		gclogger.info("-----[UnitTest] teacher timetable test passed ----------------- "+ str(updated_previous_teacher_timetable.time_table_key)+" ------------------------------ ")
+		gclogger.info("-----[IntegrationTest] teacher timetable test passed ----------------- "+ str(updated_previous_teacher_timetable.time_table_key)+" ------------------------------ ")
 		self.check_teacher_timetables(updated_new_teacher_timetable,expected_teacher_timetables_list)
-		gclogger.info("-----[UnitTest] teacher timetable test passed ----------------- "+ str(updated_new_teacher_timetable.time_table_key)+" ------------------------------ ")
+		gclogger.info("-----[IntegrationTest] teacher timetable test passed ----------------- "+ str(updated_new_teacher_timetable.time_table_key)+" ------------------------------ ")
 		
 		
 	def tearDown(self) :
