@@ -34,7 +34,7 @@ def update_subject_teacher_integrator(division,class_info_key,subject_code) :
 		integrate_update_subject_teacher(updated_teacher_timetables_list,updated_class_calendars_list,updated_class_timetables_list,current_teacher_timetables_list,academic_year,subject_code,class_info,class_info_key,division,current_class_timetable,period_list,current_class_calendars_list)
 		save_updated_calendars_and_timetables(updated_class_calendars_list,updated_class_timetables_list,updated_teacher_timetables_list)
 
-		
+
 
 def save_updated_calendars_and_timetables(updated_class_calendars_list,updated_class_timetables_list,updated_teacher_timetables_list) :
 	for updated_class_calendar in updated_class_calendars_list :
@@ -59,7 +59,19 @@ def save_updated_calendars_and_timetables(updated_class_calendars_list,updated_c
 		response = timetable_service.create_timetable(updated_teacher_timetable_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + '--------- A updated teacher time table uploaded -------- '+str(updated_teacher_timetable_dict['time_table_key']))
 
-def integrate_update_subject_teacher(updated_teacher_timetables_list,updated_class_calendars_list,updated_class_timetable_list,current_teacher_timetables_list,academic_year,subject_code,class_info,class_info_key,division,current_class_timetable,period_list,current_class_calendars_list) :
+
+def integrate_update_subject_teacher(updated_teacher_timetables_list,
+									updated_class_calendars_list,
+									updated_class_timetable_list,
+									current_teacher_timetables_list,
+									academic_year,
+									subject_code,
+									class_info,
+									class_info_key,
+									division,
+									current_class_timetable,
+									period_list,
+									current_class_calendars_list) :
 	updated_employee_key = get_updated_employee_key(subject_code,class_info,class_info_key,division)
 	previous_employee_key = get_previous_employee_key(subject_code,current_class_timetable)
 	updated_class_timetable = update_current_class_timetable(current_class_timetable,subject_code,updated_employee_key)
@@ -68,11 +80,12 @@ def integrate_update_subject_teacher(updated_teacher_timetables_list,updated_cla
 	updated_previous_teacher_timetable = update_previous_teacher_timetable(previous_teacher_timetable,subject_code,period_list)
 	updated_teacher_timetables_list.append(updated_previous_teacher_timetable)
 	new_teacher_timetable = get_new_teacher_timetable(updated_employee_key,subject_code,updated_class_timetable,current_teacher_timetables_list,academic_year)
-	updated_new_teacher_timetable = update_new_teacher_timetable(new_teacher_timetable,period_list) 
+	updated_new_teacher_timetable = update_new_teacher_timetable(new_teacher_timetable,period_list)
 	updated_teacher_timetables_list.append(updated_new_teacher_timetable)
 	updated_class_calendars = get_updated_class_calendars(current_class_calendars_list,period_list)
 	updated_class_calendars_list.extend(updated_class_calendars)
-	
+
+
 def get_previous_teacher_timetable(subject_code,previous_employee_key,current_teacher_timetables_list = None,academic_year = None) :
 	previous_teacher_timetable = None
 	if current_teacher_timetables_list is None :
@@ -101,7 +114,7 @@ def get_new_teacher_timetable(updated_employee_key,subject_code,updated_class_ti
 	elif current_teacher_timetables_list is not None :
 		for current_teacher_timetable in current_teacher_timetables_list :
 				if current_teacher_timetable.employee_key == updated_employee_key :
-					new_teacher_timetable = current_teacher_timetable	
+					new_teacher_timetable = current_teacher_timetable
 					gclogger.info(" ----------- Getting new teacher timetable from List ----------- " + str(new_teacher_timetable.time_table_key) + '-----------')
 	else :
 		timetable = get_timetable_from_updated_class_timetable(updated_class_timetable)
@@ -114,13 +127,13 @@ def get_new_teacher_timetable(updated_employee_key,subject_code,updated_class_ti
 
 def get_updated_class_calendars(current_class_calendars_list,period_list) :
 	updated_class_calendars = []
-	for period in period_list :	
+	for period in period_list :
 		for current_class_calendar in current_class_calendars_list :
 			for event in current_class_calendar.events :
-				subject_code = get_subject_code(event)	
+				subject_code = get_subject_code(event)
 				period_code = get_period_code(event)
 				if subject_code == period.subject_key and period_code == period.period_code :
-					updated_params = update_params(current_class_calendar,period)	
+					updated_params = update_params(current_class_calendar,period)
 					del event.params
 					event.params = updated_params
 					updated_class_calendars.append(current_class_calendar)
@@ -146,7 +159,7 @@ def update_params(current_class_calendar,period) :
 	employee_info.value = employee_key
 	params.append(employee_info)
 	return params
-	
+
 
 
 def get_subject_code(event) :
@@ -165,7 +178,7 @@ def get_period_code(event) :
 def update_new_teacher_timetable(new_teacher_timetable,period_list) :
 	period_list = updated_employee_key(period_list,new_teacher_timetable)
 	for period in period_list :
-		if hasattr(period,'order_index') :	
+		if hasattr(period,'order_index') :
 			new_teacher_timetable = add_period_on_new_teacher_timetable(period,new_teacher_timetable)
 	return new_teacher_timetable
 
@@ -189,7 +202,7 @@ def add_or_update_period(existing_periods,period) :
 	for existing_period in existing_periods :
 		if existing_period.order_index == order_index :
 			existing_periods[order_index-1] = period
-			
+
 
 
 def update_previous_teacher_timetable(previous_teacher_timetable,subject_code,period_list) :
@@ -259,10 +272,10 @@ def update_current_class_timetable(current_class_timetable,subject_code,updated_
 
 	return current_class_timetable
 
-	
 
 
-	
+
+
 def get_previous_employee_key(subject_code,current_class_timetable) :
 	if hasattr(current_class_timetable, 'timetable') and current_class_timetable.timetable is not None :
 		if hasattr(current_class_timetable.timetable,'day_tables') and len(current_class_timetable.timetable.day_tables) > 0 :
@@ -288,7 +301,7 @@ def get_updated_employee_key(subject_code,class_info,class_key,division) :
 			if div.code == division and len(div.subject_teachers) > 0:
 				for subject_teacher in div.subject_teachers :
 					if subject_teacher.subject_code == subject_code :
-						return subject_teacher.teacher_employee_key 
+						return subject_teacher.teacher_employee_key
 
 
 
@@ -432,7 +445,7 @@ def is_class(param) :
 	return is_class
 
 
-def generate_holiday_period_list(calendar,academic_configuration,timetable,day_code) :	
+def generate_holiday_period_list(calendar,academic_configuration,timetable,day_code) :
 	holiday_period_list =[]
 	for event in calendar.events :
 		if is_class(event.params[0]) == False :
@@ -589,9 +602,9 @@ def generate_class_calendar(day_code,time_table,date,timetable_configuration,par
 				events_list = []
 				for time_table_period in periods :
 					if not period_exist_or_not(time_table_period,partial_holiday_period_list):
-						
+
 						if timetable_configuration_periods is not None:
-							event = get_event(time_table_period,timetable_configuration_periods,date)	
+							event = get_event(time_table_period,timetable_configuration_periods,date)
 							events_list.append(event)
 
 				if (day.day_code == day_code):
