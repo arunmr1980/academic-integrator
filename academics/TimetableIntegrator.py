@@ -633,7 +633,10 @@ def check_is_event_exist_and_remove(event,existing_class_calendar) :
 		if hasattr(event_info, 'params'):
 			for param in event_info.params :
 				if param.value == get_period_param(event) :
+					print(len(existing_class_calendar.events)," BEFORE REMOVEEE---")
+					print(event_info.event_code,"GOING TO REMOVEEE----->>>")
 					existing_class_calendar.events.remove(event_info)
+					print(len(existing_class_calendar.events)," AFTER REMOVEEE---")
 	return existing_class_calendar
 
 def get_period_param(event) :
