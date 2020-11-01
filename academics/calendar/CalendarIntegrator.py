@@ -21,6 +21,7 @@ def remove_event_integrate_calendars(calendar_key) :
 	academic_configuration = academic_service.get_academic_year(school_key,calendar_date)
 	academic_year = academic_configuration.academic_year
 	day_code = findDay(calendar.calendar_date).upper()[0:3]
+	print("DAY CODEEEEEE -------",day_code)
 	class_info_list = class_info_service.get_classinfo_list(school_key,academic_year)
 	class_calendars = get_class_calendars(class_info_list,calendar_date)
 	if calendar.subscriber_type == 'SCHOOL' :
@@ -272,6 +273,17 @@ def get_updated_period_from_timetable(period_code,updated_timetable) :
 	else:
 		gclogger.warn('Time table not existing')
 
+
+def generate_holiday_period_list(calendar,academic_configuration,timetable,day_code) :
+	holiday_period_list =[]
+	for event in calendar.events :
+		if is_class(event.params[0]) == False :
+			start_time = event.from_time
+			end_time = event.to_time
+			partial_holiday_periods = get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
+			for partial_holiday_period in partial_holiday_periods :
+				holiday_period_list.append(partial_holiday_period)
+	return holiday_period_list
 
 
 def update_class_calendars_teacher_calendars(subscriber_key,existing_class_calendar,calendar,academic_configuration,updated_calendars_list,day_code,calendar_date) :
