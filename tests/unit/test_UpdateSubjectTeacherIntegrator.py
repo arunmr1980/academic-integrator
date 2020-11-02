@@ -9,13 +9,13 @@ import academics.lessonplan.LessonPlan as lpnr
 from academics.calendar.CalendarIntegrator import *
 import academics.classinfo.ClassInfo as classinfo
 import pprint
-import copy 
+import copy
 import academics.timetable.KeyGeneration as key
 pp = pprint.PrettyPrinter(indent=4)
 
 class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 
-		
+
 	def test_timetables_and_calendars(self) :
 		period_list = []
 		updated_class_timetables_list = []
@@ -29,15 +29,26 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		expected_class_calendars_list = self.get_expected_class_calendars_list()
 		class_info_list = self.get_class_info_list()
 		division = "A"
-		class_info_key = '8B1B22E72AE'	
+		class_info_key = '8B1B22E72AE'
 		subject_code = 'bio3'
+		existing_subject_teacher = 'employee-3'
+		new_subject_teacher = 'employee-1'
 		class_info = self.get_class_info(class_info_key,class_info_list)
-		current_class_timetable = self.get_class_timetable(class_info_key,division,current_class_timetables_list)
 		if current_class_timetable is not None :
 			gclogger.info("class key------> " + str(class_info_key))
 			gclogger.info("Division---------> " + str(division))
 			academic_year = None
-			integrate_update_subject_teacher(updated_teacher_timetables_list,updated_class_calendars_list,updated_class_timetables_list,current_teacher_timetables_list,academic_year,subject_code,class_info,class_info_key,division,current_class_timetable,period_list,current_class_calendars_list) 
+			integrate_update_subject_teacher(updated_teacher_timetables_list,
+											updated_class_calendars_list,
+											updated_class_timetables_list,
+											academic_year,
+											subject_code,
+											class_info,
+											class_info_key,
+											division,
+											current_class_timetable,
+											period_list,
+											current_class_calendars_list,) 
 
 		for updated_class_timetable in updated_class_timetables_list :
 			t = ttable.TimeTable(None)
@@ -62,7 +73,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
 
 
-					
+
 	def get_class_info(self,class_info_key,class_info_list) :
 		for class_info in class_info_list :
 			if class_info.class_info_key == class_info_key :

@@ -19,7 +19,7 @@
     "previous_schedule":{
         "date_time":"2020-08-04",
         "from_time":"11:00",
-        "to_time":"01:00"
+        "to_time":"13:00"
     },
     "schedulable":"YES",
     "schedule_flag":"true",
@@ -28,7 +28,7 @@
     "status":"MARK_ENTRY",
     "subject_code":"bio1",
     "subject_name":"biology",
-    "to_time":"01:00",
+    "to_time":"13:00",
     "type":"WRITTEN",
     "visibility":"SCHOOL"
   },
@@ -94,7 +94,7 @@
     "status":"MARK_ENTRY",
     "subject_code":"bio3",
     "subject_name":"biology",
-    "to_time":"01:00",
+    "to_time":"13:00",
     "type":"WRITTEN",
     "visibility":"SCHOOL"
   }

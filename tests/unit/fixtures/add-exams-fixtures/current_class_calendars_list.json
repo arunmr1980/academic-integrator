@@ -25,7 +25,7 @@
     "calendar_key":"test-key-2",
     "events":[
       {
-        "event_code":"event-1",
+        "event_code":"event-2",
         "event_type":"HOLIDAY",
         "from_time":"2020-08-04T10:40:00",
         "params":[
@@ -37,7 +37,7 @@
         "to_time":"2020-08-04T11:20:00"
       },
       {
-        "event_code":"event-2",
+        "event_code":"event-3",
         "event_type":"CLASS_SESSION",
         "from_time":"2020-08-04T11:30:00",
         "params":[
@@ -66,7 +66,7 @@
     "calendar_key":"test-key-3",
     "events":[
       {
-        "event_code":"event-3",
+        "event_code":"event-4",
         "event_type":"CLASS_SESSION",
         "from_time":"2020-08-10T10:40:00",
         "params":[
@@ -86,7 +86,7 @@
         "to_time":"2020-08-10T11:20:00"
       },
       {
-        "event_code":"event-4",
+        "event_code":"event-5",
         "event_type":"CLASS_SESSION",
         "from_time":"2020-08-10T11:30:00",
         "params":[

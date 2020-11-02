@@ -64,39 +64,12 @@ class Exam:
 
 
             try:
-                self.institution_key = item["institution_key"]
+                self.date_time = item["date_time"]
             except KeyError as ke:
-                gclogger.debug(' KeyError in Exam -  institution_key not found'.format(str(ke)))
+                gclogger.debug(' KeyError in Exam -  date_time not found'.format(str(ke)))
 
 
-            try:
-                self.institution_key = item["institution_key"]
-            except KeyError as ke:
-                gclogger.debug(' KeyError in Exam -  institution_key not found'.format(str(ke)))
-
-
-            try:
-                self.institution_key = item["institution_key"]
-            except KeyError as ke:
-                gclogger.debug(' KeyError in Exam -  institution_key not found'.format(str(ke)))
-
-
-            try:
-                self.institution_key = item["institution_key"]
-            except KeyError as ke:
-                gclogger.debug(' KeyError in Exam -  institution_key not found'.format(str(ke)))
-
-
-            try:
-                self.institution_key = item["institution_key"]
-            except KeyError as ke:
-                gclogger.debug(' KeyError in Exam -  institution_key not found'.format(str(ke)))
-
-
-            try:
-                self.institution_key = item["institution_key"]
-            except KeyError as ke:
-                gclogger.debug(' KeyError in Exam -  institution_key not found'.format(str(ke)))
+           
 
     def make_exam_dict(item) :
         exam = {
