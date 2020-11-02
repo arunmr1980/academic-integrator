@@ -33,7 +33,8 @@ def remove_event_integrate_calendars(calendar_key) :
 		if calendar.subscriber_type == 'CLASS-DIV' :
 			subscriber_key = calendar.subscriber_key
 			existing_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
-			update_class_calendars_teacher_calendars(subscriber_key,existing_class_calendar,calendar,academic_configuration,updated_calendars_list,day_code,calendar_date)
+			# Update_class_calendars_teacher_calendars(subscriber_key,existing_class_calendar,calendar,academic_configuration,updated_calendars_list,day_code,calendar_date)
+			updated_calendars_list.append(existing_class_calendar)
 
 	upload_updated_calendars(updated_calendars_list)
 	integrate_cancelled_holiday_lessonplan(calendar_key)
@@ -302,7 +303,6 @@ def update_class_calendars_teacher_calendars(subscriber_key,existing_class_calen
 				if teacher_calendar is not None :
 					updated_teacher_calendar = update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar)
 					updated_calendars_list.append(updated_teacher_calendar)
-
 
 
 def update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar) :
