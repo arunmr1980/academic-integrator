@@ -202,6 +202,7 @@ def add_schedules_and_adjust_lessonplan(current_lessonplan,events,updated_class_
 	after_calendar_date_schedules_list = []
 	gclogger.info("LESSON PLAN KEY ------------------->  " + str(current_lessonplan.lesson_plan_key))
 	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,updated_class_calendar.calendar_date,after_calendar_date_schedules_list)
+	current_lessonplan = delete_calendar_schedules_of_calendar_date(calendar.calendar_date,current_lessonplan)
 	#check is there sessions and schedule if there append to  after_calendar_date_schedules_list and delete root sessions
 	current_lessonplan = add_calendar_schedules_to_lesson_plan(current_lessonplan,events,updated_class_calendar)
 	current_lessonplan = add_shedule_after_calendar_date(after_calendar_date_schedules_list,current_lessonplan)
@@ -441,6 +442,7 @@ def cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calen
 	events = get_class_session_events(calendar.events)
 	gclogger.info("LESSON PLAN KEY ------------------->  " + str(current_lessonplan.lesson_plan_key))
 	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,calendar.calendar_date,after_calendar_date_schedules_list)
+	current_lessonplan = delete_calendar_schedules_of_calendar_date(calendar.calendar_date,current_lessonplan)
 	current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,after_calendar_date_schedules_list)
 	current_lessonplan = add_calendar_schedules_to_lesson_plan(current_lessonplan,events,calendar)
 	current_lessonplan = add_shedule_after_calendar_date(after_calendar_date_schedules_list,current_lessonplan)
@@ -456,7 +458,19 @@ def create_remaining_sessions_on_root(after_calendar_date_schedules_list,current
 			current_lessonplan.sessions.append(session)
 	return current_lessonplan
 
+def delete_calendar_schedules_of_calendar_date(calendar_date,current_lessonplan) :
+	for main_topic in current_lessonplan.topics :
+		for topic in main_topic.topics :
+			for session in topic.sessions :
+				if hasattr(session , 'schedule') :
+					if is_schedule_on_calendar_date(session.schedule,calendar_date) == True :
+						print("DELETED SHEDULE ----",session.schedule.start_time,'--',session.schedule.end_time)
+						del session.schedule
+	return current_lessonplan
 
+def is_schedule_on_calendar_date(schedule,calendar_date) :
+	if schedule.start_time[:10] == calendar_date and schedule.end_time[:10] == calendar_date :
+		return True
 
 
 def create_session(schedule,session_order_index) :
@@ -526,12 +540,7 @@ def remove_schedule_after_calendar_date(current_lessonplan,calendar_date,after_c
 						gclogger.info("The schedule " + str(session.schedule.start_time) +' --- '+str(session.schedule.end_time) +' -------')
 						del session.schedule
 
-	#check is there sessions and schedule if there append to  after_calendar_date_schedules_list and delete root sessions
-
-
-
-
-
+	#check is there sessions and schedule if there append to  after_calendar_date_schedules_list and delete root session
 	return current_lessonplan
 
 def is_calendar_date_after_schdule_date(schedule_date,calendar_date) :
@@ -547,7 +556,7 @@ def is_calendar_date_after_schdule_date(schedule_date,calendar_date) :
 	calendar_date = datetime.datetime(calendar_date_year, calendar_date_month, calendar_date_day)
 	schedule_date = datetime.datetime(schedule_date_year, schedule_date_month, schedule_date_day)
 
-	if calendar_date <= schedule_date :
+	if calendar_date < schedule_date :
 		is_delete = True
 	return is_delete
 
