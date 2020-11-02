@@ -356,6 +356,7 @@ def integrate_cancelled_holiday_lessonplan(calendar_key) :
 	academic_year = academic_configuration.academic_year
 	day_code = findDay(calendar.calendar_date).upper()[0:3]
 	if calendar.subscriber_type == 'CLASS-DIV' :
+		subscriber_key = calendar.subscriber_key
 		class_key = subscriber_key[:-2]
 		division = subscriber_key[-1:]
 		# timetable = timetable_service.get_timetable_entry(class_key, division)
@@ -366,7 +367,7 @@ def integrate_cancelled_holiday_lessonplan(calendar_key) :
 				lp = lnpr.LessonPlan(None)
 				updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 				response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-				gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(current_lesson_plan_dict['lesson_plan_key']))
+				gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
 				updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
 				updated_lessonplan_list.append(updated_lessonplan)
 	else :

@@ -38,7 +38,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 		
 
 	
-	#code to be moved to integration algorithm
+	code to be moved to integration algorithm
 	def update_class_calendar_with_exam_events(self,current_class_calendar,exam_events) :
 		for exam_event in exam_events :
 			print("EXAM TIME --------",exam_event.from_time,' --- ',exam_event.to_time)
