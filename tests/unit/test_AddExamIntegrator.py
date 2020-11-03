@@ -23,9 +23,12 @@ class AddExamIntegratorTest(unittest.TestCase):
 		current_class_calendars_list = self.get_current_class_calendars_list()
 		exams_list = self.get_exams_list()
 		exam_events = self.make_exam_events(exams_list)
+		series_code: "NEG111"
+		class_key: "8B1B22E72AE"
+		division: "A"
+
 
 		for current_class_calendar in current_class_calendars_list :
-			print("CURRENT CALENDAR ---- ",current_class_calendar.calendar_key)
 			updated_class_calendar = self.update_class_calendar_with_exam_events(current_class_calendar,exam_events)
 			updated_class_calendars_list.append(updated_class_calendar)
 		for i in updated_class_calendars_list :
