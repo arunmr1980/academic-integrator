@@ -25,9 +25,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 		exam_events = self.make_exam_events(exams_list)
 
 		for current_class_calendar in current_class_calendars_list :
-			print("")
-			print('*************************',current_class_calendar.calendar_key," GOING TO UPDATE CLENDAR KEY ************************")
-			print("")
+			print("CURRENT CALENDAR ---- ",current_class_calendar.calendar_key)
 			updated_class_calendar = self.update_class_calendar_with_exam_events(current_class_calendar,exam_events)
 			updated_class_calendars_list.append(updated_class_calendar)
 		for i in updated_class_calendars_list :
@@ -40,28 +38,28 @@ class AddExamIntegratorTest(unittest.TestCase):
 	
 	#code to be moved to integration algorithm
 	def update_class_calendar_with_exam_events(self,current_class_calendar,exam_events) :
-		for exam_event in exam_events :
-			print("EXAM TIME --------",exam_event.from_time,' --- ',exam_event.to_time)
-			updated_class_calendar = self.remove_conflicted_class_events(exam_event,current_class_calendar)		
+		updated_class_calendar = self.remove_conflicted_class_events(exam_events,current_class_calendar)	
 		return current_class_calendar
 
 
+	def remove_conflicted_class_events(self,exam_events,current_class_calendar) :
+		for exam_event in exam_events :
+			updated_class_calendar = self.update_class_calendar_events(exam_event,current_class_calendar)
+		return updated_class_calendar
+
 		
-
-	def remove_conflicted_class_events(self,exam_event,current_class_calendar) :
-		exam_event_start_time = exam_event.from_time
-		exam_event_end_time = exam_event.to_time
-		for event in current_class_calendar.events :
-			print(event.event_code,"EVENT CODEEEEE---")
-			current_class_calendar_event_start_time = event.from_time
-			current_class_calendar_event_end_time = event.to_time
-			if check_events_conflict(exam_event_start_time,exam_event_end_time,current_class_calendar_event_start_time,current_class_calendar_event_end_time) :
-				print(" ---------- THIS EVENT HAS  CONFLICT -----------",event.from_time,' --- ',event.to_time)
-				current_class_calendar.events.remove(event)
-
-				
+	def update_class_calendar_events(self,exam_event,current_class_calendar) :
+		print(exam_event.from_time,exam_event.to_time," ------ EXAM EVENT")
+		updated_events = []
+		for calendar_event in current_class_calendar.events :
+			print(calendar_event.from_time,'--',calendar_event.to_time)
+			if self.check_events_conflict(exam_event.from_time,exam_event.to_time,calendar_event.from_time,calendar_event.to_time) == True :
+				if exam_event not in updated_events :
+					updated_events.append(exam_event)
 			else :
-				print(" ------------ THIS EVENT HAS NO CONFLICT -------------",event.from_time,' --- ',event.to_time)
+				updated_events.append(calendar_event)
+		del current_class_calendar.events
+		current_class_calendar.events = updated_events
 		return current_class_calendar
 
 
