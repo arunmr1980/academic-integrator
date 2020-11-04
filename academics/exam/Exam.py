@@ -11,6 +11,7 @@ class Exam:
             self.max_score = item["max_score"]
             self.subject_code = item["subject_code"]
             self.subject_name = item["subject_name"]
+            self.series_code = item["series_code"]
             try:
                 self.academic_year = item["academic_year"]
             except KeyError as ke:
