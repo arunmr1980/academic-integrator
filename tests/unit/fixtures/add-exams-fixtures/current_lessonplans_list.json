@@ -6,6 +6,24 @@
       "resources":[
 
       ],
+      "sessions":[
+                     {
+                        "code":"SESgy0567",
+                        "completion_datetime":"NA",
+                        "completion_status":false,
+                        "name":"Session 1",
+                        "order_index":1,
+                        "schedule": {
+                           "calendar_key": "test-key-2",
+                           "event_code": "event-200000000",
+                           "start_time": "2020-08-15T11:30:00",
+                           "end_time": "2020-08-15T12:10:00"
+                        },
+                        "resources":[
+
+                        ]
+                     }
+                  ],
       "subject_code":"bio1",
       "topics":[
          {
@@ -40,16 +58,6 @@
                         "resources":[
 
                         ]
-                     },
-                      {
-                        "code":"SESgy0567",
-                        "completion_datetime":"NA",
-                        "completion_status":false,
-                        "name":"Session 1",
-                        "order_index":1,
-                        "resources":[
-
-                        ]
                      }
                   ]
                }
@@ -60,14 +68,14 @@
    {
       "class_key":"8B1B22E72AE",
       "division":"A",
-      "lesson_plan_key":"test-lessonplan-3",
+      "lesson_plan_key":"test-lessonplan-2",
       "resources":[
 
       ],
       "subject_code":"bio2",
       "topics":[
          {
-            "code":"TOP3x0jkt-bio3",
+            "code":"TOP3x0jkt-bio2",
             "name":"chapter 1",
             "order_index":1,
             "topics":[
@@ -112,6 +120,23 @@
       "resources":[
 
       ],
+      "sessions":[
+                     {
+                        "code":"SESgy022",
+                        "completion_datetime":"NA",
+                        "completion_status":false,
+                        "name":"Session 1",
+                        "order_index":1,
+                        "schedule": {
+                           "calendar_key": "test-key-2",
+                           "event_code": "UNPLANNEDD",
+                           "start_time": "2020-08-20T13:30:00",
+                           "end_time": "2020-08-20T14:10:00"
+                        },
+                        "resources":[
+
+                        ]
+                     }],
       "subject_code":"bio3",
       "topics":[
          {
@@ -172,8 +197,8 @@
                         "schedule": {
                            "calendar_key": "test-key-3",
                            "event_code": "event-1000000000",
-                           "start_time": "2020-08-04T13:30:00",
-                           "end_time": "2020-08-04T14:10:00"
+                           "start_time": "2020-08-10T13:30:00",
+                           "end_time": "2020-08-10T14:10:00"
                         },
                         "resources":[
 

@@ -12,6 +12,7 @@ import academics.calendar.CalendarDBService as calendar_service
 import academics.timetable.KeyGeneration as key
 import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.calendar.Calendar as calendar
+from academics.lessonplan.LessonplanIntegrator import *
 import copy
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -63,7 +64,7 @@ def get_standard_time(time,date) :
 def get_params() :
 	params = []
 	period_info = calendar.Param(None)
-	period_info.key = 'is_cancel_flag'
+	period_info.key = 'cancel_class_flag'
 	period_info.value = 'true'
 	params.append(period_info)
 	return params
@@ -227,9 +228,6 @@ def adjust_lessonplan_after_remove_schedule(current_lessonplan) :
 
 
 	
-
-
-
 
 
 
