@@ -13,27 +13,98 @@ import academics.timetable.KeyGeneration as key
 import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.calendar.Calendar as calendar
 from academics.lessonplan.LessonplanIntegrator import *
+from academics.exam import ExamDBService as exam_service
+from academics.lessonplan import LessonplanDBService as lessonplan_service
+import academics.lessonplan.LessonPlan as lpnr
 import copy
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 
+def integrate_add_exam_on_calendar(series_code,class_key,division) :
+	subscriber_key = class_key + '-' + division
+	updated_class_calendars_list = []
+	updated_teacher_calendars_list = []
+	updated_lessonplans_list = []
+	removed_events = []
+	current_class_calendars_list = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
+	school_key = current_class_calendars_list[0].institution_key
+	current_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type(school_key,'EMPLOYEE')
+	current_cls_calendars = copy.deepcopy(current_class_calendars_list)
+	current_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+	exams_list = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
+	updated_class_calendars_list = integrate_class_calendar_on_add_exams(updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events)
+	current_teacher_calendars_list = get_current_teacher_calendars(removed_events)
+	integrate_teacher_cal_and_lessonplan_on_add_exam(
+						updated_class_calendars_list,
+						updated_teacher_calendars_list,
+						updated_lessonplans_list,
+						current_class_calendars_list,
+						current_teacher_calendars_list,
+						current_lessonplans_list,
+						exams_list,
+						removed_events
+						)
+	save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
 
-def integrate_add_exams(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list,current_class_calendars_list,current_teacher_calendars_list,current_lessonplans_list,exams_list,removed_events) :
+
+def save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list) :
+	for updated_class_calendar in updated_class_calendars_list :
+		cal = calendar.Calendar(None)
+		class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+		response = calendar_service.add_or_update_calendar(class_calendar_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated class calendar uploaded --------- '+str(class_calendar_dict['calendar_key']))
+
+	for updated_teacher_calendar in updated_teacher_calendars_list :
+		cal = calendar.Calendar(None)
+		teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+		response = calendar_service.add_or_update_calendar(teacher_calendar_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated teacher calendar uploaded --------- '+str(class_calendar_dict['calendar_key']))
+
+	for updated_lessonplan in updated_lessonplans_list :
+		cal = lpnr.LessonPlan(None)
+		lessonplan_dict = cal.make_lessonplan_dict(updated_lessonplan)
+		response = lessonplan_service.create_lessonplan(lessonplan_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated lessonplan uploaded --------- '+str(lessonplan_dict['lesson_plan_key']))
+
+def get_current_teacher_calendars(removed_events) :
+	current_teacher_calendars = []
+	for event in removed_events :
+		event_date = get_event_date(event.from_time)
+		employee_key = get_employee_key(event.params)
+		if employee_key is not None :
+			teacher_calendar = calendar_service.get_calendar_by_date_and_key(event_date, employee_key)
+			current_teacher_calendars.append(teacher_calendar)
+	return current_teacher_calendars
+
+
+
+def get_event_date(event_from_time) :
+	return event_from_time[:10]
+
+def get_employee_key(params) :
+	for param in params :
+		if param.key == 'teacher_emp_key' :
+			return param.value
+
+
+
+def integrate_class_calendar_on_add_exams(updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events) :
 	exam_events = make_exam_events(exams_list)
 	updated_class_calendars_list = update_current_class_calendars(updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events)
-
 	for i in updated_class_calendars_list :
 		cal = calendar.Calendar(None)
 		class_calendar_dict = cal.make_calendar_dict(i)
 		pp.pprint(class_calendar_dict)
+	return updated_class_calendars_list
 
+def integrate_teacher_cal_and_lessonplan_on_add_exam(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list,current_class_calendars_list,current_teacher_calendars_list,current_lessonplans_list,exams_list,removed_events) :
 	updated_teacher_calendars_list = update_current_teacher_calendars(updated_teacher_calendars_list,current_teacher_calendars_list,updated_class_calendars_list)
 
 	for i in updated_teacher_calendars_list :
 		cal = calendar.Calendar(None)
-		class_calendar_dict = cal.make_calendar_dict(i)
-		pp.pprint(class_calendar_dict)
+		teacher_calendar_dict = cal.make_calendar_dict(i)
+		pp.pprint(teacher_calendar_dict)
 	updated_lessonplans_list = update_current_lessonplans(updated_class_calendars_list,current_lessonplans_list,updated_lessonplans_list,removed_events)
 	for i in updated_lessonplans_list :
 		lp = lnpr.LessonPlan(None)

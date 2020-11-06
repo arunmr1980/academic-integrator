@@ -295,18 +295,6 @@ def get_updated_employee_key(subject_code,class_info,class_key,division) :
 
 
 
-#---------------------------------issue-9---------------------------------#
-
-
-
-
-
-
-
-
-
-
-
 def generate_and_save_calenders(time_table_key,academic_year):
 	gclogger.info("Generating for timetable " + time_table_key + " academic_year " + academic_year)
 	timetable = timetable_service.get_time_table(time_table_key)

@@ -33,7 +33,7 @@
                         "order_index":1,
                         "schedule": {
                            "calendar_key": "test-key-2",
-                           "event_code": "event-200000000",
+                           "event_code": "UNPLANNED",
                            "start_time": "2020-08-15T11:30:00",
                            "end_time": "2020-08-15T12:10:00"
                         },
