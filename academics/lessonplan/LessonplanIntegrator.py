@@ -202,7 +202,7 @@ def add_schedules_and_adjust_lessonplan(current_lessonplan,events,updated_class_
 	after_calendar_date_schedules_list = []
 	gclogger.info("LESSON PLAN KEY ------------------->  " + str(current_lessonplan.lesson_plan_key))
 	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,updated_class_calendar.calendar_date,after_calendar_date_schedules_list)
-	current_lessonplan = delete_calendar_schedules_of_calendar_date(calendar.calendar_date,current_lessonplan)
+	current_lessonplan = delete_calendar_schedules_of_calendar_date(updated_class_calendar.calendar_date,current_lessonplan)
 	#check is there sessions and schedule if there append to  after_calendar_date_schedules_list and delete root sessions
 	current_lessonplan = add_calendar_schedules_to_lesson_plan(current_lessonplan,events,updated_class_calendar)
 	current_lessonplan = add_shedule_after_calendar_date(after_calendar_date_schedules_list,current_lessonplan)
