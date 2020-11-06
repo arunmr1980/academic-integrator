@@ -57,10 +57,25 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 		expected_class_calendars_list = self.get_expected_class_calendars()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars()
 		calendar_key ='test-key-11'
+		events = [
+				  {
+				      "event_code": "cf78e5",
+				      "event_type": "CLASS_SESSION",
+				      "from_time": "2020-05-22T10:00:00",
+				      "to_time": "2020-05-22T10:40:00",
+				      "params": [
+			               {
+			                  "key" :"cancel_class_flag",
+			                  "value" : "true"
+			               }
+			            ],
+        				"to_time":"2020-08-04T10:40:00"
+				    }
+				]
 		calendar = calendar_service.get_calendar(calendar_key)
 		school_key = calendar.institution_key
 		calendar_date = calendar.calendar_date
-		remove_event_integrate_calendars(calendar_key)
+		remove_event_integrate_calendars(calendar_key,events)
 		updated_calendars_list = calendar_service.get_all_calendars_by_school_key_and_date(school_key,calendar_date)
 		
 		updated_class_calendar_list = self.get_updated_class_calendars(updated_calendars_list)

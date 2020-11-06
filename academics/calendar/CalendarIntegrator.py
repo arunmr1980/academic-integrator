@@ -13,7 +13,7 @@ pp = pprint.PrettyPrinter(indent=4)
 import copy
 
 # Remove event calendar integration
-def remove_event_integrate_calendars(calendar_key) :
+def remove_event_integrate_calendars(calendar_key,events) :
 	updated_calendars_list = []
 	calendar = calendar_service.get_calendar(calendar_key)
 	school_key = calendar.institution_key
@@ -28,12 +28,14 @@ def remove_event_integrate_calendars(calendar_key) :
 		for existing_class_calendar in class_calendars :
 			subscriber_key = existing_class_calendar.subscriber_key
 			update_class_calendars_teacher_calendars(subscriber_key,existing_class_calendar,calendar,academic_configuration,updated_calendars_list,day_code,calendar_date)
-
 	else :
-		if calendar.subscriber_type == 'CLASS-DIV' :
+		if calendar.subscriber_type == 'CLASS-DIV' and events[0].event_type == 'CLASS_SESSION':
 			subscriber_key = calendar.subscriber_key
 			existing_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
-			# Update_class_calendars_teacher_calendars(subscriber_key,existing_class_calendar,calendar,academic_configuration,updated_calendars_list,day_code,calendar_date)
+		if calendar.subscriber_type == 'CLASS-DIV' and events[0].event_type == 'HOLIDAY':
+			subscriber_key = calendar.subscriber_key
+			existing_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
+			# update_class_calendars_teacher_calendars(subscriber_key,existing_class_calendar,calendar,academic_configuration,updated_calendars_list,day_code,calendar_date)
 			updated_calendars_list.append(existing_class_calendar)
 
 	upload_updated_calendars(updated_calendars_list)
@@ -367,6 +369,7 @@ def upload_updated_calendars(updated_calendars_list) :
 	for calendar in updated_calendars_list :
 		cal = cldr.Calendar(None)
 		calendar_dict = cal.make_calendar_dict(calendar)
+		pp.pprint(calendar_dict)
 		response = calendar_service.add_or_update_calendar(calendar_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A calendar uploaded --------- ' +str(calendar_dict['subscriber_type']) + '-' + str(calendar_dict['calendar_key']))
 

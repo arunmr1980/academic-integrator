@@ -63,14 +63,10 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 			updated_teacher_calendar = self.update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar)
 			updated_teacher_calendars.append(updated_teacher_calendar)
 
-
 	def get_class_calendar_by_subscriber_key_and_date(self,subscriber_key,date,current_class_calendars)	:
 		for current_class_calendar in current_class_calendars :
 			if current_class_calendar.subscriber_key == subscriber_key and current_class_calendar.calendar_date == date :
 				return current_class_calendar
-
-
-
 
 	def update_teacher_calendar(self,teacher_calendar,updated_class_calendar_events,existing_class_calendar) :
 		for event in updated_class_calendar_events :
