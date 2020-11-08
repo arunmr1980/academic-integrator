@@ -223,7 +223,7 @@ def update_current_class_timetable(current_class_timetable,subject_code,updated_
 
 
 
-#---------------------------------issue-9---------------------------------#
+
 
 
 
@@ -370,6 +370,35 @@ def generate_holiday_period_list(calendar,academic_configuration,timetable,day_c
 			for partial_holiday_period in partial_holiday_periods :
 				holiday_period_list.append(partial_holiday_period)
 	return holiday_period_list
+
+def generate_period_list(calendar,academic_configuration,timetable,day_code) :
+	period_list =[]
+	for event in calendar.events :
+		if is_class(event.params[0]) == False :
+			start_time = event.from_time
+			end_time = event.to_time
+			periods = get_period_list(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
+			for period in periods :
+				period_list.append(period)
+	return period_list
+
+
+
+def get_period_list(start_time,end_time,day_code,academic_configuration,timetable,date) :
+	period_list =[]
+	if hasattr(academic_configuration.time_table_configuration ,'time_table_schedules') :
+		for time_table_schedule in academic_configuration.time_table_configuration.time_table_schedules :
+				for class_key in time_table_schedule.applied_classes :
+					if class_key == timetable.class_key :
+						for day_table in  time_table_schedule.day_tables :
+							if day_table.day_code == day_code :
+								for period in day_table.periods :
+									standard_start_time = get_standard_time(period.start_time,date)
+									standard_end_time = get_standard_time(period.end_time,date)
+									if check_holiday_time_conflict(start_time,end_time,standard_start_time,standard_end_time) :
+										period_list.append(period)
+
+	return period_list
 
 
 def get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,date) :
