@@ -10,6 +10,7 @@ from academics.calendar.CalendarLessonPlanIntegrator import integrate_calendar_t
 from academics.lessonplan.LessonplanIntegrator import holiday_calendar_to_lessonplan_integrator
 from academics.TimetableIntegrator import generate_holiday_period_list,generate_class_calendar,integrate_teacher_timetable
 import academics.TimetableIntegrator as timetable_integrator
+import academics.calendar.CalendarIntegrator as calendar_integrator
 import operator
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -40,7 +41,15 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 			# self.update_class_calendars_and_teacher_calendars(existing_class_calendar,timetables,calendar,academic_configuration,updated_class_calendars,updated_teacher_calendars,day_code,date,current_teacher_calendars)
 		if calendar.subscriber_type == 'CLASS-DIV' and is_class(calendar.events[0].params[0]) == False :
 			existing_class_calendar = self.get_class_calendar_by_subscriber_key_and_date(calendar.subscriber_key,date,current_class_calendars)
-			self.update_calendars_by_adding_conflicted_periods(existing_class_calendar,timetables,calendar,academic_configuration,updated_class_calendars,updated_teacher_calendars,day_code,date,current_teacher_calendars)
+			subscriber_key = existing_class_calendar.subscriber_key
+			timetable = self.get_timetable_by_subscriber_key(existing_class_calendar.subscriber_key,timetables)
+			updated_class_calendar = calendar_integrator.update_class_calendar_by_adding_conflicted_periods(existing_class_calendar,timetable,calendar,academic_configuration,updated_class_calendars,day_code)
+			updated_class_calendar_events = updated_class_calendar.events
+			employee_key_list = calendar_integrator.get_employee_key_list(updated_class_calendar_events)
+			for employee_key in employee_key_list :
+				teacher_calendar = self.get_teacher_calendar_by_emp_key_and_date(date,employee_key,current_teacher_calendars,updated_class_calendar)
+				calendar_integrator.update_teacher_calendar_by_adding_conflicted_periods(updated_class_calendar_events,teacher_calendar,updated_class_calendar,updated_teacher_calendars)
+			
 			
 			
 		for updated_class_calendar in updated_class_calendars :
@@ -58,8 +67,7 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 			self.check_teacher_calendar(updated_teacher_calendar,expected_teacher_calendars_list)
 			gclogger.info("-----[UnitTest] Teacher calendar test passed ----------------- " + updated_teacher_calendar.calendar_key + "-----------------")
 
-	def update_calendars_by_adding_conflicted_periods(self,existing_class_calendar,timetables,calendar,academic_configuration,updated_class_calendars,updated_teacher_calendars,day_code,date,current_teacher_calendars) :
-		timetable = self.get_timetable_by_subscriber_key(existing_class_calendar.subscriber_key,timetables)
+	def update_calendars_by_adding_conflicted_periods(self,existing_class_calendar,timetable,calendar,academic_configuration,updated_class_calendars,updated_teacher_calendars,day_code,date,current_teacher_calendars) :
 		period_list = generate_period_list(calendar,academic_configuration,timetable,day_code)
 		events = self.make_events(period_list,timetable,existing_class_calendar.calendar_date)
 		updated_class_calendar = self.add_events_to_calendar(events,existing_class_calendar)

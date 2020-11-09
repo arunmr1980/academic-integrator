@@ -81,10 +81,16 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 		updated_teacher_calendar_list = self.get_updated_teacher_calendars(updated_calendars_list)
 
 		for updated_class_calendar in updated_class_calendar_list :
+			cal = cldr.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+			pp.pprint(calendar_dict)
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)	
 			gclogger.info("-----[Integration Test] Class calendar test passed for ----" + updated_class_calendar.calendar_key + "-----------------")
 
 		for updated_teacher_calendar in updated_teacher_calendar_list :
+			cal = cldr.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+			pp.pprint(calendar_dict)
 			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
 			gclogger.info("-----[Integration Test] Teacher calendar test passed for ----" + updated_teacher_calendar.calendar_key + "-----------------")
 
@@ -111,7 +117,6 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 	def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
 		for expected_class_calendar in expected_class_calendars_list :
 			if updated_class_calendar.calendar_key == expected_class_calendar.calendar_key :
-				print(updated_class_calendar.calendar_key,"CAL KEYY------------<<<>>>>>>>")
 				self.assertEqual(expected_class_calendar.institution_key,updated_class_calendar.institution_key )
 				self.assertEqual(expected_class_calendar.calendar_date,updated_class_calendar.calendar_date )
 				self.assertEqual(expected_class_calendar.subscriber_key,updated_class_calendar.subscriber_key )

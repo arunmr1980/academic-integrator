@@ -28,7 +28,7 @@
     "subscriber_type":"CLASS-DIV",
     "events":[
       {
-            "event_code":"event-1",
+            "event_code":"event-for-test",
             "event_type":"HOLIDAY",
             "from_time":"2020-08-10T09:00:00",  
             "to_time":"2020-08-10T10:40:00",
