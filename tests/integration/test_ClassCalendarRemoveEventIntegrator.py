@@ -46,31 +46,30 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 			response = calendar_service.add_or_update_calendar(calendar_dict)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Teacher calendar uploaded --------- '+str(calendar_dict['calendar_key']))
 
-		holiday_removed_calendars = self.get_holiday_removed_calendars()
-		for holiday_removed_calendar in holiday_removed_calendars :
+		event_removed_calendars = self.get_event_removed_calendars()
+		for event_removed_calendar in event_removed_calendars :
 			cal = cldr.Calendar(None)
-			calendar_dict = cal.make_calendar_dict(holiday_removed_calendar)
+			calendar_dict = cal.make_calendar_dict(event_removed_calendar)
 			response = calendar_service.add_or_update_calendar(calendar_dict)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Holiday cancelled calendar uploaded --------- '+str(calendar_dict['calendar_key']))
 
 	def test_calendars(self) :
 		expected_class_calendars_list = self.get_expected_class_calendars()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars()
-		calendar_key ='test-key-11'
+		calendar_key ='test-key-2'
 		events = [
-				  {
-				      "event_code": "cf78e5",
-				      "event_type": "CLASS_SESSION",
-				      "from_time": "2020-05-22T10:00:00",
-				      "to_time": "2020-05-22T10:40:00",
-				      "params": [
-			               {
-			                  "key" :"cancel_class_flag",
-			                  "value" : "true"
-			               }
-			            ],
-        				"to_time":"2020-08-04T10:40:00"
-				    }
+				 {
+		            "event_code":"event-1",
+		            "event_type":"HOLIDAY",
+		            "from_time":"2020-08-10T09:00:00",  
+		            "to_time":"2020-08-10T10:40:00",
+		            "params": [
+		               {
+		                  "key" :"cancel_class_flag",
+		                  "value" : "true"
+		               }
+		            ] 
+         		}
 				]
 		calendar = calendar_service.get_calendar(calendar_key)
 		school_key = calendar.institution_key
@@ -112,6 +111,7 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 	def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
 		for expected_class_calendar in expected_class_calendars_list :
 			if updated_class_calendar.calendar_key == expected_class_calendar.calendar_key :
+				print(updated_class_calendar.calendar_key,"CAL KEYY------------<<<>>>>>>>")
 				self.assertEqual(expected_class_calendar.institution_key,updated_class_calendar.institution_key )
 				self.assertEqual(expected_class_calendar.calendar_date,updated_class_calendar.calendar_date )
 				self.assertEqual(expected_class_calendar.subscriber_key,updated_class_calendar.subscriber_key )
@@ -148,7 +148,7 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 
 	def get_timetables(self) :
 		t = []
-		with open('tests/unit/fixtures/calendar-remove-fixtures/test_timetable_list.json', 'r') as timetable_list:
+		with open('tests/unit/fixtures/class-calendar-remove-fixtures/test_timetable_list.json', 'r') as timetable_list:
 			timetables = json.load(timetable_list)
 
 		for timetable in timetables :
@@ -169,7 +169,7 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 
 	def get_current_class_calendars(self) :
 		class_calendars_list = []
-		with open('tests/unit/fixtures/calendar-remove-fixtures/current_class_calendars.json', 'r') as calendars:
+		with open('tests/unit/fixtures/class-calendar-remove-fixtures/current_class_calendars.json', 'r') as calendars:
 			class_calendars = json.load(calendars)
 		for cal in class_calendars :
 			class_calendars_list.append(calendar.Calendar(cal))
@@ -177,7 +177,7 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 
 	def get_current_teacher_calendars(self) :
 		teacher_calendars_list = []
-		with open('tests/unit/fixtures/calendar-remove-fixtures/current_teacher_calendars.json', 'r') as calendars:
+		with open('tests/unit/fixtures/class-calendar-remove-fixtures/current_teacher_calendars.json', 'r') as calendars:
 			teacher_calendars = json.load(calendars)
 		for cal in teacher_calendars :
 			teacher_calendars_list.append(calendar.Calendar(cal))
@@ -185,7 +185,7 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 
 	def get_expected_teacher_calendars(self) :
 		expected_teacher_calendars_list = []
-		with open('tests/unit/fixtures/calendar-remove-fixtures/expected_teacher_calendars.json', 'r') as calendars:
+		with open('tests/unit/fixtures/class-calendar-remove-fixtures/expected_teacher_calendars.json', 'r') as calendars:
 			teacher_calendars = json.load(calendars)
 		for cal in teacher_calendars :
 			expected_teacher_calendars_list.append(calendar.Calendar(cal))
@@ -193,16 +193,16 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 
 	def get_expected_class_calendars(self) :
 		expected_class_calendars_list = []
-		with open('tests/unit/fixtures/calendar-remove-fixtures/expected_class_calendars.json', 'r') as calendars:
+		with open('tests/unit/fixtures/class-calendar-remove-fixtures/expected_class_calendars.json', 'r') as calendars:
 			class_calendars = json.load(calendars)
 		for cal in class_calendars :
 			expected_class_calendars_list.append(calendar.Calendar(cal))
 		return expected_class_calendars_list
 
 
-	def get_holiday_removed_calendars(self):
+	def get_event_removed_calendars(self):
 		holiday_calendars_list = []
-		with open('tests/unit/fixtures/calendar-remove-fixtures/cancell_holiday_event_calendars.json', 'r') as calendars:
+		with open('tests/unit/fixtures/class-calendar-remove-fixtures/cancel_event_calendars.json', 'r') as calendars:
 			holiday_calendars = json.load(calendars)
 		for cal in holiday_calendars :
 			holiday_calendars_list.append(calendar.Calendar(cal))
@@ -214,7 +214,33 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 			if calendar.calendar_key == calendar_key :
 				return calendar
 
+	def tearDown(self):
+		test_timetable_one = timetable_service.get_time_table('test-time-table-1')
+		test_timetable_two = timetable_service.get_time_table('test-time-table-2')
+		school_key = test_timetable_one.school_key
+		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
 
+		class_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','CLASS-DIV')
+		for calendar in class_calender_list :
+			calendar_service.delete_calendar(calendar.calendar_key)
+			gclogger.info("--------------- A class calendar deleted " + calendar.calendar_key+" -----------------")
+
+		teacher_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
+		for calendar in teacher_calender_list :
+			calendar_service.delete_calendar(calendar.calendar_key)
+			gclogger.info("--------------- A teacher calendar deleted " + calendar.calendar_key+" -----------------")
+
+		timetable_service.delete_timetable(test_timetable_one.time_table_key)
+		gclogger.info("--------------- Test Timetable deleted  " + test_timetable_one.time_table_key+"  -----------------")
+		timetable_service.delete_timetable(test_timetable_two.time_table_key)
+		gclogger.info("--------------- Test Timetable deleted  " + test_timetable_two.time_table_key+"  -----------------")
+	
+
+		academic_service.delete_academic_config(academic_configuration.academic_config_key)
+		gclogger.info("---------------Test Academic Configuration deleted  " + academic_configuration.academic_config_key + "-----------------")
+		
+
+		
 
 
 def update_teacher_calendar(events_to_remove_list,teacher_calendar) :

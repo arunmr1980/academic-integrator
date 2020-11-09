@@ -6,6 +6,7 @@ import academics.academic.AcademicDBService as academic_service
 import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.timetable.TimeTableDBService as timetable_service
 from academics.TimetableIntegrator import *
+import academics.TimetableIntegrator as timetable_integrator
 from academics.lessonplan.LessonplanIntegrator import *
 import academics.lessonplan.LessonPlan as lpnr
 import pprint
@@ -36,7 +37,7 @@ def remove_event_integrate_calendars(calendar_key,events) :
 	if calendar.subscriber_type == 'CLASS-DIV' and is_class(calendar.events[0].params[0]) == False :
 		subscriber_key = calendar.subscriber_key
 		existing_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
-		update_calendars_by_adding_conflicted_periods(existing_class_calendar,subscriber_key,calendar,academic_configuration,updated_class_calendars,updated_teacher_calendars,day_code,date,current_teacher_calendars)
+		update_calendars_by_adding_conflicted_periods(existing_class_calendar,subscriber_key,calendar,academic_configuration,updated_calendars_list,day_code)
 
 	upload_updated_calendars(updated_calendars_list)
 	integrate_cancelled_holiday_lessonplan(calendar_key)
@@ -328,36 +329,70 @@ def update_class_calendars_teacher_calendars(subscriber_key,existing_class_calen
 					updated_teacher_calendar = update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar)
 					updated_calendars_list.append(updated_teacher_calendar)
 
-def update_calendars_by_adding_conflicted_periods(existing_class_calendar,timetables,calendar,academic_configuration,updated_class_calendars,updated_teacher_calendars,day_code,date,current_teacher_calendars) :
+
+def update_calendars_by_adding_conflicted_periods(existing_class_calendar,subscriber_key,calendar,academic_configuration,updated_calendars_list,day_code) :
 	class_key = subscriber_key[:-2]
 	division = subscriber_key[-1:]
-	timetable = self.get_timetable_by_subscriber_key(existing_class_calendar.subscriber_key,timetables)
-	period_list = generate_period_list(calendar,academic_configuration,timetable,day_code)
-	events = self.make_events(period_list,timetable,existing_class_calendar.calendar_date)
-	updated_class_calendar = self.add_events_to_calendar(events,existing_class_calendar)
-	updated_class_calendars.append(updated_class_calendar)
+	timetable = timetable_service.get_timetable_by_class_key_and_division(class_key,division)
+	period_list = timetable_integrator.generate_period_list(calendar,academic_configuration,timetable,day_code)
+	events = make_events(period_list,timetable,existing_class_calendar.calendar_date)
+	updated_class_calendar = add_events_to_calendar(events,existing_class_calendar)
+	updated_calendars_list.append(updated_class_calendar)
 	updated_class_calendar_events = updated_class_calendar.events
-	employee_key_list = self.get_employee_key_list(updated_class_calendar_events)
+	employee_key_list = get_employee_key_list(updated_class_calendar_events)
 	for employee_key in employee_key_list :
-		teacher_calendar = self.get_teacher_calendar_by_emp_key_and_date(date,employee_key,current_teacher_calendars,updated_class_calendar)
-		updated_teacher_calendar = self.update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar)
-		updated_teacher_calendars.append(updated_teacher_calendar)
+		teacher_calendar = get_teacher_calendar_by_emp_key_and_date(employee_key,updated_class_calendar)
+		updated_teacher_calendar = update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar)
+		updated_calendars_list.append(updated_teacher_calendar)
 
-def get_timetable_by_subscriber_key(self,subscriber_key,timetables) :
-	
-	for timetable in timetables :
-		if timetable.class_key ==  class_key and timetable.division == division :
-			return timetable
 
-def update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar) :
-	for event in updated_class_calendar_events :
-		employee_key = get_employee_key(event.params)
-		if employee_key == teacher_calendar.subscriber_key :
-			event_object = cldr.Event(None)
-			event_object.event_code = event.event_code
-			event_object.ref_calendar_key = existing_class_calendar.calendar_key
-			teacher_calendar.events.append(event_object)
+def get_teacher_calendar_by_emp_key_and_date(employee_key,updated_class_calendar) :
+	teacher_calendar = calendar_service.get_calendar_by_date_and_key(updated_class_calendar.calendar_date,employee_key)
+	if teacher_calendar is None :
+		teacher_calendar = timetable_integrator.generate_employee_calendar(employee_key,updated_class_calendar)
 	return teacher_calendar
+
+
+
+def make_events(period_list,timetable,date) :
+	events_list =[]
+	for period in period_list :
+		event = calendar.Event(None)
+		event.event_code = key.generate_key(3)
+		event.event_type = 'CLASS_SESSION'
+		time_table_period = get_time_table_period(period.period_code,timetable)
+		event.params = get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
+
+		event.from_time =  get_standard_time(period.start_time,date)
+		event.to_time =  get_standard_time(period.end_time,date)
+		gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
+		events_list.append(event)
+	return events_list
+		
+def get_time_table_period(period_code,timetable) :
+	timetable_configuration_period = None 
+	if hasattr(timetable.timetable,'day_tables') :
+		days = timetable.timetable.day_tables
+		for day in days :
+			for time_table_period in day.periods :
+				if time_table_period.period_code == period_code :
+					return time_table_period
+
+		
+def add_events_to_calendar(events,existing_class_calendar) :
+	for event in events :
+		existing_class_calendar.events.append(event)
+	updated_class_calendar = sort_updated_class_calendar_events(existing_class_calendar)
+	return updated_class_calendar
+
+	
+		
+def sort_updated_class_calendar_events(existing_class_calendar) :
+	from operator import attrgetter
+	soreted_events = sorted(existing_class_calendar.events, key = attrgetter('from_time'))
+	existing_class_calendar.events = soreted_events
+	return existing_class_calendar
+
 
 def get_employee_key_list(updated_class_calendar_events) :
 	employee_key_list = []
@@ -366,6 +401,29 @@ def get_employee_key_list(updated_class_calendar_events) :
 		if employee_key not in employee_key_list :
 			employee_key_list.append(employee_key)
 	return employee_key_list
+
+
+
+
+def update_teacher_calendar(teacher_calendar,updated_class_calendar_events,existing_class_calendar) :
+	for event in updated_class_calendar_events :
+		employee_key = get_employee_key(event.params)
+		if employee_key == teacher_calendar.subscriber_key and is_event_already_exist(event,teacher_calendar.events) == False :
+			event_object = cldr.Event(None)
+			event_object.event_code = event.event_code
+			event_object.ref_calendar_key = existing_class_calendar.calendar_key
+			teacher_calendar.events.append(event_object)
+	return teacher_calendar
+
+def is_event_already_exist(event,events) :
+	is_event_exist = False
+	for existing_event in events :
+		if existing_event.event_code == event.event_code :
+			is_event_exist = True
+	return is_event_exist
+
+
+
 
 
 # Add event calendar integration

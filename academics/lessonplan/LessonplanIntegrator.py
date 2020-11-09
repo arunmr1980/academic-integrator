@@ -201,8 +201,8 @@ def add_schedules(updated_class_calendar_events,current_lessonplan,updated_class
 def add_schedules_and_adjust_lessonplan(current_lessonplan,events,updated_class_calendar) :
 	after_calendar_date_schedules_list = []
 	gclogger.info("LESSON PLAN KEY ------------------->  " + str(current_lessonplan.lesson_plan_key))
-	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,updated_class_calendar.calendar_date,after_calendar_date_schedules_list)
-	current_lessonplan = delete_calendar_schedules_of_calendar_date(updated_class_calendar.calendar_date,current_lessonplan)
+	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,events[0].from_time,after_calendar_date_schedules_list)
+	# current_lessonplan = delete_calendar_schedules_of_calendar_date(updated_class_calendar.calendar_date,current_lessonplan)
 	#check is there sessions and schedule if there append to  after_calendar_date_schedules_list and delete root sessions
 	current_lessonplan = add_calendar_schedules_to_lesson_plan(current_lessonplan,events,updated_class_calendar)
 	current_lessonplan = add_shedule_after_calendar_date(after_calendar_date_schedules_list,current_lessonplan)
@@ -441,7 +441,7 @@ def cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calen
 	after_calendar_date_schedules_list = []
 	events = get_class_session_events(calendar.events)
 	gclogger.info("LESSON PLAN KEY ------------------->  " + str(current_lessonplan.lesson_plan_key))
-	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,calendar.calendar_date,after_calendar_date_schedules_list)
+	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,events[0].from_time,after_calendar_date_schedules_list)
 	current_lessonplan = delete_calendar_schedules_of_calendar_date(calendar.calendar_date,current_lessonplan)
 	current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,after_calendar_date_schedules_list)
 	current_lessonplan = add_calendar_schedules_to_lesson_plan(current_lessonplan,events,calendar)
@@ -548,13 +548,22 @@ def is_calendar_date_after_schdule_date(schedule_date,calendar_date) :
 	schedule_date_year = int(schedule_date[:4])
 	schedule_date_month = int(schedule_date[5:7])
 	schedule_date_day = int(schedule_date[8:10])
+	schedule_date_hour = int(schedule_date[11:13])
+	schedule_date_min = int(schedule_date[14:16])
+	schedule_date_sec = int(schedule_date[-2:])
 
 	calendar_date_year = int(calendar_date[:4])
 	calendar_date_month = int(calendar_date[5:7])
-	calendar_date_day = int(calendar_date[-2:])
+	calendar_date_day = int(calendar_date[8:10])
+	calendar_date_hour = int(calendar_date[11:13])
+	calendar_date_min = int(calendar_date[14:16])
+	calendar_date_sec = int(calendar_date[-2:])
 
-	calendar_date = datetime.datetime(calendar_date_year, calendar_date_month, calendar_date_day)
-	schedule_date = datetime.datetime(schedule_date_year, schedule_date_month, schedule_date_day)
+
+	calendar_date = datetime.datetime(calendar_date_year,calendar_date_month,calendar_date_day,calendar_date_hour,calendar_date_min,calendar_date_sec,000000)
+
+	schedule_date = datetime.datetime(schedule_date_year, schedule_date_month, schedule_date_day,schedule_date_hour,schedule_date_min,schedule_date_sec,000000)
+	
 
 	if calendar_date < schedule_date :
 		is_delete = True
@@ -564,7 +573,7 @@ def is_calendar_date_after_schdule_date(schedule_date,calendar_date) :
 
 
 def get_schedule_date(schedule) :
-	schedule_date = schedule.start_time[0:10]
+	schedule_date = schedule.start_time
 	return schedule_date
 
 def generate_holiday_period_list(event,calendar,academic_configuration,timetable,day_code) :

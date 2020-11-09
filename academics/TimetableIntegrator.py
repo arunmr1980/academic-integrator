@@ -483,7 +483,6 @@ def get_event(time_table_period,timetable_configuration_periods,date):
 
 
 def get_standard_time(time,date) :
-
 	splited_date = date.split('-')
 	splited_date = list(map(int,splited_date))
 	time_hour = int(time[0:2])

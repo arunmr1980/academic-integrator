@@ -22,6 +22,6 @@ from academics.calendar.CalendarIntegrator import add_event_integrate_calendars,
 # add_event_integrate_calendars(event_code,calendar_key)
 # remove_event_integrate_calendars(calendar_key)
 
-time_table_key = '001603790956557928FEEC9069-6E31-4CD0-91CE-DA5F9853E5A4770148779'
-period_code = "WED-1"
-integrate_update_period_calendars_and_lessonplans(period_code, time_table_key)
+# time_table_key = '001603790956557928FEEC9069-6E31-4CD0-91CE-DA5F9853E5A4770148779'
+# period_code = "WED-1"
+# integrate_update_period_calendars_and_lessonplans(period_code, time_table_key)
