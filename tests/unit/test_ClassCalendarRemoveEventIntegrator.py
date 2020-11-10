@@ -37,7 +37,6 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 	         		}
 			]
 		events = self.make_event_objects(events)
-
 		academic_configuration = self.get_academic_configuration()
 		timetables = self.get_timetables()
 
@@ -50,9 +49,9 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 		date = calendar.calendar_date
 		day_code = findDay(calendar.calendar_date).upper()[0:3]
 	
-		if calendar.subscriber_type == 'CLASS-DIV' and is_class(events[0].params[0]) == True :
-			existing_class_calendar = self.get_class_calendar_by_subscriber_key_and_date(calendar.subscriber_key,date,current_class_calendars)
-			updated_class_calendars.append(existing_class_calendar)
+		# if calendar.subscriber_type == 'CLASS-DIV' and is_class(events[0].params[0]) == True :
+		# 	existing_class_calendar = self.get_class_calendar_by_subscriber_key_and_date(calendar.subscriber_key,date,current_class_calendars)
+		# 	updated_class_calendars.append(existing_class_calendar)
 			# self.update_class_calendars_and_teacher_calendars(existing_class_calendar,timetables,calendar,academic_configuration,updated_class_calendars,updated_teacher_calendars,day_code,date,current_teacher_calendars)
 		if calendar.subscriber_type == 'CLASS-DIV' and is_class(events[0].params[0]) == False :
 			existing_class_calendar = self.get_class_calendar_by_subscriber_key_and_date(calendar.subscriber_key,date,current_class_calendars)
