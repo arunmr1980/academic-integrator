@@ -21,6 +21,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		updated_class_timetables_list = []
 		updated_teacher_timetables_list =[]
 		updated_class_calendars_list = []
+		updated_teacher_calendars_list = []
 		current_class_timetables_list = self.get_current_class_timetables_list()
 		expected_teacher_timetables_list = self.get_expected_teacher_timetables_list()
 		expected_class_timetables_list = self.get_expected_class_timetables_list()
@@ -44,13 +45,15 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 											new_teacher_timetable,
 											updated_teacher_timetables_list,
 											updated_class_calendars_list,
+											updated_teacher_calendars_list,
 											updated_class_timetables_list,
 											subject_code,
 											class_info_key,
 											division,
 											period_list,
 											current_class_calendars_list
-											) 
+											)
+
 
 		for updated_class_timetable in updated_class_timetables_list :
 			t = ttable.TimeTable(None)

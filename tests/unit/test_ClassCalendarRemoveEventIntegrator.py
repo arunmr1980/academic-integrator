@@ -21,7 +21,23 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 	def test_calendars(self) :
 		updated_class_calendars = []
 		updated_teacher_calendars = []
-		calendar_key = 'test-key-2'
+		calendar_key = 'test-key-3'
+		events = [
+					 {
+			            "event_code":"event-1",
+			            "event_type":"HOLIDAY",
+			            "from_time":"2020-08-10T09:00:00",  
+			            "to_time":"2020-08-10T10:40:00",
+			            "params": [
+			               {
+			                  "key" :"cancel_class_flag",
+			                  "value" : "true"
+			               }
+			            ] 
+	         		}
+			]
+		events = self.make_event_objects(events)
+
 		academic_configuration = self.get_academic_configuration()
 		timetables = self.get_timetables()
 
@@ -29,27 +45,25 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 		current_teacher_calendars = self.get_current_teacher_calendars()
 		expected_class_calendars_list = self.get_expected_class_calendars()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars()
-		holiday_removed_calendars = self.get_event_removed_calendars()
 
-		calendar = self.get_event_removed_calendar(calendar_key,holiday_removed_calendars)
+		calendar = self.get_event_removed_calendar(calendar_key,current_class_calendars)
 		date = calendar.calendar_date
 		day_code = findDay(calendar.calendar_date).upper()[0:3]
 	
-		if calendar.subscriber_type == 'CLASS-DIV' and is_class(calendar.events[0].params[0]) == True :
+		if calendar.subscriber_type == 'CLASS-DIV' and is_class(events[0].params[0]) == True :
 			existing_class_calendar = self.get_class_calendar_by_subscriber_key_and_date(calendar.subscriber_key,date,current_class_calendars)
 			updated_class_calendars.append(existing_class_calendar)
 			# self.update_class_calendars_and_teacher_calendars(existing_class_calendar,timetables,calendar,academic_configuration,updated_class_calendars,updated_teacher_calendars,day_code,date,current_teacher_calendars)
-		if calendar.subscriber_type == 'CLASS-DIV' and is_class(calendar.events[0].params[0]) == False :
+		if calendar.subscriber_type == 'CLASS-DIV' and is_class(events[0].params[0]) == False :
 			existing_class_calendar = self.get_class_calendar_by_subscriber_key_and_date(calendar.subscriber_key,date,current_class_calendars)
 			subscriber_key = existing_class_calendar.subscriber_key
 			timetable = self.get_timetable_by_subscriber_key(existing_class_calendar.subscriber_key,timetables)
-			updated_class_calendar = calendar_integrator.update_class_calendar_by_adding_conflicted_periods(existing_class_calendar,timetable,calendar,academic_configuration,updated_class_calendars,day_code)
+			updated_class_calendar = calendar_integrator.update_class_calendar_by_adding_conflicted_periods(existing_class_calendar,timetable,calendar,events,academic_configuration,updated_class_calendars,day_code)
 			updated_class_calendar_events = updated_class_calendar.events
 			employee_key_list = calendar_integrator.get_employee_key_list(updated_class_calendar_events)
 			for employee_key in employee_key_list :
 				teacher_calendar = self.get_teacher_calendar_by_emp_key_and_date(date,employee_key,current_teacher_calendars,updated_class_calendar)
 				calendar_integrator.update_teacher_calendar_by_adding_conflicted_periods(updated_class_calendar_events,teacher_calendar,updated_class_calendar,updated_teacher_calendars)
-			
 			
 			
 		for updated_class_calendar in updated_class_calendars :
@@ -94,7 +108,14 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 		updated_class_calendar = self.sort_updated_class_calendar_events(existing_class_calendar)
 		return updated_class_calendar
 
-	
+	def make_event_objects(self,events) :
+		events_obj = []
+		for event in events :		
+			event_obj = cldr.Event(event)
+			events_obj.append(event_obj)
+		print(events_obj)
+		return events_obj
+
 		
 	def sort_updated_class_calendar_events(self,existing_class_calendar) :
 		from operator import attrgetter
@@ -304,14 +325,6 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 			expected_class_calendars_list.append(calendar.Calendar(cal))
 		return expected_class_calendars_list
 
-
-	def get_event_removed_calendars(self):
-		holiday_calendars_list = []
-		with open('tests/unit/fixtures/class-calendar-remove-fixtures/cancel_event_calendars.json', 'r') as calendars:
-			holiday_calendars = json.load(calendars)
-		for cal in holiday_calendars :
-			holiday_calendars_list.append(calendar.Calendar(cal))
-		return holiday_calendars_list
 
 
 	def get_event_removed_calendar(self,calendar_key,holiday_removed_calendars) :

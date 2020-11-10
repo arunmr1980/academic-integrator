@@ -87,36 +87,6 @@
 		"institution_key":"test-school-1",
 		"subscriber_key":"8B1B22E72AE-A",
 		"subscriber_type":"CLASS-DIV"
-	},
-  {
-    "institution_key":"test-school-1",
-    "calendar_key":"test-key-4",
-    "calendar_date":"2020-08-10",
-    "subscriber_key":"8B1B22E72AE-B",
-    "subscriber_type":"CLASS-DIV",
-    "events":[
-      
-    ]
-  },
-  {
-    "institution_key":"test-school-1",
-    "calendar_key":"test-key-2",
-    "calendar_date":"2020-08-10",
-    "subscriber_key":"8B1B22E72AE-A",
-    "subscriber_type":"CLASS-DIV",
-    "events":[
-      {
-            "event_code":"event-for-test",
-            "event_type":"HOLIDAY",
-            "from_time":"2020-08-10T09:00:00",  
-            "to_time":"2020-08-10T10:40:00",
-            "params": [
-               {
-                  "key" :"cancel_class_flag",
-                  "value" : "true"
-               }
-            ] 
-         }
-    ]
-  }
+	}
+  
 ]

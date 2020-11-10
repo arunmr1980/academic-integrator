@@ -11,7 +11,7 @@ from academics.lessonplan.LessonplanIntegrator import holiday_calendar_to_lesson
 from academics.TimetableIntegrator import generate_holiday_period_list,generate_class_calendar,integrate_teacher_timetable
 import academics.timetable.TimeTable as ttable
 import academics.timetable.TimeTableDBService as timetable_service
-from academics.calendar.CalendarIntegrator import remove_event_integrate_calendars
+from academics.calendar.CalendarIntegrator import remove_event_integrate_calendars,make_event_objects
 import operator
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -46,17 +46,11 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 			response = calendar_service.add_or_update_calendar(calendar_dict)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Teacher calendar uploaded --------- '+str(calendar_dict['calendar_key']))
 
-		event_removed_calendars = self.get_event_removed_calendars()
-		for event_removed_calendar in event_removed_calendars :
-			cal = cldr.Calendar(None)
-			calendar_dict = cal.make_calendar_dict(event_removed_calendar)
-			response = calendar_service.add_or_update_calendar(calendar_dict)
-			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Holiday cancelled calendar uploaded --------- '+str(calendar_dict['calendar_key']))
 
 	def test_calendars(self) :
 		expected_class_calendars_list = self.get_expected_class_calendars()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars()
-		calendar_key ='test-key-2'
+		calendar_key ='test-key-3'
 		events = [
 				 {
 		            "event_code":"event-1",
@@ -71,6 +65,7 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 		            ] 
          		}
 				]
+		events = make_event_objects(events)
 		calendar = calendar_service.get_calendar(calendar_key)
 		school_key = calendar.institution_key
 		calendar_date = calendar.calendar_date

@@ -28,18 +28,19 @@ def remove_event_integrate_calendars(calendar_key,events) :
 		for existing_class_calendar in class_calendars :
 			subscriber_key = existing_class_calendar.subscriber_key
 			update_class_calendars_teacher_calendars(subscriber_key,existing_class_calendar,calendar,academic_configuration,updated_calendars_list,day_code,calendar_date)
-	if calendar.subscriber_type == 'CLASS-DIV' and is_class(calendar.events[0].params[0]) == True :
+	if calendar.subscriber_type == 'CLASS-DIV' and is_class(events[0].params[0]) == True :
 		subscriber_key = calendar.subscriber_key
 		existing_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
-		updated_class_calendars.append(existing_class_calendar)
+		updated_calendars_list.append(existing_class_calendar)
 		# self.update_class_calendars_and_teacher_calendars(existing_class_calendar,timetables,calendar,academic_configuration,updated_class_calendars,updated_teacher_calendars,day_code,date,current_teacher_calendars)
-	if calendar.subscriber_type == 'CLASS-DIV' and is_class(calendar.events[0].params[0]) == False :
+	if calendar.subscriber_type == 'CLASS-DIV' and is_class(events[0].params[0]) == False :
 		subscriber_key = calendar.subscriber_key
 		existing_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
 		class_key = subscriber_key[:-2]
 		division = subscriber_key[-1:]
 		timetable = timetable_service.get_timetable_by_class_key_and_division(class_key,division)
-		updated_class_calendar = update_class_calendar_by_adding_conflicted_periods(existing_class_calendar,timetable,calendar,academic_configuration,updated_calendars_list,day_code)
+		updated_class_calendar = update_class_calendar_by_adding_conflicted_periods(existing_class_calendar,timetable,calendar,events,academic_configuration,updated_calendars_list,day_code)
+
 		updated_class_calendar_events = updated_class_calendar.events
 		employee_key_list = get_employee_key_list(updated_class_calendar_events)
 		for employee_key in employee_key_list :
@@ -210,6 +211,14 @@ def find_subject_key(event,period_code) :
 	if event.params[0].value == period_code :
 		return event.params[1].value
 
+def make_event_objects(events) :
+	events_obj = []
+	for event in events :		
+		event_obj = cldr.Event(event)
+		events_obj.append(event_obj)
+	print(events_obj)
+	return events_obj
+
 
 def get_subject_key(params) :
 	for param in params :
@@ -337,8 +346,9 @@ def update_class_calendars_teacher_calendars(subscriber_key,existing_class_calen
 					updated_calendars_list.append(updated_teacher_calendar)
 
 
-def update_class_calendar_by_adding_conflicted_periods(existing_class_calendar,timetable,calendar,academic_configuration,updated_calendars_list,day_code) :
-	period_list = timetable_integrator.generate_period_list(calendar,academic_configuration,timetable,day_code)
+def update_class_calendar_by_adding_conflicted_periods(existing_class_calendar,timetable,calendar,events,academic_configuration,updated_calendars_list,day_code) :
+	period_list = timetable_integrator.generate_period_list(calendar,events,academic_configuration,timetable,day_code)
+	print(period_list,"PERIODSSSSSSSS---------------")
 	events = make_events(period_list,timetable,existing_class_calendar.calendar_date)
 	updated_class_calendar = add_events_to_calendar(events,existing_class_calendar)
 	updated_calendars_list.append(updated_class_calendar)

@@ -92,7 +92,9 @@ def integrate_update_subject_teacher(
 	updated_class_calendars_list.extend(updated_class_calendars)
 
 
-
+# def get_updated_teacher_calendar(current_tecaher_calendar,updated_class_calendar_events) :
+# 	for event in updated_class_calendar_events :
+# 		updated_events = 
 
 def get_updated_class_calendars(current_class_calendars_list,period_list) :
 	updated_class_calendars = []
@@ -106,6 +108,7 @@ def get_updated_class_calendars(current_class_calendars_list,period_list) :
 					del event.params
 					event.params = updated_params
 					updated_class_calendars.append(current_class_calendar)
+
 	return updated_class_calendars
 
 def update_params(current_class_calendar,period) :
@@ -371,9 +374,9 @@ def generate_holiday_period_list(calendar,academic_configuration,timetable,day_c
 				holiday_period_list.append(partial_holiday_period)
 	return holiday_period_list
 
-def generate_period_list(calendar,academic_configuration,timetable,day_code) :
+def generate_period_list(calendar,events,academic_configuration,timetable,day_code) :
 	period_list =[]
-	for event in calendar.events :
+	for event in events :
 		if is_class(event.params[0]) == False :
 			start_time = event.from_time
 			end_time = event.to_time
