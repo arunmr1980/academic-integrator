@@ -407,6 +407,7 @@ def get_event_from_calendar(calendar,event_code) :
 
 
 def holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code) :
+	root_sessions =[]
 	gclogger.info("LESSON PLAN KEY------------------->  " + str(current_lessonplan.lesson_plan_key))
 	holiday_period_list = generate_holiday_period_list(event,calendar,academic_configuration,timetable,day_code)
 	for holiday_period in holiday_period_list :
@@ -421,13 +422,15 @@ def holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,
 
 	current_lessonplan = get_lesson_plan_after_remove_all_shedules(current_lessonplan)
 		#add root schedule to schedule list and delete all root sessions
-	current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,schedule_list)
+	current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,schedule_list,root_sessions)
 	current_lessonplan = get_updated_lesson_plan(schedule_list,current_lessonplan)
-	current_lessonplan = create_remaining_sessions_on_root(schedule_list,current_lessonplan)
+	current_lessonplan = create_remaining_sessions_on_root(schedule_list,current_lessonplan,root_sessions)
 	return current_lessonplan
 
 
-def add_root_schedule_to_schedule_list(current_lessonplan,schedule_list) :
+def add_root_schedule_to_schedule_list(current_lessonplan,schedule_list,root_sessions) :
+	sessions_count = len(current_lessonplan.sessions )
+	root_sessions.append(sessions_count)
 	if hasattr(current_lessonplan,'sessions') :
 		for session in current_lessonplan.sessions :
 			if hasattr(session,"schedule") :
@@ -450,10 +453,16 @@ def cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calen
 	return current_lessonplan
 
 
-def create_remaining_sessions_on_root(after_calendar_date_schedules_list,current_lessonplan) :
+def create_remaining_sessions_on_root(after_calendar_date_schedules_list,current_lessonplan,root_sessions) :
+	empty_sessions_count = int(root_sessions[0]) - len(after_calendar_date_schedules_list)
 	for schedule in after_calendar_date_schedules_list :
 		session_order_index = after_calendar_date_schedules_list.index(schedule) + 1
 		session = create_session(schedule,session_order_index)
+		if hasattr(current_lessonplan,'sessions') :
+			current_lessonplan.sessions.append(session)
+	for empty_session in range(empty_sessions_count):
+		session_order_index = len(current_lessonplan.sessions) + 1
+		session = create_empty_session(session_order_index)
 		if hasattr(current_lessonplan,'sessions') :
 			current_lessonplan.sessions.append(session)
 	return current_lessonplan
@@ -476,6 +485,12 @@ def is_schedule_on_calendar_date(schedule,calendar_date) :
 def create_session(schedule,session_order_index) :
 	session = lnpr.Session(None)
 	session.schedule = schedule
+	session.order_index = session_order_index
+	session.code = key.generate_key(4)
+	return session
+
+def create_empty_session(session_order_index) :
+	session = lnpr.Session(None)
 	session.order_index = session_order_index
 	session.code = key.generate_key(4)
 	return session

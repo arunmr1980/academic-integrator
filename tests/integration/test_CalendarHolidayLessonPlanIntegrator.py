@@ -87,8 +87,19 @@ class CalendarHolidayLessonPlanIntegratorTest(unittest.TestCase):
 				self.assertEqual(updated_lesson_plan.subject_code,expected_lesson_plan.subject_code)
 				self.assertEqual(updated_lesson_plan.resources,expected_lesson_plan.resources)
 				self.check_topics(updated_lesson_plan.topics,expected_lesson_plan.topics)
+				self.check_root_sessions(updated_lesson_plan.sessions,expected_lesson_plan.sessions)
+
 
 		gclogger.info(" <<<-------------------------------- INTEGRATION TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------>>> ")
+
+
+	def check_root_sessions(self,updated_lesson_plan_sessions,expected_lesson_plan_sessions) :
+		for index in range(len(updated_lesson_plan_sessions)) :
+			self.assertEqual(len(updated_lesson_plan_sessions),len(expected_lesson_plan_sessions))
+			self.assertEqual(updated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
+			if hasattr(updated_lesson_plan_sessions[index] ,'schedule') and hasattr(expected_lesson_plan_sessions[index] ,'schedule') :
+				self.check_schedule(updated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
+
 
 	def check_topics(self,updated_lesson_plan_topics,expected_lesson_plan_topics):
 		for index in range(0,len(updated_lesson_plan_topics)) :

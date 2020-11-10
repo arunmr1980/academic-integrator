@@ -449,7 +449,7 @@ class Session :
 			self.order_index = None
 			self.resources = []
 			self.comments = []
-			self.schedule = {}
+			self.schedule = None
 		else :
 			self.code = item['code']
 			self.name = item['name']
