@@ -439,8 +439,6 @@ def is_event_already_exist(event,events) :
 
 
 
-
-
 # Add event calendar integration
 def add_event_integrate_calendars(event_code,calendar_key) :
 	updated_calendars_list = []

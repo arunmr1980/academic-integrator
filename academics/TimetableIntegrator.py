@@ -21,6 +21,7 @@ def update_subject_teacher_integrator(division,class_info_key,subject_code,exist
 	period_list =[]
 	updated_teacher_timetables_list = []
 	updated_class_calendars_list = []
+	updated_teacher_calendars_list = []
 	updated_class_timetables_list = []
 	current_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
 	subscriber_key = class_info_key + '-' + division
@@ -34,6 +35,7 @@ def update_subject_teacher_integrator(division,class_info_key,subject_code,exist
 									new_teacher_timetable,
 									updated_teacher_timetables_list,
 									updated_class_calendars_list,
+									updated_teacher_calendars_list,
 									updated_class_timetables_list,
 									subject_code,
 									class_info_key,
@@ -75,6 +77,7 @@ def integrate_update_subject_teacher(
 									new_teacher_timetable,
 									updated_teacher_timetables_list,
 									updated_class_calendars_list,
+									updated_teacher_calendars_list,
 									updated_class_timetables_list,
 									subject_code,
 									class_info_key,

@@ -54,12 +54,12 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 											period_list,
 											current_class_calendars_list
 											)
-			for updated_class_calendar in updated_class_calendars_list :
-				updated_class_calendar_events = updated_class_calendar.events
-				employee_key_list = calendar_integrator.get_employee_key_list(updated_class_calendar_events)
-				for employee_key in employee_key_list :
-					current_tecaher_calendar = self.get_teacher_calendar_by_emp_key_and_date(employee_key,current_teacher_calendars_list,updated_class_calendar)
-					updated_teacher_calendar = calendar_integrator.get_updated_teacher_calendar(current_tecaher_calendar,updated_class_calendar_events)
+			# for updated_class_calendar in updated_class_calendars_list :
+			# 	updated_class_calendar_events = updated_class_calendar.events
+			# 	employee_key_list = calendar_integrator.get_employee_key_list(updated_class_calendar_events)
+			# 	for employee_key in employee_key_list :
+			# 		current_tecaher_calendar = self.get_teacher_calendar_by_emp_key_and_date(employee_key,current_teacher_calendars_list,updated_class_calendar)
+			# 		updated_teacher_calendar = calendar_integrator.get_updated_teacher_calendar(current_tecaher_calendar,updated_class_calendar_events)
 
 
 

@@ -162,13 +162,14 @@ def Update_lessonplan(current_lessonplan,updated_class_calendar) :
 	return current_lessonplan
 
 def adjust_lessonplan_after_remove_schedule(current_lessonplan) :
+	root_sessions = []
 	schedule_list = get_all_remaining_schedules(current_lessonplan)
 	current_lessonplan = get_lesson_plan_after_remove_all_shedules(current_lessonplan)
 	#add root schedule to schedule list and delete all root sessions
-	current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,schedule_list)
+	current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,schedule_list,root_sessions)
 	current_lessonplan = get_updated_lesson_plan(schedule_list,current_lessonplan)
 	#create remaining  schedule  on root sesions
-	current_lessonplan = create_remaining_sessions_on_root(schedule_list,current_lessonplan)
+	current_lessonplan = create_remaining_sessions_on_root_when_schedule_removed(schedule_list,current_lessonplan,root_sessions)
 	return current_lessonplan
 
 
@@ -200,15 +201,14 @@ def add_schedules(updated_class_calendar_events,current_lessonplan,updated_class
 
 def add_schedules_and_adjust_lessonplan(current_lessonplan,events,updated_class_calendar) :
 	after_calendar_date_schedules_list = []
+	root_sessions = []
 	gclogger.info("LESSON PLAN KEY ------------------->  " + str(current_lessonplan.lesson_plan_key))
 	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,events[0].from_time,after_calendar_date_schedules_list)
-	# current_lessonplan = delete_calendar_schedules_of_calendar_date(updated_class_calendar.calendar_date,current_lessonplan)
-	#check is there sessions and schedule if there append to  after_calendar_date_schedules_list and delete root sessions
+	current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,after_calendar_date_schedules_list,root_sessions)
 	current_lessonplan = add_calendar_schedules_to_lesson_plan(current_lessonplan,events,updated_class_calendar)
 	current_lessonplan = add_shedule_after_calendar_date(after_calendar_date_schedules_list,current_lessonplan)
-	current_lessonplan = create_remaining_sessions_on_root(after_calendar_date_schedules_list,current_lessonplan)
+	current_lessonplan = create_remaining_sessions_on_root_when_schedule_added(after_calendar_date_schedules_list,current_lessonplan)
 	return current_lessonplan
-
 
 
 def create_schedule(event,calendar) :
@@ -407,7 +407,7 @@ def get_event_from_calendar(calendar,event_code) :
 
 
 def holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code) :
-	root_sessions =[]
+	root_sessions = []
 	gclogger.info("LESSON PLAN KEY------------------->  " + str(current_lessonplan.lesson_plan_key))
 	holiday_period_list = generate_holiday_period_list(event,calendar,academic_configuration,timetable,day_code)
 	for holiday_period in holiday_period_list :
@@ -424,7 +424,7 @@ def holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,
 		#add root schedule to schedule list and delete all root sessions
 	current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,schedule_list,root_sessions)
 	current_lessonplan = get_updated_lesson_plan(schedule_list,current_lessonplan)
-	current_lessonplan = create_remaining_sessions_on_root(schedule_list,current_lessonplan,root_sessions)
+	current_lessonplan = create_remaining_sessions_on_root_when_schedule_removed(schedule_list,current_lessonplan,root_sessions)
 	return current_lessonplan
 
 
@@ -439,21 +439,21 @@ def add_root_schedule_to_schedule_list(current_lessonplan,schedule_list,root_ses
 	return current_lessonplan
 
 
-
 def cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calendar,day_code) :
 	after_calendar_date_schedules_list = []
+	root_sessions = []
 	events = get_class_session_events(calendar.events)
 	gclogger.info("LESSON PLAN KEY ------------------->  " + str(current_lessonplan.lesson_plan_key))
 	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,events[0].from_time,after_calendar_date_schedules_list)
 	# current_lessonplan = delete_calendar_schedules_of_calendar_date(calendar.calendar_date,current_lessonplan)
-	current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,after_calendar_date_schedules_list)
+	current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,after_calendar_date_schedules_list,root_sessions)
 	current_lessonplan = add_calendar_schedules_to_lesson_plan(current_lessonplan,events,calendar)
 	current_lessonplan = add_shedule_after_calendar_date(after_calendar_date_schedules_list,current_lessonplan)
-	current_lessonplan = create_remaining_sessions_on_root(after_calendar_date_schedules_list,current_lessonplan)
+	current_lessonplan = create_remaining_sessions_on_root_when_schedule_added(after_calendar_date_schedules_list,current_lessonplan)
 	return current_lessonplan
 
 
-def create_remaining_sessions_on_root(after_calendar_date_schedules_list,current_lessonplan,root_sessions) :
+def create_remaining_sessions_on_root_when_schedule_removed(after_calendar_date_schedules_list,current_lessonplan,root_sessions) :
 	empty_sessions_count = int(root_sessions[0]) - len(after_calendar_date_schedules_list)
 	for schedule in after_calendar_date_schedules_list :
 		session_order_index = after_calendar_date_schedules_list.index(schedule) + 1
@@ -466,6 +466,15 @@ def create_remaining_sessions_on_root(after_calendar_date_schedules_list,current
 		if hasattr(current_lessonplan,'sessions') :
 			current_lessonplan.sessions.append(session)
 	return current_lessonplan
+
+def create_remaining_sessions_on_root_when_schedule_added(after_calendar_date_schedules_list,current_lessonplan) :
+	for schedule in after_calendar_date_schedules_list :
+		session_order_index = after_calendar_date_schedules_list.index(schedule) + 1
+		session = create_session(schedule,session_order_index)
+		if hasattr(current_lessonplan,'sessions') :
+			current_lessonplan.sessions.append(session)
+	return current_lessonplan
+
 
 def delete_calendar_schedules_of_calendar_date(calendar_date,current_lessonplan) :
 	for main_topic in current_lessonplan.topics :
