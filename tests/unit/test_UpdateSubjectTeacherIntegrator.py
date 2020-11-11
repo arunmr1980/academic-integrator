@@ -8,6 +8,7 @@ import academics.calendar.Calendar as calendar
 import academics.lessonplan.LessonPlan as lpnr
 from academics.calendar.CalendarIntegrator import *
 import academics.classinfo.ClassInfo as classinfo
+import academics.calendar.CalendarIntegrator as calendar_integrator
 import pprint
 import copy
 import academics.timetable.KeyGeneration as key
@@ -29,6 +30,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		current_class_calendars_list = self.get_current_class_calendars_list()
 		current_teacher_calendars_list = self.get_current_teacher_calendars_list()
 		expected_class_calendars_list = self.get_expected_class_calendars_list()
+		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
 		division = "A"
 		class_info_key = '8B1B22E72AE'
 		subject_code = 'bio3'
@@ -46,7 +48,6 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 											new_teacher_timetable,
 											updated_teacher_timetables_list,
 											updated_class_calendars_list,
-											updated_teacher_calendars_list,
 											updated_class_timetables_list,
 											subject_code,
 											class_info_key,
@@ -54,38 +55,47 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 											period_list,
 											current_class_calendars_list
 											)
-			# for updated_class_calendar in updated_class_calendars_list :
-			# 	updated_class_calendar_events = updated_class_calendar.events
-			# 	employee_key_list = calendar_integrator.get_employee_key_list(updated_class_calendar_events)
-			# 	for employee_key in employee_key_list :
-			# 		current_tecaher_calendar = self.get_teacher_calendar_by_emp_key_and_date(employee_key,current_teacher_calendars_list,updated_class_calendar)
-			# 		updated_teacher_calendar = calendar_integrator.get_updated_teacher_calendar(current_tecaher_calendar,updated_class_calendar_events)
-
+			for updated_class_calendar in updated_class_calendars_list :
+				updated_class_calendar_events = updated_class_calendar.events
+				existing_teacher_calendar = self.get_teacher_calendar_by_emp_key_and_date(existing_teacher_emp_key,current_teacher_calendars_list,updated_class_calendar)
+				updated_existing_teacher_calendar = calendar_integrator.get_updated_teacher_calendar(existing_teacher_calendar,updated_class_calendar_events,updated_class_calendar)
+				new_teacher_calendar = self.get_teacher_calendar_by_emp_key_and_date(new_teacher_emp_key,current_teacher_calendars_list,updated_class_calendar)
+				updated_new_teacher_calendar = calendar_integrator.get_updated_teacher_calendar(new_teacher_calendar,updated_class_calendar_events,updated_class_calendar)
+				updated_teacher_calendars_list.append(updated_new_teacher_calendar)
+				updated_teacher_calendars_list.append(updated_existing_teacher_calendar)
 
 
 
 		for updated_class_timetable in updated_class_timetables_list :
 			t = ttable.TimeTable(None)
 			calendar_dict = t.make_timetable_dict(updated_class_timetable)
-			pp.pprint(calendar_dict)
-			print("------------------ UPDATED CLASS TIME TABLE --------------")
+			# pp.pprint(calendar_dict)
+			# print("------------------ UPDATED CLASS TIME TABLE --------------")
 
 			self.check_class_timetables(updated_class_timetable,expected_class_timetables_list)
 			gclogger.info("-----[UnitTest] class timetable test passed ----------------- "+ str(updated_class_timetable.time_table_key)+" ------------------------------ ")
 		for updated_teacher_timetable in updated_teacher_timetables_list :
 			t = ttable.TimeTable(None)
 			calendar_dict = t.make_timetable_dict(updated_teacher_timetable)
-			pp.pprint(calendar_dict)
-			print("------------------ UPDATED TEACHER TIME TABLE --------------")
+			# pp.pprint(calendar_dict)
+			# print("------------------ UPDATED TEACHER TIME TABLE --------------")
 			self.check_teacher_timetables(updated_teacher_timetable,expected_teacher_timetables_list)
 			gclogger.info("-----[UnitTest] teacher timetable test passed ----------------- "+ str(updated_teacher_timetable.time_table_key)+" ------------------------------ ")
 		for updated_class_calendar in updated_class_calendars_list :
 			cal = calendar.Calendar(None)
 			class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
-			pp.pprint(class_calendar_dict)
-			print("------------------ UPDATED CLASS CALENDAR --------------")
+			# pp.pprint(class_calendar_dict)
+			# print("------------------ UPDATED CLASS CALENDAR --------------")
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
+			gclogger.info("-----[ Unit Test ] Class calendar test passed for ----" + updated_class_calendar.calendar_key + "-----------------")
 
+		for updated_teacher_calendar in updated_teacher_calendars_list :
+			cal = calendar.Calendar(None)
+			teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+			# pp.pprint(teacher_calendar_dict)
+			# print("------------------ UPDATED TEACHER CALENDAR --------------")
+			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
+			gclogger.info("-----[ Unit Test ] Teacher calendar test passed for ----" + updated_teacher_calendar.calendar_key + "-----------------")
 
 
 	def get_teacher_calendar_by_emp_key_and_date(self,employee_key,current_teacher_calendars_list,updated_class_calendar) :
@@ -158,6 +168,23 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			if current_class_timetable.class_key == class_info_key and current_class_timetable.division == division :
 				return current_class_timetable
 
+
+
+	def check_teacher_calendars(self,updated_teacher_calendar,expected_teacher_calendars_list) :
+		for expected_teacher_calendar in expected_teacher_calendars_list :
+			if updated_teacher_calendar.calendar_key == expected_teacher_calendar.calendar_key :
+				self.assertEqual(expected_teacher_calendar.institution_key,updated_teacher_calendar.institution_key )
+				self.assertEqual(expected_teacher_calendar.calendar_date,updated_teacher_calendar.calendar_date )
+				self.assertEqual(expected_teacher_calendar.subscriber_key,updated_teacher_calendar.subscriber_key )
+				self.assertEqual(expected_teacher_calendar.subscriber_type,updated_teacher_calendar.subscriber_type )
+				self.check_events_teacher_calendar(expected_teacher_calendar.events,updated_teacher_calendar.events)
+
+
+	def check_events_teacher_calendar(self,expected_teacher_calendar_events,updated_teacher_calendar_events) :
+		for index in range(0,len(expected_teacher_calendar_events)) :
+			self.assertEqual(expected_teacher_calendar_events[index].event_code , updated_teacher_calendar_events[index].event_code)
+			self.assertEqual(expected_teacher_calendar_events[index].ref_calendar_key , updated_teacher_calendar_events[index].ref_calendar_key)
+
 	def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
 		for expected_class_calendar in expected_class_calendars_list :
 			if updated_class_calendar.calendar_key == expected_class_calendar.calendar_key :
@@ -166,7 +193,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 				self.assertEqual(expected_class_calendar.subscriber_key,updated_class_calendar.subscriber_key )
 				self.assertEqual(expected_class_calendar.subscriber_type,updated_class_calendar.subscriber_type )
 				self.check_events(expected_class_calendar.events,updated_class_calendar.events)
-				gclogger.info("-----[UnitTest] class calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
+				
 
 	def check_events(self,expected_class_calendar_events,generated_class_calendar_events) :
 		for index in range(0,len(expected_class_calendar_events)) :
@@ -236,6 +263,14 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		for class_cal in class_calendars_dict :
 			expected_class_calendars.append(calendar.Calendar(class_cal))
 		return expected_class_calendars
+
+	def get_expected_teacher_calendars_list(self) :
+		expected_teacher_calendars = []
+		with open('tests/unit/fixtures/update-subject-teacher-fixtures/expected_teacher_calendars.json', 'r') as calendar_list:
+			teacher_calendars_dict = json.load(calendar_list)
+		for teacher_cal in teacher_calendars_dict :
+			expected_teacher_calendars.append(calendar.Calendar(teacher_cal))
+		return expected_teacher_calendars
 
 	def get_current_class_calendars_list(self) :
 		current_class_calendars = []
