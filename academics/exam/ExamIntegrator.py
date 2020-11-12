@@ -10,6 +10,7 @@ import academics.calendar.Calendar as calendar
 import academics.academic.AcademicDBService as academic_service
 import academics.calendar.CalendarDBService as calendar_service
 import academics.TimetableIntegrator as timetable_integrator
+import academics.calendar.CalendarIntegrator as calendar_integrator
 import academics.timetable.KeyGeneration as key
 import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.calendar.Calendar as calendar
@@ -154,7 +155,11 @@ def update_current_class_calendars(academic_configuration,timetable,updated_clas
 		
 	return updated_class_calendars_list
 
-def get_class_session_events_added_calendar(periods_to_be_added,updated_class_calendar) :
+def get_class_session_events_added_calendar(periods_to_be_added,current_class_calendar) :
+	for period in periods_to_be_added :
+		events = calendar_integrator.make_events(periods_to_be_added,timetable,current_class_calendar.calendar_date)
+		updated_class_calendar = calendar_integrator.add_events_to_calendar(events,existing_class_calendar)
+	return updated_class_calendar
 	
 def update_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events) :
 	updated_class_calendar = remove_conflicted_class_events(exam_events,current_class_calendar,removed_events)	
