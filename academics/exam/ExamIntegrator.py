@@ -142,13 +142,31 @@ def get_params() :
 
 def update_current_class_calendars(updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events) :
 	for current_class_calendar in current_class_calendars_list :
+		updated_class_calendar = get_previous_class_events_added_calendar(current_class_calendar,exam_events)
 		updated_class_calendar = update_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events)
 		updated_class_calendars_list.append(updated_class_calendar)
 	return updated_class_calendars_list
 
+
 def update_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events) :
 	updated_class_calendar = remove_conflicted_class_events(exam_events,current_class_calendar,removed_events)	
 	return current_class_calendar
+
+
+def get_previous_class_events_added_calendar(current_class_calendar,exam_events) :
+	for exam_event in exam_events :
+		updated_class_calendar = integrate_previous_periods(exam_event,current_class_calendar)
+	return updated_class_calendar
+
+
+def integrate_previous_periods(exam_event,current_class_calendar) :
+	if hasattr(exam_event,'previous_schedule') :
+		previous_exam_event_from_time = exam_event.previous_schedule.from_time
+		previous_exam_event_to_time = exam_event.previous_schedule.to_time
+		print(previous_exam_event_from_time,previous_exam_event_from_time,"PREVIOUS EX_EVENT START AND END TIME ---------------<<<<<<")
+
+	else :
+		return current_class_calendar
 
 
 def remove_conflicted_class_events(exam_events,current_class_calendar,removed_events) :

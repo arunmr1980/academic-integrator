@@ -15,7 +15,7 @@ import copy
 import academics.timetable.KeyGeneration as key
 pp = pprint.PrettyPrinter(indent=4)
 
-class AddExamIntegratorTest(unittest.TestCase):
+class UpdateExamIntegratorTest(unittest.TestCase):
 
 		
 	def test_calendars_and_lessonplan(self) :
@@ -70,8 +70,9 @@ class AddExamIntegratorTest(unittest.TestCase):
 			lp = lpnr.LessonPlan(None)
 			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 			pp.pprint(updated_lessonplan_dict)
+
 			self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
-			
+			print("-----[ Unit Test ] LessonPlan test passed for ----" + updated_lessonplan.lesson_plan_key + "-----------------")
 
 
 
@@ -144,7 +145,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 				self.assertEqual(expected_teacher_calendar.subscriber_key,updated_teacher_calendar.subscriber_key )
 				self.assertEqual(expected_teacher_calendar.subscriber_type,updated_teacher_calendar.subscriber_type )
 				self.check_events_teacher_calendar(expected_teacher_calendar.events,updated_teacher_calendar.events)
-				gclogger.info("-----[UnitTest] teacher test passed ----------------- "+ str(updated_teacher_calendar.calendar_key)+" ------------------------------ ")
+				print("-----[UnitTest] teacher test passed ----------------- "+ str(updated_teacher_calendar.calendar_key)+" ------------------------------ ")
 
 
 
@@ -163,7 +164,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 				self.assertEqual(expected_class_calendar.subscriber_key,updated_class_calendar.subscriber_key )
 				self.assertEqual(expected_class_calendar.subscriber_type,updated_class_calendar.subscriber_type )
 				self.check_events(expected_class_calendar.events,updated_class_calendar.events)
-				gclogger.info("-----[UnitTest] class calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
+				print("-----[UnitTest] class calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
 
 	def check_events(self,expected_class_calendar_events,generated_class_calendar_events) :
 		for index in range(0,len(expected_class_calendar_events)) :
@@ -182,7 +183,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 
 	def get_current_lessonplans_list(self) :
 		current_lessonplans = []
-		with open('tests/unit/fixtures/add-exams-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
+		with open('tests/unit/fixtures/update-exams-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
 			lessonplans_list_dict = json.load(lessonplans_list)
 		for lessonplan in lessonplans_list_dict :
 			current_lessonplans.append(lpnr.LessonPlan(lessonplan))
@@ -190,7 +191,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 
 	def get_current_teacher_calendars_list(self) :
 		current_teacher_calendars = []
-		with open('tests/unit/fixtures/add-exams-fixtures/current_teacher_calendars_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/update-exams-fixtures/current_teacher_calendars_list.json', 'r') as calendar_list:
 			class_calendars_dict = json.load(calendar_list)
 		for class_cal in class_calendars_dict :
 			current_teacher_calendars.append(calendar.Calendar(class_cal))
@@ -198,7 +199,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 
 	def get_current_class_calendars_list(self) :
 		current_class_calendars = []
-		with open('tests/unit/fixtures/add-exams-fixtures/current_class_calendars_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/update-exams-fixtures/current_class_calendars_list.json', 'r') as calendar_list:
 			class_calendars_dict = json.load(calendar_list)
 		for class_cal in class_calendars_dict :
 			current_class_calendars.append(calendar.Calendar(class_cal))
@@ -206,7 +207,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 
 	def get_expected_class_calendars_list(self) :
 		expected_class_calendars = []
-		with open('tests/unit/fixtures/add-exams-fixtures/expected_class_calendars_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/update-exams-fixtures/expected_class_calendars_list.json', 'r') as calendar_list:
 			class_calendars_dict = json.load(calendar_list)
 		for class_cal in class_calendars_dict :
 			expected_class_calendars.append(calendar.Calendar(class_cal))
@@ -214,7 +215,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 
 	def get_expected_teacher_calendars_list(self) :
 		expected_teacher_calendars = []
-		with open('tests/unit/fixtures/add-exams-fixtures/expected_teacher_calendars_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/update-exams-fixtures/expected_teacher_calendars_list.json', 'r') as calendar_list:
 			teacher_calendars_dict = json.load(calendar_list)
 		for teacher_cal in teacher_calendars_dict :
 			expected_teacher_calendars.append(calendar.Calendar(teacher_cal))
@@ -222,7 +223,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 
 	def get_expected_lessonplans_list(self) :
 		expected_lessonplans = []
-		with open('tests/unit/fixtures/add-exams-fixtures/expected_lessonplans_list.json', 'r') as lessonplan_list:
+		with open('tests/unit/fixtures/update-exams-fixtures/expected_lessonplans_list.json', 'r') as lessonplan_list:
 			lessonplans_dict = json.load(lessonplan_list)
 		for lessonplan in lessonplans_dict :
 			expected_lessonplans.append(lpnr.LessonPlan(lessonplan))
@@ -230,7 +231,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 
 	def get_exams_list(self) :
 		exams_list = []
-		with open('tests/unit/fixtures/add-exams-fixtures/exams_list.json', 'r') as exam_list:
+		with open('tests/unit/fixtures/update-exams-fixtures/exams_list.json', 'r') as exam_list:
 			exams_list_dict = json.load(exam_list)
 		for exam_dict in exams_list_dict :
 			exams_list.append(exam.Exam(exam_dict))
