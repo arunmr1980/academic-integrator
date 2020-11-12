@@ -442,6 +442,53 @@ def is_class(param) :
 		is_class = True
 	return is_class
 
+def make_events(period_list,timetable,date) :
+	events_list =[]
+	for period in period_list :
+		event = calendar.Event(None)
+		event.event_code = key.generate_key(3)
+		event.event_type = 'CLASS_SESSION'
+		time_table_period = get_time_table_period(period.period_code,timetable)
+		event.params = get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
+
+		event.from_time =  get_standard_time(period.start_time,date)
+		event.to_time =  get_standard_time(period.end_time,date)
+		gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
+		events_list.append(event)
+	return events_list
+		
+def get_time_table_period(period_code,timetable) :
+	timetable_configuration_period = None 
+	if hasattr(timetable.timetable,'day_tables') :
+		days = timetable.timetable.day_tables
+		for day in days :
+			for time_table_period in day.periods :
+				if time_table_period.period_code == period_code :
+					return time_table_period
+
+		
+def add_events_to_calendar(events,existing_class_calendar) :
+	for event in events :
+		existing_class_calendar.events.append(event)
+	updated_class_calendar = sort_updated_class_calendar_events(existing_class_calendar)
+	return updated_class_calendar
+
+	
+		
+def sort_updated_class_calendar_events(existing_class_calendar) :
+	from operator import attrgetter
+	soreted_events = sorted(existing_class_calendar.events, key = attrgetter('from_time'))
+	existing_class_calendar.events = soreted_events
+	return existing_class_calendar
+
+
+
+
+
+
+
+
+
 def get_events_to_remove(class_calendar,event) :
 	events_to_remove_list = []
 	calendar_event_start_time = event.from_time
