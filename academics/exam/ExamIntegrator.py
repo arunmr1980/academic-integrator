@@ -91,7 +91,7 @@ def get_employee_key(params) :
 
 def integrate_class_calendar_on_add_exams(updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events) :
 	exam_events = make_exam_events(exams_list)
-	updated_class_calendars_list = update_current_class_calendars(updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events,exams_list)
+	updated_class_calendars_list = update_current_class_calendars(updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events)
 	for i in updated_class_calendars_list :
 		cal = calendar.Calendar(None)
 		class_calendar_dict = cal.make_calendar_dict(i)
@@ -140,35 +140,15 @@ def get_params() :
 	params.append(period_info)
 	return params
 
-def update_current_class_calendars(updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events,exams_list) :
+def update_current_class_calendars(updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events) :
 	for current_class_calendar in current_class_calendars_list :
-		updated_class_calendar = get_previous_class_events_added_calendar(current_class_calendar,exams_list)
 		updated_class_calendar = update_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events)
 		updated_class_calendars_list.append(updated_class_calendar)
 	return updated_class_calendars_list
 
-
 def update_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events) :
 	updated_class_calendar = remove_conflicted_class_events(exam_events,current_class_calendar,removed_events)	
 	return current_class_calendar
-
-
-def get_previous_class_events_added_calendar(current_class_calendar,exams_list) :
-	print("THIS FUNCTION IS WORKING ------")
-	for exam in exams_list :
-		updated_class_calendar = integrate_previous_periods(exam,current_class_calendar)
-	return updated_class_calendar
-
-
-def integrate_previous_periods(exam,current_class_calendar) :
-	if hasattr(exam,'previous_schedule') :
-		print("HHAASS PREVIOUS SCHEDULE ----------",exam.from_time)
-		previous_exam_event_from_time = exam.previous_schedule.from_time
-		previous_exam_event_to_time = exam.previous_schedule.to_time
-		print(previous_exam_event_from_time,previous_exam_event_from_time,"PREVIOUS EX_EVENT START AND END TIME ---------------<<<<<<")
-	else :
-		print("NO PREVIOUS SCHEDULE ----------",exam_event.from_time)
-		return current_class_calendar
 
 
 def remove_conflicted_class_events(exam_events,current_class_calendar,removed_events) :
@@ -287,7 +267,6 @@ def get_subject_code(event) :
 def update_current_lessonplan(current_lessonplan,events_to_remove) :
 	for event in events_to_remove :
 		updated_lessonplan = remove_event_schedule_from_lessonplan(current_lessonplan,event)
-		print(updated_lessonplan,"ERRORRRRRRR------------------")
 	return updated_lessonplan
 			
 def is_need_remove_schedule(event,schedule) :
