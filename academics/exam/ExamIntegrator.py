@@ -9,6 +9,7 @@ import academics.timetable.KeyGeneration as key
 import academics.calendar.Calendar as calendar
 import academics.academic.AcademicDBService as academic_service
 import academics.calendar.CalendarDBService as calendar_service
+import academics.TimetableIntegrator as timetable_integrator
 import academics.timetable.KeyGeneration as key
 import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.calendar.Calendar as calendar
@@ -89,13 +90,13 @@ def get_employee_key(params) :
 
 
 
-def integrate_class_calendar_on_add_exams(updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events) :
+def integrate_class_calendar_on_add_exams(academic_configuration,timetable,updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events) :
 	exam_events = make_exam_events(exams_list)
-	updated_class_calendars_list = update_current_class_calendars(updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events)
-	for i in updated_class_calendars_list :
-		cal = calendar.Calendar(None)
-		class_calendar_dict = cal.make_calendar_dict(i)
-		pp.pprint(class_calendar_dict)
+	updated_class_calendars_list = update_current_class_calendars(academic_configuration,timetable,updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events,exams_list)
+	# for i in updated_class_calendars_list :
+	# 	cal = calendar.Calendar(None)
+	# 	class_calendar_dict = cal.make_calendar_dict(i)
+	# 	pp.pprint(class_calendar_dict)
 	return updated_class_calendars_list
 
 def integrate_teacher_cal_and_lessonplan_on_add_exam(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list,current_class_calendars_list,current_teacher_calendars_list,current_lessonplans_list,exams_list,removed_events) :
@@ -140,33 +141,119 @@ def get_params() :
 	params.append(period_info)
 	return params
 
-def update_current_class_calendars(updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events) :
+def update_current_class_calendars(academic_configuration,timetable,updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events,exams_list) :
 	for current_class_calendar in current_class_calendars_list :
-		updated_class_calendar = get_previous_class_events_added_calendar(current_class_calendar,exam_events)
-		updated_class_calendar = update_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events)
-		updated_class_calendars_list.append(updated_class_calendar)
+		periods_to_be_added =[]
+		updated_class_calendar = get_exam_events_removed_calendar(academic_configuration,timetable,current_class_calendar,exams_list,periods_to_be_added)
+		# cal = calendar.Calendar(None)
+		# class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+		# pp.pprint(class_calendar_dict)
+		updated_class_calendar = get_class_session_events_added_calendar(periods_to_be_added,updated_class_calendar)
+		# updated_class_calendar = update_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events)
+		# updated_class_calendars_list.append(updated_class_calendar)
+		
 	return updated_class_calendars_list
 
-
+def get_class_session_events_added_calendar(periods_to_be_added,updated_class_calendar) :
+	
 def update_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events) :
 	updated_class_calendar = remove_conflicted_class_events(exam_events,current_class_calendar,removed_events)	
 	return current_class_calendar
 
 
-def get_previous_class_events_added_calendar(current_class_calendar,exam_events) :
-	for exam_event in exam_events :
-		updated_class_calendar = integrate_previous_periods(exam_event,current_class_calendar)
-	return updated_class_calendar
+def get_exam_events_removed_calendar(academic_configuration,timetable,current_class_calendar,exams_list,periods_to_be_added) :
+	
+	for exam in exams_list :
+		if hasattr(exam,'previous_schedule') and is_schedule_has_same_calendar_key(exam.previous_schedule,current_class_calendar) == True :
+			updated_class_calendar = integrate_previous_periods(academic_configuration,timetable,exam,current_class_calendar,periods_to_be_added)
 
 
-def integrate_previous_periods(exam_event,current_class_calendar) :
-	if hasattr(exam_event,'previous_schedule') :
-		previous_exam_event_from_time = exam_event.previous_schedule.from_time
-		previous_exam_event_to_time = exam_event.previous_schedule.to_time
-		print(previous_exam_event_from_time,previous_exam_event_from_time,"PREVIOUS EX_EVENT START AND END TIME ---------------<<<<<<")
+	print(">>>>>>PERIODS TO BE ADDED <<<<<<")
+	for i in periods_to_be_added :
+		print(i.period_code)
 
-	else :
-		return current_class_calendar
+	return current_class_calendar
+
+
+
+def is_schedule_has_same_calendar_key(previous_schedule,current_class_calendar) :
+	has_same_calendar_date = False
+	if previous_schedule.date_time == current_class_calendar.calendar_date :
+		has_same_calendar_date = True 
+	return has_same_calendar_date
+
+
+def integrate_previous_periods(academic_configuration,timetable,exam,current_class_calendar,periods_to_be_added) :
+	previous_exam_from_time = exam.previous_schedule.from_time
+	previous_exam_to_time = exam.previous_schedule.to_time	
+	previous_exam_event_from_time = timetable_integrator.get_standard_time(previous_exam_from_time,current_class_calendar.calendar_date)
+	previous_exam_event_to_time = timetable_integrator.get_standard_time(previous_exam_to_time,current_class_calendar.calendar_date)
+	day_code = timetable_integrator.findDay(current_class_calendar.calendar_date).upper()[0:3]
+	period_list = generate_period_list(
+										current_class_calendar,
+										previous_exam_event_from_time,
+										previous_exam_event_to_time,
+										academic_configuration,
+										timetable,
+										day_code
+										)
+	for period in period_list :
+		if is_period_already_exist(period,periods_to_be_added) == False :
+			periods_to_be_added.append(period)
+	updated_class_calendar = remove_exam_event_of_previous_schedule(current_class_calendar,previous_exam_event_from_time,previous_exam_event_to_time)
+
+	
+		
+def remove_exam_event_of_previous_schedule(current_class_calendar,previous_exam_event_from_time,previous_exam_event_to_time) :
+	for event in current_class_calendar.events :
+		if event.event_type == 'EXAM' and is_schedule_matching(event,previous_exam_event_from_time,previous_exam_event_to_time) == True :
+			current_class_calendar.events.remove(event)
+	return current_class_calendar
+
+
+
+def is_schedule_matching(event,previous_exam_event_from_time,previous_exam_event_to_time) :
+	is_matching = False
+	if event.from_time == previous_exam_event_from_time and event.to_time == previous_exam_event_to_time :
+		is_matching = True
+	return is_matching
+
+
+def is_period_already_exist(period,periods_to_be_added) :
+	is_period_exist = False
+	for existing_period in periods_to_be_added :
+		if period.period_code == existing_period.period_code :
+			is_period_exist = True
+	return is_period_exist
+
+def generate_period_list(calendar,previous_exam_event_from_time,previous_exam_event_to_time,academic_configuration,timetable,day_code) :
+	period_list =[]
+	periods = get_period_list(
+							previous_exam_event_from_time,
+							previous_exam_event_to_time,
+							day_code,academic_configuration,
+							timetable,calendar.calendar_date
+							)
+	for period in periods :
+		period_list.append(period)
+	return period_list
+
+
+
+def get_period_list(start_time,end_time,day_code,academic_configuration,timetable,date) :
+	period_list =[]
+	if hasattr(academic_configuration.time_table_configuration ,'time_table_schedules') :
+		for time_table_schedule in academic_configuration.time_table_configuration.time_table_schedules :
+				for class_key in time_table_schedule.applied_classes :
+					if class_key == timetable.class_key :
+						for day_table in  time_table_schedule.day_tables :
+							if day_table.day_code == day_code :
+								for period in day_table.periods :
+									standard_start_time = timetable_integrator.get_standard_time(period.start_time,date)
+									standard_end_time = timetable_integrator.get_standard_time(period.end_time,date)
+									if timetable_integrator.check_holiday_time_conflict(start_time,end_time,standard_start_time,standard_end_time) == True:
+										period_list.append(period)
+	return period_list
 
 
 def remove_conflicted_class_events(exam_events,current_class_calendar,removed_events) :
@@ -285,6 +372,7 @@ def get_subject_code(event) :
 def update_current_lessonplan(current_lessonplan,events_to_remove) :
 	for event in events_to_remove :
 		updated_lessonplan = remove_event_schedule_from_lessonplan(current_lessonplan,event)
+		print(updated_lessonplan,"ERRORRRRRRR------------------")
 	return updated_lessonplan
 			
 def is_need_remove_schedule(event,schedule) :

@@ -449,6 +449,9 @@ def get_holiday_period_list(start_time,end_time,day_code,academic_configuration,
 	return partial_holiday_period_list
 
 
+
+
+
 def check_holiday_time_conflict(event_start_time,event_end_time,standard_start_time,standard_end_time) :
 	is_conflict = None
 	event_start_time_year = int(event_start_time[:4])
@@ -489,7 +492,6 @@ def check_holiday_time_conflict(event_start_time,event_end_time,standard_start_t
 	    is_conflict = True
 	else :
 	    is_conflict = False
-
 	return is_conflict
 
 
