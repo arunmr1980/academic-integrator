@@ -174,9 +174,9 @@ def get_previous_exam_events_removed_calendar(academic_configuration,timetable,c
 			updated_class_calendar = integrate_previous_periods(academic_configuration,timetable,exam,current_class_calendar,periods_to_be_added)
 
 
-	print(">>>>>>PERIODS TO BE ADDED <<<<<<")
-	for i in periods_to_be_added :
-		print(i.period_code)
+	# print(">>>>>>PERIODS TO BE ADDED <<<<<<")
+	# for i in periods_to_be_added :
+	# 	print(i.period_code)
 
 	return current_class_calendar
 
@@ -301,7 +301,7 @@ def get_class_session_events_added_teacher_calendar(current_teacher_calendar,upd
 	for updated_class_calendar in updated_class_calendars_list :
 		updated_event_list = []
 		for event in updated_class_calendar.events :
-			if is_event_exist_in_teacer_calendars(event,current_teacher_calendar) == True :
+			if is_event_exist_in_teacer_calendar(event,current_teacher_calendar) == True :
 				updated_event_list.append(event)
 		current_teacher_calendar.events = updated_event_list
 	return current_teacher_calendar
@@ -313,6 +313,12 @@ def is_event_exist_in_class_calendars(event,updated_class_calendars_list) :
 			if event_info.event_code == event.event_code :
 				is_event_exist = True
 	return is_event_exist
+
+# def is_event_exist_in_teacer_calendar(event,current_teacher_calendar) :
+# 	is_exist = False
+# 	for existing_event in current_teacher_calendar.events :
+# 		if event.event_code == 
+
 
 
 def check_events_conflict(event_start_time,event_end_time,class_calendar_event_start_time,class_calendar_event_end_time) :
