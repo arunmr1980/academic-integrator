@@ -8,7 +8,7 @@ import academics.calendar.Calendar as calendar
 import academics.lessonplan.LessonPlan as lpnr
 from academics.calendar.CalendarIntegrator import * 
 import academics.classinfo.ClassInfo as classinfo
-from academics.exam.ExamIntegrator import integrate_teacher_cal_and_lessonplan_on_add_exam,integrate_class_calendar_on_add_exams
+import academics.exam.ExamIntegrator as exam_integrator
 import academics.exam.Exam as exam
 import pprint
 import copy 
@@ -31,6 +31,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 		current_class_calendars = self.get_current_class_calendars_list()
 		academic_configuration = self.get_academic_configuration()
 		timetable = self.get_timetable()
+		school_key = timetable.school_key
 		# expected_class_calendars_list = self.get_expected_class_calendars_list()
 		# expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
 		# expected_lessonplans_list = self.get_expected_lessonplans_list()
@@ -40,32 +41,36 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 		current_cls_calendars = copy.deepcopy(current_class_calendars_list)
 		exams = self.get_exams_list()
 		exams_list = self.perticular_exams_for_perticular_class(exams,class_key,division,series_code)
-		updated_class_calendars_list = integrate_class_calendar_on_add_exams(academic_configuration,timetable,updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events)
-		# integrate_teacher_cal_and_lessonplan_on_add_exam(
-		# 					updated_class_calendars_list,
-		# 					updated_teacher_calendars_list,
-		# 					updated_lessonplans_list,
-		# 					current_class_calendars_list,
-		# 					current_teacher_calendars_list,
-		# 					current_lessonplans_list,
-		# 					exams_list,
-		# 					removed_events
-		# 					)
+		current_class_calendars_list = exam_integrator.integrate_class_calendar_on_update_exams(academic_configuration,timetable,exams_list,current_class_calendars_list)
+		current_teacher_calendars_list = self.integrate_teacher_calendars_on_update_exam(current_teacher_calendars_list,current_class_calendars_list,school_key) 
+		current_lessonplans_list = exam_integrator.integrate_lessonplans_on_add_exams(current_lessonplans_list,current_class_calendars_list)
+		updated_class_calendars_list = exam_integrator.integrate_class_calendar_on_add_exams(academic_configuration,timetable,updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events)
+		
+		exam_integrator.integrate_teacher_cal_and_lessonplan_on_add_exam(
+							updated_class_calendars_list,
+							updated_teacher_calendars_list,
+							updated_lessonplans_list,
+							current_class_calendars_list,
+							current_teacher_calendars_list,
+							current_lessonplans_list,
+							exams_list,
+							removed_events
+							)
 
 
 
-		# for updated_class_calendar in updated_class_calendars_list :
-		# 	cal = calendar.Calendar(None)
-		# 	class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
-		# 	pp.pprint(class_calendar_dict)
-		# 	self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
+		for updated_class_calendar in updated_class_calendars_list :
+			cal = calendar.Calendar(None)
+			class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+			pp.pprint(class_calendar_dict)
+			# self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
 
 
-		# for updated_teacher_calendar in updated_teacher_calendars_list :
-		# 	cal = calendar.Calendar(None)
-		# 	teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
-		# 	pp.pprint(teacher_calendar_dict)
-		# 	self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
+		for updated_teacher_calendar in updated_teacher_calendars_list :
+			cal = calendar.Calendar(None)
+			teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+			pp.pprint(teacher_calendar_dict)
+			# self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
 
 		# for updated_lessonplan in updated_lessonplans_list :
 
@@ -76,7 +81,70 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 		# 	self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
 		# 	print("-----[ Unit Test ] LessonPlan test passed for ----" + updated_lessonplan.lesson_plan_key + "-----------------")
 
+	def integrate_teacher_calendars_on_update_exam(self,current_teacher_calendars_list,updated_class_calendars_list,school_key) :
+		updated_teacher_calendars_list =[]
+		for updated_class_calendar in updated_class_calendars_list :
+			for event in updated_class_calendar.events :
+				calendar_date = updated_class_calendar.calendar_date
+				employee_key = self.get_employee_key(event.params)
+				if employee_key is not None :
+					current_teacher_calendar = self.get_teacher_calendar(current_teacher_calendars_list,calendar_date,employee_key,school_key)
+					emp_event = self.make_employee_event(event,updated_class_calendar)
+					if self.is_calendar_already_exist(current_teacher_calendar,updated_teacher_calendars_list) == False :
+						updated_teacher_calendars_list.append(current_teacher_calendar)
 
+		for teacher_calendar in updated_teacher_calendars_list :
+			for updated_class_calendar in updated_class_calendars_list :
+				for event in updated_class_calendar.events :
+					calendar_date = updated_class_calendar.calendar_date
+					employee_key = self.get_employee_key(event.params)
+					if teacher_calendar.calendar_date == calendar_date and teacher_calendar.subscriber_key == employee_key :
+						emp_event = self.make_employee_event(event,updated_class_calendar)
+						if emp_event not in teacher_calendar.events :
+							teacher_calendar.events.append(emp_event)
+			
+		return updated_teacher_calendars_list
+
+	def make_employee_event(self,event,updated_class_calendar) :
+		if event is not None :
+			emp_event = calendar.Event(None)
+			emp_event.event_code = event.event_code
+			emp_event.ref_calendar_key = updated_class_calendar.calendar_key
+		return emp_event
+
+	def is_calendar_already_exist(self,current_teacher_calendar,updated_teacher_calendars_list) :
+		is_exist = False
+		for updated_teacher_calendar in updated_teacher_calendars_list :
+			if updated_teacher_calendar.subscriber_key == current_teacher_calendar.subscriber_key and updated_teacher_calendar.calendar_date == current_teacher_calendar.calendar_date:
+				is_exist = True
+		return is_exist
+
+
+	def get_employee_key(self,params) :
+		for param in params :
+			if param.key == 'teacher_emp_key' :
+				return param.value
+
+
+	def get_teacher_calendar(self,teacher_calendars_list,calendar_date,employee_key,school_key) :
+		for teacher_calendar in teacher_calendars_list :
+			if teacher_calendar.subscriber_key == employee_key and teacher_calendar.calendar_date == calendar_date :
+				teacher_calendar.events = []
+				return teacher_calendar
+		else :
+			employee_calendar = self.generate_employee_calendar(calendar_date,employee_key,school_key)
+			return employee_calendar
+			
+
+	def generate_employee_calendar(self,calendar_date,employee_key,school_key) :
+		employee_calendar=calendar.Calendar(None)
+		employee_calendar.calendar_date = calendar_date
+		employee_calendar.calendar_key = key.generate_key(16)
+		employee_calendar.institution_key = school_key
+		employee_calendar.subscriber_key = employee_key
+		employee_calendar.subscriber_type = 'EMPLOYEE'
+		employee_calendar.events = []
+		return employee_calendar
 
 	def current_class_calendars_perticular_class(self,subscriber_key,current_class_calendars) :
 		current_class_calendars_list =[]
