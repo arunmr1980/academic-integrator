@@ -61,7 +61,7 @@ class Division:
                 for subject_teacher in subject_teachers :
                     self.subject_teachers.append(SubjectTeacher(subject_teacher))
             except KeyError as ke:
-                logger.debug ('[WARN] - KeyError in Calendar -events not present'.format (str (ke)))
+                gclogger.debug ('[WARN] - KeyError in Calendar -events not present'.format (str (ke)))
             try:
                 self.class_teacher_employee_key = item["class_teacher_employee_key"]
             except KeyError as ke:

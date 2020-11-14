@@ -6,18 +6,18 @@ import academics.timetable.TimeTable as ttable
 from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as calendar
 import academics.lessonplan.LessonPlan as lpnr
-from academics.calendar.CalendarIntegrator import * 
+from academics.calendar.CalendarIntegrator import *
 import academics.classinfo.ClassInfo as classinfo
 from academics.exam.ExamIntegrator import integrate_teacher_cal_and_lessonplan_on_add_exam,integrate_class_calendar_on_add_exams
 import academics.exam.Exam as exam
 import pprint
-import copy 
+import copy
 import academics.timetable.KeyGeneration as key
 pp = pprint.PrettyPrinter(indent=4)
 
 class AddExamIntegratorTest(unittest.TestCase):
 
-		
+
 	def test_calendars_and_lessonplan(self) :
 		series_code = "NEG111"
 		class_key = "8B1B22E72AE"
@@ -71,7 +71,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 			pp.pprint(updated_lessonplan_dict)
 			self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
-			
+
 
 
 
@@ -154,7 +154,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 			self.assertEqual(expected_teacher_calendar_events[index].event_code , updated_teacher_calendar_events[index].event_code)
 			self.assertEqual(expected_teacher_calendar_events[index].ref_calendar_key , updated_teacher_calendar_events[index].ref_calendar_key)
 
-	
+
 	def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
 		for expected_class_calendar in expected_class_calendars_list :
 			if updated_class_calendar.calendar_key == expected_class_calendar.calendar_key :
@@ -178,7 +178,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 			self.assertEqual(expected_class_calendar_event_params[index].value,generated_class_calendar_event_params[index].value)
 
 
-	
+
 
 	def get_current_lessonplans_list(self) :
 		current_lessonplans = []
@@ -236,7 +236,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 			exams_list.append(exam.Exam(exam_dict))
 		return exams_list
 
-	
+
 
 if __name__ == '__main__':
 	unittest.main()

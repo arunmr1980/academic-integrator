@@ -57,10 +57,25 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 		expected_class_calendars_list = self.get_expected_class_calendars()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars()
 		calendar_key ='test-key-11'
+		events = [
+				  {
+				      "event_code": "cf78e5",
+				      "event_type": "CLASS_SESSION",
+				      "from_time": "2020-05-22T10:00:00",
+				      "to_time": "2020-05-22T10:40:00",
+				      "params": [
+			               {
+			                  "key" :"cancel_class_flag",
+			                  "value" : "true"
+			               }
+			            ],
+        				"to_time":"2020-08-04T10:40:00"
+				    }
+				]
 		calendar = calendar_service.get_calendar(calendar_key)
 		school_key = calendar.institution_key
 		calendar_date = calendar.calendar_date
-		remove_event_integrate_calendars(calendar_key)
+		remove_event_integrate_calendars(calendar_key,events)
 		updated_calendars_list = calendar_service.get_all_calendars_by_school_key_and_date(school_key,calendar_date)
 		
 		updated_class_calendar_list = self.get_updated_class_calendars(updated_calendars_list)
@@ -128,12 +143,12 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 				self.check_events_teacher_calendars(expected_teacher_calendar.events,updated_teacher_calendar.events)
 
 	def check_events_teacher_calendars(self,expected_teacher_calendar_events,updated_teacher_calendar_events) :
-		for index in range(0,len(expected_teacher_calendar_events)) :
+		for index in range(0,len(expected_teacher_calendar_events) -1) :
 			self.assertEqual(expected_teacher_calendar_events[index].ref_calendar_key , updated_teacher_calendar_events[index].ref_calendar_key)
 
 	def get_timetables(self) :
 		t = []
-		with open('tests/unit/fixtures/calendar-remove-fixtures/test_timetable_list.json', 'r') as timetable_list:
+		with open('tests/unit/fixtures/school-calendar-remove-fixtures/test_timetable_list.json', 'r') as timetable_list:
 			timetables = json.load(timetable_list)
 
 		for timetable in timetables :
@@ -154,7 +169,7 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 
 	def get_current_class_calendars(self) :
 		class_calendars_list = []
-		with open('tests/unit/fixtures/calendar-remove-fixtures/current_class_calendars.json', 'r') as calendars:
+		with open('tests/unit/fixtures/school-calendar-remove-fixtures/current_class_calendars.json', 'r') as calendars:
 			class_calendars = json.load(calendars)
 		for cal in class_calendars :
 			class_calendars_list.append(calendar.Calendar(cal))
@@ -162,7 +177,7 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 
 	def get_current_teacher_calendars(self) :
 		teacher_calendars_list = []
-		with open('tests/unit/fixtures/calendar-remove-fixtures/current_teacher_calendars.json', 'r') as calendars:
+		with open('tests/unit/fixtures/school-calendar-remove-fixtures/current_teacher_calendars.json', 'r') as calendars:
 			teacher_calendars = json.load(calendars)
 		for cal in teacher_calendars :
 			teacher_calendars_list.append(calendar.Calendar(cal))
@@ -170,7 +185,7 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 
 	def get_expected_teacher_calendars(self) :
 		expected_teacher_calendars_list = []
-		with open('tests/unit/fixtures/calendar-remove-fixtures/expected_teacher_calendars.json', 'r') as calendars:
+		with open('tests/unit/fixtures/school-calendar-remove-fixtures/expected_teacher_calendars.json', 'r') as calendars:
 			teacher_calendars = json.load(calendars)
 		for cal in teacher_calendars :
 			expected_teacher_calendars_list.append(calendar.Calendar(cal))
@@ -178,7 +193,7 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 
 	def get_expected_class_calendars(self) :
 		expected_class_calendars_list = []
-		with open('tests/unit/fixtures/calendar-remove-fixtures/expected_class_calendars.json', 'r') as calendars:
+		with open('tests/unit/fixtures/school-calendar-remove-fixtures/expected_class_calendars.json', 'r') as calendars:
 			class_calendars = json.load(calendars)
 		for cal in class_calendars :
 			expected_class_calendars_list.append(calendar.Calendar(cal))
@@ -187,7 +202,7 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 
 	def get_holiday_removed_calendars(self):
 		holiday_calendars_list = []
-		with open('tests/unit/fixtures/calendar-remove-fixtures/cancell_holiday_event_calendars.json', 'r') as calendars:
+		with open('tests/unit/fixtures/school-calendar-remove-fixtures/cancell_holiday_event_calendars.json', 'r') as calendars:
 			holiday_calendars = json.load(calendars)
 		for cal in holiday_calendars :
 			holiday_calendars_list.append(calendar.Calendar(cal))

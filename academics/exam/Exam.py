@@ -45,7 +45,7 @@ class Exam:
                     self.audit_logs.append(AuditLog(audit_log))
             except KeyError as ke:
                 gclogger.debug(' KeyError in Exam - audit_logs not found'.format(str(ke)))
-            
+
             try:
                 self.institution_key = item["institution_key"]
             except KeyError as ke:
@@ -54,7 +54,7 @@ class Exam:
                 self.schedulable = item["schedulable"]
             except KeyError as ke:
                 gclogger.debug(' KeyError in Exam -  schedulable not found'.format(str(ke)))
-            
+
             try:
                 self.schedule_flag = item["schedule_flag"]
             except KeyError as ke:
@@ -71,7 +71,7 @@ class Exam:
                 gclogger.debug(' KeyError in Exam -  date_time not found'.format(str(ke)))
 
 
-           
+
 
     def make_exam_dict(item) :
         exam = {
@@ -81,7 +81,7 @@ class Exam:
             "to_time" :item.to_time
         }
         return exam
-            
+
 
 class AuditLog:
     def __init__(self, item):
@@ -102,6 +102,3 @@ class PreviousSchedule :
             self.date_time = item['date_time']
             self.from_time = item['from_time']
             self.to_time = item['to_time']
-
-
-

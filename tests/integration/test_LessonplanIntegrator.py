@@ -29,7 +29,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		for current_lesson_plan in current_lesson_plan_list :
 			response = lessonplan_service.create_lessonplan(current_lesson_plan)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Current lesson plan uploaded '+str(current_lesson_plan['lesson_plan_key']))
-			current_lesson_plan_list_single_cal = self.get_current_lesson_plan_list_for_single_calendar()
+		current_lesson_plan_list_single_cal = self.get_current_lesson_plan_list_for_single_calendar()
 		for current_lesson_plan in current_lesson_plan_list_single_cal :
 			response = lessonplan_service.create_lessonplan(current_lesson_plan)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Current lesson plan single calendar uploaded '+str(current_lesson_plan['lesson_plan_key']))
