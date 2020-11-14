@@ -128,6 +128,8 @@ def get_updated_lessonplan_with_previous_schedules(lessonplan,current_class_cale
 def need_add_this_event(event,lessonplan) :
 	
 
+	
+
 def make_exam_events(exams_list) :
 	exam_events = []
 	for exam_info in exams_list :
