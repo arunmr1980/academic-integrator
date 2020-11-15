@@ -67,6 +67,9 @@ def integrate_update_exam_on_calendar(series_code,class_key,division) :
 	save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
 
 
+
+
+
 def save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list) :
 	for updated_class_calendar in updated_class_calendars_list :
 		cal = calendar.Calendar(None)
@@ -163,7 +166,7 @@ def get_current_teacher_calendars(removed_events) :
 	current_teacher_calendars = []
 	for event in removed_events :
 		event_date = get_event_date(event.from_time)
-		employee_key = get_employee_key(event.params)
+		employee_key = timetable_integrator.get_employee_key(event.params)
 		if employee_key is not None :
 			teacher_calendar = calendar_service.get_calendar_by_date_and_key(event_date, employee_key)
 			current_teacher_calendars.append(teacher_calendar)
@@ -172,6 +175,88 @@ def get_current_teacher_calendars(removed_events) :
 
 def get_event_date(event_from_time) :
 	return event_from_time[:10]
+
+#-------- below code is of unit test ----
+def integrate_add_exam_on_calendar(series_code,class_key,division) :
+	subscriber_key = class_key + '-' + division
+	updated_class_calendars_list = []
+	updated_teacher_calendars_list = []
+	updated_lessonplans_list = []
+	removed_events = []
+	current_class_calendars_list = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
+	school_key = current_class_calendars_list[0].institution_key
+	current_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type(school_key,'EMPLOYEE')
+	current_cls_calendars = copy.deepcopy(current_class_calendars_list)
+	current_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+	exams_list = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
+	updated_class_calendars_list = integrate_class_calendars_on_add_exams(updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events)
+	current_teacher_calendars_list = get_current_teacher_calendars(removed_events)
+	integrate_teacher_cals_and_lessonplans_on_add_exam(
+						updated_class_calendars_list,
+						updated_teacher_calendars_list,
+						updated_lessonplans_list,
+						current_class_calendars_list,
+						current_teacher_calendars_list,
+						current_lessonplans_list,
+						exams_list,
+						removed_events
+						)
+	save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
+
+def integrate_class_calendars_on_add_exams(updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events) :
+	exam_events = make_exam_events(exams_list)
+	updated_class_calendars_list = get_updated_current_class_calendars(updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events)
+	return updated_class_calendars_list
+
+def get_updated_current_class_calendars(updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events) :
+	for current_class_calendar in current_class_calendars_list :
+		updated_class_calendar = get_updated_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events)
+		updated_class_calendars_list.append(updated_class_calendar)
+	return updated_class_calendars_list
+
+def get_updated_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events) :
+	updated_class_calendar = get_remove_conflicted_class_events(exam_events,current_class_calendar,removed_events)	
+	return current_class_calendar
+
+def get_remove_conflicted_class_events(exam_events,current_class_calendar,removed_events) :
+	for exam_event in exam_events :
+		updated_class_calendar = get_updated_class_calendar_events(exam_event,current_class_calendar,removed_events)
+	return updated_class_calendar
+
+def get_updated_class_calendar_events(exam_event,current_class_calendar,removed_events) :
+	updated_events = []
+	for calendar_event in current_class_calendar.events :
+		if check_events_conflict(exam_event.from_time,exam_event.to_time,calendar_event.from_time,calendar_event.to_time) == True :
+			removed_events.append(calendar_event)
+			if exam_event not in updated_events :
+				updated_events.append(exam_event)
+		else :
+			updated_events.append(calendar_event)
+	current_class_calendar.events = updated_events
+	return current_class_calendar
+
+
+def integrate_teacher_cals_and_lessonplans_on_add_exam(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list,current_class_calendars_list,current_teacher_calendars_list,current_lessonplans_list,exams_list,removed_events) :
+	updated_teacher_calendars_list = get_updated_current_teacher_calendars(updated_teacher_calendars_list,current_teacher_calendars_list,updated_class_calendars_list)
+	updated_lessonplans_list = get_updated_current_lessonplans(updated_class_calendars_list,current_lessonplans_list,updated_lessonplans_list,removed_events)
+
+def get_updated_current_teacher_calendars(updated_teacher_calendars_list,current_teacher_calendars_list,updated_class_calendars_list) :
+	for current_teacher_calendar in current_teacher_calendars_list :
+		updated_teacher_calendar = get_removed_events_from_teacher_calendar(current_teacher_calendar,updated_class_calendars_list)
+		updated_teacher_calendars_list.append(updated_teacher_calendar)
+	return updated_teacher_calendars_list
+
+def get_updated_current_lessonplans(updated_class_calendars_list,current_lessonplans_list,updated_lessonplans_list,removed_events) :
+	for current_lessonplan in current_lessonplans_list :
+		subject_code = current_lessonplan.subject_code
+		events_to_remove = get_removed_events(subject_code,removed_events)
+		updated_lessonplan = get_updated_current_lessonplan(current_lessonplan,events_to_remove)
+		updated_lessonplans_list.append(updated_lessonplan)
+	return updated_lessonplans_list
+
+
+
+# --------------ends ---------------
 
 def integrate_class_calendar_on_update_exams(academic_configuration,timetable,exams_list,current_class_calendars_list) :
 	exam_events = make_exam_events(exams_list)
