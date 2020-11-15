@@ -13,6 +13,7 @@ class Exam:
             self.subject_name = item["subject_name"]
             self.series_code = item["series_code"]
             self.exam_key = item["exam_key"]
+
             try:
                 self.academic_year = item["academic_year"]
             except KeyError as ke:

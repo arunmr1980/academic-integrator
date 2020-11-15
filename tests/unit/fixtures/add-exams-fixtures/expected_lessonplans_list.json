@@ -3,6 +3,18 @@
       "class_key":"8B1B22E72AE",
       "division":"A",
       "lesson_plan_key":"test-lessonplan-1",
+       "sessions":[
+                     {
+                        "code":"SESgy0567",
+                        "completion_datetime":"NA",
+                        "completion_status":false,
+                        "name":"Session 1",
+                        "order_index":1,
+                        "resources":[
+
+                        ]
+                     }
+                  ],
       "resources":[
 
       ],
@@ -99,6 +111,17 @@
       "class_key":"8B1B22E72AE",
       "division":"A",
       "lesson_plan_key":"test-lessonplan-3",
+      "sessions":[
+                     {
+                        "code":"SESgy022",
+                        "completion_datetime":"NA",
+                        "completion_status":false,
+                        "name":"Session 1",
+                        "order_index":1,
+                        "resources":[
+
+                        ]
+                     }],
       "resources":[
 
       ],

@@ -6,18 +6,18 @@ import academics.timetable.TimeTable as ttable
 from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as calendar
 import academics.lessonplan.LessonPlan as lpnr
-from academics.calendar.CalendarIntegrator import * 
+from academics.calendar.CalendarIntegrator import *
 import academics.classinfo.ClassInfo as classinfo
 import academics.exam.ExamIntegrator as exam_integrator
 import academics.exam.Exam as exam
 import pprint
-import copy 
+import copy
 import academics.timetable.KeyGeneration as key
 pp = pprint.PrettyPrinter(indent=4)
 
 class UpdateExamIntegratorTest(unittest.TestCase):
 
-		
+
 	def test_calendars_and_lessonplan(self) :
 		series_code = "NEG111"
 		class_key = "8B1B22E72AE"
@@ -29,23 +29,30 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 		removed_events = []
 
 		current_class_calendars = self.get_current_class_calendars_list()
+<<<<<<< HEAD
 		academic_configuration = self.get_academic_configuration()
 		timetable = self.get_timetable()
 		school_key = timetable.school_key
 		expected_class_calendars_list = self.get_expected_class_calendars_list()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
 		expected_lessonplans_list = self.get_expected_lessonplans_list()
+=======
+		# expected_class_calendars_list = self.get_expected_class_calendars_list()
+		# expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
+		# expected_lessonplans_list = self.get_expected_lessonplans_list()
+>>>>>>> 5-add-exam-in-class-calendar
 		current_teacher_calendars_list = self.get_current_teacher_calendars_list()
 		current_lessonplans_list = self.get_current_lessonplans_list()
 		current_class_calendars_list = self.current_class_calendars_perticular_class(subscriber_key,current_class_calendars)
 		current_cls_calendars = copy.deepcopy(current_class_calendars_list)
 		exams = self.get_exams_list()
 		exams_list = self.perticular_exams_for_perticular_class(exams,class_key,division,series_code)
+<<<<<<< HEAD
 		current_class_calendars_list = exam_integrator.integrate_class_calendar_on_update_exams(academic_configuration,timetable,exams_list,current_class_calendars_list)
-		current_teacher_calendars_list = self.integrate_teacher_calendars_on_update_exam(current_teacher_calendars_list,current_class_calendars_list,school_key) 
+		current_teacher_calendars_list = self.integrate_teacher_calendars_on_update_exam(current_teacher_calendars_list,current_class_calendars_list,school_key)
 		current_lessonplans_list = exam_integrator.integrate_lessonplans_on_update_exams(current_lessonplans_list,current_class_calendars_list)
 		updated_class_calendars_list = exam_integrator.integrate_class_calendar_on_add_exams(academic_configuration,timetable,updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events)
-		
+
 		exam_integrator.integrate_teacher_cal_and_lessonplan_on_add_exam(
 							updated_class_calendars_list,
 							updated_teacher_calendars_list,
@@ -73,12 +80,49 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
 
 		for updated_lessonplan in current_lessonplans_list :
+=======
+		for exam in exams_list :
+			print(exam.previous_schedule.from_time,"PREVIOIS SCHEDYLLLLL----")
+		updated_class_calendars_list = integrate_class_calendar_on_add_exams(updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events)
+		# integrate_teacher_cal_and_lessonplan_on_add_exam(
+		# 					updated_class_calendars_list,
+		# 					updated_teacher_calendars_list,
+		# 					updated_lessonplans_list,
+		# 					current_class_calendars_list,
+		# 					current_teacher_calendars_list,
+		# 					current_lessonplans_list,
+		# 					exams_list,
+		# 					removed_events
+		# 					)
 
-			lp = lpnr.LessonPlan(None)
-			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-			pp.pprint(updated_lessonplan_dict)
 
+
+		# for updated_class_calendar in updated_class_calendars_list :
+		# 	cal = calendar.Calendar(None)
+		# 	class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+		# 	pp.pprint(class_calendar_dict)
+		# 	self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
+
+
+		# for updated_teacher_calendar in updated_teacher_calendars_list :
+		# 	cal = calendar.Calendar(None)
+		# 	teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+		# 	pp.pprint(teacher_calendar_dict)
+		# 	self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
+
+		# for updated_lessonplan in updated_lessonplans_list :
+>>>>>>> 5-add-exam-in-class-calendar
+
+		# 	lp = lpnr.LessonPlan(None)
+		# 	updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+		# 	pp.pprint(updated_lessonplan_dict)
+
+<<<<<<< HEAD
 			self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
+=======
+		# 	self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
+		# 	print("-----[ Unit Test ] LessonPlan test passed for ----" + updated_lessonplan.lesson_plan_key + "-----------------")
+>>>>>>> 5-add-exam-in-class-calendar
 
 
 	def integrate_teacher_calendars_on_update_exam(self,current_teacher_calendars_list,updated_class_calendars_list,school_key) :
@@ -111,7 +155,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 			if event.event_code == existing_event.event_code and event.ref_calendar_key == existing_event.ref_calendar_key :
 				is_exist = True
 		return is_exist
-		
+
 	def make_employee_event(self,event,updated_class_calendar) :
 		if event is not None :
 			emp_event = calendar.Event(None)
@@ -141,7 +185,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 		else :
 			employee_calendar = self.generate_employee_calendar(calendar_date,employee_key,school_key)
 			return employee_calendar
-			
+
 
 	def generate_employee_calendar(self,calendar_date,employee_key,school_key) :
 		employee_calendar=calendar.Calendar(None)
@@ -232,7 +276,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 			self.assertEqual(expected_teacher_calendar_events[index].event_code , updated_teacher_calendar_events[index].event_code)
 			self.assertEqual(expected_teacher_calendar_events[index].ref_calendar_key , updated_teacher_calendar_events[index].ref_calendar_key)
 
-	
+
 	def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
 		for expected_class_calendar in expected_class_calendars_list :
 			if updated_class_calendar.calendar_key == expected_class_calendar.calendar_key :
@@ -256,7 +300,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 			self.assertEqual(expected_class_calendar_event_params[index].value,generated_class_calendar_event_params[index].value)
 
 
-	
+
 	def get_academic_configuration(self):
 		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configuration:
 			academic_configuration_dict = json.load(academic_configuration)
@@ -324,7 +368,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 			exams_list.append(exam.Exam(exam_dict))
 		return exams_list
 
-	
+
 
 if __name__ == '__main__':
 	unittest.main()
