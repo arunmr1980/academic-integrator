@@ -6,14 +6,14 @@ import academics.timetable.TimeTable as ttable
 from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as calendar
 import academics.lessonplan.LessonPlan as lpnr
-from academics.calendar.CalendarIntegrator import *
+from academics.calendar.CalendarIntegrator import * 
 import academics.classinfo.ClassInfo as classinfo
 import academics.exam.ExamIntegrator as exam_integrator
 from academics.exam import ExamDBService as exam_service
 from academics.lessonplan import LessonplanDBService as lessonplan_service
 import academics.exam.Exam as exam
 import pprint
-import copy
+import copy 
 import academics.timetable.KeyGeneration as key
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -41,7 +41,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 		for current_lessonplan in current_lessonplans :
 			response = lessonplan_service.create_lessonplan(current_lessonplan)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Existing lesson plan uploaded '+str(current_lessonplan['lesson_plan_key']))
-
+		
 		exams = self.get_exams_list_json()
 		for exam in exams :
 			response = exam_service.add_or_update_exam(exam)
@@ -52,11 +52,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 		class_key = "8B1B22E72AE"
 		division = "A"
 		subscriber_key = class_key + '-' + division
-<<<<<<< HEAD:tests/integration/test_UpdateExamIntegrator.py
 		exam_integrator.integrate_update_exam_on_calendar(series_code,class_key,division)
-=======
-		exam_integrator.integrate_add_exam_on_calendar(series_code,class_key,division)
->>>>>>> 5-add-exam-in-class-calendar:tests/integration/test_AddExamIntegrator.py
 		expected_class_calendars_list = self.get_expected_class_calendars_list()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
 		expected_lessonplans_list = self.get_expected_lessonplans_list()
@@ -64,7 +60,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 		school_key = updated_class_calendars_list[0].institution_key
 		updated_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type(school_key,'EMPLOYEE')
 		updated_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key,division)
-
+		
 
 		for updated_class_calendar in updated_class_calendars_list :
 			cal = calendar.Calendar(None)
@@ -86,7 +82,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 			pp.pprint(updated_lessonplan_dict)
 
 			self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
-
+			
 
 
 	def tearDown(self) :
@@ -116,7 +112,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 		gclogger.info("--------------- Test Timetable deleted  " + timetable.time_table_key+"  -----------------")
 		academic_service.delete_academic_config(academic_configuration.academic_config_key)
 		gclogger.info("---------------Test Academic Configuration deleted  " + academic_configuration.academic_config_key + "-----------------")
-
+	
 
 	def check_lesson_plans(self,updated_lesson_plan,expected_lesson_plan_list) :
 		for expected_lesson_plan in expected_lesson_plan_list :
@@ -184,7 +180,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 			self.assertEqual(expected_teacher_calendar_events[index].event_code , updated_teacher_calendar_events[index].event_code)
 			self.assertEqual(expected_teacher_calendar_events[index].ref_calendar_key , updated_teacher_calendar_events[index].ref_calendar_key)
 
-
+	
 	def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
 		for expected_class_calendar in expected_class_calendars_list :
 			if updated_class_calendar.calendar_key == expected_class_calendar.calendar_key :
@@ -208,7 +204,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 			self.assertEqual(expected_class_calendar_event_params[index].value,generated_class_calendar_event_params[index].value)
 
 
-
+	
 
 	def get_current_lessonplans_from_json(self) :
 		with open('tests/unit/fixtures/update-exams-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
@@ -263,7 +259,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configure:
 			academic_configuration = json.load(academic_configure)
 		return academic_configuration
-
+	
 
 if __name__ == '__main__':
 	unittest.main()
