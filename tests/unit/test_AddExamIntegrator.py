@@ -27,7 +27,8 @@ class AddExamIntegratorTest(unittest.TestCase):
 		updated_teacher_calendars_list = []
 		updated_lessonplans_list = []
 		removed_events = []
-
+		academic_configuration = self.get_academic_configuration()
+		timetable = self.get_timetable()
 		current_class_calendars = self.get_current_class_calendars_list()
 		expected_class_calendars_list = self.get_expected_class_calendars_list()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
@@ -236,7 +237,16 @@ class AddExamIntegratorTest(unittest.TestCase):
 			exams_list.append(exam.Exam(exam_dict))
 		return exams_list
 
-
+	def get_academic_configuration(self):
+		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configuration:
+			academic_configuration_dict = json.load(academic_configuration)
+			academic_configuration = academic_config.AcademicConfiguration(academic_configuration_dict)
+		return academic_configuration
+	#timetable is not needed for add exam using only for avoid errors in functions
+	def get_timetable(self):
+		with open('tests/unit/fixtures/update-exams-fixtures/test_timetable.json', 'r') as tiemtable:
+			tiemtable_dict = json.load(tiemtable)
+			tiemtable = ttable.TimeTable(tiemtable_dict)
 
 if __name__ == '__main__':
 	unittest.main()
