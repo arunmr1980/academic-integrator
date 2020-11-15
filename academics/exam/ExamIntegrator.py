@@ -430,7 +430,7 @@ def update_class_calendar_events(exam_event,current_class_calendar,removed_event
 def update_current_teacher_calendars(updated_teacher_calendars_list,current_teacher_calendars_list,updated_class_calendars_list) :
 	updated_teacher_calendars = []
 	for current_teacher_calendar in current_teacher_calendars_list :
-		updated_teacher_calendar = remove_events_from_teacher_calendar(current_teacher_calendar,updated_class_calendars_list)
+		updated_teacher_calendar = get_removed_events_from_teacher_calendar(current_teacher_calendar,updated_class_calendars_list)
 		updated_teacher_calendars.append(updated_teacher_calendar)
 		updated_teacher_calendars_list = updated_teacher_calendars
 	return updated_teacher_calendars_list
@@ -497,7 +497,7 @@ def check_events_conflict(event_start_time,event_end_time,class_calendar_event_s
 		return is_conflict
 
 
-def get_updated_current_lessonplans(updated_class_calendars_list,current_lessonplans_list,updated_lessonplans_list,removed_events) :
+def update_current_lessonplans(updated_class_calendars_list,current_lessonplans_list,updated_lessonplans_list,removed_events) :
 	for current_lessonplan in current_lessonplans_list :
 		subject_code = current_lessonplan.subject_code
 		events_to_remove = get_removed_events(subject_code,removed_events)
