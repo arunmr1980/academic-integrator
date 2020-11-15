@@ -26,7 +26,7 @@ import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 
-def integrate_add_exam_on_calendar(series_code,class_key,division) :
+def integrate_update_exam_on_calendar(series_code,class_key,division) :
 	subscriber_key = class_key + '-' + division
 	updated_class_calendars_list = []
 	updated_teacher_calendars_list = []

@@ -8,7 +8,7 @@ import academics.calendar.Calendar as calendar
 import academics.lessonplan.LessonPlan as lpnr
 from academics.calendar.CalendarIntegrator import * 
 import academics.classinfo.ClassInfo as classinfo
-from academics.exam.ExamIntegrator import integrate_teacher_cal_and_lessonplan_on_add_exam,integrate_class_calendar_on_add_exams,integrate_add_exam_on_calendar
+import academics.exam.ExamIntegrator as exam_integrator
 from academics.exam import ExamDBService as exam_service
 from academics.lessonplan import LessonplanDBService as lessonplan_service
 import academics.exam.Exam as exam
@@ -52,7 +52,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 		class_key = "8B1B22E72AE"
 		division = "A"
 		subscriber_key = class_key + '-' + division
-		integrate_add_exam_on_calendar(series_code,class_key,division)
+		exam_integrator.integrate_update_exam_on_calendar(series_code,class_key,division)
 		expected_class_calendars_list = self.get_expected_class_calendars_list()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
 		expected_lessonplans_list = self.get_expected_lessonplans_list()
