@@ -666,8 +666,9 @@ def get_updated_lesson_plan(schedule_list,current_lessonplan) :
 				if not hasattr(session , 'schedule') :
 					if len(schedule_list) > 0 :
 						session.schedule = schedule_list[0]
-						gclogger.info('A schedule is added ' + str(schedule_list[0].start_time) + ' --- ' + str(schedule_list[0].start_time) )
-						schedule_list.remove(schedule_list[0])
+						if session.schedule is not None :
+							gclogger.info('A schedule is added ' + str(schedule_list[0].start_time) + ' --- ' + str(schedule_list[0].start_time) )
+							schedule_list.remove(schedule_list[0])
 	return current_lessonplan
 
 def add_shedule_after_calendar_date(schedule_list,current_lessonplan) :

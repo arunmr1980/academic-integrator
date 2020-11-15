@@ -14,7 +14,7 @@ from academics.calendar.CalendarIntegrator import add_event_integrate_calendars,
 # integrate_calendars_to_lesson_plan(class_calender_list)
 
 # timetable_key = '0015857593937522563601DB25-595D-4024-BD9B-2FC6F6E02C2C1293121299'
-# timetable_key = '0016006874968973003B532C32-C856-4D0D-9393-4842E439FFF51699906267'
+# timetable_key = '001600455732267479E9481EFF-F916-46C2-B36F-340B471D16981429920084'
 # calendars_lesson_plan_integration_from_timetable(timetable_key,'2020-2021')
 
 # calendar_key = 'b66d7c66f1b2d95fcbb9cce91b79f122'
@@ -22,6 +22,8 @@ from academics.calendar.CalendarIntegrator import add_event_integrate_calendars,
 # add_event_integrate_calendars(event_code,calendar_key)
 # remove_event_integrate_calendars(calendar_key)
 
-time_table_key = '00160397692489898347377F45-7AE0-4328-85CF-0925C31408B5-365640440'
-period_code = "WED-7"
-integrate_update_period_calendars_and_lessonplans(period_code, time_table_key)
+# time_table_key = '00160397692489898347377F45-7AE0-4328-85CF-0925C31408B5-365640440'
+# period_code = "WED-7"
+# integrate_update_period_calendars_and_lessonplans(period_code, time_table_key)
+
+	

@@ -368,21 +368,6 @@ def get_teacher_calendar_by_emp_key_and_date(employee_key,updated_class_calendar
 	return teacher_calendar
 
 
-
-def make_events(period_list,timetable,date) :
-	events_list =[]
-	for period in period_list :
-		event = calendar.Event(None)
-		event.event_code = key.generate_key(3)
-		event.event_type = 'CLASS_SESSION'
-		time_table_period = get_time_table_period(period.period_code,timetable)
-		event.params = get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
-
-		event.from_time =  get_standard_time(period.start_time,date)
-		event.to_time =  get_standard_time(period.end_time,date)
-		gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
-		events_list.append(event)
-	return events_list
 		
 def get_time_table_period(period_code,timetable) :
 	timetable_configuration_period = None 
@@ -577,10 +562,10 @@ def make_events(period_list,timetable,date) :
 		event.event_code = key.generate_key(3)
 		event.event_type = 'CLASS_SESSION'
 		time_table_period = get_time_table_period(period.period_code,timetable)
-		event.params = get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
+		event.params = timetable_integrator.get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
 
-		event.from_time =  get_standard_time(period.start_time,date)
-		event.to_time =  get_standard_time(period.end_time,date)
+		event.from_time =  timetable_integrator.get_standard_time(period.start_time,date)
+		event.to_time =  timetable_integrator.get_standard_time(period.end_time,date)
 		gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
 		events_list.append(event)
 	return events_list
