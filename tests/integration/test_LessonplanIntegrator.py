@@ -29,7 +29,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		for current_lesson_plan in current_lesson_plan_list :
 			response = lessonplan_service.create_lessonplan(current_lesson_plan)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Current lesson plan uploaded '+str(current_lesson_plan['lesson_plan_key']))
-			current_lesson_plan_list_single_cal = self.get_current_lesson_plan_list_for_single_calendar()
+		current_lesson_plan_list_single_cal = self.get_current_lesson_plan_list_for_single_calendar()
 		for current_lesson_plan in current_lesson_plan_list_single_cal :
 			response = lessonplan_service.create_lessonplan(current_lesson_plan)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Current lesson plan single calendar uploaded '+str(current_lesson_plan['lesson_plan_key']))
@@ -39,45 +39,36 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		school_key = timetable.school_key
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
 		generate_and_save_calenders(timetable.time_table_key,academic_configuration.academic_year)
-		class_calender_list = calendar_service.get_all_class_calendars('8B1B22E72AE-A','CLASS-DIV')
+		class_calender_list = calendar_service.get_all_calendars_by_key_and_type('8B1B22E72AE-A','CLASS-DIV')
 		expected_lesson_plan_list = self.get_expected_lesson_plan_list()
-		# generated_class_calendar_dict = integrate_class_timetable(timetable,academic_configuration)
 		integrate_calendars_to_lesson_plan(class_calender_list)
-
-		# generated_lesson_plan_dict_list = self.get_generated_lesson_plan_dict_list(updated_lesson_plan_list)
-		# for generated_lesson_plan_dict in generated_lesson_plan_dict_list :
-		# 	response = lessonplan_service.create_lessonplan(generated_lesson_plan_dict)
-		# 	gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Generated lesson plan uploaded '+str(generated_lesson_plan_dict['lesson_plan_key']))
-
 		generated_lesson_plan_list = lessonplan_service.get_lesson_plan_list('8B1B22E72AE','A')
 		generated_lesson_plans_dict = self.get_generated_lesson_plans_dict(generated_lesson_plan_list)
 		self.check_lesson_plan(expected_lesson_plan_list, generated_lesson_plans_dict)
 
 
 	def test_lessonplan_with_calendar(self) :
-		class_calendar_json_dict = self.get_calendar()
+		class_calendar_json_dict = self.get_current_class_calendar()
 		calendar_service.add_or_update_calendar(class_calendar_json_dict)
 		calendar_obj = calendar.Calendar(class_calendar_json_dict)
 		gclogger.info('A class calendar uploaded for '+ calendar_obj.calendar_key)
 		expected_lesson_plan_list = self.get_expected_lesson_plan_single_calendar()
 		integrate_calendar(calendar_obj.calendar_key)
-		# generated_lesson_plan_dict_list = self.get_generated_lesson_plan_dict_list(updated_lesson_plan_list)
-		#
-		# for generated_lesson_plan_dict in generated_lesson_plan_dict_list :
-		# 	response = lessonplan_service.create_lessonplan(generated_lesson_plan_dict)
-		# 	gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Generated lesson plan uploaded '+str(generated_lesson_plan_dict['lesson_plan_key']))
-
 		generated_lesson_plan_list = lessonplan_service.get_lesson_plan_list('single-8B1B22E','A')
-
 		generated_lesson_plans_dict = self.get_generated_lesson_plans_dict(generated_lesson_plan_list)
 		self.check_lesson_plan(expected_lesson_plan_list, generated_lesson_plans_dict)
 
 
 	def check_lesson_plan(self,expected_lesson_plan_list, generated_lesson_plans_dict) :
-
 		for expected_lesson_plan in expected_lesson_plan_list :
 			lesson_plan_key = expected_lesson_plan.lesson_plan_key
 			generated_lesson_plan = generated_lesson_plans_dict[lesson_plan_key]
+
+			lp = lessonplan.LessonPlan(None)
+			updated_lessonplan_dict = lp.make_lessonplan_dict(generated_lesson_plan)
+			pp.pprint(updated_lessonplan_dict)
+
+			self.check_root_sessions(generated_lesson_plan.sessions,expected_lesson_plan.sessions)
 			self.assertEqual(generated_lesson_plan.lesson_plan_key,expected_lesson_plan.lesson_plan_key)
 			self.assertEqual(generated_lesson_plan.class_key,expected_lesson_plan.class_key)
 			self.assertEqual(generated_lesson_plan.division,expected_lesson_plan.division)
@@ -115,6 +106,10 @@ class LessonplanIntegratorTest(unittest.TestCase):
 			self.assertEqual(generated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
 			self.check_schedule(generated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
 
+	def check_root_sessions(self,updated_lesson_plan_sessions,expected_lesson_plan_sessions) :
+		for index in range(len(updated_lesson_plan_sessions)) :
+			self.assertEqual(updated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
+			self.check_schedule(updated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
 
 	def check_schedule(self,generated_lesson_plan_shedule,expexted_lesson_plan_shedule) :
 		self.assertEqual(generated_lesson_plan_shedule.start_time,expexted_lesson_plan_shedule.start_time)
@@ -124,13 +119,13 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		timetable = timetable_service.get_time_table('test-time-table-1')
 		school_key = timetable.school_key
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
-		class_calender_list = calendar_service.get_all_class_calendars('8B1B22E72AE-A','CLASS-DIV')
+		class_calender_list = calendar_service.get_all_calendars_by_key_and_type('8B1B22E72AE-A','CLASS-DIV')
 		for calendar in class_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- Class calendar deleted " + calendar.calendar_key+" -----------------")
 
 
-		teacher_calender_list = calendar_service.get_all_calendars('test-school-1','EMPLOYEE')
+		teacher_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
 		for calendar in teacher_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- Teacher calendar deleted " + calendar.calendar_key+" -----------------")
@@ -144,8 +139,6 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		for generated_lesson_plan in generated_lesson_plan_list :
 			lessonplan_service.delete_lessonplan(generated_lesson_plan.lesson_plan_key)
 			gclogger.info("---------------Test Lesson Plan deleted  " + generated_lesson_plan.lesson_plan_key + "-----------------")
-
-
 
 
 	def get_generated_lesson_plan_dict_list(self,generated_lesson_plan_list) :
@@ -200,8 +193,8 @@ class LessonplanIntegratorTest(unittest.TestCase):
 			class_calendar_dict_list = json.load(calendar_list)
 		return class_calendar_dict_list
 
-	def get_calendar(self) :
-	    with open('tests/unit/fixtures/class_calendar.json', 'r') as calendar:
+	def get_current_class_calendar(self) :
+	    with open('tests/unit/fixtures/current_class_calendar.json', 'r') as calendar:
 		    class_calendar_dict = json.load(calendar)
 	    return class_calendar_dict
 

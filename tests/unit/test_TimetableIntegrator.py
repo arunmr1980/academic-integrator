@@ -5,7 +5,8 @@ from academics.timetable import AcademicConfiguration as academic_config
 import academics.timetable.TimeTable as ttable
 from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as calendar
-
+import pprint
+pp = pprint.PrettyPrinter(indent=4)
 
 class TimetableIntegratorTest(unittest.TestCase):
 
@@ -23,6 +24,11 @@ class TimetableIntegratorTest(unittest.TestCase):
 			expected_class_calendar = calendar.Calendar(class_calendar)
 			calendar_date = expected_class_calendar.calendar_date
 			generated_class_calendar = generated_class_calendar_dict[calendar_date]
+
+			cal = calendar.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(generated_class_calendar)	
+			pp.pprint(calendar_dict)
+			
 			self.assertEqual(expected_class_calendar.institution_key,generated_class_calendar.institution_key )
 			self.assertEqual(expected_class_calendar.calendar_date,generated_class_calendar.calendar_date )
 			self.assertEqual(expected_class_calendar.subscriber_key,generated_class_calendar.subscriber_key )

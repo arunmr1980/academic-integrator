@@ -20,8 +20,8 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 
-class CalendarHolidayIntegratorTest(unittest.TestCase):
-	
+class CalendarHolidayLessonPlanIntegratorTest(unittest.TestCase):
+
 	def setUp(self) :
 		test_timetable_one = self.get_test_timetable_one_from_json()
 		response = timetable_service.create_timetable(test_timetable_one)
@@ -60,17 +60,22 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 		response = class_info_service.add_or_update_class_info(class_info_two_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for uploaded -------------- ' +str(class_info_one_dict['class_info_key']) )
 
-		
+
 
 	def test_lessonplan(self) :
 		expected_lesson_plan_list = self.get_expected_lesson_plan_list()
 		event_code = 'event-1'
 		calendar_key ='test-key-5'
-		updated_lessonplan_list = integrate_holiday_lessonplan(event_code,calendar_key)
+		calendar = calendar_service.get_calendar(calendar_key)
+		subscriber_key = calendar.subscriber_key
+		class_key = subscriber_key[:-2]
+		division = subscriber_key[-1:]
+		integrate_holiday_lessonplan(event_code,calendar_key)
+		updated_lessonplan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 		for updated_lessonplan in updated_lessonplan_list :
 			self.check_lesson_plans(updated_lessonplan,expected_lesson_plan_list)
 
-		
+
 
 	def check_lesson_plans(self,updated_lesson_plan,expected_lesson_plan_list) :
 		for expected_lesson_plan in expected_lesson_plan_list :
@@ -82,8 +87,19 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 				self.assertEqual(updated_lesson_plan.subject_code,expected_lesson_plan.subject_code)
 				self.assertEqual(updated_lesson_plan.resources,expected_lesson_plan.resources)
 				self.check_topics(updated_lesson_plan.topics,expected_lesson_plan.topics)
+				self.check_root_sessions(updated_lesson_plan.sessions,expected_lesson_plan.sessions)
+
 
 		gclogger.info(" <<<-------------------------------- INTEGRATION TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------>>> ")
+
+
+	def check_root_sessions(self,updated_lesson_plan_sessions,expected_lesson_plan_sessions) :
+		for index in range(len(updated_lesson_plan_sessions)) :
+			self.assertEqual(len(updated_lesson_plan_sessions),len(expected_lesson_plan_sessions))
+			self.assertEqual(updated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
+			if hasattr(updated_lesson_plan_sessions[index] ,'schedule') and hasattr(expected_lesson_plan_sessions[index] ,'schedule') :
+				self.check_schedule(updated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
+
 
 	def check_topics(self,updated_lesson_plan_topics,expected_lesson_plan_topics):
 		for index in range(0,len(updated_lesson_plan_topics)) :
@@ -123,12 +139,12 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 		school_key = test_timetable_one.school_key
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
 
-		holiday_calender_list = calendar_service.get_all_calendars('test-school-1','CLASS-DIV')
+		holiday_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','CLASS-DIV')
 		for calendar in holiday_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- A Holiday class calendar deleted " + calendar.calendar_key+" -----------------")
 
-		teacher_calender_list = calendar_service.get_all_calendars('test-school-1','SCHOOL')
+		teacher_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','SCHOOL')
 		for calendar in teacher_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- A Holiday School calendar deleted " + calendar.calendar_key+" -----------------")
@@ -159,7 +175,7 @@ class CalendarHolidayIntegratorTest(unittest.TestCase):
 			gclogger.info("---------------Test Lesson Plan deleted  " + generated_lesson_plan.lesson_plan_key + "-----------------")
 
 
-	
+
 
 	def get_lesson_plan_after_remove_all_shedules(self,current_lessonplan) :
 		for main_topic in current_lessonplan.topics :

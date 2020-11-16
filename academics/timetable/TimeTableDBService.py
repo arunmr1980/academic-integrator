@@ -6,16 +6,25 @@ from academics.logger import GCLogger as logger
 
 TIMETABLE_TBL = 'TimeTable'
 
+def get_timetable_by_class_key_and_division(class_key,division) :
+    dynamo_db = boto3.resource('dynamodb')
+    table = dynamo_db.Table(TIMETABLE_TBL)
+    response = table.query(
+        KeyConditionExpression=Key('class_key').eq(class_key) & Key('division').eq(division),
+        IndexName='class_key-division-index'
+    )
+    if len(response['Items']) > 0 :
+        return TimeTable(response['Items'][0])
 
 
 def get_time_table(time_table_key):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(TIMETABLE_TBL)
     response = table.get_item(
-                Key={
-                    'time_table_key':time_table_key
-                }
-            )
+        Key={
+            'time_table_key':time_table_key
+        }
+    )
     return TimeTable(response['Item'])
  
 

@@ -11,8 +11,8 @@
              "from_time": "2020-08-03T09:00:00",
              "params": [
                   {
-                    "key": "is_class_flag",
-                   "value": "false"
+                    "key": "cancel_class_flag",
+                   "value": "true"
                   }
             ],
              "to_time": "2020-08-03T10:05:00"
@@ -31,8 +31,8 @@
              "from_time": "2020-08-04T11:00:00",
              "params": [
                {
-                 "key": "is_class_flag",
-                  "value": "false"
+                 "key": "cancel_class_flag",
+                  "value": "true"
                 }
               ],
              "to_time": "2020-08-04T12:30:00"
@@ -42,8 +42,8 @@
              "from_time": "2020-08-04T11:30:00",
              "params": [
                 {
-                   "key" :"is_class_flag",
-                   "value" : "false"
+                   "key" :"cancel_class_flag",
+                   "value" : "true"
                 }
              ],
                 "to_time": "2020-08-04T12:10:00"
@@ -62,8 +62,8 @@
               "from_time": "2020-08-10T10:40:00",
               "params": [
                  {
-                    "key" :"is_class_flag",
-                    "value" : "false"
+                    "key" :"cancel_class_flag",
+                    "value" : "true"
                  }
               ],
               "to_time": "2020-08-10T11:20:00"},
@@ -72,8 +72,8 @@
                   "from_time": "2020-08-10T11:30:00",
                   "params": [
                      {
-                        "key" :"is_class_flag",
-                        "value" : "false"
+                        "key" :"cancel_class_flag",
+                        "value" : "true"
                      }
                   ],
                   "to_time": "2020-08-10T12:10:00"}
@@ -92,8 +92,8 @@
             "to_time":"2020-08-05T12:10:00",
             "params": [
                {
-                  "key" :"is_class_flag",
-                  "value" : "false"
+                  "key" :"cancel_class_flag",
+                  "value" : "true"
                }
             ]
          }
@@ -113,8 +113,8 @@
             "to_time":"2020-08-04T10:40:00",
             "params": [
                {
-                  "key" :"is_class_flag",
-                  "value" : "false"
+                  "key" :"cancel_class_flag",
+                  "value" : "true"
                }
             ]
          }
@@ -134,7 +134,7 @@
             "to_time":"2020-08-10T10:40:00",
             "params": [
                {
-                  "key" :"is_class_flag",
+                  "key" :"cancel_class_flag",
                   "value" : "false"
                }
                ]
@@ -146,8 +146,8 @@
             "to_time":"2020-08-10T11:20:00",
             "params": [
                {
-                  "key" :"is_class_flag",
-                  "value" : "true"
+                  "key" :"cancel_class_flag",
+                  "value" : "false"
                }
             ]
          }

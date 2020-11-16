@@ -1,0 +1,72 @@
+[
+   {  "institution_key" :"test-school-1",
+      "calendar_key":"test-key-10",
+      "calendar_date":"2020-08-05",
+      "subscriber_key":"test-school-1",
+      "subscriber_type":"SCHOOL",
+      "events":[
+         {
+            "event_code":"event-1",
+            "event_type":"HOLIDAY",
+            "from_time":"2020-08-05T10:00:00",
+            "to_time":"2020-08-05T12:10:00",
+            "params": [
+               {
+                  "key" :"cancel_class_flag",
+                  "value" : "true"
+               }
+            ] 
+         }       
+      ]
+   },
+   {
+      "institution_key" :"test-school-1",
+      "calendar_key":"test-key-11",
+      "calendar_date":"2020-08-04",
+      "subscriber_key":"test-school-1",
+      "subscriber_type":"SCHOOL",
+      "events":[
+         {
+            "event_code":"event-1",
+            "event_type":"HOLIDAY",
+            "from_time":"2020-08-04T09:00:00",  
+            "to_time":"2020-08-04T11:00:00",
+            "params": [
+               {
+                  "key" :"cancel_class_flag",
+                  "value" : "true"
+               }
+            ] 
+         }      
+      ]
+   },
+
+   {
+      "institution_key" :"test-school-1",
+      "calendar_key":"test-key-12",
+      "calendar_date":"2020-08-10",
+      "subscriber_key":"test-school-1",
+      "subscriber_type":"SCHOOL",
+      "events":[
+         {
+            "event_code":"event-1",
+            "event_type":"PTA_MEETING",
+            "from_time":"2020-08-10T09:00:00",
+            "to_time":"2020-08-10T11:00:00",
+            "params": [
+               {
+                  "key" :"cancel_class_flag",
+                  "value" : "true"
+               }
+               ]      
+         }
+         
+      ]
+   }
+
+]
+
+
+
+
+

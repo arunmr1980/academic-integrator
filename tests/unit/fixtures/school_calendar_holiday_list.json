@@ -12,8 +12,8 @@
             "to_time":"2020-08-05T12:10:00",
             "params": [
                {
-                  "key" :"is_class_flag",
-                  "value" : "false"
+                  "key" :"cancel_class_flag",
+                  "value" : "true"
                }
             ] 
          }       
@@ -33,8 +33,8 @@
             "to_time":"2020-08-04T10:40:00",
             "params": [
                {
-                  "key" :"is_class_flag",
-                  "value" : "false"
+                  "key" :"cancel_class_flag",
+                  "value" : "true"
                }
             ] 
          }      
@@ -54,8 +54,8 @@
             "to_time":"2020-08-10T10:40:00",
             "params": [
                {
-                  "key" :"is_class_flag",
-                  "value" : "false"
+                  "key" :"cancel_class_flag",
+                  "value" : "true"
                }
                ]      
          },
@@ -66,8 +66,8 @@
             "to_time":"2020-08-10T11:20:00",
             "params": [
                {
-                  "key" :"is_class_flag",
-                  "value" : "true"
+                  "key" :"cancel_class_flag",
+                  "value" : "false"
                }
             ]  
          }

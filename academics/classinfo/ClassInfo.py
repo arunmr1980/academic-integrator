@@ -55,7 +55,13 @@ class Division:
             self.name = item["name"]
             self.code = item["code"]
             self.students = []
-
+            self.subject_teachers =[]
+            try:
+                subject_teachers = item['subject_teachers']
+                for subject_teacher in subject_teachers :
+                    self.subject_teachers.append(SubjectTeacher(subject_teacher))
+            except KeyError as ke:
+                gclogger.debug ('[WARN] - KeyError in Calendar -events not present'.format (str (ke)))
             try:
                 self.class_teacher_employee_key = item["class_teacher_employee_key"]
             except KeyError as ke:
