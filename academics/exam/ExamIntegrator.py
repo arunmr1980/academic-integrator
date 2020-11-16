@@ -39,10 +39,11 @@ def integrate_update_exam_on_calendar(series_code,class_key,division) :
 
 	academic_configuration = academic_service.get_academig(school_key,academic_year)
 	timetable = timetable_service.get_timetable_by_class_key_and_division(class_key,division)
-	# current_class_calendars_list = get_affected_class_calendars(exams_list)
+	
 
-	current_class_calendars_list = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
-	current_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type(school_key,'EMPLOYEE')
+	current_class_calendars_list = get_updated_current_class_calendars_from_exam_and_schedule(exams_list)
+	# current_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type(school_key,'EMPLOYEE')
+	current_teacher_calendars_list = get_current_teacher_calendars_from_current_class_calendars(current_class_calendars_list,school_key)
 	current_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 	current_class_calendars_list = integrate_class_calendar_on_update_exams(academic_configuration,timetable,exams_list,current_class_calendars_list)
 	current_teacher_calendars_list = integrate_teacher_calendars_on_update_exam(current_teacher_calendars_list,current_class_calendars_list,school_key)
@@ -93,12 +94,48 @@ def save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_
 def get_affected_class_calendars(exams_list) :
 	current_class_calendars_list = []
 	for exam in exams_list :
-		subscriber_key = exam.division + '-' + exam.class_key
+		subscriber_key = exam.class_key + '-' + exam.division
 		calendar_date = exam.date_time
 		current_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
-		current_class_calendars_list.append(current_class_calendar)
+		if check_calendar_already_exist(current_class_calendar,current_class_calendars_list) == False :
+			current_class_calendars_list.append(current_class_calendar)
 	return current_class_calendars_list
 
+def get_updated_current_class_calendars_from_exam_and_schedule(exams_list) :
+	current_class_calendars_list = []
+	for exam in exams_list :
+		subscriber_key = exam.class_key + '-' + exam.division
+		calendar_date = exam.date_time
+		current_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
+		if check_calendar_already_exist(current_class_calendar,current_class_calendars_list) == False :
+			current_class_calendars_list.append(current_class_calendar)
+		if hasattr(exam,'previous_schedule') :
+			calendar_date = exam.previous_schedule.date_time
+			current_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
+			if check_calendar_already_exist(current_class_calendar,current_class_calendars_list) == False :
+				current_class_calendars_list.append(current_class_calendar)
+	return current_class_calendars_list
+
+def get_current_teacher_calendars_from_current_class_calendars(current_class_calendars_list,school_key) :
+	current_teacher_calendars_list = []
+	for current_class_calendar in current_class_calendars_list :
+		for event in current_class_calendar.events :
+			calendar_date = current_class_calendar.calendar_date
+			employee_key = timetable_integrator.get_employee_key(event.params)
+			if employee_key is not None :
+				current_teacher_calendar = get_teacher_calendar(current_teacher_calendars_list,calendar_date,employee_key,school_key)
+				emp_event = make_employee_event(event,current_class_calendar)
+				if is_calendar_already_exist(current_teacher_calendar,current_teacher_calendars_list) == False :
+					current_teacher_calendars_list.append(current_teacher_calendar)
+	return current_teacher_calendars_list
+	
+
+def check_calendar_already_exist(current_class_calendar,current_class_calendars_list) :
+	is_exist = False 
+	for calendar in current_class_calendars_list :
+		if current_class_calendar.calendar_key == calendar.calendar_key :
+			is_exist = True 
+	return is_exist
 def integrate_teacher_calendars_on_update_exam(current_teacher_calendars_list,updated_class_calendars_list,school_key) :
 	updated_teacher_calendars_list =[]
 	for updated_class_calendar in updated_class_calendars_list :
@@ -176,19 +213,18 @@ def get_current_teacher_calendars(removed_events) :
 def get_event_date(event_from_time) :
 	return event_from_time[:10]
 
-#-------- below code is of unit test ----
+#-------- below code is of issue 5 test ----
 def integrate_add_exam_on_calendar(series_code,class_key,division) :
 	subscriber_key = class_key + '-' + division
 	updated_class_calendars_list = []
 	updated_teacher_calendars_list = []
 	updated_lessonplans_list = []
 	removed_events = []
-	current_class_calendars_list = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
+	exams_list = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
+	current_class_calendars_list = get_affected_class_calendars(exams_list)
 	school_key = current_class_calendars_list[0].institution_key
-	current_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type(school_key,'EMPLOYEE')
 	current_cls_calendars = copy.deepcopy(current_class_calendars_list)
 	current_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key,division)
-	exams_list = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
 	updated_class_calendars_list = integrate_class_calendars_on_add_exams(updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events)
 	current_teacher_calendars_list = get_current_teacher_calendars(removed_events)
 	integrate_teacher_cals_and_lessonplans_on_add_exam(
