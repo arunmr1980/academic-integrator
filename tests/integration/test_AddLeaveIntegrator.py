@@ -93,6 +93,31 @@ class AddLeaveIntegratorTest(unittest.TestCase):
 		
 
 	
+	def tearDown(self) :
+		updated_class_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','CLASS-DIV')
+		for updated_class_calendar in updated_class_calendars_list :
+			calendar_service.delete_calendar(updated_class_calendar.calendar_key)
+			gclogger.info("--------------- A updated class calendar deleted " + updated_class_calendar.calendar_key+" -----------------")
+
+		updated_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')	
+		for updated_teacher_calendar in updated_teacher_calendars_list :
+			calendar_service.delete_calendar(updated_teacher_calendar.calendar_key)
+			gclogger.info("--------------- A updated teacher calendar deleted " + updated_teacher_calendar.calendar_key+" -----------------")
+
+		current_lessonplans = self.get_current_lessonplans_from_json()
+		for current_lessonplan in current_lessonplans :
+			lessonplan_service.delete_lessonplan(current_lessonplan['lesson_plan_key'])
+			gclogger.info("--------------- Test Lesson Plan deleted --------- " + current_lessonplan['lesson_plan_key'] + "-----------------")
+		
+		leaves = self.get_leaves_list_json()
+		for leave in leaves :
+			response = leave_service.delete_leave(leave['leave_key'])
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Leave is Deleted --------- '+str(leave['leave_key']))
+
+		class_info = self.get_class_info()
+		response = class_info_service.delete_class_info(class_info['class_info_key'])
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for deleted --------- ' +str(class_info['class_info_key']) )
+
 
 	
 	def check_lesson_plans(self,updated_lesson_plan,expected_lesson_plan_list) :
@@ -267,7 +292,7 @@ class AddLeaveIntegratorTest(unittest.TestCase):
 		return leaves_list
 
 	def get_class_info(self) :
-		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/class_info_two.json', 'r') as class_info_two:
+		with open('tests/unit/fixtures/add-teacher-leave-fixtures/class_info.json', 'r') as class_info_two:
 			class_info_two_dict = json.load(class_info_two)
 		return class_info_two_dict
 
