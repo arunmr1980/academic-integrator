@@ -576,46 +576,46 @@ def check_event_exist_in_class_calendars(event,updated_class_calendars_list) :
 
 
 def check_events_conflict(event_start_time,event_end_time,class_calendar_event_start_time,class_calendar_event_end_time) :
-		is_conflict = None
-		event_start_time_year = int(event_start_time[:4])
-		event_start_time_month = int(event_start_time[5:7])
-		event_start_time_day = int(event_start_time[8:10])
-		event_start_time_hour = int(event_start_time[11:13])
-		event_start_time_min = int(event_start_time[14:16])
-		event_start_time_sec = int(event_start_time[-2:])
+	is_conflict = None
+	event_start_time_year = int(event_start_time[:4])
+	event_start_time_month = int(event_start_time[5:7])
+	event_start_time_day = int(event_start_time[8:10])
+	event_start_time_hour = int(event_start_time[11:13])
+	event_start_time_min = int(event_start_time[14:16])
+	event_start_time_sec = int(event_start_time[-2:])
 
-		event_end_time_year = int(event_end_time[:4])
-		event_end_time_month = int(event_end_time[5:7])
-		event_end_time_day = int(event_end_time[8:10])
-		event_end_time_hour = int(event_end_time[11:13])
-		event_end_time_min = int(event_end_time[14:16])
-		event_end_time_sec = int(event_end_time[-2:])
+	event_end_time_year = int(event_end_time[:4])
+	event_end_time_month = int(event_end_time[5:7])
+	event_end_time_day = int(event_end_time[8:10])
+	event_end_time_hour = int(event_end_time[11:13])
+	event_end_time_min = int(event_end_time[14:16])
+	event_end_time_sec = int(event_end_time[-2:])
 
-		class_calendar_event_start_time_year = int(class_calendar_event_start_time[:4])
-		class_calendar_event_start_time_month = int(class_calendar_event_start_time[5:7])
-		class_calendar_event_start_time_day = int(class_calendar_event_start_time[8:10])
-		class_calendar_event_start_time_hour = int(class_calendar_event_start_time[11:13])
-		class_calendar_event_start_time_min = int(class_calendar_event_start_time[14:16])
-		class_calendar_event_start_time_sec = int(class_calendar_event_start_time[-2:])
+	class_calendar_event_start_time_year = int(class_calendar_event_start_time[:4])
+	class_calendar_event_start_time_month = int(class_calendar_event_start_time[5:7])
+	class_calendar_event_start_time_day = int(class_calendar_event_start_time[8:10])
+	class_calendar_event_start_time_hour = int(class_calendar_event_start_time[11:13])
+	class_calendar_event_start_time_min = int(class_calendar_event_start_time[14:16])
+	class_calendar_event_start_time_sec = int(class_calendar_event_start_time[-2:])
 
-		class_calendar_event_end_time_year = int(class_calendar_event_end_time[:4])
-		class_calendar_event_end_time_month = int(class_calendar_event_end_time[5:7])
-		class_calendar_event_end_time_day = int(class_calendar_event_end_time[8:10])
-		class_calendar_event_end_time_hour = int(class_calendar_event_end_time[11:13])
-		class_calendar_event_end_time_min = int(class_calendar_event_end_time[14:16])
-		class_calendar_event_end_time_sec = int(class_calendar_event_end_time[-2:])
+	class_calendar_event_end_time_year = int(class_calendar_event_end_time[:4])
+	class_calendar_event_end_time_month = int(class_calendar_event_end_time[5:7])
+	class_calendar_event_end_time_day = int(class_calendar_event_end_time[8:10])
+	class_calendar_event_end_time_hour = int(class_calendar_event_end_time[11:13])
+	class_calendar_event_end_time_min = int(class_calendar_event_end_time[14:16])
+	class_calendar_event_end_time_sec = int(class_calendar_event_end_time[-2:])
 
-		class_calendar_event_start_time = dt(class_calendar_event_start_time_year, class_calendar_event_start_time_month, class_calendar_event_start_time_day, class_calendar_event_start_time_hour, class_calendar_event_start_time_min, class_calendar_event_start_time_sec, 000000)
-		class_calendar_event_end_time = dt(class_calendar_event_end_time_year, class_calendar_event_end_time_month, class_calendar_event_end_time_day, class_calendar_event_end_time_hour, class_calendar_event_end_time_min, class_calendar_event_end_time_sec, 000000)
-		event_start_time = dt(event_start_time_year, event_start_time_month, event_start_time_day, event_start_time_hour, event_start_time_min, event_start_time_sec, 000000)
-		event_end_time = dt(event_end_time_year, event_end_time_month, event_end_time_day, event_end_time_hour, event_end_time_min, event_end_time_sec, 000000)
+	class_calendar_event_start_time = dt(class_calendar_event_start_time_year, class_calendar_event_start_time_month, class_calendar_event_start_time_day, class_calendar_event_start_time_hour, class_calendar_event_start_time_min, class_calendar_event_start_time_sec, 000000)
+	class_calendar_event_end_time = dt(class_calendar_event_end_time_year, class_calendar_event_end_time_month, class_calendar_event_end_time_day, class_calendar_event_end_time_hour, class_calendar_event_end_time_min, class_calendar_event_end_time_sec, 000000)
+	event_start_time = dt(event_start_time_year, event_start_time_month, event_start_time_day, event_start_time_hour, event_start_time_min, event_start_time_sec, 000000)
+	event_end_time = dt(event_end_time_year, event_end_time_month, event_end_time_day, event_end_time_hour, event_end_time_min, event_end_time_sec, 000000)
 
-		delta = max(event_start_time,class_calendar_event_start_time) - min(event_end_time,class_calendar_event_end_time)
-		if delta.days < 0 :
-			is_conflict = True
-		else :
-			is_conflict = False
-		return is_conflict
+	delta = max(event_start_time,class_calendar_event_start_time) - min(event_end_time,class_calendar_event_end_time)
+	if delta.days < 0 :
+		is_conflict = True
+	else :
+		is_conflict = False
+	return is_conflict
 
 
 def update_current_lessonplans(updated_class_calendars_list,current_lessonplans_list,updated_lessonplans_list,removed_events) :

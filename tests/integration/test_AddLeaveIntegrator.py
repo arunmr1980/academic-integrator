@@ -8,166 +8,93 @@ import academics.calendar.Calendar as calendar
 import academics.lessonplan.LessonPlan as lpnr
 from academics.calendar.CalendarIntegrator import *
 import academics.classinfo.ClassInfo as classinfo
+import academics.classinfo.ClassInfoDBService as classinfo_service
 import academics.exam.ExamIntegrator as exam_integrator
+import academics.TimetableIntegrator as timetable_integrator
+import academics.leave.Leave as leave
+import academics.leave.LeaveDBService as leave_service
+import academics.leave.LeaveIntegrator as leave_integrator
 import academics.exam.Exam as exam
 import pprint
 import copy
 import academics.timetable.KeyGeneration as key
 pp = pprint.PrettyPrinter(indent=4)
 
-class UpdateExamIntegratorTest(unittest.TestCase):
+class AddLeaveIntegratorTest(unittest.TestCase):
 
+	def setUp(self) :
+		current_class_calendars = self.get_current_class_calendars_list_json()
+		for current_calendar in current_class_calendars :
+			response = calendar_service.add_or_update_calendar(current_calendar)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Existing class calendar uploaded --------- '+str(current_calendar['calendar_key']))
+
+		current_teachers_calendars = self.get_current_teacher_calendars_list_json()
+		for current_calendar in current_teachers_calendars :
+			response = calendar_service.add_or_update_calendar(current_calendar)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Existing teacher calendar uploaded --------- '+str(current_calendar['calendar_key']))
+
+		current_lessonplans = self.get_current_lessonplans_from_json()
+		for current_lessonplan in current_lessonplans :
+			response = lessonplan_service.create_lessonplan(current_lessonplan)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Existing lesson plan uploaded '+str(current_lessonplan['lesson_plan_key']))
+		
+		leaves = self.get_leaves_list_json()
+		for leave in leaves :
+			response = leave_service.add_or_update_leave(leave)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Leave uploaded --------- '+str(leave['leave_key']))
+
+		class_info_one_dict = self.get_class_info()
+		response = class_info_service.add_or_update_class_info(class_info_one_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for uploaded --------- ' +str(class_info_one_dict['class_info_key']) )
 
 	def test_calendars_and_lessonplan(self) :
-		series_code = "NEG111"
-		class_key = "8B1B22E72AE"
-		division = "A"
-		subscriber_key = class_key + '-' + division
-		updated_class_calendars_list = []
-		updated_teacher_calendars_list = []
-		updated_lessonplans_list = []
-		removed_events = []
-
-		current_class_calendars = self.get_current_class_calendars_list()
-		academic_configuration = self.get_academic_configuration()
-		timetable = self.get_timetable()
-		school_key = timetable.school_key
-		expected_class_calendars_list = self.get_expected_class_calendars_list()
+		leave_key = 'test-leave-key-1'
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
 		expected_lessonplans_list = self.get_expected_lessonplans_list()
-
-		current_teacher_calendars_list = self.get_current_teacher_calendars_list()
-		current_lessonplans_list = self.get_current_lessonplans_list()
-		current_class_calendars_list = self.current_class_calendars_perticular_class(subscriber_key,current_class_calendars)
-		current_cls_calendars = copy.deepcopy(current_class_calendars_list)
-		exams = self.get_exams_list()
-		exams_list = self.perticular_exams_for_perticular_class(exams,class_key,division,series_code)
-		current_class_calendars_list = exam_integrator.integrate_class_calendar_on_update_exams(academic_configuration,timetable,exams_list,current_class_calendars_list)
-		current_teacher_calendars_list = self.integrate_teacher_calendars_on_update_exam(current_teacher_calendars_list,current_class_calendars_list,school_key)
-		current_lessonplans_list = exam_integrator.integrate_lessonplans_on_update_exams(current_lessonplans_list,current_class_calendars_list)
-		updated_class_calendars_list = exam_integrator.integrate_class_calendar_on_add_exams(academic_configuration,timetable,updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events)
-		exam_integrator.integrate_teacher_cal_and_lessonplan_on_add_exam(
-							updated_class_calendars_list,
-							updated_teacher_calendars_list,
-							updated_lessonplans_list,
-							current_class_calendars_list,
-							current_teacher_calendars_list,
-							current_lessonplans_list,
-							exams_list,
-							removed_events
-							)
+		expected_class_calendars_list = self.get_expected_class_calendars_list()
 
 
+		leave_integrator.integrate_add_leave_on_calendar(leave_key)
 
-		for updated_class_calendar in current_class_calendars_list :
+		updated_class_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','CLASS-DIV')
+		updated_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
+		class_info_list = class_info_service.get_classinfo_list('test-school-1', '2020-2021')
+		for class_info in class_info_list :
+			if hasattr(class_info, 'divisions') :
+				for div in class_info.divisions :
+					division = div.name
+					class_key = class_info.class_info_key
+					print("CLASS KEY ________",class_key)
+					print("DIVISION-_______",division)
+					updated_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key, division)
+					for updated_lessonplan in updated_lessonplans_list :
+						lp = lpnr.LessonPlan(None)
+						updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+						pp.pprint(updated_lessonplan_dict)
+						self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
+		
+		
+		# print("--------------REMOVED EVENTS ------------")
+		# for event in removed_events :
+		# 	print(event.event_code)
+		for updated_class_calendar in updated_class_calendars_list :
 			cal = calendar.Calendar(None)
 			class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
 			pp.pprint(class_calendar_dict)
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
 
 
-		for updated_teacher_calendar in current_teacher_calendars_list :
+		for updated_teacher_calendar in updated_teacher_calendars_list :
 			cal = calendar.Calendar(None)
 			teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
 			pp.pprint(teacher_calendar_dict)
 			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
 
-		for updated_lessonplan in current_lessonplans_list :
+		
 
+	
 
-			lp = lpnr.LessonPlan(None)
-			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-			pp.pprint(updated_lessonplan_dict)
-
-			self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
-
-
-
-	def integrate_teacher_calendars_on_update_exam(self,current_teacher_calendars_list,updated_class_calendars_list,school_key) :
-		updated_teacher_calendars_list =[]
-		for updated_class_calendar in updated_class_calendars_list :
-			for event in updated_class_calendar.events :
-				calendar_date = updated_class_calendar.calendar_date
-				employee_key = self.get_employee_key(event.params)
-				if employee_key is not None :
-					current_teacher_calendar = self.get_teacher_calendar(current_teacher_calendars_list,calendar_date,employee_key,school_key)
-					emp_event = self.make_employee_event(event,updated_class_calendar)
-					if self.is_calendar_already_exist(current_teacher_calendar,updated_teacher_calendars_list) == False :
-						updated_teacher_calendars_list.append(current_teacher_calendar)
-
-		for teacher_calendar in updated_teacher_calendars_list :
-			for updated_class_calendar in updated_class_calendars_list :
-				for event in updated_class_calendar.events :
-					calendar_date = updated_class_calendar.calendar_date
-					employee_key = self.get_employee_key(event.params)
-					if teacher_calendar.calendar_date == calendar_date and teacher_calendar.subscriber_key == employee_key :
-						emp_event = self.make_employee_event(event,updated_class_calendar)
-						if self.is_event_already_exist(emp_event,teacher_calendar.events) == False :
-							teacher_calendar.events.append(emp_event)
-		return updated_teacher_calendars_list
-
-
-	def is_event_already_exist(self,event,teacher_calendar_events) :
-		is_exist = False
-		for existing_event in teacher_calendar_events :
-			if event.event_code == existing_event.event_code and event.ref_calendar_key == existing_event.ref_calendar_key :
-				is_exist = True
-		return is_exist
-
-	def make_employee_event(self,event,updated_class_calendar) :
-		if event is not None :
-			emp_event = calendar.Event(None)
-			emp_event.event_code = event.event_code
-			emp_event.ref_calendar_key = updated_class_calendar.calendar_key
-		return emp_event
-
-	def is_calendar_already_exist(self,current_teacher_calendar,updated_teacher_calendars_list) :
-		is_exist = False
-		for updated_teacher_calendar in updated_teacher_calendars_list :
-			if updated_teacher_calendar.subscriber_key == current_teacher_calendar.subscriber_key and updated_teacher_calendar.calendar_date == current_teacher_calendar.calendar_date:
-				is_exist = True
-		return is_exist
-
-
-	def get_employee_key(self,params) :
-		for param in params :
-			if param.key == 'teacher_emp_key' :
-				return param.value
-
-
-	def get_teacher_calendar(self,teacher_calendars_list,calendar_date,employee_key,school_key) :
-		for teacher_calendar in teacher_calendars_list :
-			if teacher_calendar.subscriber_key == employee_key and teacher_calendar.calendar_date == calendar_date :
-				teacher_calendar.events = []
-				return teacher_calendar
-		else :
-			employee_calendar = self.generate_employee_calendar(calendar_date,employee_key,school_key)
-			return employee_calendar
-
-
-	def generate_employee_calendar(self,calendar_date,employee_key,school_key) :
-		employee_calendar=calendar.Calendar(None)
-		employee_calendar.calendar_date = calendar_date
-		employee_calendar.calendar_key = key.generate_key(16)
-		employee_calendar.institution_key = school_key
-		employee_calendar.subscriber_key = employee_key
-		employee_calendar.subscriber_type = 'EMPLOYEE'
-		employee_calendar.events = []
-		return employee_calendar
-
-	def current_class_calendars_perticular_class(self,subscriber_key,current_class_calendars) :
-		current_class_calendars_list =[]
-		for current_class_calendar in current_class_calendars:
-			if current_class_calendar.subscriber_key == subscriber_key :
-				current_class_calendars_list.append(current_class_calendar)
-		return current_class_calendars_list
-
-	def perticular_exams_for_perticular_class(self,exams,class_key,division,series_code) :
-		exams_list =[]
-		for exam in exams :
-			if exam.division == division and exam.class_key == class_key and exam.series_code == series_code :
-				exams_list.append(exam)
-		return exams_list
+	
 	def check_lesson_plans(self,updated_lesson_plan,expected_lesson_plan_list) :
 		for expected_lesson_plan in expected_lesson_plan_list :
 			if expected_lesson_plan.lesson_plan_key == updated_lesson_plan.lesson_plan_key :
@@ -259,20 +186,27 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 
 
 
-	def get_academic_configuration(self):
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configuration:
-			academic_configuration_dict = json.load(academic_configuration)
-			academic_configuration = academic_config.AcademicConfiguration(academic_configuration_dict)
-		return academic_configuration
+	def get_current_lessonplans_from_json(self) :
+		with open('tests/unit/fixtures/add-teacher-leave-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
+			current_lessonplans = json.load(lessonplans_list)
+		return current_lessonplans
 
-	def get_timetable(self):
-		with open('tests/unit/fixtures/update-exams-fixtures/test_timetable.json', 'r') as tiemtable:
-			tiemtable_dict = json.load(tiemtable)
-			tiemtable = ttable.TimeTable(tiemtable_dict)
-		return tiemtable
+	def get_current_teacher_calendars_list_json(self) :
+		with open('tests/unit/fixtures/add-teacher-leave-fixtures/current_teacher_calendars_list.json', 'r') as calendar_list:
+			current_teacher_calendars = json.load(calendar_list)
+		return current_teacher_calendars
+
+	def get_current_class_calendars_list_json(self) :
+		with open('tests/unit/fixtures/add-teacher-leave-fixtures/current_class_calendars_list.json', 'r') as calendar_list:
+			current_class_calendars = json.load(calendar_list)
+		return current_class_calendars
+
+
+
+
 	def get_current_lessonplans_list(self) :
 		current_lessonplans = []
-		with open('tests/unit/fixtures/update-exams-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
+		with open('tests/unit/fixtures/add-teacher-leave-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
 			lessonplans_list_dict = json.load(lessonplans_list)
 		for lessonplan in lessonplans_list_dict :
 			current_lessonplans.append(lpnr.LessonPlan(lessonplan))
@@ -280,7 +214,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 
 	def get_current_teacher_calendars_list(self) :
 		current_teacher_calendars = []
-		with open('tests/unit/fixtures/update-exams-fixtures/current_teacher_calendars_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/add-teacher-leave-fixtures/current_teacher_calendars_list.json', 'r') as calendar_list:
 			class_calendars_dict = json.load(calendar_list)
 		for class_cal in class_calendars_dict :
 			current_teacher_calendars.append(calendar.Calendar(class_cal))
@@ -288,15 +222,24 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 
 	def get_current_class_calendars_list(self) :
 		current_class_calendars = []
-		with open('tests/unit/fixtures/update-exams-fixtures/current_class_calendars_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/add-teacher-leave-fixtures/current_class_calendars_list.json', 'r') as calendar_list:
 			class_calendars_dict = json.load(calendar_list)
 		for class_cal in class_calendars_dict :
 			current_class_calendars.append(calendar.Calendar(class_cal))
 		return current_class_calendars
 
+	def get_current_teacher_leaves_list(self) :
+		current_teacher_leaves = []
+		with open('tests/unit/fixtures/add-teacher-leave-fixtures/current_teacher_leaves_list.json', 'r') as leaves_list:
+			teacher_leaves_dict = json.load(leaves_list)
+		for teacher_leave in teacher_leaves_dict :
+			current_teacher_leaves.append(leave.Leave(teacher_leave))
+		return current_teacher_leaves
+
+
 	def get_expected_class_calendars_list(self) :
 		expected_class_calendars = []
-		with open('tests/unit/fixtures/update-exams-fixtures/expected_class_calendars_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/add-teacher-leave-fixtures/expected_class_calendars_list.json', 'r') as calendar_list:
 			class_calendars_dict = json.load(calendar_list)
 		for class_cal in class_calendars_dict :
 			expected_class_calendars.append(calendar.Calendar(class_cal))
@@ -304,7 +247,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 
 	def get_expected_teacher_calendars_list(self) :
 		expected_teacher_calendars = []
-		with open('tests/unit/fixtures/update-exams-fixtures/expected_teacher_calendars_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/add-teacher-leave-fixtures/expected_teacher_calendars_list.json', 'r') as calendar_list:
 			teacher_calendars_dict = json.load(calendar_list)
 		for teacher_cal in teacher_calendars_dict :
 			expected_teacher_calendars.append(calendar.Calendar(teacher_cal))
@@ -312,20 +255,21 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 
 	def get_expected_lessonplans_list(self) :
 		expected_lessonplans = []
-		with open('tests/unit/fixtures/update-exams-fixtures/expected_lessonplans_list.json', 'r') as lessonplan_list:
+		with open('tests/unit/fixtures/add-teacher-leave-fixtures/expected_lessonplans_list.json', 'r') as lessonplan_list:
 			lessonplans_dict = json.load(lessonplan_list)
 		for lessonplan in lessonplans_dict :
 			expected_lessonplans.append(lpnr.LessonPlan(lessonplan))
 		return expected_lessonplans
 
-	def get_exams_list(self) :
-		exams_list = []
-		with open('tests/unit/fixtures/update-exams-fixtures/exams_list.json', 'r') as exam_list:
-			exams_list_dict = json.load(exam_list)
-		for exam_dict in exams_list_dict :
-			exams_list.append(exam.Exam(exam_dict))
-		return exams_list
+	def get_leaves_list_json(self) :
+		with open('tests/unit/fixtures/add-teacher-leave-fixtures/current_teacher_leaves_list.json', 'r') as leave_list:
+			leaves_list = json.load(leave_list)
+		return leaves_list
 
+	def get_class_info(self) :
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/class_info_two.json', 'r') as class_info_two:
+			class_info_two_dict = json.load(class_info_two)
+		return class_info_two_dict
 
 
 if __name__ == '__main__':

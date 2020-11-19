@@ -629,6 +629,7 @@ def remove_events_from_class_calendar(events_to_remove_list,class_calendar) :
 	return class_calendar
 
 def check_events_conflict(event_start_time,event_end_time,class_calendar_event_start_time,class_calendar_event_end_time) :
+	
 	is_conflict = None
 	event_start_time_year = int(event_start_time[:4])
 	event_start_time_month = int(event_start_time[5:7])

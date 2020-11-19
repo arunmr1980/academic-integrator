@@ -633,6 +633,8 @@ def remove_shedules(schedules,current_lessonplan) :
 	for schedule in schedules :
 		schedule_start_time = schedule.start_time
 		schedule_end_time = schedule.end_time
+		# print(schedule_start_time,"SCHEDULE START <<<<<<<<<<<<<<<-----------")
+		# print(schedule_end_time,"SCHEDULE END <<<<<<<<<<<<<<<-----------")
 		for main_topic in current_lessonplan.topics :
 			for topic in main_topic.topics :
 				for session in topic.sessions :
