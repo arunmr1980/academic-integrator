@@ -3,7 +3,16 @@
 		"calendar_date":"2020-08-04",
 		"calendar_key":"teacher-sample-1",
 		"events":[
-			
+			{
+				"event_code":"event-2",
+				"ref_calendar_key":"test-key-2",
+				"status":"LEAVE"
+			},
+			{
+				"event_code":"event-11",
+				"ref_calendar_key":"test-key-5",
+				"status":"LEAVE"
+			}
 		],
 		"institution_key":"test-school-1",
 		"subscriber_key":"employee-1",
@@ -47,7 +56,16 @@
 		"calendar_date":"2020-08-10",
 		"calendar_key":"teacher-sample-4",
 		"events":[
-			
+			{
+				"event_code":"event-7",
+				"ref_calendar_key":"test-key-3",
+				"status":"LEAVE"
+			},
+			{
+				"event_code":"event-8",
+				"ref_calendar_key":"test-key-4",
+				"status":"LEAVE"
+			}
 		],
 		"institution_key":"test-school-1",
 		"subscriber_key":"employee-1",

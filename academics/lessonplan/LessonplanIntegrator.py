@@ -2,7 +2,8 @@ import datetime
 from academics.TimetableIntegrator import *
 import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.lessonplan.LessonplanDBService as lessonplan_service
-import academics.lessonplan.LessonplanDBService as lessonplan_service
+import academics.TimetableIntegrator as timetable_integrator
+
 import academics.school.SchoolDBService as school_service
 import academics.lessonplan.LessonPlan as lnpr
 import academics.academic.AcademicDBService as academic_service
@@ -294,7 +295,7 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 	academic_year = academic_configuration.academic_year
 	event = get_event_from_calendar(calendar,event_code)
 	gclogger.info("EVENT START TIME AND END TIME ----------------->" + str(event.from_time) + str(event.to_time))
-	day_code = findDay(calendar.calendar_date).upper()[0:3]
+	day_code = timetable_integrator.findDay(calendar.calendar_date).upper()[0:3]
 	subscriber_key = calendar.subscriber_key
 	gclogger.info("subscriber_key------------------->>>>" + str(subscriber_key))
 
@@ -313,7 +314,7 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 					lp = lnpr.LessonPlan(None)
 					updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 					response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-					gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(current_lesson_plan_dict['lesson_plan_key']))
+					gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
 					updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
 					updated_lessonplan_list.append(updated_lessonplan)
 
@@ -355,7 +356,7 @@ def integrate_cancelled_holiday_lessonplan(calendar_key) :
 	school_key = calendar.institution_key
 	academic_configuration = academic_service.get_academic_year(school_key, calendar.calendar_date)
 	academic_year = academic_configuration.academic_year
-	day_code = findDay(calendar.calendar_date).upper()[0:3]
+	day_code = timetable_integrator.findDay(calendar.calendar_date).upper()[0:3]
 	if calendar.subscriber_type == 'CLASS-DIV' :
 		subscriber_key = calendar.subscriber_key
 		class_key = subscriber_key[:-2]
@@ -602,10 +603,10 @@ def get_schedule_date(schedule) :
 
 def generate_holiday_period_list(event,calendar,academic_configuration,timetable,day_code) :
 	holiday_period_list =[]
-	if is_class(event.params[0]) == False :
+	if timetable_integrator.is_class(event.params[0]) == False :
 		start_time = event.from_time
 		end_time = event.to_time
-		partial_holiday_periods = get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
+		partial_holiday_periods = timetable_integrator.get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
 		for partial_holiday_period in partial_holiday_periods :
 			holiday_period_list.append(partial_holiday_period)
 	return holiday_period_list
@@ -613,8 +614,8 @@ def generate_holiday_period_list(event,calendar,academic_configuration,timetable
 
 def get_schedule(holiday_period_list,schedule,date) :
 	for period in holiday_period_list :
-		standard_start_time = get_standard_time(period.start_time,date)
-		standard_end_time = get_standard_time(period.end_time,date)
+		standard_start_time = timetable_integrator.get_standard_time(period.start_time,date)
+		standard_end_time = timetable_integrator.get_standard_time(period.end_time,date)
 		if standard_start_time == schedule.start_time and standard_end_time ==schedule.end_time :
 			return schedule
 

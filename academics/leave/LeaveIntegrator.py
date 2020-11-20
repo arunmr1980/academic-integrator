@@ -199,14 +199,19 @@ def get_updated_teacher_calendar(current_teacher_calendar,removed_events) :
 def get_event_removed_class_calendar(event,current_class_calendar) :
 	for existing_event in current_class_calendar.events :
 		if existing_event.event_code == event.event_code and existing_event.from_time == event.from_time :
-			current_class_calendar.events.remove(existing_event)
+			# current_class_calendar.events.remove(existing_event)
+			existing_event.status = 'UN-ASSIGNED'
+			existing_event.params[1].value = 'null'
+			existing_event.params[2].value = 'null'
+
 	return current_class_calendar
 
 
 def get_event_removed_teacher_calendar(event,current_teacher_calendar) :
 	for existing_event in current_teacher_calendar.events :
 		if event.event_code == existing_event.event_code :
-			current_teacher_calendar.events.remove(existing_event)
+			# current_teacher_calendar.events.remove(existing_event)
+			existing_event.status = "LEAVE"
 	return current_teacher_calendar
 
 

@@ -14,14 +14,14 @@ pp = pprint.PrettyPrinter(indent=4)
 import copy
 
 # Remove event calendar integration
-def remove_event_integrate_calendars(calendar_key,events) :
+def remove_event_integrate_calendars(calendar_key) :
 	updated_calendars_list = []
 	calendar = calendar_service.get_calendar(calendar_key)
 	school_key = calendar.institution_key
 	calendar_date = calendar.calendar_date
 	academic_configuration = academic_service.get_academic_year(school_key,calendar_date)
 	academic_year = academic_configuration.academic_year
-	day_code = findDay(calendar.calendar_date).upper()[0:3]
+	day_code = timetable_integrator.findDay(calendar.calendar_date).upper()[0:3]
 	class_info_list = class_info_service.get_classinfo_list(school_key,academic_year)
 	class_calendars = get_class_calendars(class_info_list,calendar_date)
 	if calendar.subscriber_type == 'SCHOOL' :
@@ -334,7 +334,7 @@ def update_class_calendars_teacher_calendars(subscriber_key,existing_class_calen
 	timetable = timetable_service.get_timetable_by_class_key_and_division(class_key,division)
 	if timetable is not None :
 		holiday_period_list = generate_holiday_period_list(calendar,academic_configuration,timetable,day_code)
-		updated_class_calendar = generate_class_calendar(day_code,timetable,calendar_date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)
+		updated_class_calendar = timetable_integrator.generate_class_calendar(day_code,timetable,calendar_date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)
 		updated_calendars_list.append(updated_class_calendar)
 		updated_class_calendar_events = updated_class_calendar.events
 		employee_key_list = get_employee_key_list(updated_class_calendar_events)

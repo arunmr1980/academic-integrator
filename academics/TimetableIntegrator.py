@@ -387,6 +387,7 @@ def is_class(param) :
 
 
 def generate_holiday_period_list(calendar,academic_configuration,timetable,day_code) :
+	gclogger.info("EXISTING SCHOOL CALENDAR KEY ------------------>>>>>>  " + calendar.calendar_key)
 	holiday_period_list =[]
 	for event in calendar.events :
 		if is_class(event.params[0]) == False :
@@ -398,6 +399,7 @@ def generate_holiday_period_list(calendar,academic_configuration,timetable,day_c
 	return holiday_period_list
 
 def generate_period_list(calendar,events,academic_configuration,timetable,day_code) :
+	gclogger.info("SCHOOL CALENDAR KEY ------------------>>>>>>  " + calendar.calendar_key)
 	period_list =[]
 	for event in events :
 		if is_class(event.params[0]) == False :
