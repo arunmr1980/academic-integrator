@@ -21,12 +21,51 @@ from academics.lessonplan import LessonplanDBService as lessonplan_service
 import academics.academic.AcademicDBService as academic_service
 import academics.timetable.TimeTableDBService as timetable_service
 import academics.lessonplan.LessonPlan as lpnr
-import academics.lessonplan.LessonplanIntegrator as lessonplan_integrator
+import academics.lessonplan.LessonplanIntegrator as lesssonplan_integrator
 import copy
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
+def integrate_cancel_exam(exam_series) :
+	exam_series = make_exam_series_objects(exam_series)
+	current_class_calendars_list = get_affected_class_calendars_list(exam_series.classes,exam_series.from_date,exam_series.to_date)
+	current_lessonplans_list = get_current_lessonplans(exam_series.classes)
+	updated_class_calendars_list = get_updated_class_calendars_list_on_cancel_exam(current_class_calendars_list,exam_series.code)
+	school_key = updated_class_calendars_list[0].institution_key
+	current_teacher_calendars_list = get_current_teacher_calendars_from_current_class_calendars(current_class_calendars_list,school_key)
+	updated_teacher_calendars_list = integrate_teacher_calendars_on_update_exam(current_teacher_calendars_list,current_class_calendars_list,school_key)
+	updated_lessonplans_list = integrate_lessonplans_on_update_exams(current_lessonplans_list,current_class_calendars_list)
 
+	save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
+
+
+
+def get_current_lessonplans(classes) :
+	current_lessonplans_list =[]
+	for clazz in classes :
+		division = clazz.division
+		class_key = clazz.class_key
+		current_lessonplans = lessonplan_service.get_lesson_plan_list(class_key, division)
+		current_lessonplans_list.extend(current_lessonplans) 
+	return current_lessonplans_list
+
+
+def get_affected_class_calendars_list(classes,from_date,to_date) :
+	current_class_calendars_list = []
+	dates_list = timetable_integrator.get_dates(from_date,to_date)
+	for date in dates_list :	
+		for clazz in classes :
+			division = clazz.division
+			class_key = clazz.class_key
+			subscriber_key = class_key + '-' + division
+			current_class_calendar = calendar_service.get_calendar_by_date_and_key(date,subscriber_key)
+			if current_class_calendar is not None :
+				current_class_calendars_list.append(current_class_calendar)
+	return current_class_calendars_list
+
+def make_exam_series_objects(exam_series) :
+		exam_series = ExamSeries(exam_series[0])
+		return exam_series
 def integrate_update_exam_on_calendar(series_code,class_key,division) :
 	subscriber_key = class_key + '-' + division
 	updated_class_calendars_list = []
@@ -42,7 +81,6 @@ def integrate_update_exam_on_calendar(series_code,class_key,division) :
 	
 
 	current_class_calendars_list = get_updated_current_class_calendars_from_exam_and_schedule(exams_list)
-	# current_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type(school_key,'EMPLOYEE')
 	current_teacher_calendars_list = get_current_teacher_calendars_from_current_class_calendars(current_class_calendars_list,school_key)
 	current_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 	current_class_calendars_list = integrate_class_calendar_on_update_exams(academic_configuration,timetable,exams_list,current_class_calendars_list)
@@ -293,6 +331,97 @@ def get_updated_current_lessonplans(updated_class_calendars_list,current_lessonp
 
 
 # --------------ends ---------------
+
+def get_updated_class_calendars_list_on_cancel_exam(current_class_calendars_list,exam_series_code) :
+	updated_class_calendars_list = []
+	for current_class_calendar in current_class_calendars_list :
+		subscriber_key = current_class_calendar.subscriber_key
+		class_key = subscriber_key[:-2]
+		division = subscriber_key[-1:]
+		timetable = timetable_service.get_timetable_by_class_key_and_division(class_key,division)
+		academic_year = timetable.academic_year
+		school_key = timetable.school_key
+		academic_configuration = academic_service.get_academig(school_key,academic_year)
+		get_updated_class_calendars_on_cancel_exam(academic_configuration,timetable,updated_class_calendars_list,current_class_calendar,exam_series_code)
+	return updated_class_calendars_list
+
+def get_updated_class_calendars_on_cancel_exam(academic_configuration,timetable,updated_class_calendars_list,current_class_calendar,exam_series_code) :
+	periods_to_be_added =[]
+	exam_events_to_be_removed = []
+	current_class_calendar = get_previous_events_and_exam_events(academic_configuration,timetable,current_class_calendar,periods_to_be_added,exam_series_code,exam_events_to_be_removed)
+	updated_class_calendar = remove_exam_events_of_series_code(exam_events_to_be_removed,current_class_calendar,exam_series_code)
+	updated_class_calendar = get_class_session_events_added_calendar(academic_configuration,timetable,periods_to_be_added,updated_class_calendar)
+	updated_class_calendars_list.append(updated_class_calendar)
+
+def remove_exam_events_of_series_code(exam_events_to_be_removed,current_class_calendar,exam_series_code) :
+	updated_events = []
+	for existing_event in current_class_calendar.events :
+		if existing_event.event_type == 'EXAM' :
+			previous_exam_event_from_time = existing_event.from_time
+			previous_exam_event_to_time = existing_event.to_time
+			series_code = get_exam_series_code(existing_event.params)
+			if series_code != exam_series_code :
+				updated_events.append(existing_event)		
+		else :
+			updated_events.append(existing_event)
+	current_class_calendar.events = updated_events		# updated_class_calendar = exam_integrator.remove_exam_event_of_previous_schedule(current_class_calendar,previous_exam_event_from_time,previous_exam_event_to_time)
+	return current_class_calendar
+
+
+def get_previous_events_and_exam_events(academic_configuration,timetable,current_class_calendar,periods_to_be_added,exam_series_code,exam_events_to_be_removed) :
+	for existing_event in current_class_calendar.events :
+		if existing_event.event_type == 'EXAM' :
+			series_code = get_exam_series_code(existing_event.params)
+			if series_code == exam_series_code :
+				exam_events_to_be_removed.append(existing_event)
+				current_class_calendar = get_previous_periods(academic_configuration,timetable,existing_event,current_class_calendar,periods_to_be_added)
+	return current_class_calendar
+
+
+def get_exam_series_code(params) :
+	for param in params :
+		if param.key == 'series_code' :
+			return param.value
+
+def get_previous_periods(academic_configuration,timetable,existing_event,current_class_calendar,periods_to_be_added) :
+	previous_exam_event_from_time = existing_event.from_time
+	previous_exam_event_to_time = existing_event.to_time
+	day_code = timetable_integrator.findDay(current_class_calendar.calendar_date).upper()[0:3]
+	period_list = generate_period_list(
+										current_class_calendar,
+										previous_exam_event_from_time,
+										previous_exam_event_to_time,
+										academic_configuration,
+										timetable,
+										day_code
+										)
+	for period in period_list :
+		if is_period_already_exist(period,periods_to_be_added) == False :
+			periods_to_be_added.append(period)
+	return current_class_calendar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def integrate_class_calendar_on_update_exams(academic_configuration,timetable,exams_list,current_class_calendars_list) :
 	exam_events = make_exam_events(exams_list)
@@ -678,3 +807,48 @@ def adjust_lessonplan_after_remove_schedule(current_lessonplan) :
 	#create remaining  schedule  on root sesions
 	current_lessonplan = create_remaining_sessions_on_root_when_schedule_removed(schedule_list,current_lessonplan,root_sessions)
 	return current_lessonplan
+
+class ExamSeries :
+	def __init__(self, item):
+		if item is None:
+			
+			self.classes = []
+			self.code = None
+			self.from_date = None
+			self.name = None
+			self.to_date = None
+		else :
+			try :
+				self.classes = []
+				classes = item['classes']
+				for clazz in classes :
+					self.classes.append(Class(clazz))
+			except KeyError as ke:
+				logger.debug('[WARN] - KeyError in ExamSeries - classes not present'.format(str (ke)))
+			try :
+				self.code = item['code']
+			except KeyError as ke:
+				logger.debug('[WARN] - KeyError in ExamSeries - code not present'.format(str (ke)))
+			try :
+				self.from_date = item['from_date']
+			except KeyError as ke:
+				logger.debug('[WARN] - KeyError in ExamSeries - from_date not present'.format(str (ke)))
+			try :
+				self.to_date = item['to_date']
+			except KeyError as ke:
+				logger.debug('[WARN] - KeyError in ExamSeries - to_date not present'.format(str (ke)))
+			try :
+				self.name = item['name']
+			except KeyError as ke:
+				logger.debug('[WARN] - KeyError in ExamSeries - name not present'.format(str (ke)))
+
+
+class Class :
+	def __init__(self, item):
+		if item is None:
+			self.class_key = None
+			self.division = None
+			
+		else :
+			self.class_key = item['class_key']
+			self.division = item['division']

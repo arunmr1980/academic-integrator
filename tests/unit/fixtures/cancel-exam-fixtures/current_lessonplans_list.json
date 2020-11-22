@@ -31,12 +31,6 @@
                         "completion_status":false,
                         "name":"Session 1",
                         "order_index":1,
-                        "schedule": {
-                           "calendar_key": "test-key-2",
-                           "event_code": "UNPLANNED",
-                           "start_time": "2020-08-15T11:30:00",
-                           "end_time": "2020-08-15T12:10:00"
-                        },
                         "resources":[
 
                         ]
@@ -79,12 +73,6 @@
                         "completion_status":false,
                         "name":"Session 1",
                         "order_index":1,
-                        "schedule": {
-                           "calendar_key": "test-key-3",
-                           "event_code": "event-4",
-                           "start_time": "2020-08-10T10:40:00",
-                           "end_time": "2020-08-10T11:20:00"
-                        },
                         "resources":[
 
                         ]
@@ -148,22 +136,6 @@
                            "event_code": "event-1000000000",
                            "start_time": "2020-08-10T13:30:00",
                            "end_time": "2020-08-10T14:10:00"
-                        },
-                        "resources":[
-
-                        ]
-                     },
-                     {
-                        "code":"SESgy022",
-                        "completion_datetime":"NA",
-                        "completion_status":false,
-                        "name":"Session 1",
-                        "order_index":1,
-                        "schedule": {
-                           "calendar_key": "test-key-2",
-                           "event_code": "UNPLANNEDD",
-                           "start_time": "2020-08-20T13:30:00",
-                           "end_time": "2020-08-20T14:10:00"
                         },
                         "resources":[
 

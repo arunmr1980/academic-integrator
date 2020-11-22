@@ -14,7 +14,7 @@ pp = pprint.PrettyPrinter(indent=4)
 import copy
 
 # Remove event calendar integration
-def remove_event_integrate_calendars(calendar_key) :
+def remove_event_integrate_calendars(calendar_key,events) :
 	updated_calendars_list = []
 	calendar = calendar_service.get_calendar(calendar_key)
 	school_key = calendar.institution_key

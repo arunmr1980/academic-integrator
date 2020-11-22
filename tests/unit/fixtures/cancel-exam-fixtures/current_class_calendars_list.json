@@ -25,13 +25,21 @@
     "calendar_key":"test-key-2",
     "events":[
       {
-        "event_code":"event-1",
+        "event_code":"4b99b5",
         "event_type":"EXAM",
         "from_time":"2020-08-04T11:00:00",
         "params":[
           {
             "key":"cancel_class_flag",
             "value":"true"
+          },
+          {
+            "key":"exam_key",
+            "value":"test-exam-key-1"
+          },
+          {
+            "key":"series_code",
+            "value":"NEG111"
           }
         ],
         "to_time":"2020-08-04T13:00:00"
@@ -66,25 +74,41 @@
     "calendar_key":"test-key-3",
     "events":[
       {
-        "event_code":"event-1",
+        "event_code":"32f92b",
         "event_type":"EXAM",
         "from_time":"2020-08-10T09:00:00",
         "params":[
           {
             "key":"cancel_class_flag",
             "value":"true"
+          },
+          {
+            "key":"exam_key",
+            "value":"test-exam-key-2"
+          },
+          {
+            "key":"series_code",
+            "value":"NEG111"
           }
         ],
         "to_time":"2020-08-10T11:00:00"
       },
       {
-        "event_code":"event-1",
+        "event_code":"d4f760",
         "event_type":"EXAM",
         "from_time":"2020-08-10T11:00:00",
         "params":[
           {
             "key":"cancel_class_flag",
             "value":"true"
+          },
+          {
+            "key":"exam_key",
+            "value":"test-exam-key-3"
+          },
+          {
+            "key":"series_code",
+            "value":"NEG111"
           }
         ],
         "to_time":"2020-08-10T13:00:00"

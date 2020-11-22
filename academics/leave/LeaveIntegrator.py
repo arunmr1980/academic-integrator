@@ -36,11 +36,6 @@ def integrate_add_leave_on_calendar(leave_key) :
 	updated_teacher_calendars_list = []
 	updated_lessonplans_list = []
 	events_with_sub_key = {}
-	
-	# current_class_calendars_list= self.get_current_class_calendars_list()
-	# current_teacher_calendars_list = self.get_current_teacher_calendars_list()
-	# current_lessonplans_list = self.get_current_lessonplans_list()
-	# current_teacher_leaves_list = self.get_current_teacher_leaves_list()
 	leave = leave_service.get_leave(leave_key)
 	employee_key = leave.subscriber_key
 	from_time = leave.from_time
