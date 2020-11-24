@@ -18,7 +18,16 @@ import copy
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-def update_subject_teacher_integrator(division,class_info_key,subject_code,existing_teacher_timetable,new_teacher_timetable) :
+def update_subject_teacher_integrator(division,class_info_key,subject_code,existing_teacher_emp_key,new_teacher_emp_key) :
+
+#newly added--------------
+	current_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
+	current_cls_timetable = copy.deepcopy(current_class_timetable)
+	existing_teacher_timetable = get_existing_teacher_timetable(existing_teacher_emp_key,current_cls_timetable,subject_code)
+	new_teacher_timetable = get_new_teacher_timetable(new_teacher_emp_key,current_cls_timetable,subject_code)
+#newly added--------------
+
+
 	period_list =[]
 	updated_teacher_timetables_list = []
 	updated_class_calendars_list = []
@@ -51,6 +60,61 @@ def update_subject_teacher_integrator(division,class_info_key,subject_code,exist
 
 
 		save_updated_calendars_and_timetables(updated_teacher_calendars_list,updated_class_calendars_list,updated_class_timetables_list,updated_teacher_timetables_list)
+
+
+#newly added--------------
+def get_existing_teacher_timetable(existing_teacher_emp_key,current_cls_timetable,subject_code) :
+	existing_teacher_timetable = None
+	existing_teacher_timetable = timetable_service.get_timetable_entry_by_employee(existing_teacher_emp_key,current_cls_timetable.academic_year)
+	if existing_teacher_timetable is not None :
+		gclogger.info(" ----------- Getting existing teacher timetable from DB ----------- " + str(existing_teacher_timetable.time_table_key) + '-----------')
+	if existing_teacher_timetable is None :
+		timetable = get_timetable_from_updated_class_timetable(current_cls_timetable)
+		timetable = reset_periods(timetable,existing_teacher_emp_key,subject_code)
+		existing_teacher_timetable = generate_teacher_timetable(existing_teacher_emp_key,timetable,current_cls_timetable)
+		gclogger.info(" ------------ Generating previous teacher timetable  ------------- "+ str(existing_teacher_timetable.time_table_key) + '-----------')
+
+	return existing_teacher_timetable
+
+
+def get_new_teacher_timetable(new_teacher_emp_key,current_cls_timetable,subject_code) :
+	new_teacher_timetable = None	
+	new_teacher_timetable = timetable_service.get_timetable_entry_by_employee(new_teacher_emp_key,current_cls_timetable.academic_year)
+	if new_teacher_timetable is not None :
+		gclogger.info(" ----------- Getting new teacher timetable from DB ----------- " + str(new_teacher_timetable.time_table_key) + '-----------')
+	if new_teacher_timetable is None :
+		timetable = get_timetable_from_updated_class_timetable(current_cls_timetable)
+		timetable = reset_periods(timetable,new_teacher_emp_key,subject_code)
+		new_teacher_timetable = generate_teacher_timetable(new_teacher_emp_key,timetable,current_cls_timetable)
+		gclogger.info(" ------------ Generating new teacher timetable  ------------- "+ str(new_teacher_timetable.time_table_key) + '-----------')
+	return new_teacher_timetable
+
+
+def reset_periods(timetable,updated_employee_key,subject_code) :
+	if hasattr(timetable ,'day_tables') :
+		for day in timetable.day_tables :
+			for period in day.periods :
+				period.class_info_key = None
+				period.division_code = None
+				period.employee_key = None
+				period.subject_key = None
+	return timetable
+
+def get_timetable_from_updated_class_timetable(updated_class_timetable) :
+	if hasattr(updated_class_timetable,'timetable') :
+		return updated_class_timetable.timetable
+
+def generate_teacher_timetable(updated_employee_key,timetable,updated_class_timetable) :
+	teacher_timetable = ttable.TimeTable(None)
+	teacher_timetable.academic_year = updated_class_timetable.academic_year
+	teacher_timetable.employee_key = updated_employee_key
+	teacher_timetable.school_key = updated_class_timetable.school_key
+	teacher_timetable.time_table_key = key.generate_key(16)
+	teacher_timetable.timetable = timetable
+	return teacher_timetable
+
+
+#newly added--------------
 
 
 def update_both_teacher_calendars(updated_class_calendars_list,existing_teacher_timetable,new_teacher_timetable) :
@@ -194,6 +258,7 @@ def updated_employee_key(period_list,new_teacher_timetable,new_teacher_emp_key) 
 	return period_list
 
 def add_period_on_new_teacher_timetable(period,new_teacher_timetable) :
+	print(" --------------------NEW TEACHERBTIME TABLE KEY ----------------------",new_teacher_timetable.time_table_key)
 	if hasattr(new_teacher_timetable.timetable,'day_tables') :
 		day_code = period.period_code[:3]
 		for day in new_teacher_timetable.timetable.day_tables :
@@ -205,6 +270,7 @@ def add_period_on_new_teacher_timetable(period,new_teacher_timetable) :
 def add_or_update_period(existing_periods,period) :
 	order_index = int(period.order_index)
 	for existing_period in existing_periods :
+		print("---------------------- PERIOD CDE ---------------------",existing_period.period_code)
 		if existing_period.order_index == order_index :
 			existing_periods[order_index-1] = period
 

@@ -47,9 +47,9 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		subscriber_key = class_info_key + '-' + division
 		current_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
 		current_cls_timetable = copy.deepcopy(current_class_timetable)
-		existing_teacher_timetable = self.get_existing_teacher_timetable(existing_teacher_emp_key,current_cls_timetable,subject_code)
-		new_teacher_timetable = self.get_new_teacher_timetable(new_teacher_emp_key,current_cls_timetable,subject_code)
-		update_subject_teacher_integrator(division,class_info_key,subject_code,existing_teacher_timetable,new_teacher_timetable)
+		# existing_teacher_timetable = self.get_existing_teacher_timetable(existing_teacher_emp_key,current_cls_timetable,subject_code)
+		# new_teacher_timetable = self.get_new_teacher_timetable(new_teacher_emp_key,current_cls_timetable,subject_code)
+		update_subject_teacher_integrator(division,class_info_key,subject_code,existing_teacher_emp_key,new_teacher_emp_key)
 
 		expected_teacher_timetables_list = self.get_expected_teacher_timetables_list()
 		expected_class_calendars_list = self.get_expected_class_calendars_list()

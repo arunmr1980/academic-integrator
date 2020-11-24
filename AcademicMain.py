@@ -1,4 +1,4 @@
-from academics.TimetableIntegrator import generate_and_save_calenders
+from academics.TimetableIntegrator import generate_and_save_calenders,update_subject_teacher_integrator
 import academics.calendar.CalendarDBService as calendar_service
 from academics.calendar.CalendarLessonPlanIntegrator import integrate_calendars_to_lesson_plan, calendars_lesson_plan_integration_from_timetable, integrate_calendar
 from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars, integrate_update_period_calendars_and_lessonplans
@@ -17,28 +17,33 @@ from academics.calendar.CalendarIntegrator import remove_event_integrate_calenda
 # timetable_key = '0016052638719701962C01A5A7-1DF5-4C16-93A2-3D37FEA3F315-551118910'
 # calendars_lesson_plan_integration_from_timetable(timetable_key,'2020-2021')
 
-calendar_key = '66295046de8427e875e083394dcce209'
-events = [
-      {
-         "event_code":"1ffyau-1mgw4q",
-         "event_date":"2020-05-05",
-         "event_type":"HOLIDAY",
-         "from_time":"2020-05-05T09:00:00",
-         "params":[
-            {
-               "key":"cancel_class_flag",
-               "value":"true"
-            }
-         ],
-         "to_time":"2020-05-05T16:00:00"
-      }
-   ]
-events = make_event_objects(events)
+# calendar_key = '66295046de8427e875e083394dcce209'
+# events = [
+#       {
+#          "event_code":"1ffyau-1mgw4q",
+#          "event_date":"2020-05-05",
+#          "event_type":"HOLIDAY",
+#          "from_time":"2020-05-05T09:00:00",
+#          "params":[
+#             {
+#                "key":"cancel_class_flag",
+#                "value":"true"
+#             }
+#          ],
+#          "to_time":"2020-05-05T16:00:00"
+#       }
+#    ]
+# events = make_event_objects(events)
 # add_event_integrate_calendars(event_code,calendar_key)
-remove_event_integrate_calendars(calendar_key,events)
+# remove_event_integrate_calendars(calendar_key,events)
 
 # time_table_key = '00160397692489898347377F45-7AE0-4328-85CF-0925C31408B5-365640440'
 # period_code = "WED-7"
 # integrate_update_period_calendars_and_lessonplans(period_code, time_table_key)
-
+class_info_key = "00160379057939727066A8F208-16F2-4065-A775-6399511D57E9-286430072"
+division = "A"
+subject_code = "a m01"
+existing_teacher_emp_key = "001588257438134998684DD33C-A964-4911-BBC8-9017E4532083-1550754530"
+new_teacher_emp_key = "001606132387756687C2B22FE8-DF79-4657-8FEA-F22226176AF3-744133722"
+update_subject_teacher_integrator(division,class_info_key,subject_code,existing_teacher_emp_key,new_teacher_emp_key)
 	

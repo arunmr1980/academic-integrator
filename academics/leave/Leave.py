@@ -13,6 +13,7 @@ class Leave:
             self.to_date = None
             self.to_time = None
             self.reason = None
+            self.status = None
         else:
             self.leave_key = item["leave_key"]
             self.institution_key = item["institution_key"]
@@ -24,6 +25,10 @@ class Leave:
                 self.from_time = item["from_time"]
             except KeyError as ke:
                 gclogger.debug ('KeyError from_time '.format (str (ke)))
+            try:
+                self.status = item["status"]
+            except KeyError as ke:
+                gclogger.debug ('KeyError status '.format (str (ke)))
             try:
                 self.status = item["status"]
             except KeyError as ke:

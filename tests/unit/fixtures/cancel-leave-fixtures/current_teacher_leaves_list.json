@@ -8,7 +8,8 @@
     "subscriber_key":"employee-1",
     "subscriber_type":"EMPLOYEE",
     "to_date":"2020-08-10",
-    "to_time":"2020-08-10T13:00:00"
+    "to_time":"2020-08-10T13:00:00",
+    "status" :"CANCELLED"
     
   },
   {
@@ -20,6 +21,7 @@
     "subscriber_key":"employee-2",
     "subscriber_type":"EMPLOYEE",
     "to_date":"2020-08-04",
-    "to_time":"2020-08-04T13:00:00"
+    "to_time":"2020-08-04T13:00:00",
+    "status" :"CANCELLED"
   }
 ]
