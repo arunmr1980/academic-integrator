@@ -8,12 +8,12 @@ import operator
 EXAM_TBL = 'Exam'
 
 
-def delete_calendar(calendar_key) :
+def delete_exam(exam_key) :
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(CALENDAR_TBL)
+    table = dynamodb.Table(EXAM_TBL)
     response=table.delete_item(
       Key={
-        'calendar_key':calendar_key
+        'exam_key':exam_key
       }
     )
     return response

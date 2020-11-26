@@ -37,21 +37,22 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		          }
 		        ],
 		        "code": "NEG111",
-		        "from_date": "2020-08-04",
-		        "name": "June Series",
-		        "to_date": "2020-08-10",
+		        "name": "June Series"
 		      }
 		]
 
 		exam_series = self.make_exam_series_objects(exam_series)
+		exams = self.get_exams_list()
+		exams_list = self.perticular_exams_for_perticular_classes(exams,exam_series.classes,exam_series.code)
+
 		current_class_calendars = self.get_current_class_calendars_list()
 		current_teacher_calendars_list = self.get_current_teacher_calendars_list()
 		current_lessonplans_list = self.get_current_lessonplans_list()
-		current_class_calendars_list = self.get_affected_class_calendars_list(exam_series.classes,current_class_calendars,exam_series.from_date,exam_series.to_date)
+		current_class_calendars_list = self.get_affected_class_calendars_list(current_class_calendars,exams_list)
 		updated_class_calendars_list = self.get_updated_class_calendars_list_on_cancel_exam(current_class_calendars_list,exam_series.code,timetables,academic_configuration)
-		school_key = current_class_calendars_list[0].institution_key
+		school_key = academic_configuration.school_key
 		updated_teacher_calendars_list = self.integrate_teacher_calendars_on_update_exam(current_teacher_calendars_list,current_class_calendars_list,school_key)
-		current_lessonplans_list = exam_integrator.integrate_lessonplans_on_update_exams(current_lessonplans_list,current_class_calendars_list)
+		updated_lessonplans_list = exam_integrator.integrate_lessonplans_on_update_exams(current_lessonplans_list,updated_class_calendars_list)
 
 		for updated_class_calendar in updated_class_calendars_list :
 			cal = calendar.Calendar(None)
@@ -68,12 +69,31 @@ class CancelExamIntegratorTest(unittest.TestCase):
 			
 
 
-		for updated_lessonplan in current_lessonplans_list :
+		for updated_lessonplan in updated_lessonplans_list :
 			lp = lpnr.LessonPlan(None)
 			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 			pp.pprint(updated_lessonplan_dict)
 			self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
 			
+
+
+	def perticular_exams_for_perticular_classes(self,exams,classes,series_code) :
+		exams_list =[]
+		for exam in exams :
+			if self.check_exam_in_given_classes(classes,exam,series_code) == True :
+				exams_list.append(exam)
+		return exams_list
+
+
+	def check_exam_in_given_classes(self,classes,exam,series_code) :
+		do_cancel_exam = False
+		for clazz in classes :
+			division = clazz.division
+			class_key = clazz.class_key
+			if exam.class_key == class_key and exam.division == division and exam.series_code == series_code and exam.status == "DELETED" :
+				do_cancel_exam = True
+		return do_cancel_exam
+
 	def get_updated_class_calendars_list_on_cancel_exam(self,current_class_calendars_list,exam_series_code,timetables,academic_configuration) :
 		updated_class_calendars_list = []
 		for current_class_calendar in current_class_calendars_list :
@@ -97,17 +117,16 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		exam_series = ExamSeries(exam_series[0])
 		return exam_series
 
-	def get_affected_class_calendars_list(self,classes,current_class_calendars,from_date,to_date) :
+	def get_affected_class_calendars_list(self,current_class_calendars,exams_list) :
 		current_class_calendars_list = []
-		dates_list = timetable_integrator.get_dates(from_date,to_date)
-		for date in dates_list :	
-			for clazz in classes :
-				division = clazz.division
-				class_key = clazz.class_key
-				subscriber_key = class_key + '-' + division
-				current_class_calendar = self.get_calendar_by_date_and_key(subscriber_key,date,current_class_calendars)
-				if current_class_calendar is not None :
-					current_class_calendars_list.append(current_class_calendar)
+		for exam in exams_list :
+			division = exam.division
+			class_key = exam.class_key
+			subscriber_key = class_key + '-' + division
+			date = exam.date_time
+			current_class_calendar = self.get_calendar_by_date_and_key(subscriber_key,date,current_class_calendars)
+			if current_class_calendar is not None and self.check_calendar_already_in_list(current_class_calendars_list,current_class_calendar) == False :
+				current_class_calendars_list.append(current_class_calendar)
 		return current_class_calendars_list
 
 
@@ -117,7 +136,12 @@ class CancelExamIntegratorTest(unittest.TestCase):
 				return current_calendar
 
 
-
+	def check_calendar_already_in_list(self,current_class_calendars_list,current_class_calendar) :
+		is_calendar_exist = False
+		for calendar in current_class_calendars_list :
+			if calendar.calendar_key == current_class_calendar.calendar_key :
+				is_calendar_exist = True
+		return is_calendar_exist
 
 
 
@@ -371,9 +395,7 @@ class ExamSeries :
 			
 			self.classes = []
 			self.code = None
-			self.from_date = None
 			self.name = None
-			self.to_date = None
 		else :
 			try :
 				self.classes = []
@@ -386,14 +408,6 @@ class ExamSeries :
 				self.code = item['code']
 			except KeyError as ke:
 				logger.debug('[WARN] - KeyError in ExamSeries - code not present'.format(str (ke)))
-			try :
-				self.from_date = item['from_date']
-			except KeyError as ke:
-				logger.debug('[WARN] - KeyError in ExamSeries - from_date not present'.format(str (ke)))
-			try :
-				self.to_date = item['to_date']
-			except KeyError as ke:
-				logger.debug('[WARN] - KeyError in ExamSeries - to_date not present'.format(str (ke)))
 			try :
 				self.name = item['name']
 			except KeyError as ke:

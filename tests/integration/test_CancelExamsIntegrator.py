@@ -10,6 +10,7 @@ from academics.calendar.CalendarIntegrator import *
 import academics.classinfo.ClassInfo as classinfo
 import academics.exam.ExamIntegrator as exam_integrator
 import academics.TimetableIntegrator as timetable_integrator
+from academics.exam import ExamDBService as exam_service
 import academics.exam.Exam as exam
 import pprint
 import copy
@@ -41,7 +42,11 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		for current_lessonplan in current_lessonplans :
 			response = lessonplan_service.create_lessonplan(current_lessonplan)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Existing lesson plan uploaded '+str(current_lessonplan['lesson_plan_key']))
-		
+
+		exams = self.get_exams_list_json()
+		for exam in exams :
+			response = exam_service.add_or_update_exam(exam)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Exan uploaded --------- '+str(exam['exam_key']))
 
 	def test_calendars_and_lessonplan(self) :
 		
@@ -58,9 +63,7 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		          }
 		        ],
 		        "code": "NEG111",
-		        "from_date": "2020-08-04",
-		        "name": "June Series",
-		        "to_date": "2020-08-10",
+		        "name": "June Series"
 		      }
 		]
 		exam_integrator.integrate_cancel_exam(exam_series)
@@ -113,9 +116,7 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		          }
 		        ],
 		        "code": "NEG111",
-		        "from_date": "2020-08-04",
-		        "name": "June Series",
-		        "to_date": "2020-08-10",
+		        "name": "June Series"
 		      }
 		]
 		timetables = self.get_timetables_list_from_json()
@@ -144,7 +145,10 @@ class CancelExamIntegratorTest(unittest.TestCase):
 
 		academic_service.delete_academic_config(academic_configuration.academic_config_key)
 		gclogger.info("---------------Test Academic Configuration deleted  " + academic_configuration.academic_config_key + "-----------------")
-			
+		exams = self.get_exams_list_json()
+		for exam in exams :
+			response = exam_service.delete_exam(exam['exam_key'])
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Test Exam deleted--------- '+str(exam['exam_key']))
 
 	def make_exam_series_objects(self,exam_series) :
 		exam_series = ExamSeries(exam_series[0])
@@ -168,11 +172,6 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		for current_calendar in current_class_calendars :
 			if current_calendar.subscriber_key == subscriber_key and current_calendar.calendar_date == date :
 				return current_calendar
-
-
-
-
-
 
 
 	def integrate_teacher_calendars_on_update_exam(self,current_teacher_calendars_list,updated_class_calendars_list,school_key) :
@@ -248,16 +247,6 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		return employee_calendar
 
 
-
-
-
-
-
-
-
-
-
-
 	def check_lesson_plans(self,updated_lesson_plan,expected_lesson_plan_list) :
 		for expected_lesson_plan in expected_lesson_plan_list :
 			if expected_lesson_plan.lesson_plan_key == updated_lesson_plan.lesson_plan_key :
@@ -269,7 +258,7 @@ class CancelExamIntegratorTest(unittest.TestCase):
 				self.assertEqual(updated_lesson_plan.resources,expected_lesson_plan.resources)
 				self.check_topics(updated_lesson_plan.topics,expected_lesson_plan.topics)
 
-		gclogger.info(" <<<-------------------------------- UNIT TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------ ")
+		gclogger.info("-----[ IntegrationTest ] Lessonplan passed ----------------- "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------ ")
 
 	def check_topics(self,updated_lesson_plan_topics,expected_lesson_plan_topics):
 		for index in range(0,len(updated_lesson_plan_topics)) :
@@ -314,7 +303,7 @@ class CancelExamIntegratorTest(unittest.TestCase):
 				self.assertEqual(expected_teacher_calendar.subscriber_key,updated_teacher_calendar.subscriber_key )
 				self.assertEqual(expected_teacher_calendar.subscriber_type,updated_teacher_calendar.subscriber_type )
 				self.check_events_teacher_calendar(expected_teacher_calendar.events,updated_teacher_calendar.events)
-				gclogger.info("-----[UnitTest] teacher test passed ----------------- "+ str(updated_teacher_calendar.calendar_key)+" ------------------------------ ")
+				gclogger.info("-----[ IntegrationTest ] teacher calendar passed ----------------- "+ str(updated_teacher_calendar.calendar_key)+" ------------------------------ ")
 
 
 
@@ -333,7 +322,7 @@ class CancelExamIntegratorTest(unittest.TestCase):
 				self.assertEqual(expected_class_calendar.subscriber_key,updated_class_calendar.subscriber_key )
 				self.assertEqual(expected_class_calendar.subscriber_type,updated_class_calendar.subscriber_type )
 				self.check_events(expected_class_calendar.events,updated_class_calendar.events)
-				gclogger.info("-----[UnitTest] class calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
+				gclogger.info("-----[ IntegrationTest ] class calendar  passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
 
 	def check_events(self,expected_class_calendar_events,generated_class_calendar_events) :
 		for index in range(0,len(expected_class_calendar_events)) :
@@ -398,6 +387,11 @@ class CancelExamIntegratorTest(unittest.TestCase):
 			current_class_calendars = json.load(calendar_list)
 		return current_class_calendars
 
+	def get_exams_list_json(self) :
+		with open('tests/unit/fixtures/add-exams-fixtures/exams_list.json', 'r') as exam_list:
+			exams_list = json.load(exam_list)
+		return exams_list
+
 
 class ExamSeries :
 	def __init__(self, item):
@@ -405,9 +399,7 @@ class ExamSeries :
 			
 			self.classes = []
 			self.code = None
-			self.from_date = None
 			self.name = None
-			self.to_date = None
 		else :
 			try :
 				self.classes = []
@@ -415,23 +407,15 @@ class ExamSeries :
 				for clazz in classes :
 					self.classes.append(Class(clazz))
 			except KeyError as ke:
-				logger.debug('[WARN] - KeyError in ExamSeries - classes not present'.format(str (ke)))
+				gclogger.debug('[WARN] - KeyError in ExamSeries - classes not present'.format(str (ke)))
 			try :
 				self.code = item['code']
 			except KeyError as ke:
-				logger.debug('[WARN] - KeyError in ExamSeries - code not present'.format(str (ke)))
-			try :
-				self.from_date = item['from_date']
-			except KeyError as ke:
-				logger.debug('[WARN] - KeyError in ExamSeries - from_date not present'.format(str (ke)))
-			try :
-				self.to_date = item['to_date']
-			except KeyError as ke:
-				logger.debug('[WARN] - KeyError in ExamSeries - to_date not present'.format(str (ke)))
+				gclogger.debug('[WARN] - KeyError in ExamSeries - code not present'.format(str (ke)))
 			try :
 				self.name = item['name']
 			except KeyError as ke:
-				logger.debug('[WARN] - KeyError in ExamSeries - name not present'.format(str (ke)))
+				gclogger.debug('[WARN] - KeyError in ExamSeries - name not present'.format(str (ke)))
 
 
 class Class :
