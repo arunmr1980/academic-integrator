@@ -14,6 +14,11 @@ class Exam:
             self.series_code = item["series_code"]
             self.exam_key = item["exam_key"]
 
+
+            try:
+                self.status = item["status"]
+            except KeyError as ke:
+                gclogger.debug(' KeyError in Exam -  status not found'.format(str(ke)))
             try:
                 self.academic_year = item["academic_year"]
             except KeyError as ke:

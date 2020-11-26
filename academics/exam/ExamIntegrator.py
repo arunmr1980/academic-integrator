@@ -28,7 +28,8 @@ pp = pprint.PrettyPrinter(indent=4)
 
 def integrate_cancel_exam(exam_series) :
 	exam_series = make_exam_series_objects(exam_series)
-	current_class_calendars_list = get_affected_class_calendars_list(exam_series.classes,exam_series.from_date,exam_series.to_date)
+	exams_list = perticular_exams_for_perticular_classes(exam_series.classes,exam_series.code)
+	current_class_calendars_list = get_affected_class_calendars_list(exams_list)
 	current_lessonplans_list = get_current_lessonplans(exam_series.classes)
 	updated_class_calendars_list = get_updated_class_calendars_list_on_cancel_exam(current_class_calendars_list,exam_series.code)
 	school_key = updated_class_calendars_list[0].institution_key
@@ -38,7 +39,22 @@ def integrate_cancel_exam(exam_series) :
 
 	save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
 
+def perticular_exams_for_perticular_classes(classes,series_code) :
+	exams_list = []
+	for clazz in classes :
+		division = clazz.division
+		class_key = clazz.class_key
+		exams = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
+		exams_of_division = get_exams_of_division(exams,division)
+		exams_list.extend(exams)
+	return exams_list
 
+def get_exams_of_division(exams,division) :
+	exams_of_division = []
+	for exam in exams :
+		if exam.division == division :
+			exams_of_division.append(exam)
+	return exams_of_division
 
 def get_current_lessonplans(classes) :
 	current_lessonplans_list =[]
@@ -50,18 +66,30 @@ def get_current_lessonplans(classes) :
 	return current_lessonplans_list
 
 
-def get_affected_class_calendars_list(classes,from_date,to_date) :
+
+def get_affected_class_calendars_list(exams_list) :
 	current_class_calendars_list = []
-	dates_list = timetable_integrator.get_dates(from_date,to_date)
-	for date in dates_list :	
-		for clazz in classes :
-			division = clazz.division
-			class_key = clazz.class_key
-			subscriber_key = class_key + '-' + division
-			current_class_calendar = calendar_service.get_calendar_by_date_and_key(date,subscriber_key)
-			if current_class_calendar is not None :
-				current_class_calendars_list.append(current_class_calendar)
+	for exam in exams_list :
+		division = exam.division
+		class_key = exam.class_key
+		subscriber_key = class_key + '-' + division
+		date = exam.date_time
+		current_class_calendar = calendar_service.get_calendar_by_date_and_key(date,subscriber_key)
+		if current_class_calendar is not None and check_calendar_already_in_list(current_class_calendars_list,current_class_calendar) == False :
+			current_class_calendars_list.append(current_class_calendar)
 	return current_class_calendars_list
+
+
+def check_calendar_already_in_list(current_class_calendars_list,current_class_calendar) :
+	is_calendar_exist = False
+	for calendar in current_class_calendars_list :
+		if calendar.calendar_key == current_class_calendar.calendar_key :
+			is_calendar_exist = True
+	return is_calendar_exist
+
+
+
+
 
 def make_exam_series_objects(exam_series) :
 		exam_series = ExamSeries(exam_series[0])
@@ -824,23 +852,23 @@ class ExamSeries :
 				for clazz in classes :
 					self.classes.append(Class(clazz))
 			except KeyError as ke:
-				logger.debug('[WARN] - KeyError in ExamSeries - classes not present'.format(str (ke)))
+				gclogger.debug('[WARN] - KeyError in ExamSeries - classes not present'.format(str (ke)))
 			try :
 				self.code = item['code']
 			except KeyError as ke:
-				logger.debug('[WARN] - KeyError in ExamSeries - code not present'.format(str (ke)))
+				gclogger.debug('[WARN] - KeyError in ExamSeries - code not present'.format(str (ke)))
 			try :
 				self.from_date = item['from_date']
 			except KeyError as ke:
-				logger.debug('[WARN] - KeyError in ExamSeries - from_date not present'.format(str (ke)))
+				gclogger.debug('[WARN] - KeyError in ExamSeries - from_date not present'.format(str (ke)))
 			try :
 				self.to_date = item['to_date']
 			except KeyError as ke:
-				logger.debug('[WARN] - KeyError in ExamSeries - to_date not present'.format(str (ke)))
+				gclogger.debug('[WARN] - KeyError in ExamSeries - to_date not present'.format(str (ke)))
 			try :
 				self.name = item['name']
 			except KeyError as ke:
-				logger.debug('[WARN] - KeyError in ExamSeries - name not present'.format(str (ke)))
+				gclogger.debug('[WARN] - KeyError in ExamSeries - name not present'.format(str (ke)))
 
 
 class Class :

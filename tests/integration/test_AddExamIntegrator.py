@@ -96,7 +96,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 		for updated_lessonplan in updated_lessonplan_list :
 			lessonplan_service.delete_lessonplan(updated_lessonplan.lesson_plan_key)
 			gclogger.info("--------------- Test Lesson Plan deleted --------- " + updated_lessonplan.lesson_plan_key + "-----------------")
-	
+		
 
 	def check_lesson_plans(self,updated_lesson_plan,expected_lesson_plan_list) :
 		for expected_lesson_plan in expected_lesson_plan_list :
@@ -109,7 +109,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 				self.assertEqual(updated_lesson_plan.resources,expected_lesson_plan.resources)
 				self.check_topics(updated_lesson_plan.topics,expected_lesson_plan.topics)
 
-		gclogger.info(" <<<--------------------------------  Integration  TES T PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------ ")
+		gclogger.info(" <<<--------------------------------  [Integration Test]  TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------ ")
 
 	def check_topics(self,updated_lesson_plan_topics,expected_lesson_plan_topics):
 		for index in range(0,len(updated_lesson_plan_topics)) :
@@ -154,7 +154,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 				self.assertEqual(expected_teacher_calendar.subscriber_key,updated_teacher_calendar.subscriber_key )
 				self.assertEqual(expected_teacher_calendar.subscriber_type,updated_teacher_calendar.subscriber_type )
 				self.check_events_teacher_calendar(expected_teacher_calendar.events,updated_teacher_calendar.events)
-				gclogger.info("-----[ Integration Test ] teacher test passed ----------------- "+ str(updated_teacher_calendar.calendar_key)+" ------------------------------ ")
+				gclogger.info("-----[ Integration Test ] teacher calendar test passed ----------------- "+ str(updated_teacher_calendar.calendar_key)+" ------------------------------ ")
 
 
 
