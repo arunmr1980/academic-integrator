@@ -69,11 +69,11 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 
 
 
-		
+
 		
 		self.update_class_cals_on_cancel_leave(removed_events,class_cals_to_be_updated,updated_class_calendars_list,timetables)
 		school_key = updated_class_calendars_list[0].institution_key
-		updated_teacher_calendars_list = self.integrate_teacher_calendars_on_cancel_leave(current_teacher_calendars_list,updated_class_calendars_list,'test-school-1')
+		updated_teacher_calendars_list = self.integrate_teacher_calendars_on_cancel_leave(current_teacher_calendars_list,updated_class_calendars_list,school_key)
 		current_lessonplans = self.get_lessonplans_list(events_with_sub_key.keys(),current_lessonplans_list)
 		updated_lessonplans_list = leave_integrator.update_lessonplans_with_adding_events(current_lessonplans,updated_class_calendars_list,removed_events)
 		for updated_teacher_calendar in updated_teacher_calendars_list :

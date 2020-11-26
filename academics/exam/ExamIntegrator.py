@@ -66,6 +66,7 @@ def get_affected_class_calendars_list(classes,from_date,to_date) :
 def make_exam_series_objects(exam_series) :
 		exam_series = ExamSeries(exam_series[0])
 		return exam_series
+		
 def integrate_update_exam_on_calendar(series_code,class_key,division) :
 	subscriber_key = class_key + '-' + division
 	updated_class_calendars_list = []
