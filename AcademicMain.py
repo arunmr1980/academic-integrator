@@ -40,10 +40,15 @@ from academics.calendar.CalendarIntegrator import remove_event_integrate_calenda
 # time_table_key = '00160397692489898347377F45-7AE0-4328-85CF-0925C31408B5-365640440'
 # period_code = "WED-7"
 # integrate_update_period_calendars_and_lessonplans(period_code, time_table_key)
-class_info_key = "00160379057939727066A8F208-16F2-4065-A775-6399511D57E9-286430072"
+class_info_key = "0016039702346273588CD515A7-4FED-4F09-BF79-BCB16CF6F76B56180309"
 division = "A"
-subject_code = "a m01"
-existing_teacher_emp_key = "001588257438134998684DD33C-A964-4911-BBC8-9017E4532083-1550754530"
-new_teacher_emp_key = "001606132387756687C2B22FE8-DF79-4657-8FEA-F22226176AF3-744133722"
+subject_code = "a e01"
+existing_teacher_emp_key = "0015537484840607793B53C924-D830-46A2-9192-FF92F734609A29484778"
+new_teacher_emp_key = "0015967938045448063E9E03C6-B4CE-41FF-8C28-933711C105B1575403656"
 update_subject_teacher_integrator(division,class_info_key,subject_code,existing_teacher_emp_key,new_teacher_emp_key)
+	
+
+
+
+
 	

@@ -70,64 +70,64 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
 			gclogger.info("-----[IntegrationTest] class calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
 		for updated_teacher_calendar in updated_teacher_calendars_list :
-			cal = calendar.Calendar(None)
-			calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+			# cal = calendar.Calendar(None)
+			# calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
 			# pp.pprint(calendar_dict)
 			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
-			gclogger.info("-----[IntegrationTest] teacher calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
+			gclogger.info("-----[IntegrationTest] teacher calendar test passed ----------------- "+ str(updated_teacher_calendar.calendar_key)+" ------------------------------ ")
 
 		self.check_teacher_timetables(updated_previous_teacher_timetable,expected_teacher_timetables_list)
 		gclogger.info("-----[IntegrationTest] teacher timetable test passed ----------------- "+ str(updated_previous_teacher_timetable.time_table_key)+" ------------------------------ ")
 		self.check_teacher_timetables(updated_new_teacher_timetable,expected_teacher_timetables_list)
 		gclogger.info("-----[IntegrationTest] teacher timetable test passed ----------------- "+ str(updated_new_teacher_timetable.time_table_key)+" ------------------------------ ")
 		
-	def get_existing_teacher_timetable(self,existing_teacher_emp_key,current_cls_timetable,subject_code) :
-		existing_teacher_timetable = None
-		existing_teacher_timetable = timetable_service.get_timetable_entry_by_employee(existing_teacher_emp_key,current_cls_timetable.academic_year)
-		gclogger.info(" ----------- Getting existing teacher timetable from DB ----------- " + str(existing_teacher_timetable.time_table_key) + '-----------')
-		if existing_teacher_timetable is None :
-			timetable = self.get_timetable_from_updated_class_timetable(current_class_timetable)
-			timetable = self.reset_periods(timetable,existing_teacher_emp_key,subject_code)
-			existing_teacher_timetable = generate_teacher_timetable(existing_teacher_emp_key,timetable,current_cls_timetable)
-			gclogger.info(" ------------ Generating previous teacher timetable  ------------- "+ str(existing_teacher_timetable.time_table_key) + '-----------')
+	# def get_existing_teacher_timetable(self,existing_teacher_emp_key,current_cls_timetable,subject_code) :
+	# 	existing_teacher_timetable = None
+	# 	existing_teacher_timetable = timetable_service.get_timetable_entry_by_employee(existing_teacher_emp_key,current_cls_timetable.academic_year)
+	# 	gclogger.info(" ----------- Getting existing teacher timetable from DB ----------- " + str(existing_teacher_timetable.time_table_key) + '-----------')
+	# 	if existing_teacher_timetable is None :
+	# 		timetable = self.get_timetable_from_updated_class_timetable(current_class_timetable)
+	# 		timetable = self.reset_periods(timetable,existing_teacher_emp_key,subject_code)
+	# 		existing_teacher_timetable = generate_teacher_timetable(existing_teacher_emp_key,timetable,current_cls_timetable)
+	# 		gclogger.info(" ------------ Generating previous teacher timetable  ------------- "+ str(existing_teacher_timetable.time_table_key) + '-----------')
 
-		return existing_teacher_timetable
-
-
-	def get_new_teacher_timetable(self,new_teacher_emp_key,current_cls_timetable,subject_code) :
-		new_teacher_timetable = None	
-		new_teacher_timetable = timetable_service.get_timetable_entry_by_employee(new_teacher_emp_key,current_cls_timetable.academic_year)
-		gclogger.info(" ----------- Getting new teacher timetable from DB ----------- " + str(new_teacher_timetable.time_table_key) + '-----------')
-		if new_teacher_timetable is None :
-			timetable = self.get_timetable_from_updated_class_timetable(current_cls_timetable)
-			timetable = self.reset_periods(timetable,new_teacher_emp_key,subject_code)
-			new_teacher_timetable = self.generate_teacher_timetable(new_teacher_emp_key,timetable,current_class_timetable)
-			gclogger.info(" ------------ Generating new teacher timetable  ------------- "+ str(new_teacher_timetable.time_table_key) + '-----------')
-		return new_teacher_timetable
+	# 	return existing_teacher_timetable
 
 
-	def reset_periods(self,timetable,updated_employee_key,subject_code) :
-		if hasattr(timetable ,'day_tables') :
-			for day in timetable.day_tables :
-				for period in day.periods :
-					period.class_info_key = None
-					period.division_code = None
-					period.employee_key = None
-					period.subject_key = None
-		return timetable
+	# def get_new_teacher_timetable(self,new_teacher_emp_key,current_cls_timetable,subject_code) :
+	# 	new_teacher_timetable = None	
+	# 	new_teacher_timetable = timetable_service.get_timetable_entry_by_employee(new_teacher_emp_key,current_cls_timetable.academic_year)
+	# 	gclogger.info(" ----------- Getting new teacher timetable from DB ----------- " + str(new_teacher_timetable.time_table_key) + '-----------')
+	# 	if new_teacher_timetable is None :
+	# 		timetable = self.get_timetable_from_updated_class_timetable(current_cls_timetable)
+	# 		timetable = self.reset_periods(timetable,new_teacher_emp_key,subject_code)
+	# 		new_teacher_timetable = self.generate_teacher_timetable(new_teacher_emp_key,timetable,current_class_timetable)
+	# 		gclogger.info(" ------------ Generating new teacher timetable  ------------- "+ str(new_teacher_timetable.time_table_key) + '-----------')
+	# 	return new_teacher_timetable
 
-	def get_timetable_from_updated_class_timetable(self,updated_class_timetable) :
-		if hasattr(updated_class_timetable,'timetable') :
-			return updated_class_timetable.timetable
 
-	def generate_teacher_timetable(self,updated_employee_key,timetable,updated_class_timetable) :
-		teacher_timetable = ttable.TimeTable(None)
-		teacher_timetable.academic_year = updated_class_timetable.academic_year
-		teacher_timetable.employee_key = updated_employee_key
-		teacher_timetable.school_key = updated_class_timetable.school_key
-		teacher_timetable.time_table_key = key.generate_key(16)
-		teacher_timetable.timetable = timetable
-		return teacher_timetable
+	# def reset_periods(self,timetable,updated_employee_key,subject_code) :
+	# 	if hasattr(timetable ,'day_tables') :
+	# 		for day in timetable.day_tables :
+	# 			for period in day.periods :
+	# 				period.class_info_key = None
+	# 				period.division_code = None
+	# 				period.employee_key = None
+	# 				period.subject_key = None
+	# 	return timetable
+
+	# def get_timetable_from_updated_class_timetable(self,updated_class_timetable) :
+	# 	if hasattr(updated_class_timetable,'timetable') :
+	# 		return updated_class_timetable.timetable
+
+	# def generate_teacher_timetable(self,updated_employee_key,timetable,updated_class_timetable) :
+	# 	teacher_timetable = ttable.TimeTable(None)
+	# 	teacher_timetable.academic_year = updated_class_timetable.academic_year
+	# 	teacher_timetable.employee_key = updated_employee_key
+	# 	teacher_timetable.school_key = updated_class_timetable.school_key
+	# 	teacher_timetable.time_table_key = key.generate_key(16)
+	# 	teacher_timetable.timetable = timetable
+	# 	return teacher_timetable
 
 
 
@@ -173,6 +173,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 	def check_teacher_calendars(self,updated_teacher_calendar,expected_teacher_calendars_list) :
 		for expected_teacher_calendar in expected_teacher_calendars_list :
 			if updated_teacher_calendar.calendar_key == expected_teacher_calendar.calendar_key :
+				print(updated_teacher_calendar.calendar_key,"CALENDAR KEYYYYYYYYYYYYY-----------------------------------------")
 				self.assertEqual(expected_teacher_calendar.institution_key,updated_teacher_calendar.institution_key )
 				self.assertEqual(expected_teacher_calendar.calendar_date,updated_teacher_calendar.calendar_date )
 				self.assertEqual(expected_teacher_calendar.subscriber_key,updated_teacher_calendar.subscriber_key )

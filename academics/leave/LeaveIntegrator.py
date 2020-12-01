@@ -31,6 +31,50 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 
+def integrate_lessonplan_on_substitute_teacher(calendar_key,event_code,substitution_emp_key,previous_substitution_emp_key) :
+
+	updated_calendar = calendar_service.get_calendar(calendar_key)
+	subscriber_key = updated_calendar.subscriber_key
+	class_key = subscriber_key[:-2]
+	division = subscriber_key[-1:]
+	current_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key, division)
+	updated_lessonplan = get_updated_lessonplan_on_substitute_teacher(updated_calendar,current_lessonplans_list,event_code)
+	
+	lp = lpnr.LessonPlan(None)
+	updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+	save_lessonplan(updated_lessonplan_dict)
+	
+
+def save_lessonplan(updated_lessonplan_dict) :
+	response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
+	gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated lessonplan uploaded --------- '+str(updated_lessonplan_dict['lesson_plan_key']))
+
+
+def get_updated_lessonplan_on_substitute_teacher(updated_calendar,current_lessonplans_list,event_code) :
+	events_to_be_added = []
+	subscriber_key = updated_calendar.subscriber_key
+	class_key = subscriber_key[:-2]
+	division = subscriber_key[-1:]
+	event_to_be_added = get_event_from_updated_calendar(updated_calendar,event_code)
+	events_to_be_added.append(event_to_be_added)
+	subject_key = calendar_integrator.get_subject_key(event_to_be_added.params)
+	current_lessonplan = get_current_lessonplan(current_lessonplans_list,subject_key,class_key,division)
+	updated_lessonplan = lessonplan_integrator.add_schedules_and_adjust_lessonplan(current_lessonplan,events_to_be_added,updated_calendar)
+	return updated_lessonplan
+
+
+
+def get_current_lessonplan(current_lessonplans_list,subject_key,class_key,division) :
+	for lessonplan in current_lessonplans_list :
+		if lessonplan.subject_code == subject_key and lessonplan.class_key == class_key and lessonplan.division == division :
+			return lessonplan
+
+def get_event_from_updated_calendar(updated_calendar,event_code) :
+	for event in updated_calendar.events :
+		if event.event_code == event_code :
+			return event
+
+
 def integrate_leave_cancel(leave_key) :
 	removed_events = []
 	events_with_sub_key = {}

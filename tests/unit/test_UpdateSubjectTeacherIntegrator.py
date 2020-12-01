@@ -69,31 +69,31 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		for updated_class_timetable in updated_class_timetables_list :
 			t = ttable.TimeTable(None)
 			calendar_dict = t.make_timetable_dict(updated_class_timetable)
-			# pp.pprint(calendar_dict)
-			# print("------------------ UPDATED CLASS TIME TABLE --------------")
+			pp.pprint(calendar_dict)
+			print("------------------ UPDATED CLASS TIME TABLE --------------")
 
 			self.check_class_timetables(updated_class_timetable,expected_class_timetables_list)
 			gclogger.info("-----[UnitTest] class timetable test passed ----------------- "+ str(updated_class_timetable.time_table_key)+" ------------------------------ ")
 		for updated_teacher_timetable in updated_teacher_timetables_list :
 			t = ttable.TimeTable(None)
 			calendar_dict = t.make_timetable_dict(updated_teacher_timetable)
-			# pp.pprint(calendar_dict)
-			# print("------------------ UPDATED TEACHER TIME TABLE --------------")
+			pp.pprint(calendar_dict)
+			print("------------------ UPDATED TEACHER TIME TABLE --------------")
 			self.check_teacher_timetables(updated_teacher_timetable,expected_teacher_timetables_list)
 			gclogger.info("-----[UnitTest] teacher timetable test passed ----------------- "+ str(updated_teacher_timetable.time_table_key)+" ------------------------------ ")
 		for updated_class_calendar in updated_class_calendars_list :
 			cal = calendar.Calendar(None)
 			class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
-			# pp.pprint(class_calendar_dict)
-			# print("------------------ UPDATED CLASS CALENDAR --------------")
+			pp.pprint(class_calendar_dict)
+			print("------------------ UPDATED CLASS CALENDAR --------------")
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
 			gclogger.info("-----[ Unit Test ] Class calendar test passed for ----" + updated_class_calendar.calendar_key + "-----------------")
 
 		for updated_teacher_calendar in updated_teacher_calendars_list :
 			cal = calendar.Calendar(None)
 			teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
-			# pp.pprint(teacher_calendar_dict)
-			# print("------------------ UPDATED TEACHER CALENDAR --------------")
+			pp.pprint(teacher_calendar_dict)
+			print("------------------ UPDATED TEACHER CALENDAR --------------")
 			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
 			gclogger.info("-----[ Unit Test ] Teacher calendar test passed for ----" + updated_teacher_calendar.calendar_key + "-----------------")
 

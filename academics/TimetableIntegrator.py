@@ -98,6 +98,10 @@ def reset_periods(timetable,updated_employee_key,subject_code) :
 				period.division_code = None
 				period.employee_key = None
 				period.subject_key = None
+				if not hasattr(period,'order_index') :
+					period.order_index = int(period.period_code[-1:])
+
+
 	return timetable
 
 def get_timetable_from_updated_class_timetable(updated_class_timetable) :
@@ -124,40 +128,48 @@ def update_both_teacher_calendars(updated_class_calendars_list,existing_teacher_
 		existing_teacher_calendar = calendar_service.get_calendar_by_date_and_key(updated_class_calendar.calendar_date, existing_teacher_timetable.employee_key)
 		updated_existing_teacher_calendar = calendar_integrator.get_updated_teacher_calendar(existing_teacher_calendar,updated_class_calendar_events,updated_class_calendar)
 		updated_teacher_calendars_list.append(updated_existing_teacher_calendar)
-		new_teacher_calendar = calendar_service.get_calendar_by_date_and_key(updated_class_calendar.calendar_date, new_teacher_timetable.employee_key)
+		new_teacher_calendar = get_new_tecaher_calendar(updated_class_calendar,new_teacher_timetable)
 		updated_new_teacher_calendar = calendar_integrator.get_updated_teacher_calendar(new_teacher_calendar,updated_class_calendar_events,updated_class_calendar)
 		updated_teacher_calendars_list.append(updated_new_teacher_calendar)
 	return updated_teacher_calendars_list
+
+def get_new_tecaher_calendar(updated_class_calendar,new_teacher_timetable) :
+	new_teacher_calendar = None
+	new_teacher_calendar = calendar_service.get_calendar_by_date_and_key(updated_class_calendar.calendar_date, new_teacher_timetable.employee_key)
+	if new_teacher_calendar is None :
+		new_teacher_calendar = calendar_integrator.generate_employee_calendar(new_teacher_timetable.employee_key,updated_class_calendar)
+	return new_teacher_calendar
+
 
 def save_updated_calendars_and_timetables(updated_teacher_calendars_list,updated_class_calendars_list,updated_class_timetables_list,updated_teacher_timetables_list) :
 
 	for updated_class_calendar in updated_class_calendars_list :
 		cal = calendar.Calendar(None)
 		class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
-		# pp.pprint(class_calendar_dict)
-		# print("------------------ UPDATED CLASS CALENDAR --------------")
+		pp.pprint(class_calendar_dict)
+		print("------------------ UPDATED CLASS CALENDAR --------------")
 		response = calendar_service.add_or_update_calendar(class_calendar_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated calendar-- ( '+str(class_calendar_dict['subscriber_type'])+' )  uploaded --------- '+str(class_calendar_dict['calendar_key']))
 	for updated_teacher_calendar in updated_teacher_calendars_list :
 		cal = calendar.Calendar(None)
 		teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
-		# pp.pprint(teacher_calendar_dict)
-		# print("------------------ UPDATED TEACHER CALENDAR --------------")
+		pp.pprint(teacher_calendar_dict)
+		print("------------------ UPDATED TEACHER CALENDAR --------------")
 		response = calendar_service.add_or_update_calendar(teacher_calendar_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated calendar-- ( '+str(class_calendar_dict['subscriber_type'])+' )  uploaded --------- '+str(class_calendar_dict['calendar_key']))
 
 	for updated_class_timetable in updated_class_timetables_list :
 		timtable_obj = ttable.TimeTable(None)
 		updated_class_timetable_dict = timtable_obj.make_timetable_dict(updated_class_timetable)
-		# pp.pprint(updated_class_timetable_dict)
-		# print("------------------ UPDATED CLASS TIME TABLE --------------")
+		pp.pprint(updated_class_timetable_dict)
+		print("------------------ UPDATED CLASS TIME TABLE --------------")
 		response = timetable_service.create_timetable(updated_class_timetable_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + '--------- A updated class time table uploaded -------- '+str(updated_class_timetable_dict['time_table_key']))
 	for updated_teacher_timetable in updated_teacher_timetables_list :
 		timtable_obj = ttable.TimeTable(None)
 		updated_teacher_timetable_dict = timtable_obj.make_timetable_dict(updated_teacher_timetable)
-		# pp.pprint(updated_teacher_timetable_dict)
-		# print("------------------ UPDATED TEACHER TIME TABLE --------------")
+		pp.pprint(updated_teacher_timetable_dict)
+		print("------------------ UPDATED TEACHER TIME TABLE --------------")
 		response = timetable_service.create_timetable(updated_teacher_timetable_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + '--------- A updated teacher time table uploaded -------- '+str(updated_teacher_timetable_dict['time_table_key']))
 
@@ -258,7 +270,7 @@ def updated_employee_key(period_list,new_teacher_timetable,new_teacher_emp_key) 
 	return period_list
 
 def add_period_on_new_teacher_timetable(period,new_teacher_timetable) :
-	print(" --------------------NEW TEACHERBTIME TABLE KEY ----------------------",new_teacher_timetable.time_table_key)
+	gclogger.info(" --------------------NEW TEACHERBTIME TABLE KEY ----------------------" + new_teacher_timetable.time_table_key)
 	if hasattr(new_teacher_timetable.timetable,'day_tables') :
 		day_code = period.period_code[:3]
 		for day in new_teacher_timetable.timetable.day_tables :
@@ -270,7 +282,6 @@ def add_period_on_new_teacher_timetable(period,new_teacher_timetable) :
 def add_or_update_period(existing_periods,period) :
 	order_index = int(period.order_index)
 	for existing_period in existing_periods :
-		print("---------------------- PERIOD CDE ---------------------",existing_period.period_code)
 		if existing_period.order_index == order_index :
 			existing_periods[order_index-1] = period
 
