@@ -31,36 +31,50 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 
-def integrate_lessonplan_on_substitute_teacher(calendar_key,event_code,substitution_emp_key,previous_substitution_emp_key) :
+def integrate_lessonplan_on_substitute_teacher(calendar_key,event_code,substitution_emp_key,previous_substitution_emp_key,previous_substitution_subject_code) :
 
 	updated_calendar = calendar_service.get_calendar(calendar_key)
 	subscriber_key = updated_calendar.subscriber_key
 	class_key = subscriber_key[:-2]
 	division = subscriber_key[-1:]
 	current_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key, division)
-	updated_lessonplan = get_updated_lessonplan_on_substitute_teacher(updated_calendar,current_lessonplans_list,event_code)
-	
-	lp = lpnr.LessonPlan(None)
-	updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-	save_lessonplan(updated_lessonplan_dict)
+	updated_lessonplans_list = get_updated_lessonplans_on_substitute_teacher(updated_calendar,current_lessonplans_list,event_code,previous_substitution_subject_code)
+
+	save_lessonplans(updated_lessonplans_list)
 	
 
-def save_lessonplan(updated_lessonplan_dict) :
-	response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-	gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated lessonplan uploaded --------- '+str(updated_lessonplan_dict['lesson_plan_key']))
+def save_lessonplans(updated_lessonplans_list) :
+	for updated_lessonplan in updated_lessonplans_list :		
+		lp = lpnr.LessonPlan(None)
+		updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+		response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated lessonplan uploaded --------- '+str(updated_lessonplan_dict['lesson_plan_key']))
 
 
-def get_updated_lessonplan_on_substitute_teacher(updated_calendar,current_lessonplans_list,event_code) :
+def get_updated_lessonplans_on_substitute_teacher(updated_calendar,current_lessonplans_list,event_code,previous_substitution_subject_code) :
+	updated_lessonplans_list = []
+	if previous_substitution_subject_code is not None :
+		subscriber_key = updated_calendar.subscriber_key
+		class_key = subscriber_key[:-2]
+		division = subscriber_key[-1:]
+		current_lessonplan = get_current_lessonplan(current_lessonplans_list,previous_substitution_subject_code,class_key,division)
+		event_to_be_removed = get_event_from_updated_calendar(updated_calendar,event_code)
+		schedules_to_be_removed = []
+		schedule_to_be_removed = lessonplan_integrator.create_schedule(event_to_be_removed,updated_calendar)
+		schedules_to_be_removed.append(schedule_to_be_removed)
+		updated_lessonplan = get_removed_event_updated_lessonplan_(current_lessonplan,schedules_to_be_removed)
+		updated_lessonplans_list.append(updated_lessonplan)
 	events_to_be_added = []
 	subscriber_key = updated_calendar.subscriber_key
 	class_key = subscriber_key[:-2]
 	division = subscriber_key[-1:]
 	event_to_be_added = get_event_from_updated_calendar(updated_calendar,event_code)
 	events_to_be_added.append(event_to_be_added)
-	subject_key = calendar_integrator.get_subject_key(event_to_be_added)
+	subject_key = calendar_integrator.get_subject_key(event_to_be_added.params)
 	current_lessonplan = get_current_lessonplan(current_lessonplans_list,subject_key,class_key,division)
 	updated_lessonplan = lessonplan_integrator.add_schedules_and_adjust_lessonplan(current_lessonplan,events_to_be_added,updated_calendar)
-	return updated_lessonplan
+	updated_lessonplans_list.append(updated_lessonplan)
+	return updated_lessonplans_list
 
 
 

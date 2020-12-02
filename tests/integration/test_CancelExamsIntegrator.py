@@ -49,7 +49,7 @@ class CancelExamIntegratorTest(unittest.TestCase):
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Exan uploaded --------- '+str(exam['exam_key']))
 
 	def test_calendars_and_lessonplan(self) :
-		
+		expected_teacher_calendar_dict = {}
 		exam_series = [
 		      {
 		        "classes": [
@@ -69,6 +69,12 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		exam_integrator.integrate_cancel_exam(exam_series)
 		expected_class_calendars_list = self.get_expected_class_calendars_list()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
+
+		for teacher_calendar in expected_teacher_calendars_list :
+			calendar_date = teacher_calendar.calendar_date
+			subscriber_key = teacher_calendar.subscriber_key
+			expected_teacher_calendar_dict[calendar_date + subscriber_key] = teacher_calendar
+
 		expected_lessonplans_list = self.get_expected_lessonplans_list()
 
 		exam_series = exam_integrator.make_exam_series_objects(exam_series)
@@ -94,11 +100,19 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		
 
 
-		for updated_teacher_calendar in updated_teacher_calendars_list :
+		for teacher_calendar in updated_teacher_calendars_list :
 			cal = calendar.Calendar(None)
-			calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+			calendar_dict = cal.make_calendar_dict(teacher_calendar)
 			pp.pprint(calendar_dict)
-			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
+			teacher_calendar_key = teacher_calendar.calendar_date + teacher_calendar.subscriber_key
+			expected_teacher_calendar = expected_teacher_calendar_dict[teacher_calendar_key]
+
+			self.assertEqual(expected_teacher_calendar.institution_key,teacher_calendar.institution_key )
+			self.assertEqual(expected_teacher_calendar.calendar_date,teacher_calendar.calendar_date )
+			self.assertEqual(expected_teacher_calendar.subscriber_key,teacher_calendar.subscriber_key )
+			self.assertEqual(expected_teacher_calendar.subscriber_type,teacher_calendar.subscriber_type )
+			# self.check_events_teacher_calendar(expected_teacher_calendar.events,teacher_calendar.events)
+			gclogger.info("-----[ IntegrationTest ] teacher calendar test passed ----------------- "+ str(teacher_calendar.calendar_key)+" ------------------------------ ")
 			
 
 

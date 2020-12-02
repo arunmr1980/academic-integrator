@@ -19,10 +19,15 @@ pp = pprint.PrettyPrinter(indent=4)
 class CancelExamIntegratorTest(unittest.TestCase):
 
 	def test_calendars_and_lessonplan(self) :
+		expected_teacher_calendar_dict = {}
 		academic_configuration = self.get_academic_configuration()
 		timetables = self.get_timetables_list()
 		expected_class_calendars_list = self.get_expected_class_calendars_list()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
+		for teacher_calendar in expected_teacher_calendars_list :
+			calendar_date = teacher_calendar.calendar_date
+			subscriber_key = teacher_calendar.subscriber_key
+			expected_teacher_calendar_dict[calendar_date + subscriber_key] = teacher_calendar
 		expected_lessonplans_list = self.get_expected_lessonplans_list()
 		exam_series = [
 		      {
@@ -51,8 +56,8 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		current_class_calendars_list = self.get_affected_class_calendars_list(current_class_calendars,exams_list)
 		updated_class_calendars_list = self.get_updated_class_calendars_list_on_cancel_exam(current_class_calendars_list,exam_series.code,timetables,academic_configuration)
 		school_key = academic_configuration.school_key
-		updated_teacher_calendars_list = self.integrate_teacher_calendars_on_update_exam(current_teacher_calendars_list,current_class_calendars_list,school_key)
-		updated_lessonplans_list = exam_integrator.integrate_lessonplans_on_update_exams(current_lessonplans_list,updated_class_calendars_list)
+		updated_teacher_calendars_list = self.integrate_teacher_calendars_on_update_exam_and_cancel_exam(current_teacher_calendars_list,current_class_calendars_list,school_key)
+		updated_lessonplans_list = exam_integrator.integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_list,updated_class_calendars_list)
 
 		for updated_class_calendar in updated_class_calendars_list :
 			cal = calendar.Calendar(None)
@@ -61,12 +66,17 @@ class CancelExamIntegratorTest(unittest.TestCase):
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
 			
 
-		for updated_teacher_calendar in updated_teacher_calendars_list :
-			cal = calendar.Calendar(None)
-			calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
-			pp.pprint(calendar_dict)
-			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
-			
+		
+		for teacher_calendar in updated_teacher_calendars_list :
+			teacher_calendar_key = teacher_calendar.calendar_date + teacher_calendar.subscriber_key
+			expected_teacher_calendar = expected_teacher_calendar_dict[teacher_calendar_key]
+
+			self.assertEqual(expected_teacher_calendar.institution_key,teacher_calendar.institution_key )
+			self.assertEqual(expected_teacher_calendar.calendar_date,teacher_calendar.calendar_date )
+			self.assertEqual(expected_teacher_calendar.subscriber_key,teacher_calendar.subscriber_key )
+			self.assertEqual(expected_teacher_calendar.subscriber_type,teacher_calendar.subscriber_type )
+			# self.check_events_teacher_calendar(expected_teacher_calendar.events,teacher_calendar.events)
+			gclogger.info("-----[UnitTest] teacher calendar test passed ----------------- "+ str(teacher_calendar.calendar_key)+" ------------------------------ ")
 
 
 		for updated_lessonplan in updated_lessonplans_list :
@@ -146,7 +156,7 @@ class CancelExamIntegratorTest(unittest.TestCase):
 
 
 
-	def integrate_teacher_calendars_on_update_exam(self,current_teacher_calendars_list,updated_class_calendars_list,school_key) :
+	def integrate_teacher_calendars_on_update_exam_and_cancel_exam(self,current_teacher_calendars_list,updated_class_calendars_list,school_key) :
 			updated_teacher_calendars_list =[]
 			for updated_class_calendar in updated_class_calendars_list :
 				for event in updated_class_calendar.events :

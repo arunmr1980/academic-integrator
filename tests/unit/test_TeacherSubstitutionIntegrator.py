@@ -26,18 +26,23 @@ class SubstituteTeacherIntegratorTest(unittest.TestCase):
 	def test_lessonplans(self) :		
 		calendar_key = "test-key-2"
 		event_code =  "event-2"
-		substitution_emp_key = "employee-2"
-		previous_substitution_emp_key = "employee-1"
+		substitution_emp_key = "employee-3"
+		previous_substitution_emp_key = "employee-2"
+		previous_substitution_subject_code = "bio2"
+
 		current_class_calendars = self.get_current_class_calendars_list()
 		current_lessonplans_list = self.get_current_lessonplans_list()
 		expected_lessonplans_list = self.get_expected_lessonplans_list()
 		updated_calendar = self.get_updated_class_calendar(current_class_calendars,calendar_key)
-		updated_lessonplan = leave_integrator.get_updated_lessonplan_on_substitute_teacher(updated_calendar,current_lessonplans_list,event_code)
+		updated_lessonplans_list = leave_integrator.get_updated_lessonplans_on_substitute_teacher(updated_calendar,current_lessonplans_list,event_code,previous_substitution_subject_code)
 		
-		lp = lpnr.LessonPlan(None)
-		updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-		# pp.pprint(updated_lessonplan_dict)
-		self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
+
+
+		for updated_lessonplan in updated_lessonplans_list :
+			lp = lpnr.LessonPlan(None)
+			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+			pp.pprint(updated_lessonplan_dict)
+			self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
 		
 
 	

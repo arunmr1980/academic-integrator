@@ -40,10 +40,11 @@ class SubstituteTeacherIntegratorTest(unittest.TestCase):
 	def test_lessonplans(self) :		
 		calendar_key = "test-key-2"
 		event_code =  "event-2"
-		substitution_emp_key = "employee-2"
-		previous_substitution_emp_key = "employee-1"
+		substitution_emp_key = "employee-3"
+		previous_substitution_emp_key = "employee-2"
+		previous_substitution_subject_code = "bio2"
 	
-		leave_integrator.integrate_lessonplan_on_substitute_teacher(calendar_key,event_code,substitution_emp_key,previous_substitution_emp_key)
+		leave_integrator.integrate_lessonplan_on_substitute_teacher(calendar_key,event_code,substitution_emp_key,previous_substitution_emp_key,previous_substitution_subject_code)
 		expected_lessonplans_list = self.get_expected_lessonplans_list()
 		updated_calendar = calendar_service.get_calendar(calendar_key)
 		subscriber_key = updated_calendar.subscriber_key
@@ -53,7 +54,7 @@ class SubstituteTeacherIntegratorTest(unittest.TestCase):
 		for updated_lessonplan in updated_lessonplan_list :		
 			lp = lpnr.LessonPlan(None)
 			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-			# pp.pprint(updated_lessonplan_dict)
+			pp.pprint(updated_lessonplan_dict)
 			self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
 		
 

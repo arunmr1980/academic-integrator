@@ -28,25 +28,25 @@ pp = pprint.PrettyPrinter(indent=4)
 
 def integrate_cancel_exam(exam_series) :
 	exam_series = make_exam_series_objects(exam_series)
-	exams_list = perticular_exams_for_perticular_classes(exam_series.classes,exam_series.code)
-	current_class_calendars_list = get_affected_class_calendars_list(exams_list)
-	current_lessonplans_list = get_current_lessonplans(exam_series.classes)
-	updated_class_calendars_list = get_updated_class_calendars_list_on_cancel_exam(current_class_calendars_list,exam_series.code)
-	school_key = updated_class_calendars_list[0].institution_key
-	current_teacher_calendars_list = get_current_teacher_calendars_from_current_class_calendars(current_class_calendars_list,school_key)
-	updated_teacher_calendars_list = integrate_teacher_calendars_on_update_exam(current_teacher_calendars_list,current_class_calendars_list,school_key)
-	updated_lessonplans_list = integrate_lessonplans_on_update_exams(current_lessonplans_list,current_class_calendars_list)
+	for clazz in exam_series.classes :	
+		exams_list = perticular_exams_for_perticular_classes(clazz,exam_series.code)
+		current_class_calendars_list = get_affected_class_calendars_list(exams_list)
+		if len(current_class_calendars_list) > 0 :
+			current_lessonplans_list = get_current_lessonplans(exam_series.classes)
+			updated_class_calendars_list = get_updated_class_calendars_list_on_cancel_exam(current_class_calendars_list,exam_series.code)
+			school_key = current_class_calendars_list[0].institution_key
+			current_teacher_calendars_list = get_current_teacher_calendars_from_current_class_calendars(current_class_calendars_list,school_key)
+			updated_teacher_calendars_list = integrate_teacher_calendars_on_update_exam_and_cancel_exam(current_teacher_calendars_list,updated_class_calendars_list,school_key)
+			updated_lessonplans_list = integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_list,updated_class_calendars_list)
+			save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
 
-	save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
-
-def perticular_exams_for_perticular_classes(classes,series_code) :
+def perticular_exams_for_perticular_classes(clazz,series_code) :
 	exams_list = []
-	for clazz in classes :
-		division = clazz.division
-		class_key = clazz.class_key
-		exams = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
-		exams_of_division = get_exams_of_division(exams,division)
-		exams_list.extend(exams)
+	division = clazz.division
+	class_key = clazz.class_key
+	exams = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
+	exams_of_division = get_exams_of_division(exams,division)
+	exams_list.extend(exams)
 	return exams_list
 
 def get_exams_of_division(exams,division) :
@@ -113,11 +113,11 @@ def integrate_update_exam_on_calendar(series_code,class_key,division) :
 	current_teacher_calendars_list = get_current_teacher_calendars_from_current_class_calendars(current_class_calendars_list,school_key)
 	current_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 	current_class_calendars_list = integrate_class_calendar_on_update_exams(academic_configuration,timetable,exams_list,current_class_calendars_list)
-	current_teacher_calendars_list = integrate_teacher_calendars_on_update_exam(current_teacher_calendars_list,current_class_calendars_list,school_key)
+	current_teacher_calendars_list = integrate_teacher_calendars_on_update_exam_and_cancel_exam(current_teacher_calendars_list,current_class_calendars_list,school_key)
 
 
 
-	current_lessonplans_list = integrate_lessonplans_on_update_exams(current_lessonplans_list,current_class_calendars_list)
+	current_lessonplans_list = integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_list,current_class_calendars_list)
 	updated_class_calendars_list = integrate_class_calendar_on_add_exams(academic_configuration,timetable,updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events)
 
 	integrate_teacher_cal_and_lessonplan_on_add_exam(
@@ -203,7 +203,7 @@ def check_calendar_already_exist(current_class_calendar,current_class_calendars_
 		if current_class_calendar.calendar_key == calendar.calendar_key :
 			is_exist = True 
 	return is_exist
-def integrate_teacher_calendars_on_update_exam(current_teacher_calendars_list,updated_class_calendars_list,school_key) :
+def integrate_teacher_calendars_on_update_exam_and_cancel_exam(current_teacher_calendars_list,updated_class_calendars_list,school_key) :
 	updated_teacher_calendars_list =[]
 	for updated_class_calendar in updated_class_calendars_list :
 		for event in updated_class_calendar.events :
@@ -380,6 +380,7 @@ def get_updated_class_calendars_on_cancel_exam(academic_configuration,timetable,
 	current_class_calendar = get_previous_events_and_exam_events(academic_configuration,timetable,current_class_calendar,periods_to_be_added,exam_series_code,exam_events_to_be_removed)
 	updated_class_calendar = remove_exam_events_of_series_code(exam_events_to_be_removed,current_class_calendar,exam_series_code)
 	updated_class_calendar = get_class_session_events_added_calendar(academic_configuration,timetable,periods_to_be_added,updated_class_calendar)
+	
 	updated_class_calendars_list.append(updated_class_calendar)
 
 def remove_exam_events_of_series_code(exam_events_to_be_removed,current_class_calendar,exam_series_code) :
@@ -467,7 +468,7 @@ def integrate_teacher_cal_and_lessonplan_on_add_exam(updated_class_calendars_lis
 	updated_teacher_calendars_list.extend(updated_teacher_calendars)
 	update_current_lessonplans(updated_class_calendars_list,current_lessonplans_list,updated_lessonplans_list,removed_events)
 
-def integrate_lessonplans_on_update_exams(current_lessonplans_list,current_class_calendars_list) :
+def integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_list,current_class_calendars_list) :
 	updated_lessonplans = []
 	for current_lessonplan in current_lessonplans_list :
 		current_lessonplan = remove_all_existing_schedules(current_lessonplan)

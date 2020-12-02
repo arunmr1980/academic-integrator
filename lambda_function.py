@@ -1,7 +1,7 @@
 import json
 import boto3
 
-from academics.TimetableIntegrator import generate_and_save_calenders
+from academics.TimetableIntegrator import generate_and_save_calenders,update_subject_teacher_integrator
 from academics.calendar.CalendarLessonPlanIntegrator import calendars_lesson_plan_integration, calendars_lesson_plan_integration_from_timetable
 from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars, integrate_update_period_calendars_and_lessonplans
 import academics.logger.GCLogger as logger
@@ -25,6 +25,8 @@ def lambda_handler(event, context):
               remove_event_calendar_lessonplan_integration(request)
           if request_type == 'PERIOD_UPDATE_SYNC':
               update_period_calendar_lessonplan_integration(request)
+          if request_type == 'UPDATE_SUBJECT_TEACHER_SYNC':
+              update_subject_teacher_integration(request)
        except:
           logger.info("Unexpected error ...")
           send_response(400,"unexpected error")
@@ -104,6 +106,26 @@ def calendar_to_lessonplan_integration(request):
        except:
           logger.info("Unexpected error ...")
           send_response(400,"unexpected error")
+
+
+def update_subject_teacher_integration(request):
+       try:
+          class_info_key = request['class_info_key']
+          division = request['division']
+          subject_code = request['subject_code']
+          existing_teacher_emp_key = request['existing_teacher_emp_key']
+          new_teacher_emp_key = request['new_teacher_emp_key']
+          logger.info('Processing for existing emp_key  ' + existing_teacher_emp_key + 'and new teacher emp_key ' + new_teacher_emp_key )
+          update_subject_teacher_integrator(division,class_info_key,subject_code,existing_teacher_emp_key,new_teacher_emp_key)
+          send_response(200,"success")
+       except KeyError as ke:
+          logger.info("Error in input. class_info_key ,division,subject_code,existing_teacher_emp_key, new_teacher_emp_key not present")
+          send_response(400,"input validation error")
+       except:
+          logger.info("Unexpected error ...")
+          send_response(400,"unexpected error")
+
+
 
 
 def send_response(status_code, message):
