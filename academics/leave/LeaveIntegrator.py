@@ -57,7 +57,7 @@ def get_updated_lessonplan_on_substitute_teacher(updated_calendar,current_lesson
 	division = subscriber_key[-1:]
 	event_to_be_added = get_event_from_updated_calendar(updated_calendar,event_code)
 	events_to_be_added.append(event_to_be_added)
-	subject_key = calendar_integrator.get_subject_key(event_to_be_added.params)
+	subject_key = calendar_integrator.get_subject_key(event_to_be_added)
 	current_lessonplan = get_current_lessonplan(current_lessonplans_list,subject_key,class_key,division)
 	updated_lessonplan = lessonplan_integrator.add_schedules_and_adjust_lessonplan(current_lessonplan,events_to_be_added,updated_calendar)
 	return updated_lessonplan

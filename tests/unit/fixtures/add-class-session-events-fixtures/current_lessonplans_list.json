@@ -1,0 +1,202 @@
+[
+	{
+		"class_key":"8B1B22E72AE",
+		"division":"A",
+		"lesson_plan_key":"test-lessonplan-1",
+		"sessions":[
+			
+		],
+		"resources":[
+			
+		],
+		"subject_code":"bio1",
+		"topics":[
+			{
+				"code":"TOP3x0jkt-bio1",
+				"name":"chapter 1",
+				"order_index":1,
+				"topics":[
+					{
+						"assignments":[
+							
+						],
+						"code":"CHAP1-TOP1",
+						"description":"edited",
+						"name":"topic 1",
+						"order_index":1,
+						"resources":[
+							
+						],
+						"sessions":[
+							{
+								"code":"SESgy0567",
+								"completion_datetime":"NA",
+								"completion_status":false,
+								"name":"Session 1",
+								"order_index":1,
+								"schedule":{
+									"calendar_key":"test-key-2",
+									"event_code":"event-2",
+									"start_time":"2020-08-04T10:00:00",
+									"end_time":"2020-08-04T10:40:00"
+								},
+								"resources":[
+									
+								]
+							},
+							{
+								"code":"SESyy555",
+								"completion_datetime":"NA",
+								"completion_status":false,
+								"name":"Session 2",
+								"order_index":2,
+								"schedule":{
+									"calendar_key":"test-key-3",
+									"event_code":"event-7",
+									"start_time":"2020-08-10T11:30:00",
+									"end_time":"2020-08-10T12:10:00"
+								},
+								"resources":[
+									
+								]
+							}
+							
+						]
+					}
+				]
+			}
+		]
+	},
+	{
+		"class_key":"8B1B22E72AE",
+		"division":"A",
+		"lesson_plan_key":"test-lessonplan-2",
+		"sessions":[
+		],
+		"resources":[
+			
+		],
+		"subject_code":"bio2",
+		"topics":[
+			{
+				"code":"TOP3x0jkt-bio2",
+				"name":"chapter 2",
+				"order_index":1,
+				"topics":[
+					{
+						"assignments":[
+							
+						],
+						"code":"CHAP2-TOP1",
+						"description":"edited",
+						"name":"topic 1",
+						"order_index":1,
+						"resources":[
+							
+						],
+						"sessions":[
+							{
+								"code":"SESgy087",
+								"completion_datetime":"NA",
+								"completion_status":false,
+								"name":"Session 1",
+								"order_index":1,
+								"schedule":{
+									"calendar_key":"test-key-2",
+									"event_code":"event-3",
+									"start_time":"2020-08-04T10:40:00",
+									"end_time":"2020-08-04T11:20:00"
+								},
+								"resources":[
+									
+								]
+							},
+							{
+								"code":"SESyy178",
+								"completion_datetime":"NA",
+								"completion_status":false,
+								"name":"Session 2",
+								"order_index":2,
+								"schedule":{
+									"calendar_key":"test-key-3",
+									"event_code":"event-5",
+									"start_time":"2020-08-10T10:00:00",
+									"end_time":"2020-08-10T10:40:00"
+								},
+								"resources":[
+									
+								]
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	{
+		"class_key":"8B1B22E72AE",
+		"division":"A",
+		"lesson_plan_key":"test-lessonplan-3",
+		"resources":[
+			
+		],
+		"sessions":[
+		],
+		"subject_code":"bio3",
+		"topics":[
+			{
+				"code":"TOP3x0jkt-bio2",
+				"name":"chapter 2",
+				"order_index":1,
+				"topics":[
+					{
+						"assignments":[
+							
+						],
+						"code":"CHAP2-TOP1",
+						"description":"edited",
+						"name":"topic 1",
+						"order_index":1,
+						"resources":[
+							
+						],
+						"sessions":[
+							{
+								"code":"SESgy087",
+								"completion_datetime":"NA",
+								"completion_status":false,
+								"name":"Session 1",
+								"order_index":1,
+								"schedule":{
+									"calendar_key":"test-key-2",
+									"event_code":"event-4",
+									"start_time":"2020-08-04T11:30:00",
+									"end_time":"2020-08-04T12:10:00"
+								},
+								"resources":[
+									
+								]
+							},
+							{
+								"code":"SESyy178",
+								"completion_datetime":"NA",
+								"completion_status":false,
+								"name":"Session 2",
+								"order_index":1,
+								"schedule":{
+									"calendar_key":"test-key-3",
+									"event_code":"event-6",
+									"start_time":"2020-08-10T10:40:00",
+									"end_time":"2020-08-10T11:20:00"
+								},
+								"resources":[
+									
+								]
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+]

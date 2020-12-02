@@ -13,6 +13,12 @@ import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 
+
+
+def integrate_add_class_session_events(event_to_add,calendar_key,current_lessonplan) :
+	print(event_to_add,calendar_key,current_lessonplan)
+
+
 def is_subject_code_exist_in_event(params,subject_code) :
 	for param in params :
 		if param.key == 'subject_key' and param.value == subject_code:
