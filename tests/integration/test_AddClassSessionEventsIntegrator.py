@@ -19,11 +19,21 @@ pp = pprint.PrettyPrinter(indent=4)
 
 class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 
+	def setUp(self) :
+		updated_class_calendars = self.get_updated_class_calendars_list_json()
+		for updated_calendar in updated_class_calendars :
+			response = calendar_service.add_or_update_calendar(updated_calendar)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Updated class calendar uploaded --------- '+str(updated_calendar['calendar_key']))
+
+
+		current_lessonplans = self.get_current_lessonplans_from_json()
+		for current_lessonplan in current_lessonplans :
+			response = lessonplan_service.create_lessonplan(current_lessonplan)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + '------- Existing lesson plan uploaded -------- '+str(current_lessonplan['lesson_plan_key']))
+		
 
 	def test_lessonplans(self) :
-		updated_class_calendars_list = self.get_updated_class_calendars_list()
-		current_lessonplans_list = self.get_current_lessonplans_list()
-		expected_lessonplans_list = self.get_expected_lessonplan_list()
+		expected_lessonplans_list = self.get_expected_lessonplans_list()
 		calendar_key = 'test-key-3'
 		events = [
 			{
@@ -33,19 +43,36 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		    	"event_code": "event-9" 
 		    }
 		]
-		updated_calendar = self.get_updated_class_calendar(updated_class_calendars_list,calendar_key)
+		lessonplan_integrator.integrate_add_class_session_events(calendar_key,events)
+		updated_calendar = calendar_service.get_calendar(calendar_key)
 		subscriber_key = updated_calendar.subscriber_key
 		class_key = subscriber_key[:-2]
 		division = subscriber_key[-1:]
-		events_to_be_added = self.get_event_code_list(events,calendar_key,updated_calendar)
-		for event in events_to_be_added :
-			subject_key = timetable_integrator.get_subject_code(event)
-			current_lessonplan = leave_integrator.get_current_lessonplan(current_lessonplans_list,subject_key,class_key,division)
-			updated_lessonplan = lessonplan_integrator.update_lessonplan_on_add_class_session_events(event,updated_calendar,current_lessonplan)
+		updated_lessonplan_list = lessonplan_service.get_lesson_plan_list(class_key, division)
+		for updated_lessonplan in updated_lessonplan_list :		
 			lp = lpnr.LessonPlan(None)
 			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 			pp.pprint(updated_lessonplan_dict)
 			self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
+
+	def tearDown(self) :
+		calendar_key = 'test-key-3'
+		updated_calendar = calendar_service.get_calendar(calendar_key)
+		subscriber_key = updated_calendar.subscriber_key
+		class_key = subscriber_key[:-2]
+		division = subscriber_key[-1:]
+		updated_lessonplan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+		for updated_lessonplan in updated_lessonplan_list :
+			lessonplan_service.delete_lessonplan(updated_lessonplan.lesson_plan_key)
+			gclogger.info("--------------- Test Lesson Plan deleted --------- " + updated_lessonplan.lesson_plan_key + "-----------------")
+
+		updated_class_calendars_list = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
+		for updated_class_calendar in updated_class_calendars_list :
+			calendar_service.delete_calendar(updated_class_calendar.calendar_key)
+			gclogger.info("--------------- A updated class calendar deleted " + updated_class_calendar.calendar_key+" -----------------")
+
+		
+	
 
 
 
@@ -76,7 +103,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 				self.assertEqual(updated_lesson_plan.resources,expected_lesson_plan.resources)
 				self.check_topics(updated_lesson_plan.topics,expected_lesson_plan.topics)
 
-		gclogger.info(" --------------------------------  [Unit Test]  TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------ ")
+		gclogger.info(" --------------------------------  [Integration Test]  TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------ ")
 
 	def check_topics(self,updated_lesson_plan_topics,expected_lesson_plan_topics):
 		for index in range(0,len(updated_lesson_plan_topics)) :
@@ -113,6 +140,16 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		self.assertEqual(updated_lesson_plan_shedule.start_time,expected_lesson_plan_shedule.start_time)
 		self.assertEqual(updated_lesson_plan_shedule.end_time,expected_lesson_plan_shedule.end_time)
 
+	def get_updated_class_calendars_list_json(self) :
+		with open('tests/unit/fixtures/add-class-session-events-fixtures/updated_class_calendars_list.json', 'r') as calendar_list:
+			updated_class_calendars = json.load(calendar_list)
+		return updated_class_calendars
+
+	def get_current_lessonplans_from_json(self) :
+		with open('tests/unit/fixtures/add-class-session-events-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
+			current_lessonplans = json.load(lessonplans_list)
+		return current_lessonplans
+
 	def get_current_lessonplans_list(self) :
 		current_lessonplans = []
 		with open('tests/unit/fixtures/add-class-session-events-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
@@ -129,7 +166,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			updated_class_calendars.append(calendar.Calendar(class_cal))
 		return updated_class_calendars
 
-	def get_expected_lessonplan_list(self) :
+	def get_expected_lessonplans_list(self) :
 		expected_lesson_plan_list =[]
 		with open('tests/unit/fixtures/add-class-session-events-fixtures/expected_lessonplans_list.json', 'r') as lesson_plan_list:
 			expected_lessonplan_json_list = json.load(lesson_plan_list)

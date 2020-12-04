@@ -7,16 +7,56 @@ import academics.TimetableIntegrator as timetable_integrator
 import academics.school.SchoolDBService as school_service
 import academics.lessonplan.LessonPlan as lnpr
 import academics.academic.AcademicDBService as academic_service
+import academics.leave.LeaveIntegrator as leave_integrator
 import academics.timetable.KeyGeneration as key
 import copy
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 
+def integrate_add_class_session_events(calendar_key,events) :
+	updated_lessonplans_list = []
+	updated_calendar = calendar_service.get_calendar(calendar_key)
+	subscriber_key = updated_calendar.subscriber_key
+	class_key = subscriber_key[:-2]
+	division = subscriber_key[-1:]
+	current_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key, division)
+	events_to_be_added = get_event_code_list(events,calendar_key,updated_calendar)
+	for event in events_to_be_added :
+		subject_key = timetable_integrator.get_subject_code(event)
+		current_lessonplan = leave_integrator.get_current_lessonplan(current_lessonplans_list,subject_key,class_key,division)
+		updated_lessonplan = update_lessonplan_on_add_class_session_events(event,updated_calendar,current_lessonplan)
+		updated_lessonplans_list.append(updated_lessonplan)
 
+	save_lessonplans(updated_lessonplans_list)
+	
 
-def integrate_add_class_session_events(event_to_add,calendar_key,current_lessonplan) :
-	print(event_to_add,calendar_key,current_lessonplan)
+def save_lessonplans(updated_lessonplans_list) :
+	for updated_lessonplan in updated_lessonplans_list :		
+		lp = lnpr.LessonPlan(None)
+		updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+		response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated lessonplan uploaded --------- '+str(updated_lessonplan_dict['lesson_plan_key']))
+		
+
+def get_event_code_list(events,calendar_key,updated_calendar) :
+	events_to_be_added = []
+	for event in events :
+		updated_event = get_added_event(event['event_code'],updated_calendar)
+		events_to_be_added.append(updated_event)
+	return events_to_be_added
+
+def get_added_event(event_code,updated_calendar) :
+	for event in updated_calendar.events :
+		if event.event_code == event_code :
+			return event 
+
+def update_lessonplan_on_add_class_session_events(event_to_add,updated_calendar,current_lessonplan) :
+	events_to_add = []
+	events_to_add.append(event_to_add)
+	updated_lessonplan = add_schedules_and_adjust_lessonplan(current_lessonplan,events_to_add,updated_calendar)
+	return updated_lessonplan
+	
 
 
 def is_subject_code_exist_in_event(params,subject_code) :
@@ -143,8 +183,7 @@ def get_current_class_calendars_with_day_code(day_code,current_current_class_cal
 			current_class_calendars_with_day_code.append(current_class_calendar)
 	return current_class_calendars_with_day_code
 
-def list_difference(list1,list2):
-	return (list(list(set(list1) - set(list2)) + list(set(list2) - set(list1))))
+
 
 def get_subject_key_from_current_class_calendars(current_class_calendar_event_list) :
 	subject_key_list = get_subject_key_list(current_class_calendar_event_list)
