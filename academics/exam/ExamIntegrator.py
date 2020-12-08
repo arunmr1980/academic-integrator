@@ -3,6 +3,7 @@ import datetime
 from datetime import datetime as dt
 import calendar as cal
 import academics.timetable.TimeTableDBService as timetable_service
+import academics.TimetableIntegrator as timetable_integrator
 from academics.logger import GCLogger as gclogger
 import academics.timetable.TimeTable as ttable
 import academics.timetable.KeyGeneration as key
@@ -19,7 +20,6 @@ import academics.lessonplan.LessonplanIntegrator as lessonplan_integrator
 from academics.exam import ExamDBService as exam_service
 from academics.lessonplan import LessonplanDBService as lessonplan_service
 import academics.academic.AcademicDBService as academic_service
-import academics.timetable.TimeTableDBService as timetable_service
 import academics.lessonplan.LessonPlan as lpnr
 import academics.lessonplan.LessonplanIntegrator as lesssonplan_integrator
 import copy
@@ -308,6 +308,9 @@ def integrate_add_exam_on_calendar(series_code,class_key,division) :
 
 def integrate_class_calendars_on_add_exams(updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events) :
 	exam_events = make_exam_events(exams_list)
+	print("----------- EXAM EVENTS -----")
+	for exam_event in exam_events :
+		pp.pprint(vars(exam_event))
 	updated_class_calendars_list = get_updated_current_class_calendars(updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events)
 	return updated_class_calendars_list
 
@@ -318,6 +321,7 @@ def get_updated_current_class_calendars(updated_class_calendars_list,current_cla
 	return updated_class_calendars_list
 
 def get_updated_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events) :
+	print('CURRENT CLASS CALENDAR ----------->>>>',current_class_calendar.calendar_key)
 	updated_class_calendar = get_remove_conflicted_class_events(exam_events,current_class_calendar,removed_events)	
 	return current_class_calendar
 
@@ -336,6 +340,7 @@ def get_updated_class_calendar_events(exam_event,current_class_calendar,removed_
 		else :
 			updated_events.append(calendar_event)
 	current_class_calendar.events = updated_events
+	print(removed_events," --------------- REMOVED EVENTS --------------- ")
 	return current_class_calendar
 
 
@@ -534,11 +539,13 @@ def is_shedule_exist(event,schedule,current_class_calendar) :
 def make_exam_events(exams_list) :
 	exam_events = []
 	for exam_info in exams_list :
+		exam_event_info_from_time = timetable_integrator.convert24Hr(exam_info.from_time)
+		exam_event_info_to_time = timetable_integrator.convert24Hr(exam_info.to_time)
 		exam_event = calendar.Event(None)
 		exam_event.event_code = key.generate_key(3)
 		exam_event.event_type = 'EXAM'
-		exam_event.from_time = get_standard_time(exam_info.from_time,exam_info.date_time)
-		exam_event.to_time = get_standard_time(exam_info.to_time,exam_info.date_time)
+		exam_event.from_time = get_standard_time(exam_event_info_from_time,exam_info.date_time)
+		exam_event.to_time = get_standard_time(exam_event_info_to_time,exam_info.date_time)
 		exam_event.params = get_params(exam_info.exam_key)
 		exam_events.append(exam_event)
 	return exam_events
@@ -735,7 +742,11 @@ def check_event_exist_in_class_calendars(event,updated_class_calendars_list) :
 
 
 def check_events_conflict(event_start_time,event_end_time,class_calendar_event_start_time,class_calendar_event_end_time) :
-	is_conflict = None
+	print("EXAM EVENT START TIME ----->",event_start_time)
+	print("EXAM EVENT START TIME ----->",event_end_time)
+	print("CLASS SESSION  START TIME ------>",class_calendar_event_start_time)
+	print("CLASS SESSION END TIME ------>",class_calendar_event_end_time)
+	is_conflict = False
 	event_start_time_year = int(event_start_time[:4])
 	event_start_time_month = int(event_start_time[5:7])
 	event_start_time_day = int(event_start_time[8:10])
@@ -772,8 +783,7 @@ def check_events_conflict(event_start_time,event_end_time,class_calendar_event_s
 	delta = max(event_start_time,class_calendar_event_start_time) - min(event_end_time,class_calendar_event_end_time)
 	if delta.days < 0 :
 		is_conflict = True
-	else :
-		is_conflict = False
+	print("CONFLICT VALUE",is_conflict)
 	return is_conflict
 
 
@@ -806,8 +816,8 @@ def get_subject_code(event) :
 
 def get_updated_current_lessonplan(current_lessonplan,events_to_remove) :
 	for event in events_to_remove :
-		updated_lessonplan = remove_event_schedule_from_lessonplan(current_lessonplan,event)
-	return updated_lessonplan
+		current_lessonplan = remove_event_schedule_from_lessonplan(current_lessonplan,event)
+	return current_lessonplan
 
 def is_need_remove_schedule(event,schedule) :
 		is_need_remove = False

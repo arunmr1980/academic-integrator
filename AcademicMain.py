@@ -3,8 +3,9 @@ import academics.calendar.CalendarDBService as calendar_service
 from academics.calendar.CalendarLessonPlanIntegrator import integrate_calendars_to_lesson_plan, calendars_lesson_plan_integration_from_timetable, integrate_calendar
 from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars, integrate_update_period_calendars_and_lessonplans
 from academics.calendar.CalendarIntegrator import remove_event_integrate_calendars,make_event_objects
+import academics.exam.ExamIntegrator as exam_integrator
 
-# timetable_key = '0016041399849397128D980CA2-98CF-40CF-AA3E-922522661A7F427791508'
+# timetable_key = '001604166781163221F2E5F2D3-7981-4461-BB51-4B8346A2AABE-451130953'
 # academic_year = '2020-2021'
 # generate_and_save_calenders(timetable_key,academic_year)
 
@@ -40,14 +41,23 @@ from academics.calendar.CalendarIntegrator import remove_event_integrate_calenda
 # time_table_key = '00160397692489898347377F45-7AE0-4328-85CF-0925C31408B5-365640440'
 # period_code = "WED-7"
 # integrate_update_period_calendars_and_lessonplans(period_code, time_table_key)
-class_info_key = "0016039702346273588CD515A7-4FED-4F09-BF79-BCB16CF6F76B56180309"
-division = "A"
-subject_code = "a e01"
-existing_teacher_emp_key = "0015537484840607793B53C924-D830-46A2-9192-FF92F734609A29484778"
-new_teacher_emp_key = "0015967938045448063E9E03C6-B4CE-41FF-8C28-933711C105B1575403656"
-update_subject_teacher_integrator(division,class_info_key,subject_code,existing_teacher_emp_key,new_teacher_emp_key)
+# class_info_key = "0016039702346273588CD515A7-4FED-4F09-BF79-BCB16CF6F76B56180309"
+# division = "A"
+# subject_code = "a e01"
+# existing_teacher_emp_key = "0015537484840607793B53C924-D830-46A2-9192-FF92F734609A29484778"
+# new_teacher_emp_key = "0015967938045448063E9E03C6-B4CE-41FF-8C28-933711C105B1575403656"
+# update_subject_teacher_integrator(division,class_info_key,subject_code,existing_teacher_emp_key,new_teacher_emp_key)
 	
 
+# series_code = "Int155"
+# class_key = "00158857819780310638F0CC59-C38A-44EC-9F87-CC88E9B2ECAC212999768"
+# division = "A"
 
+# exam_integrator.integrate_add_exam_on_calendar(series_code,class_key,division)
 
 	
+
+# Python program to convert time
+# from 12 hour to 24 hour format
+ 
+# Function to convert the date format
