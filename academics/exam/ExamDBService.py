@@ -77,4 +77,4 @@ def send_to_sqs(school_key,academic_year,exam_series):
             "{\"request_type\": \"NOTIFY_DELETE_EXAM\"\"school_key\": "+str(school_key)+"\"academic_year\":"+str(academic_year)+"\"exam_series\":"+str(exam_series)+"}"
         )
     )
-    print("+++++++ A FUNCTION RUN AAYI +++++++++")
+    
