@@ -60,3 +60,21 @@ def make_exam_obj(exams):
         exam = exm.Exam(item)
         exams_obj_list.append(exam)
     return exams_obj_list
+
+
+
+queue_url = 'https://sqs.us-west-2.amazonaws.com/272936841180/exam-reports'
+queue_name = 'exam-reports'
+
+sqs = boto3.client('sqs')
+
+def send_to_sqs(school_key,academic_year,exam_series):
+    response = sqs.send_message(
+        QueueUrl=queue_url,
+        MessageGroupId=queue_name,
+        MessageDeduplicationId = "test",
+        MessageBody=(
+            "{\"request_type\": \"NOTIFY_DELETE_EXAM\"\"school_key\": "+str(school_key)+"\"academic_year\":"+str(academic_year)+"\"exam_series\":"+str(exam_series)+"}"
+        )
+    )
+    print("+++++++ A FUNCTION RUN AAYI +++++++++")

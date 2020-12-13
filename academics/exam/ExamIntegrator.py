@@ -26,8 +26,8 @@ import copy
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-def integrate_cancel_exam(exam_series) :
-	exam_series = make_exam_series_objects(exam_series)
+def integrate_cancel_exam(exam_series_json) :
+	exam_series = make_exam_series_objects(exam_series_json)
 	for clazz in exam_series.classes :	
 		exams_list = perticular_exams_for_perticular_classes(clazz,exam_series.code)
 		current_class_calendars_list = get_affected_class_calendars_list(exams_list)
@@ -35,10 +35,12 @@ def integrate_cancel_exam(exam_series) :
 			current_lessonplans_list = get_current_lessonplans(exam_series.classes)
 			updated_class_calendars_list = get_updated_class_calendars_list_on_cancel_exam(current_class_calendars_list,exam_series.code)
 			school_key = current_class_calendars_list[0].institution_key
+			academic_year = exams_list[0].academic_year
 			current_teacher_calendars_list = get_current_teacher_calendars_from_current_class_calendars(current_class_calendars_list,school_key)
 			updated_teacher_calendars_list = integrate_teacher_calendars_on_update_exam_and_cancel_exam(current_teacher_calendars_list,updated_class_calendars_list,school_key)
 			updated_lessonplans_list = integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_list,updated_class_calendars_list)
 			save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
+	# exam_service.send_to_sqs(school_key,academic_year,exam_series_json)
 
 def perticular_exams_for_perticular_classes(clazz,series_code) :
 	exams_list = []
@@ -46,7 +48,7 @@ def perticular_exams_for_perticular_classes(clazz,series_code) :
 	class_key = clazz.class_key
 	exams = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
 	exams_of_division = get_exams_of_division(exams,division)
-	exams_list.extend(exams)
+	exams_list.extend(exams_of_division)
 	return exams_list
 
 def get_exams_of_division(exams,division) :
@@ -503,7 +505,7 @@ def get_updated_lessonplan_with_previous_schedules(current_lessonplan,current_cl
 			events_to_add = []
 			if need_add_this_event(event,current_lessonplan,current_class_calendar) == True :
 				events_to_add.append(event)
-				current_lessonplan = add_schedules_and_adjust_lessonplan(current_lessonplan,events_to_add,current_class_calendar)
+				current_lessonplan = lesssonplan_integrator.add_schedules_and_adjust_lessonplan(current_lessonplan,events_to_add,current_class_calendar)
 	return current_lessonplan
 
 

@@ -10,9 +10,9 @@ from academics.exam.ExamIntegrator import integrate_add_exam_on_calendar
 def lambda_handler(event, context):
 
 		for record in event['Records']:
-			 payload=record["body"]
-			 request = json.loads(payload)
-			 try:
+			payload=record["body"]
+			request = json.loads(payload)
+			try:
 				request_type = request['request_type']
 				if request_type == 'TIMETABLE_CALENDAR_LESSON_PLAN_GEN':
 						timetable_to_calendar_and_lessonplan_integration(request)
@@ -30,9 +30,9 @@ def lambda_handler(event, context):
 						update_subject_teacher_integration(request)
 				if request_type == 'EXAM_CALENDAR_SYNC':
 						add_exam_integration(request)
-			 except:
-					logger.info("Unexpected error ...")
-					send_response(400,"unexpected error")
+			except:
+				logger.info("Unexpected error ...")
+				send_response(400,"unexpected error")
 
 
 
@@ -131,12 +131,12 @@ def update_subject_teacher_integration(request):
 def add_exam_integration(request) :
 	try :
 		series_code = request['series_code']
-		class_key = request['class_key']
+		class_info_key = request['class_info_key']
 		division = request['division']
 		
-		integrate_add_exam_on_calendar(series_code,class_key,division)
+		integrate_add_exam_on_calendar(series_code,class_info_key,division)
 	except KeyError as ke:
-				logger.info("Error in input. series_code,class_key or division not present")
+				logger.info("Error in input. series_code,class_info_key or division not present")
 				send_response(400,"input validation error")
 
 

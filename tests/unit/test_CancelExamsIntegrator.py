@@ -45,7 +45,6 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		        "name": "June Series"
 		      }
 		]
-
 		exam_series = self.make_exam_series_objects(exam_series)
 		exams = self.get_exams_list()
 		exams_list = self.perticular_exams_for_perticular_classes(exams,exam_series.classes,exam_series.code)
