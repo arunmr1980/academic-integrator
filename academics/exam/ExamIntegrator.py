@@ -40,7 +40,7 @@ def integrate_cancel_exam(exam_series_json) :
 			updated_teacher_calendars_list = integrate_teacher_calendars_on_update_exam_and_cancel_exam(current_teacher_calendars_list,updated_class_calendars_list,school_key)
 			updated_lessonplans_list = integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_list,updated_class_calendars_list)
 			save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
-	# exam_service.send_to_sqs(school_key,academic_year,exam_series_json)
+	exam_service.send_to_sqs(school_key,academic_year,exam_series_json)
 
 def perticular_exams_for_perticular_classes(clazz,series_code) :
 	exams_list = []
