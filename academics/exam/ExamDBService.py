@@ -72,7 +72,7 @@ def send_to_sqs(message_body):
     # print(" --- inside sqs requset function --")
     # print(school_key,academic_year,exam_series)
     response = sqs.send_message(
-        QueueUrl=queue_url,
-        MessageBody=MessageBody=json.dumps(message_body)
+        QueueUrl = queue_url,
+        MessageBody = json.dumps(message_body)
     )
     
