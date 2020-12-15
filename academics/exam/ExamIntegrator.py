@@ -26,21 +26,28 @@ import copy
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-def integrate_cancel_exam(exam_series_json) :
-	exam_series = make_exam_series_objects(exam_series_json)
+def integrate_cancel_exam(exam_series_list,school_key,academic_year) :
+	exam_series = make_exam_series_objects(exam_series_list)
 	for clazz in exam_series.classes :	
 		exams_list = perticular_exams_for_perticular_classes(clazz,exam_series.code)
 		current_class_calendars_list = get_affected_class_calendars_list(exams_list)
 		if len(current_class_calendars_list) > 0 :
 			current_lessonplans_list = get_current_lessonplans(exam_series.classes)
 			updated_class_calendars_list = get_updated_class_calendars_list_on_cancel_exam(current_class_calendars_list,exam_series.code)
-			school_key = current_class_calendars_list[0].institution_key
-			academic_year = exams_list[0].academic_year
+			# school_key = current_class_calendars_list[0].institution_key
+			# academic_year = exams_list[0].academic_year
 			current_teacher_calendars_list = get_current_teacher_calendars_from_current_class_calendars(current_class_calendars_list,school_key)
 			updated_teacher_calendars_list = integrate_teacher_calendars_on_update_exam_and_cancel_exam(current_teacher_calendars_list,updated_class_calendars_list,school_key)
 			updated_lessonplans_list = integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_list,updated_class_calendars_list)
 			save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
-	exam_service.send_to_sqs(school_key,academic_year,exam_series_json)
+	message_body = {
+		"request_type" : "NOTIFY_DELETE_EXAM",
+		"school_key" : school_key,
+		"academic_year" : academic_year,
+		"exam_series" : exam_series_list
+
+	}
+	exam_service.send_to_sqs(message_body)
 
 def perticular_exams_for_perticular_classes(clazz,series_code) :
 	exams_list = []
