@@ -1,4 +1,5 @@
 import boto3
+import json
 from boto3.dynamodb.conditions import Key,Attr
 from academics.logger import GCLogger as logger
 import academics.exam.Exam as exm
@@ -69,10 +70,11 @@ queue_name = 'exam-reports'
 sqs = boto3.client('sqs')
 
 def send_to_sqs(message_body):
-    # print(" --- inside sqs requset function --")
-    # print(school_key,academic_year,exam_series)
     response = sqs.send_message(
         QueueUrl = queue_url,
-        MessageBody = json.dumps(message_body)
+        MessageBody = (
+             json.dumps(message_body)
+            )
     )
+    print(response,"---------------- RESPONSE --------------------")
     

@@ -58,23 +58,23 @@ import academics.exam.ExamIntegrator as exam_integrator
 	
 
 
-exam_series = [
+# exam_series = [
 
-	{
-		"code":"j1",
-		"classes":[
-			{
-				"division":"A",
-				"class_key":"0016047553432136704AC43719-3A8F-4949-B341-A691DF86FE2C-439199663"
-			}
-		],
-		"name":"j1"
-	}
+# 	{
+# 		"code":"j1",
+# 		"classes":[
+# 			{
+# 				"division":"A",
+# 				"class_key":"0016047553432136704AC43719-3A8F-4949-B341-A691DF86FE2C-439199663"
+# 			}
+# 		],
+# 		"name":"j1"
+# 	}
 
-]
-school_key ="1e4d12bc2b58050ff084f8da"
-academic_year ="2020-2021"
-exam_integrator.integrate_cancel_exam(exam_series,school_key,academic_year)
+# ]
+# school_key ="1e4d12bc2b58050ff084f8da"
+# academic_year ="2020-2021"
+# exam_integrator.integrate_cancel_exam(exam_series,school_key,academic_year)
 
 
 

@@ -1,6 +1,6 @@
 import json
 import boto3
-
+import traceback
 from academics.TimetableIntegrator import generate_and_save_calenders,update_subject_teacher_integrator
 from academics.calendar.CalendarLessonPlanIntegrator import calendars_lesson_plan_integration, calendars_lesson_plan_integration_from_timetable
 from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars, integrate_update_period_calendars_and_lessonplans
@@ -37,6 +37,7 @@ def lambda_handler(event, context):
 						add_leave_integration(request)	
 
 			except:
+				traceback.print_exc()
 				logger.info("Unexpected error ...")
 				send_response(400,"unexpected error")
 
@@ -150,7 +151,7 @@ def cancel_exam_integration(request) :
 		exam_series = request['exam_series']
 		academic_year = request['academic_year']
 		school_key = request['school_key']
-		integrate_cancel_exam(exam_series_json,school_key,academic_year)
+		integrate_cancel_exam(exam_series,school_key,academic_year)
 	except KeyError as ke:
 				logger.info("Error in input. series_code,academic_year,school_key not present")
 				send_response(400,"input validation error")
