@@ -34,8 +34,6 @@ def integrate_cancel_exam(exam_series_list,school_key,academic_year) :
 		if len(current_class_calendars_list) > 0 :
 			current_lessonplans_list = get_current_lessonplans(exam_series.classes)
 			updated_class_calendars_list = get_updated_class_calendars_list_on_cancel_exam(current_class_calendars_list,exam_series.code)
-			# school_key = current_class_calendars_list[0].institution_key
-			# academic_year = exams_list[0].academic_year
 			current_teacher_calendars_list = get_current_teacher_calendars_from_current_class_calendars(current_class_calendars_list,school_key)
 			updated_teacher_calendars_list = integrate_teacher_calendars_on_update_exam_and_cancel_exam(current_teacher_calendars_list,updated_class_calendars_list,school_key)
 			updated_lessonplans_list = integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_list,updated_class_calendars_list)
@@ -289,7 +287,7 @@ def get_current_teacher_calendars(removed_events) :
 def get_event_date(event_from_time) :
 	return event_from_time[:10]
 
-#-------- below code is of issue 5 test ----
+
 def integrate_add_exam_on_calendar(series_code,class_key,division) :
 	subscriber_key = class_key + '-' + division
 	updated_class_calendars_list = []
@@ -352,16 +350,40 @@ def get_updated_class_calendar_events(exam_event,current_class_calendar,removed_
 	print(removed_events," --------------- REMOVED EVENTS --------------- ")
 	return current_class_calendar
 
+# -------------------- Add exam teacher calendar update new code --------------------#
 
+def get_updated_teacher_calendars_list(current_teacher_calendars_list,removed_events,updated_teacher_calendars_list) :
+	for teacher_calendar in current_teacher_calendars_list :
+		teacher_calendar_events = copy.deepcopy(teacher_calendar.events)
+		for event in teacher_calendar.events :
+			if is_event_in_remove_events(removed_events,event) == True :
+				remove_event_from_teacher_calendar_events(event,teacher_calendar_events)
+		teacher_calendar.events = teacher_calendar_events
+		updated_teacher_calendars_list.append(teacher_calendar)
+
+def remove_event_from_teacher_calendar_events(event,teacher_calendar_events) :
+	for existing_event in teacher_calendar_events :
+		if existing_event.event_code == event.event_code :
+			teacher_calendar_events.remove(existing_event)
+def is_event_in_remove_events(removed_events,event) :
+	is_exist = False
+	for removed_event in removed_events :
+		if removed_event.event_code == event.event_code :
+			is_exist = True
+	return is_exist
+	
 def integrate_teacher_cals_and_lessonplans_on_add_exam(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list,current_class_calendars_list,current_teacher_calendars_list,current_lessonplans_list,exams_list,removed_events) :
-	updated_teacher_calendars_list = get_updated_current_teacher_calendars(updated_teacher_calendars_list,current_teacher_calendars_list,updated_class_calendars_list)
+	# updated_teacher_calendars_list = get_updated_current_teacher_calendars(updated_teacher_calendars_list,current_teacher_calendars_list,updated_class_calendars_list)
+	updated_teacher_calendars_list = get_updated_teacher_calendars_list(current_teacher_calendars_list,removed_events,updated_teacher_calendars_list)
 	updated_lessonplans_list = get_updated_current_lessonplans(updated_class_calendars_list,current_lessonplans_list,updated_lessonplans_list,removed_events)
 
-def get_updated_current_teacher_calendars(updated_teacher_calendars_list,current_teacher_calendars_list,updated_class_calendars_list) :
-	for current_teacher_calendar in current_teacher_calendars_list :
-		updated_teacher_calendar = get_removed_events_from_teacher_calendar(current_teacher_calendar,updated_class_calendars_list)
-		updated_teacher_calendars_list.append(updated_teacher_calendar)
-	return updated_teacher_calendars_list
+ #-------------------- Add exam teacher calendar update new code End--------------------#
+
+# def get_updated_current_teacher_calendars(updated_teacher_calendars_list,current_teacher_calendars_list,updated_class_calendars_list) :
+# 	for current_teacher_calendar in current_teacher_calendars_list :
+# 		updated_teacher_calendar = get_removed_events_from_teacher_calendar(current_teacher_calendar,updated_class_calendars_list)
+# 		updated_teacher_calendars_list.append(updated_teacher_calendar)
+# 	return updated_teacher_calendars_list
 
 def get_updated_current_lessonplans(updated_class_calendars_list,current_lessonplans_list,updated_lessonplans_list,removed_events) :
 	for current_lessonplan in current_lessonplans_list :
@@ -373,7 +395,7 @@ def get_updated_current_lessonplans(updated_class_calendars_list,current_lessonp
 
 
 
-# --------------ends ---------------
+
 
 def get_updated_class_calendars_list_on_cancel_exam(current_class_calendars_list,exam_series_code) :
 	updated_class_calendars_list = []
@@ -751,10 +773,10 @@ def check_event_exist_in_class_calendars(event,updated_class_calendars_list) :
 
 
 def check_events_conflict(event_start_time,event_end_time,class_calendar_event_start_time,class_calendar_event_end_time) :
-	print("EXAM EVENT START TIME ----->",event_start_time)
-	print("EXAM EVENT START TIME ----->",event_end_time)
-	print("CLASS SESSION  START TIME ------>",class_calendar_event_start_time)
-	print("CLASS SESSION END TIME ------>",class_calendar_event_end_time)
+	# print("EXAM EVENT START TIME ----->",event_start_time)
+	# print("EXAM EVENT START TIME ----->",event_end_time)
+	# print("CLASS SESSION  START TIME ------>",class_calendar_event_start_time)
+	# print("CLASS SESSION END TIME ------>",class_calendar_event_end_time)
 	is_conflict = False
 	event_start_time_year = int(event_start_time[:4])
 	event_start_time_month = int(event_start_time[5:7])
@@ -792,7 +814,7 @@ def check_events_conflict(event_start_time,event_end_time,class_calendar_event_s
 	delta = max(event_start_time,class_calendar_event_start_time) - min(event_end_time,class_calendar_event_end_time)
 	if delta.days < 0 :
 		is_conflict = True
-	print("CONFLICT VALUE",is_conflict)
+	# print("CONFLICT VALUE",is_conflict)
 	return is_conflict
 
 
