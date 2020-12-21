@@ -158,11 +158,26 @@ def update_teacher_calendar_with_new_event(new_teacher_calendar,calendar_event,u
 	return new_teacher_calendar
 
 
-def get_updated_teacher_calendar(teacher_calendar,updated_class_calendar_events,updated_class_calendar) :
-	teacher_calendar.events = []
+def get_updated_existing_teacher_calendar(teacher_calendar,updated_class_calendar_events,updated_class_calendar,subject_code) :
 	for event in updated_class_calendar_events :
 		employee_key = get_employee_key(event.params)
-		if employee_key == teacher_calendar.subscriber_key :
+		if employee_key != teacher_calendar.subscriber_key :
+			event_code = event.event_code
+			subject_key = get_subject_key(event.params)
+			if subject_key == subject_code :
+				teacher_calendar_event = get_event(teacher_calendar,event.event_code)
+				teacher_calendar.events.remove(teacher_calendar_event)			
+	return teacher_calendar
+
+def get_event(calendar,event_code) :
+	for existing_event in calendar.events :
+		if existing_event.event_code == event_code :
+			return existing_event
+
+def get_updated_new_teacher_calendar(teacher_calendar,updated_class_calendar_events,updated_class_calendar) :
+	for event in updated_class_calendar_events :
+		employee_key = get_employee_key(event.params)
+		if employee_key == teacher_calendar.subscriber_key and is_event_already_exist(event,teacher_calendar.events) == False:
 			event_object = calendar.Event(None)
 			event_object.event_code = event.event_code
 			event_object.ref_calendar_key = updated_class_calendar.calendar_key

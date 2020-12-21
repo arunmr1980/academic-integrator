@@ -20,12 +20,12 @@ pp = pprint.PrettyPrinter(indent=4)
 
 def update_subject_teacher_integrator(division,class_info_key,subject_code,existing_teacher_emp_key,new_teacher_emp_key) :
 
-#newly added--------------
+
 	current_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
 	current_cls_timetable = copy.deepcopy(current_class_timetable)
 	existing_teacher_timetable = get_existing_teacher_timetable(existing_teacher_emp_key,current_cls_timetable,subject_code)
 	new_teacher_timetable = get_new_teacher_timetable(new_teacher_emp_key,current_cls_timetable,subject_code)
-#newly added--------------
+
 
 
 	period_list =[]
@@ -52,7 +52,7 @@ def update_subject_teacher_integrator(division,class_info_key,subject_code,exist
 									period_list,
 									current_class_calendars_list
 									)
-		updated_teacher_calendars_list = update_both_teacher_calendars(updated_class_calendars_list,existing_teacher_timetable,new_teacher_timetable)
+		updated_teacher_calendars_list = update_both_teacher_calendars(updated_class_calendars_list,existing_teacher_timetable,new_teacher_timetable,subject_code)
 		# for i in updated_teacher_calendars_list :
 		# 	cal = calendar.Calendar(None)
 		# 	class_calendar_dict = cal.make_calendar_dict(i)
@@ -62,7 +62,6 @@ def update_subject_teacher_integrator(division,class_info_key,subject_code,exist
 		save_updated_calendars_and_timetables(updated_teacher_calendars_list,updated_class_calendars_list,updated_class_timetables_list,updated_teacher_timetables_list)
 
 
-#newly added--------------
 def get_existing_teacher_timetable(existing_teacher_emp_key,current_cls_timetable,subject_code) :
 	existing_teacher_timetable = None
 	existing_teacher_timetable = timetable_service.get_timetable_entry_by_employee(existing_teacher_emp_key,current_cls_timetable.academic_year)
@@ -118,18 +117,18 @@ def generate_teacher_timetable(updated_employee_key,timetable,updated_class_time
 	return teacher_timetable
 
 
-#newly added--------------
 
 
-def update_both_teacher_calendars(updated_class_calendars_list,existing_teacher_timetable,new_teacher_timetable) :
+
+def update_both_teacher_calendars(updated_class_calendars_list,existing_teacher_timetable,new_teacher_timetable,subject_code) :
 	updated_teacher_calendars_list = []
 	for updated_class_calendar in updated_class_calendars_list :
 		updated_class_calendar_events = updated_class_calendar.events
 		existing_teacher_calendar = calendar_service.get_calendar_by_date_and_key(updated_class_calendar.calendar_date, existing_teacher_timetable.employee_key)
-		updated_existing_teacher_calendar = calendar_integrator.get_updated_teacher_calendar(existing_teacher_calendar,updated_class_calendar_events,updated_class_calendar)
+		updated_existing_teacher_calendar = calendar_integrator.get_updated_existing_teacher_calendar(existing_teacher_calendar,updated_class_calendar_events,updated_class_calendar,subject_code)
 		updated_teacher_calendars_list.append(updated_existing_teacher_calendar)
 		new_teacher_calendar = get_new_tecaher_calendar(updated_class_calendar,new_teacher_timetable)
-		updated_new_teacher_calendar = calendar_integrator.get_updated_teacher_calendar(new_teacher_calendar,updated_class_calendar_events,updated_class_calendar)
+		updated_new_teacher_calendar = calendar_integrator.get_updated_new_teacher_calendar(new_teacher_calendar,updated_class_calendar_events,updated_class_calendar)
 		updated_teacher_calendars_list.append(updated_new_teacher_calendar)
 	return updated_teacher_calendars_list
 
@@ -213,7 +212,9 @@ def get_updated_class_calendars(current_class_calendars_list,period_list) :
 			for event in current_class_calendar.events :
 				subject_code = get_subject_code(event)
 				period_code = get_period_code(event)
-				if subject_code == period.subject_key and period_code == period.period_code :
+				current_date = today = date.today()
+				calendar_date = datetime.datetime.strptime(current_class_calendar.calendar_date, '%Y-%m-%d').date()
+				if current_date <= calendar_date and subject_code == period.subject_key and period_code == period.period_code :
 					updated_params = update_params(current_class_calendar,period)
 					del event.params
 					event.params = updated_params

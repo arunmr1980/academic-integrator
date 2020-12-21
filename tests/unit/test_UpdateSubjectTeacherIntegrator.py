@@ -58,9 +58,9 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			for updated_class_calendar in updated_class_calendars_list :
 				updated_class_calendar_events = updated_class_calendar.events
 				existing_teacher_calendar = self.get_teacher_calendar_by_emp_key_and_date(existing_teacher_emp_key,current_teacher_calendars_list,updated_class_calendar)
-				updated_existing_teacher_calendar = calendar_integrator.get_updated_teacher_calendar(existing_teacher_calendar,updated_class_calendar_events,updated_class_calendar)
+				updated_existing_teacher_calendar = calendar_integrator.get_updated_existing_teacher_calendar(existing_teacher_calendar,updated_class_calendar_events,updated_class_calendar,subject_code)
 				new_teacher_calendar = self.get_teacher_calendar_by_emp_key_and_date(new_teacher_emp_key,current_teacher_calendars_list,updated_class_calendar)
-				updated_new_teacher_calendar = calendar_integrator.get_updated_teacher_calendar(new_teacher_calendar,updated_class_calendar_events,updated_class_calendar)
+				updated_new_teacher_calendar = calendar_integrator.get_updated_new_teacher_calendar(new_teacher_calendar,updated_class_calendar_events,updated_class_calendar)
 				updated_teacher_calendars_list.append(updated_new_teacher_calendar)
 				updated_teacher_calendars_list.append(updated_existing_teacher_calendar)
 
@@ -185,7 +185,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			self.assertEqual(expected_teacher_calendar_events[index].event_code , updated_teacher_calendar_events[index].event_code)
 			self.assertEqual(expected_teacher_calendar_events[index].ref_calendar_key , updated_teacher_calendar_events[index].ref_calendar_key)
 
-	def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
+	# def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
 		for expected_class_calendar in expected_class_calendars_list :
 			if updated_class_calendar.calendar_key == expected_class_calendar.calendar_key :
 				self.assertEqual(expected_class_calendar.institution_key,updated_class_calendar.institution_key )
