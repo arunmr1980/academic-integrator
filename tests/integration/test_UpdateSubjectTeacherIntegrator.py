@@ -47,8 +47,6 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		subscriber_key = class_info_key + '-' + division
 		current_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
 		current_cls_timetable = copy.deepcopy(current_class_timetable)
-		# existing_teacher_timetable = self.get_existing_teacher_timetable(existing_teacher_emp_key,current_cls_timetable,subject_code)
-		# new_teacher_timetable = self.get_new_teacher_timetable(new_teacher_emp_key,current_cls_timetable,subject_code)
 		update_subject_teacher_integrator(division,class_info_key,subject_code,existing_teacher_emp_key,new_teacher_emp_key)
 
 		expected_teacher_timetables_list = self.get_expected_teacher_timetables_list()
@@ -67,13 +65,16 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		gclogger.info("-----[IntegrationTest] class timetable test passed ----------------- "+ str(updated_class_timetable.time_table_key)+" ------------------------------ ")
 
 		for updated_class_calendar in updated_class_calendars_list :
-			# self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
+			cal = calendar.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+			pp.pprint(calendar_dict)
+			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
 			gclogger.info("-----[IntegrationTest] class calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
 		for updated_teacher_calendar in updated_teacher_calendars_list :
-			# cal = calendar.Calendar(None)
-			# calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
-			# pp.pprint(calendar_dict)
-			# self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
+			cal = calendar.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+			pp.pprint(calendar_dict)
+			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
 			gclogger.info("-----[IntegrationTest] teacher calendar test passed ----------------- "+ str(updated_teacher_calendar.calendar_key)+" ------------------------------ ")
 
 		self.check_teacher_timetables(updated_previous_teacher_timetable,expected_teacher_timetables_list)
@@ -173,7 +174,6 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 	def check_teacher_calendars(self,updated_teacher_calendar,expected_teacher_calendars_list) :
 		for expected_teacher_calendar in expected_teacher_calendars_list :
 			if updated_teacher_calendar.calendar_key == expected_teacher_calendar.calendar_key :
-				print(updated_teacher_calendar.calendar_key,"CALENDAR KEYYYYYYYYYYYYY-----------------------------------------")
 				self.assertEqual(expected_teacher_calendar.institution_key,updated_teacher_calendar.institution_key )
 				self.assertEqual(expected_teacher_calendar.calendar_date,updated_teacher_calendar.calendar_date )
 				self.assertEqual(expected_teacher_calendar.subscriber_key,updated_teacher_calendar.subscriber_key )
@@ -207,7 +207,6 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		for index in range(0,len(expected_class_calendar_event_params)) :
 			self.assertEqual(expected_class_calendar_event_params[index].key,generated_class_calendar_event_params[index].key)
 			self.assertEqual(expected_class_calendar_event_params[index].value,generated_class_calendar_event_params[index].value)
-
 
 	def check_class_timetables(self,updated_class_timetable,expected_class_timetables_list) :
 		for expected_class_timetable in expected_class_timetables_list :

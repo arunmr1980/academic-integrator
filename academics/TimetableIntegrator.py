@@ -145,30 +145,26 @@ def save_updated_calendars_and_timetables(updated_teacher_calendars_list,updated
 	for updated_class_calendar in updated_class_calendars_list :
 		cal = calendar.Calendar(None)
 		class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
-		pp.pprint(class_calendar_dict)
-		print("------------------ UPDATED CLASS CALENDAR --------------")
+	
 		response = calendar_service.add_or_update_calendar(class_calendar_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated calendar-- ( '+str(class_calendar_dict['subscriber_type'])+' )  uploaded --------- '+str(class_calendar_dict['calendar_key']))
 	for updated_teacher_calendar in updated_teacher_calendars_list :
 		cal = calendar.Calendar(None)
 		teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
-		pp.pprint(teacher_calendar_dict)
-		print("------------------ UPDATED TEACHER CALENDAR --------------")
+	
 		response = calendar_service.add_or_update_calendar(teacher_calendar_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated calendar-- ( '+str(class_calendar_dict['subscriber_type'])+' )  uploaded --------- '+str(class_calendar_dict['calendar_key']))
 
 	for updated_class_timetable in updated_class_timetables_list :
 		timtable_obj = ttable.TimeTable(None)
 		updated_class_timetable_dict = timtable_obj.make_timetable_dict(updated_class_timetable)
-		pp.pprint(updated_class_timetable_dict)
-		print("------------------ UPDATED CLASS TIME TABLE --------------")
+	
 		response = timetable_service.create_timetable(updated_class_timetable_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + '--------- A updated class time table uploaded -------- '+str(updated_class_timetable_dict['time_table_key']))
 	for updated_teacher_timetable in updated_teacher_timetables_list :
 		timtable_obj = ttable.TimeTable(None)
 		updated_teacher_timetable_dict = timtable_obj.make_timetable_dict(updated_teacher_timetable)
-		pp.pprint(updated_teacher_timetable_dict)
-		print("------------------ UPDATED TEACHER TIME TABLE --------------")
+
 		response = timetable_service.create_timetable(updated_teacher_timetable_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + '--------- A updated teacher time table uploaded -------- '+str(updated_teacher_timetable_dict['time_table_key']))
 
@@ -212,7 +208,7 @@ def get_updated_class_calendars(current_class_calendars_list,period_list) :
 			for event in current_class_calendar.events :
 				subject_code = get_subject_code(event)
 				period_code = get_period_code(event)
-				current_date = today = date.today()
+				current_date = date.today()
 				calendar_date = datetime.datetime.strptime(current_class_calendar.calendar_date, '%Y-%m-%d').date()
 				if current_date <= calendar_date and subject_code == period.subject_key and period_code == period.period_code :
 					updated_params = update_params(current_class_calendar,period)
@@ -468,24 +464,26 @@ def generate_holiday_period_list(calendar,academic_configuration,timetable,day_c
 	gclogger.info("EXISTING SCHOOL CALENDAR KEY ------------------>>>>>>  " + calendar.calendar_key)
 	holiday_period_list =[]
 	for event in calendar.events :
-		if is_class(event.params[0]) == False :
-			start_time = event.from_time
-			end_time = event.to_time
-			partial_holiday_periods = get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
-			for partial_holiday_period in partial_holiday_periods :
-				holiday_period_list.append(partial_holiday_period)
+		if hasattr(event,"params") :
+			if is_class(event.params[0]) == False :
+				start_time = event.from_time
+				end_time = event.to_time
+				partial_holiday_periods = get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
+				for partial_holiday_period in partial_holiday_periods :
+					holiday_period_list.append(partial_holiday_period)
 	return holiday_period_list
 
 def generate_period_list(calendar,events,academic_configuration,timetable,day_code) :
 	gclogger.info("SCHOOL CALENDAR KEY ------------------>>>>>>  " + calendar.calendar_key)
 	period_list =[]
 	for event in events :
-		if is_class(event.params[0]) == False :
-			start_time = event.from_time
-			end_time = event.to_time
-			periods = get_period_list(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
-			for period in periods :
-				period_list.append(period)
+		if hasattr(event,"params") :
+			if is_class(event.params[0]) == False :
+				start_time = event.from_time
+				end_time = event.to_time
+				periods = get_period_list(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
+				for period in periods :
+					period_list.append(period)
 	return period_list
 
 

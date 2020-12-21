@@ -185,7 +185,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			self.assertEqual(expected_teacher_calendar_events[index].event_code , updated_teacher_calendar_events[index].event_code)
 			self.assertEqual(expected_teacher_calendar_events[index].ref_calendar_key , updated_teacher_calendar_events[index].ref_calendar_key)
 
-	# def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
+	def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
 		for expected_class_calendar in expected_class_calendars_list :
 			if updated_class_calendar.calendar_key == expected_class_calendar.calendar_key :
 				self.assertEqual(expected_class_calendar.institution_key,updated_class_calendar.institution_key )

@@ -62,13 +62,13 @@
 		"subscriber_type":"CLASS-DIV"
 	},
 	{
-		"calendar_date":"2020-08-10",
+		"calendar_date":"2020-12-30",
 		"calendar_key":"test-key-3",
 		"events":[
 			{
 				"event_code":"event-3",
 				"event_type":"CLASS_SESSION",
-				"from_time":"2020-08-10T10:40:00",
+				"from_time":"2020-12-30T10:40:00",
 				"params":[
 					{
 						"key":"period_code",
@@ -83,12 +83,12 @@
 						"value":"employee-1"
 					}
 				],
-				"to_time":"2020-08-10T11:20:00"
+				"to_time":"2020-12-30T11:20:00"
 			},
 			{
 				"event_code":"event-4",
 				"event_type":"CLASS_SESSION",
-				"from_time":"2020-08-10T11:30:00",
+				"from_time":"2020-12-30T11:30:00",
 				"params":[
 					{
 						"key":"period_code",
@@ -103,12 +103,12 @@
 						"value":"employee-2"
 					}
 				],
-				"to_time":"2020-08-10T12:10:00"
+				"to_time":"2020-12-30T12:10:00"
 			},
 			{
 				"event_code":"event-5",
 				"event_type":"CLASS_SESSION",
-				"from_time":"2020-08-10T11:30:00",
+				"from_time":"2020-12-30T11:30:00",
 				"params":[
 					{
 						"key":"period_code",
@@ -123,7 +123,7 @@
 						"value":"employee-3"
 					}
 				],
-				"to_time":"2020-08-10T12:10:00"
+				"to_time":"2020-12-30T12:10:00"
 			}
 		],
 		"institution_key":"test-school-1",

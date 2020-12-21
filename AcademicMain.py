@@ -5,7 +5,7 @@ from academics.calendar.CalendarIntegrator import add_event_integrate_calendars,
 from academics.calendar.CalendarIntegrator import remove_event_integrate_calendars,make_event_objects
 import academics.exam.ExamIntegrator as exam_integrator
 
-# timetable_key = '001604166781163221F2E5F2D3-7981-4461-BB51-4B8346A2AABE-451130953'
+# timetable_key = '001608545524299274473F45C8-E9B7-4592-BA91-EDD8EC8F67EC-1247518102'
 # academic_year = '2020-2021'
 # generate_and_save_calenders(timetable_key,academic_year)
 
