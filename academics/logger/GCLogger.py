@@ -5,11 +5,11 @@ logger = logging.getLogger()
 
 # Comment out this section for lambda deployment
 
-logger = logging.getLogger('academic-integrator')
-hdlr = logging.FileHandler('academicintegrator.log')
-formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-hdlr.setFormatter(formatter)
-logger.addHandler(hdlr)
+# logger = logging.getLogger('academic-integrator')
+# hdlr = logging.FileHandler('academicintegrator.log')
+# formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+# hdlr.setFormatter(formatter)
+# logger.addHandler(hdlr)
 
 logger.setLevel(logging.INFO)
 
