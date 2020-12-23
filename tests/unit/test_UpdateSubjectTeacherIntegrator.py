@@ -27,10 +27,14 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		expected_teacher_timetables_list = self.get_expected_teacher_timetables_list()
 		expected_class_timetables_list = self.get_expected_class_timetables_list()
 		current_teacher_timetables_list = self.get_current_teacher_timetables_list()
-		current_class_calendars_list = self.get_current_class_calendars_list()
-		current_teacher_calendars_list = self.get_current_teacher_calendars_list()
-		expected_class_calendars_list = self.get_expected_class_calendars_list()
-		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
+		current_class_calendars = self.get_current_class_calendars_list()
+		current_class_calendars_list = self.update_a_class_calendar_to_future_date(current_class_calendars)
+		current_teacher_calendars = self.get_current_teacher_calendars_list()
+		current_teacher_calendars_list = self.update_teacher_calendars_to_future_date(current_teacher_calendars)
+		expected_class_calendars = self.get_expected_class_calendars_list()
+		expected_class_calendars_list = self.update_a_class_calendar_to_future_date(expected_class_calendars)
+		expected_teacher_calendars = self.get_expected_teacher_calendars_list()
+		expected_teacher_calendars_list = self.update_teacher_calendars_to_future_date(expected_teacher_calendars)
 		division = "A"
 		class_info_key = '8B1B22E72AE'
 		subject_code = 'bio3'
@@ -97,6 +101,32 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
 			gclogger.info("-----[ Unit Test ] Teacher calendar test passed for ----" + updated_teacher_calendar.calendar_key + "-----------------")
 
+	def update_a_class_calendar_to_future_date(self,class_calendars_list) :
+		updated_class_calendars_list = []
+		tomorrow_date = datetime.date.today() + datetime.timedelta(days=1)
+		tomorrow_date = tomorrow_date.strftime("%Y-%m-%d")
+		for calendar in class_calendars_list :
+			if calendar.calendar_date == '2020-12-30' :
+				calendar.calendar_date = tomorrow_date
+			for event in calendar.events :
+				if '2020-12-30' in event.from_time :
+					new_from_time = event.from_time.replace('2020-12-30',tomorrow_date)
+					event.from_time = new_from_time
+				if '2020-12-30' in event.to_time :
+					new_to_time = event.to_time.replace('2020-12-30',tomorrow_date)
+					event.to_time = new_to_time
+			updated_class_calendars_list.append(calendar)
+		return updated_class_calendars_list
+
+	def update_teacher_calendars_to_future_date(self,teacher_calendars_list) :
+		updated_teacher_calendars_list = []
+		tomorrow_date = datetime.date.today() + datetime.timedelta(days=1)
+		tomorrow_date = tomorrow_date.strftime("%Y-%m-%d")
+		for calendar in teacher_calendars_list :
+			if calendar.calendar_date == '2020-12-30' :
+				calendar.calendar_date = tomorrow_date
+			updated_teacher_calendars_list.append(calendar)
+		return updated_teacher_calendars_list
 
 	def get_teacher_calendar_by_emp_key_and_date(self,employee_key,current_teacher_calendars_list,updated_class_calendar) :
 		for current_teacher_calendar in current_teacher_calendars_list :
