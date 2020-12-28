@@ -67,6 +67,9 @@ class CancelExamIntegratorTest(unittest.TestCase):
 
 		
 		for teacher_calendar in updated_teacher_calendars_list :
+			cal = calendar.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(teacher_calendar)
+			pp.pprint(calendar_dict)
 			teacher_calendar_key = teacher_calendar.calendar_date + teacher_calendar.subscriber_key
 			expected_teacher_calendar = expected_teacher_calendar_dict[teacher_calendar_key]
 

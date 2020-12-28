@@ -230,7 +230,6 @@ def integrate_teacher_calendars_on_update_exam_and_cancel_exam(current_teacher_c
 				if teacher_calendar.calendar_date == calendar_date and teacher_calendar.subscriber_key == employee_key :
 					emp_event = make_employee_event(event,updated_class_calendar)
 					if is_event_already_exist(emp_event,teacher_calendar.events) == False :
-					# if emp_event not in teacher_calendar.events :
 						teacher_calendar.events.append(emp_event)
 	return updated_teacher_calendars_list
 
@@ -350,7 +349,6 @@ def get_updated_class_calendar_events(exam_event,current_class_calendar,removed_
 	print(removed_events," --------------- REMOVED EVENTS --------------- ")
 	return current_class_calendar
 
-# -------------------- Add exam teacher calendar update new code --------------------#
 
 def get_updated_teacher_calendars_list(current_teacher_calendars_list,removed_events,updated_teacher_calendars_list) :
 	for teacher_calendar in current_teacher_calendars_list :
@@ -373,17 +371,10 @@ def is_event_in_remove_events(removed_events,event) :
 	return is_exist
 	
 def integrate_teacher_cals_and_lessonplans_on_add_exam(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list,current_class_calendars_list,current_teacher_calendars_list,current_lessonplans_list,exams_list,removed_events) :
-	# updated_teacher_calendars_list = get_updated_current_teacher_calendars(updated_teacher_calendars_list,current_teacher_calendars_list,updated_class_calendars_list)
 	updated_teacher_calendars_list = get_updated_teacher_calendars_list(current_teacher_calendars_list,removed_events,updated_teacher_calendars_list)
 	updated_lessonplans_list = get_updated_current_lessonplans(updated_class_calendars_list,current_lessonplans_list,updated_lessonplans_list,removed_events)
 
- #-------------------- Add exam teacher calendar update new code End--------------------#
-
-# def get_updated_current_teacher_calendars(updated_teacher_calendars_list,current_teacher_calendars_list,updated_class_calendars_list) :
-# 	for current_teacher_calendar in current_teacher_calendars_list :
-# 		updated_teacher_calendar = get_removed_events_from_teacher_calendar(current_teacher_calendar,updated_class_calendars_list)
-# 		updated_teacher_calendars_list.append(updated_teacher_calendar)
-# 	return updated_teacher_calendars_list
+ 
 
 def get_updated_current_lessonplans(updated_class_calendars_list,current_lessonplans_list,updated_lessonplans_list,removed_events) :
 	for current_lessonplan in current_lessonplans_list :
@@ -469,28 +460,7 @@ def get_previous_periods(academic_configuration,timetable,existing_event,current
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def integrate_class_calendar_on_update_exams(academic_configuration,timetable,exams_list,current_class_calendars_list) :
-	exam_events = make_exam_events(exams_list)
 	updated_class_calendars_list = get_previous_events_added_class_calendars(academic_configuration,timetable,current_class_calendars_list,exams_list)
 	return updated_class_calendars_list
 
@@ -653,8 +623,8 @@ def is_schedule_has_same_calendar_key(previous_schedule,current_class_calendar) 
 
 
 def integrate_previous_periods(academic_configuration,timetable,exam,current_class_calendar,periods_to_be_added) :
-	previous_exam_from_time = exam.previous_schedule.from_time
-	previous_exam_to_time = exam.previous_schedule.to_time
+	previous_exam_from_time = timetable_integrator.convert24Hr(exam.previous_schedule.from_time)
+	previous_exam_to_time = timetable_integrator.convert24Hr(exam.previous_schedule.to_time)
 	previous_exam_event_from_time = timetable_integrator.get_standard_time(previous_exam_from_time,current_class_calendar.calendar_date)
 	previous_exam_event_to_time = timetable_integrator.get_standard_time(previous_exam_to_time,current_class_calendar.calendar_date)
 	day_code = timetable_integrator.findDay(current_class_calendar.calendar_date).upper()[0:3]

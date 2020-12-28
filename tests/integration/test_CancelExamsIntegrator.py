@@ -49,6 +49,9 @@ class CancelExamIntegratorTest(unittest.TestCase):
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Exan uploaded --------- '+str(exam['exam_key']))
 
 	def test_calendars_and_lessonplan(self) :
+		timetables = self.get_timetables_list_from_json()
+		academic_year = timetables[0]['academic_year']
+		school_key = timetables[0]['school_key']
 		expected_teacher_calendar_dict = {}
 		exam_series = [
 		      {
@@ -66,7 +69,7 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		        "name": "June Series"
 		      }
 		]
-		exam_integrator.integrate_cancel_exam(exam_series)
+		exam_integrator.integrate_cancel_exam(exam_series,school_key,academic_year)
 		expected_class_calendars_list = self.get_expected_class_calendars_list()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
 
