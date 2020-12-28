@@ -547,7 +547,7 @@ def make_exam_events(exams_list) :
 		exam_event.event_type = 'EXAM'
 		exam_event.from_time = get_standard_time(exam_event_info_from_time,exam_info.date_time)
 		exam_event.to_time = get_standard_time(exam_event_info_to_time,exam_info.date_time)
-		exam_event.params = get_params(exam_info.exam_key)
+		exam_event.params = get_params(exam_info.exam_key,exam_info.series_code)
 		exam_events.append(exam_event)
 	return exam_events
 
@@ -559,7 +559,7 @@ def get_standard_time(time,date) :
 	return datetime.datetime(splited_date[0],splited_date[1],splited_date[2],time_hour,time_minute).isoformat()
 
 
-def get_params(exam_key) :
+def get_params(exam_key,series_code) :
 	params = []
 	param_info = calendar.Param(None)
 	param_info.key = 'cancel_class_flag'
@@ -568,6 +568,10 @@ def get_params(exam_key) :
 	param_exam_info = calendar.Param(None)
 	param_exam_info.key = 'exam_key'
 	param_exam_info.value = exam_key
+	params.append(param_exam_info)
+	param_exam_info = calendar.Param(None)
+	param_exam_info.key = 'series_code'
+	param_exam_info.value = series_code
 	params.append(param_exam_info)
 
 
