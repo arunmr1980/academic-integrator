@@ -61,14 +61,14 @@ import academics.exam.ExamIntegrator as exam_integrator
 # exam_series = [
 
 # 	{
-# 		"code":"j1",
+# 		"code":"Intgojjtv",
 # 		"classes":[
 # 			{
 # 				"division":"A",
-# 				"class_key":"0016047553432136704AC43719-3A8F-4949-B341-A691DF86FE2C-439199663"
+# 				"class_key":"00158857819780310638F0CC59-C38A-44EC-9F87-CC88E9B2ECAC212999768"
 # 			}
 # 		],
-# 		"name":"j1"
+# 		"name":"Integration-July"
 # 	}
 
 # ]
