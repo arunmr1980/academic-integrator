@@ -353,12 +353,13 @@ def get_updated_class_calendar_events(exam_event,current_class_calendar,removed_
 
 def get_updated_teacher_calendars_list(current_teacher_calendars_list,removed_events,updated_teacher_calendars_list) :
 	for teacher_calendar in current_teacher_calendars_list :
-		teacher_calendar_events = copy.deepcopy(teacher_calendar.events)
-		for event in teacher_calendar.events :
-			if is_event_in_remove_events(removed_events,event) == True :
-				remove_event_from_teacher_calendar_events(event,teacher_calendar_events)
-		teacher_calendar.events = teacher_calendar_events
-		updated_teacher_calendars_list.append(teacher_calendar)
+		if teacher_calendar is not None :
+			teacher_calendar_events = copy.deepcopy(teacher_calendar.events)
+			for event in teacher_calendar.events :
+				if is_event_in_remove_events(removed_events,event) == True :
+					remove_event_from_teacher_calendar_events(event,teacher_calendar_events)
+			teacher_calendar.events = teacher_calendar_events
+			updated_teacher_calendars_list.append(teacher_calendar)
 
 def remove_event_from_teacher_calendar_events(event,teacher_calendar_events) :
 	for existing_event in teacher_calendar_events :
