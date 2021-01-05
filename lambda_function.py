@@ -7,6 +7,7 @@ from academics.calendar.CalendarIntegrator import add_event_integrate_calendars,
 import academics.logger.GCLogger as logger
 from academics.exam.ExamIntegrator import integrate_add_exam_on_calendar,integrate_cancel_exam
 from academics.leave.LeaveIntegrator import integrate_add_leave_on_calendar,integrate_leave_cancel
+from academics.lessonplan.LessonplanIntegrator import integrate_add_class_session_events
 
 def lambda_handler(event, context):
 	for record in event['Records']:
@@ -33,9 +34,11 @@ def lambda_handler(event, context):
 		if request_type == 'EXAM-DELETE-SYNC':
 				cancel_exam_integration(request)
 		if request_type == 'TEACHER_LEAVE_SYNC':
-				add_leave_integration(request)	
+				add_leave_integration(request)
 		if request_type == 'TEACHER_LEAVE_CANCEL':
 				cancel_leave_integration(request)
+		if request_type == 'CLASS_SESSION_EVENT_SYNC':
+				special_class_session_integration(request)
 	except:
 		traceback.print_exc()
 		logger.info("Unexpected error ...")
@@ -140,7 +143,7 @@ def add_exam_integration(request) :
 		series_code = request['series_code']
 		class_info_key = request['class_info_key']
 		division = request['division']
-		
+
 		integrate_add_exam_on_calendar(series_code,class_info_key,division)
 	except KeyError as ke:
 		logger.info("Error in input. series_code,class_info_key or division not present")
@@ -159,7 +162,7 @@ def cancel_exam_integration(request) :
 def add_leave_integration(request) :
 	try :
 		leave_key= request['leave_key']
-		integrate_add_leave_on_calendar(leave_key) 
+		integrate_add_leave_on_calendar(leave_key)
 	except KeyError as ke:
 		traceback.print_exc()
 		logger.info("Error in input. leave key not present")
@@ -168,12 +171,20 @@ def add_leave_integration(request) :
 def cancel_leave_integration(request) :
 	try :
 		leave_key= request['leave_key']
-		integrate_leave_cancel(leave_key) 
+		integrate_leave_cancel(leave_key)
 	except KeyError as ke:
 		traceback.print_exc()
 		logger.info("Error in input. leave key not present")
 		send_response(400,"input validation error")
 
+def special_class_session_integration(request) :
+	try :
+		calendar_key = request['calendar_key']
+		events = request['events']
+		integrate_add_class_session_events(calendar_key, events)
+	except KeyError as ke:
+		logger.info("Error in input. events or calendar_key not present")
+		send_response(400,"input validation error")
 
 def send_response(status_code, message):
 	data = {
