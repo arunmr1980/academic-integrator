@@ -44,6 +44,10 @@ class CalendarAddEventIntegratorTest(unittest.TestCase):
 			response = calendar_service.add_or_update_calendar(calendar_dict)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Holiday calendar uploaded --------- '+str(calendar_dict['calendar_key']))
 
+		class_info_one_dict = self.get_class_info()
+		response = class_info_service.add_or_update_class_info(class_info_one_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for uploaded --------- ' +str(class_info_one_dict['class_info_key']) )
+
 	def test_calendars(self) :
 		expected_class_calendars_list = self.get_expected_class_calendars()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars()
@@ -59,11 +63,16 @@ class CalendarAddEventIntegratorTest(unittest.TestCase):
 		updated_teacher_calendar_list = self.get_updated_teacher_calendars(updated_calendars_list)
 
 		for updated_class_calendar in updated_class_calendar_list :
+			cal = cldr.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+			pp.pprint(calendar_dict)
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)			
 			gclogger.info("-----[Integration Test] Class calendar test passed for ----" + updated_class_calendar.calendar_key + "-----------------")
 
 		for updated_teacher_calendar in updated_teacher_calendar_list :
-			print('-------- Teacher -------')
+			cal = cldr.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+			pp.pprint(calendar_dict)
 			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
 			gclogger.info("-----[Integration Test] Teacher calendar test passed for ----" + updated_teacher_calendar.calendar_key + "-----------------")
 
@@ -144,6 +153,9 @@ class CalendarAddEventIntegratorTest(unittest.TestCase):
 		for calendar in current_teacher_calendars :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- A Teacher calendar deleted ---------- " + calendar.calendar_key+" -----------------")
+		class_info = self.get_class_info()
+		response = class_info_service.delete_class_info(class_info['class_info_key'])
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for deleted --------- ' +str(class_info['class_info_key']) )
 
 
 	def get_current_class_calendars(self) :
@@ -192,7 +204,10 @@ class CalendarAddEventIntegratorTest(unittest.TestCase):
 			academic_configuration = json.load(academic_configure)
 		return academic_configuration
 
-
+	def get_class_info(self) :
+		with open('tests/unit/fixtures/add-teacher-leave-fixtures/class_info.json', 'r') as class_info_two:
+			class_info_two_dict = json.load(class_info_two)
+		return class_info_two_dict
 
 
 if __name__ == '__main__':
