@@ -5,7 +5,7 @@ from academics.TimetableIntegrator import generate_and_save_calenders,update_sub
 from academics.calendar.CalendarLessonPlanIntegrator import calendars_lesson_plan_integration, calendars_lesson_plan_integration_from_timetable
 from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars, integrate_update_period_calendars_and_lessonplans
 import academics.logger.GCLogger as logger
-from academics.exam.ExamIntegrator import integrate_add_exam_on_calendar,integrate_cancel_exam
+from academics.exam.ExamIntegrator import integrate_add_exam_on_calendar,integrate_cancel_exam,integrate_update_exam_on_calendar
 from academics.leave.LeaveIntegrator import integrate_add_leave_on_calendar,integrate_leave_cancel
 from academics.lessonplan.LessonplanIntegrator import integrate_add_class_session_events
 
@@ -39,6 +39,8 @@ def lambda_handler(event, context):
 				cancel_leave_integration(request)
 		if request_type == 'CLASS_SESSION_EVENT_SYNC':
 				special_class_session_integration(request)
+		if request_type == 'EXAM_UPDATE_CALENDAR_SYNC':
+				update_exam_integration(request)
 	except:
 		traceback.print_exc()
 		logger.info("Unexpected error ...")
@@ -158,6 +160,17 @@ def cancel_exam_integration(request) :
 	except KeyError as ke:
 		logger.info("Error in input. series_code,academic_year,school_key not present")
 		send_response(400,"input validation error")
+
+def update_exam_integration(request) :
+	try :
+		series_code = request['series_code']
+		class_info_key = request['class_info_key']
+		division = request['division']
+		integrate_update_exam_on_calendar(series_code,class_info_key,division)
+	except KeyError as ke:
+		logger.info("Error in input. series_code,class_info_key or division not present")
+		send_response(400,"input validation error")
+
 
 def add_leave_integration(request) :
 	try :

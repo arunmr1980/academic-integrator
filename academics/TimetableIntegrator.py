@@ -351,6 +351,7 @@ def generate_and_save_calenders(time_table_key,academic_year):
 
 	teacher_calendar_list = generated_teacher_calendar_dict.values()
 
+
 	save_or_update_calendars(class_calendar_list, teacher_calendar_list)
 
 
@@ -703,12 +704,12 @@ def integrate_teacher_timetable(class_calendar_list) :
 				set_teacher_calendar_dict(teacher_calendars_dict,employee_key,class_calendar)
 				key = class_calendar.calendar_date + employee_key
 				teacher_calendar = teacher_calendars_dict[key]
-
+				gclogger.info("--- >>>> Teacher Calendar for employee key " + employee_key + " and date " + class_calendar.calendar_date )
 				event_object = calendar.Event(None)
 				event_object.event_code = event.event_code
 				event_object.ref_calendar_key = class_calendar.calendar_key
 				teacher_calendar.events.append(event_object)
-				gclogger.info("Adding event " + event_object.event_code + " to teacher calendar " + teacher_calendar.calendar_key)
+				gclogger.info("----- Adding event with class_calendar --> " + class_calendar.calendar_key +" Event code --> "+ event_object.event_code + " to teacher calendar " + teacher_calendar.calendar_key)
 
 	return teacher_calendars_dict
 
@@ -736,9 +737,9 @@ def set_teacher_calendar_dict(teacher_calendars_dict,employee_key,class_calendar
 		teacher_cal = calendar_service.get_calendar_by_date_and_key(class_calendar.calendar_date,employee_key)
 		if teacher_cal is None:
 			teacher_cal = generate_employee_calendar(employee_key,class_calendar)
-			gclogger.info("Teacher calendar - New record created in DB")
-		else:
-			gclogger.info("Teacher calendar - Existing record loaded from DB")
+			gclogger.info("--->>Teacher calendar - New record created in DB calendar key --> " + str(teacher_cal.calendar_key))
+		else :
+			gclogger.info(" --->>Teacher calendar - Existing record loaded from DB calendar key --> " + str(teacher_cal.calendar_key))
 		teacher_calendars_dict[key] = teacher_cal
 	else:
 		gclogger.info("Teacher calendar present in Dict")
