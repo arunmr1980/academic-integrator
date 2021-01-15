@@ -86,13 +86,13 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 
 
 		
-		self.update_class_cals_on_cancel_leave(removed_events,class_cals_to_be_updated,updated_class_calendars_list,timetables)
-		for class_event in removed_events :
+		updated_removed_events = self.update_class_cals_on_cancel_leave(removed_events,class_cals_to_be_updated,updated_class_calendars_list,timetables)
+		for class_event in updated_removed_events :
 			print(class_event.params[1].value,"subject_key -----------------------__>>>>>>>(2)")
 		school_key = updated_class_calendars_list[0].institution_key
 		updated_teacher_calendars_list = self.integrate_teacher_calendars_on_cancel_leave(current_teacher_calendars_list,updated_class_calendars_list,school_key)
 		current_lessonplans = self.get_lessonplans_list(events_with_sub_key.keys(),current_lessonplans_list)
-		updated_lessonplans_list = leave_integrator.update_lessonplans_with_adding_events(current_lessonplans,updated_class_calendars_list,removed_events)
+		updated_lessonplans_list = leave_integrator.update_lessonplans_with_adding_events(current_lessonplans,updated_class_calendars_list,updated_removed_events)
 		for updated_teacher_calendar in updated_teacher_calendars_list :
 			cal = calendar.Calendar(None)
 			teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
@@ -210,13 +210,15 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 
 
 	def update_class_cals_on_cancel_leave(self,removed_events,class_cals,updated_class_calendars_list,timetables) :
+		updated_removed_events = []
 		for current_class_calendar in class_cals :
 			subscriber_key = current_class_calendar.subscriber_key
 			class_key = subscriber_key[:-2]
 			division = subscriber_key[-1:]
 			timetable = self.get_timetable_by_class_key_and_division(class_key,division,timetables)
-			updated_class_calendar = leave_integrator.get_updated_class_calendar_on_cancel_leave(current_class_calendar,removed_events,timetable)
+			updated_class_calendar = leave_integrator.get_updated_class_calendar_on_cancel_leave(current_class_calendar,removed_events,timetable,updated_removed_events)
 			updated_class_calendars_list.append(updated_class_calendar)
+		return updated_removed_events
 
 
 	def get_timetable_by_class_key_and_division(self,class_key,division,timetables) :
