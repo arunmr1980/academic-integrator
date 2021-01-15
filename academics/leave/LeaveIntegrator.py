@@ -97,10 +97,14 @@ def integrate_leave_cancel(leave_key) :
 	teacher_cals_to_be_updated = []
 
 	leave = leave_service.get_leave(leave_key)
+	from_time = None
+	to_time = None
+	if hasattr(leave,"from_time") :
+		from_time = leave.from_time
+	if hasattr(leave,"to_time") :
+		to_time = leave.to_time
 	if hasattr(leave, 'status') and leave.status == 'CANCELLED':
 		employee_key = leave.subscriber_key
-		from_time = leave.from_time
-		to_time = leave.to_time
 		from_date = leave.from_date
 		to_date = leave.to_date
 		teacher_cals = get_teacher_calendars_on_dates(from_date,to_date,employee_key)
@@ -114,14 +118,24 @@ def integrate_leave_cancel(leave_key) :
 					if is_class_class_calendar_already_exist(class_cals_to_be_updated,current_class_calendar) == False :
 						class_cals_to_be_updated.append(current_class_calendar)
 					class_event = get_class_calendar_event(current_class_calendar,event_code,removed_events)
-					if exam_integrator.check_events_conflict(class_event.from_time,class_event.to_time,from_time,to_time) == True :
+					if from_time is not None and to_time is not None :
+						if exam_integrator.check_events_conflict(class_event.from_time,class_event.to_time,from_time,to_time) == True :
+							if is_this_event_already_exist(current_class_calendar,class_event,removed_events) == False :
+								removed_events.append(class_event)
+								if current_class_calendar.subscriber_key in events_with_sub_key :
+									events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
+								else :
+									events_with_sub_key[current_class_calendar.subscriber_key] = []
+									events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
+					else :
 						if is_this_event_already_exist(current_class_calendar,class_event,removed_events) == False :
-							removed_events.append(class_event)
-							if current_class_calendar.subscriber_key in events_with_sub_key :
-								events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
-							else :
-								events_with_sub_key[current_class_calendar.subscriber_key] = []
-								events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
+								removed_events.append(class_event)
+								if current_class_calendar.subscriber_key in events_with_sub_key :
+									events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
+								else :
+									events_with_sub_key[current_class_calendar.subscriber_key] = []
+									events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
+
 
 
 	update_class_cals_on_cancel_leave(removed_events,class_cals_to_be_updated,updated_class_calendars_list)

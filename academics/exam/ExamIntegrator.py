@@ -110,12 +110,11 @@ def integrate_update_exam_on_calendar(series_code,class_key,division) :
 	updated_lessonplans_list = []
 	removed_events = []
 	exams_list = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
-	school_key = exams_list[0].institution_key
-	academic_year = exams_list[0].academic_year
-
-	academic_configuration = academic_service.get_academig(school_key,academic_year)
-	timetable = timetable_service.get_timetable_by_class_key_and_division(class_key,division)
 	
+	timetable = timetable_service.get_timetable_by_class_key_and_division(class_key,division)
+	school_key = timetable.school_key
+	academic_year = timetable.academic_year
+	academic_configuration = academic_service.get_academig(school_key,academic_year)
 	events_to_be_added = []
 	current_class_calendars_list = get_updated_current_class_calendars_from_exam_and_schedule(exams_list)
 	current_teacher_calendars_list = get_current_teacher_calendars_from_current_class_calendars(current_class_calendars_list,school_key)
