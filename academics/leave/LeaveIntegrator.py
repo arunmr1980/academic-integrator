@@ -118,7 +118,7 @@ def integrate_leave_cancel(leave_key) :
 					if is_class_class_calendar_already_exist(class_cals_to_be_updated,current_class_calendar) == False :
 						class_cals_to_be_updated.append(current_class_calendar)
 					class_event = get_class_calendar_event(current_class_calendar,event_code,removed_events)
-					print(class_event.params[1].value,"subject_key -----------------------__>>>>>>> (1)")
+					gclogger.info(class_event.params[1].value + " subject_key -----------------------__>>>>>>> (1)")
 					if from_time is not None and to_time is not None :
 						if exam_integrator.check_events_conflict(class_event.from_time,class_event.to_time,from_time,to_time) == True :
 							if is_this_event_already_exist(current_class_calendar,class_event,removed_events) == False :
@@ -141,7 +141,7 @@ def integrate_leave_cancel(leave_key) :
 
 	update_class_cals_on_cancel_leave(removed_events,class_cals_to_be_updated,updated_class_calendars_list)
 	for class_event in removed_events :
-			print(class_event.params[1].value,"subject_key -----------------------__>>>>>>>(2)")
+			gclogger.info(class_event.params[1].value + " subject_key -----------------------__>>>>>>>(2)")
 	school_key = updated_class_calendars_list[0].institution_key
 	updated_teacher_calendars_list = integrate_teacher_calendars_on_cancel_leave(teacher_cals_to_be_updated,updated_class_calendars_list,school_key)
 	current_lessonplans = get_lessonplans_list(events_with_sub_key.keys())
