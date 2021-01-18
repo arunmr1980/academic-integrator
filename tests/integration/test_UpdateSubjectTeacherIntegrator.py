@@ -28,12 +28,14 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + '--------- A teacher time table uploaded -------- '+str(current_teacher_timetable['time_table_key']))
 
 		current_class_calendars = self.get_current_class_calendars_list_json()
-		for current_calendar in current_class_calendars :
+		current_class_calendars_list = self.update_a_class_calendar_to_future_date(current_class_calendars)
+		for current_calendar in current_class_calendars_list :
 			response = calendar_service.add_or_update_calendar(current_calendar)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A class calendar uploaded --------- '+str(current_calendar['calendar_key']))
 
 		current_teacher_calendars = self.get_current_teacher_calendars_list_json()
-		for current_calendar in current_teacher_calendars :
+		current_teacher_calendars_list = self.update_teacher_calendars_to_future_date(current_teacher_calendars)
+		for current_calendar in current_teacher_calendars_list :
 			response = calendar_service.add_or_update_calendar(current_calendar)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A teacher calendar uploaded --------- '+str(current_calendar['calendar_key']))
 
@@ -47,13 +49,13 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		subscriber_key = class_info_key + '-' + division
 		current_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
 		current_cls_timetable = copy.deepcopy(current_class_timetable)
-		existing_teacher_timetable = self.get_existing_teacher_timetable(existing_teacher_emp_key,current_cls_timetable,subject_code)
-		new_teacher_timetable = self.get_new_teacher_timetable(new_teacher_emp_key,current_cls_timetable,subject_code)
-		update_subject_teacher_integrator(division,class_info_key,subject_code,existing_teacher_timetable,new_teacher_timetable)
+		update_subject_teacher_integrator(division,class_info_key,subject_code,existing_teacher_emp_key,new_teacher_emp_key)
 
 		expected_teacher_timetables_list = self.get_expected_teacher_timetables_list()
-		expected_class_calendars_list = self.get_expected_class_calendars_list()
-		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
+		expected_class_calendars = self.get_expected_class_calendars_list()
+		expected_class_calendars_list = self.update_a_class_calendar_object_to_future_date(expected_class_calendars)
+		expected_teacher_calendars = self.get_expected_teacher_calendars_list()
+		expected_teacher_calendars_list = self.update_teacher_calendars_object_to_future_date(expected_teacher_calendars)
 		expected_class_timetables_list = self.get_expected_class_timetables_list()
 		
 
@@ -67,73 +69,76 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		gclogger.info("-----[IntegrationTest] class timetable test passed ----------------- "+ str(updated_class_timetable.time_table_key)+" ------------------------------ ")
 
 		for updated_class_calendar in updated_class_calendars_list :
+			cal = calendar.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+			pp.pprint(calendar_dict)
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
 			gclogger.info("-----[IntegrationTest] class calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
 		for updated_teacher_calendar in updated_teacher_calendars_list :
 			cal = calendar.Calendar(None)
 			calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
-			# pp.pprint(calendar_dict)
+			pp.pprint(calendar_dict)
 			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
-			gclogger.info("-----[IntegrationTest] teacher calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
+			gclogger.info("-----[IntegrationTest] teacher calendar test passed ----------------- "+ str(updated_teacher_calendar.calendar_key)+" ------------------------------ ")
 
 		self.check_teacher_timetables(updated_previous_teacher_timetable,expected_teacher_timetables_list)
 		gclogger.info("-----[IntegrationTest] teacher timetable test passed ----------------- "+ str(updated_previous_teacher_timetable.time_table_key)+" ------------------------------ ")
 		self.check_teacher_timetables(updated_new_teacher_timetable,expected_teacher_timetables_list)
 		gclogger.info("-----[IntegrationTest] teacher timetable test passed ----------------- "+ str(updated_new_teacher_timetable.time_table_key)+" ------------------------------ ")
-		
-	def get_existing_teacher_timetable(self,existing_teacher_emp_key,current_cls_timetable,subject_code) :
-		existing_teacher_timetable = None
-		existing_teacher_timetable = timetable_service.get_timetable_entry_by_employee(existing_teacher_emp_key,current_cls_timetable.academic_year)
-		gclogger.info(" ----------- Getting existing teacher timetable from DB ----------- " + str(existing_teacher_timetable.time_table_key) + '-----------')
-		if existing_teacher_timetable is None :
-			timetable = self.get_timetable_from_updated_class_timetable(current_class_timetable)
-			timetable = self.reset_periods(timetable,existing_teacher_emp_key,subject_code)
-			existing_teacher_timetable = generate_teacher_timetable(existing_teacher_emp_key,timetable,current_cls_timetable)
-			gclogger.info(" ------------ Generating previous teacher timetable  ------------- "+ str(existing_teacher_timetable.time_table_key) + '-----------')
 
-		return existing_teacher_timetable
+	def update_a_class_calendar_to_future_date(self,class_calendars_list) :
+		updated_class_calendars_list = []
+		tomorrow_date = datetime.date.today() + datetime.timedelta(days=1)
+		tomorrow_date = tomorrow_date.strftime("%Y-%m-%d")
+		for class_calendar in class_calendars_list :
+			if class_calendar['calendar_date'] == '2020-12-30' :
+				class_calendar['calendar_date'] = tomorrow_date
+			for event in class_calendar['events'] :
+				if '2020-12-30' in event['from_time'] :
+					new_from_time = event['from_time'].replace('2020-12-30',tomorrow_date)
+					event['from_time'] = new_from_time
+				if '2020-12-30' in event['to_time'] :
+					new_to_time = event['to_time'].replace('2020-12-30',tomorrow_date)
+					event['to_time'] = new_to_time
+			updated_class_calendars_list.append(class_calendar)
+		return updated_class_calendars_list
 
+	def update_teacher_calendars_to_future_date(self,teacher_calendars_list) :
+		updated_teacher_calendars_list = []
+		tomorrow_date = datetime.date.today() + datetime.timedelta(days=1)
+		tomorrow_date = tomorrow_date.strftime("%Y-%m-%d")
+		for teacher_calendar in teacher_calendars_list :
+			if teacher_calendar['calendar_date'] == '2020-12-30' :
+				teacher_calendar['calendar_date'] = tomorrow_date
+			updated_teacher_calendars_list.append(teacher_calendar)
+		return updated_teacher_calendars_list
 
-	def get_new_teacher_timetable(self,new_teacher_emp_key,current_cls_timetable,subject_code) :
-		new_teacher_timetable = None	
-		new_teacher_timetable = timetable_service.get_timetable_entry_by_employee(new_teacher_emp_key,current_cls_timetable.academic_year)
-		gclogger.info(" ----------- Getting new teacher timetable from DB ----------- " + str(new_teacher_timetable.time_table_key) + '-----------')
-		if new_teacher_timetable is None :
-			timetable = self.get_timetable_from_updated_class_timetable(current_cls_timetable)
-			timetable = self.reset_periods(timetable,new_teacher_emp_key,subject_code)
-			new_teacher_timetable = self.generate_teacher_timetable(new_teacher_emp_key,timetable,current_class_timetable)
-			gclogger.info(" ------------ Generating new teacher timetable  ------------- "+ str(new_teacher_timetable.time_table_key) + '-----------')
-		return new_teacher_timetable
+	def update_a_class_calendar_object_to_future_date(self,class_calendars_list) :
+		updated_class_calendars_list = []
+		tomorrow_date = datetime.date.today() + datetime.timedelta(days=1)
+		tomorrow_date = tomorrow_date.strftime("%Y-%m-%d")
+		for calendar in class_calendars_list :
+			if calendar.calendar_date == '2020-12-30' :
+				calendar.calendar_date = tomorrow_date
+			for event in calendar.events :
+				if '2020-12-30' in event.from_time :
+					new_from_time = event.from_time.replace('2020-12-30',tomorrow_date)
+					event.from_time = new_from_time
+				if '2020-12-30' in event.to_time :
+					new_to_time = event.to_time.replace('2020-12-30',tomorrow_date)
+					event.to_time = new_to_time
+			updated_class_calendars_list.append(calendar)
+		return updated_class_calendars_list
 
-
-	def reset_periods(self,timetable,updated_employee_key,subject_code) :
-		if hasattr(timetable ,'day_tables') :
-			for day in timetable.day_tables :
-				for period in day.periods :
-					period.class_info_key = None
-					period.division_code = None
-					period.employee_key = None
-					period.subject_key = None
-		return timetable
-
-	def get_timetable_from_updated_class_timetable(self,updated_class_timetable) :
-		if hasattr(updated_class_timetable,'timetable') :
-			return updated_class_timetable.timetable
-
-	def generate_teacher_timetable(self,updated_employee_key,timetable,updated_class_timetable) :
-		teacher_timetable = ttable.TimeTable(None)
-		teacher_timetable.academic_year = updated_class_timetable.academic_year
-		teacher_timetable.employee_key = updated_employee_key
-		teacher_timetable.school_key = updated_class_timetable.school_key
-		teacher_timetable.time_table_key = key.generate_key(16)
-		teacher_timetable.timetable = timetable
-		return teacher_timetable
-
-
-
-
-
-
+	def update_teacher_calendars_object_to_future_date(self,teacher_calendars_list) :
+		updated_teacher_calendars_list = []
+		tomorrow_date = datetime.date.today() + datetime.timedelta(days=1)
+		tomorrow_date = tomorrow_date.strftime("%Y-%m-%d")
+		for calendar in teacher_calendars_list :
+			if calendar.calendar_date == '2020-12-30' :
+				calendar.calendar_date = tomorrow_date
+			updated_teacher_calendars_list.append(calendar)
+		return updated_teacher_calendars_list
 
 	def tearDown(self) :
 		division = 'A'
@@ -206,7 +211,6 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		for index in range(0,len(expected_class_calendar_event_params)) :
 			self.assertEqual(expected_class_calendar_event_params[index].key,generated_class_calendar_event_params[index].key)
 			self.assertEqual(expected_class_calendar_event_params[index].value,generated_class_calendar_event_params[index].value)
-
 
 	def check_class_timetables(self,updated_class_timetable,expected_class_timetables_list) :
 		for expected_class_timetable in expected_class_timetables_list :

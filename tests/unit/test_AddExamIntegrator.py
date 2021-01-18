@@ -8,136 +8,193 @@ import academics.calendar.Calendar as calendar
 import academics.lessonplan.LessonPlan as lpnr
 from academics.calendar.CalendarIntegrator import *
 import academics.classinfo.ClassInfo as classinfo
+import academics.exam.ExamIntegrator as exam_integrator
 import academics.exam.Exam as exam
 import pprint
-import copy 
+import copy
 import academics.timetable.KeyGeneration as key
 pp = pprint.PrettyPrinter(indent=4)
 
 class AddExamIntegratorTest(unittest.TestCase):
 
-		
+
 	def test_calendars_and_lessonplan(self) :
+		series_code = "NEG111"
+		class_key = "8B1B22E72AE"
+		division = "A"
+		subscriber_key = class_key + '-' + division
 		updated_class_calendars_list = []
 		updated_teacher_calendars_list = []
-		current_class_calendars_list = self.get_current_class_calendars_list()
-		exams_list = self.get_exams_list()
-		exam_events = self.make_exam_events(exams_list)
+		updated_lessonplans_list = []
+		removed_events = []
 
-		for current_class_calendar in current_class_calendars_list :
-			print("")
-			print('*************************',current_class_calendar.calendar_key," GOING TO UPDATE CLENDAR KEY ************************")
-			print("")
-			updated_class_calendar = self.update_class_calendar_with_exam_events(current_class_calendar,exam_events)
-			updated_class_calendars_list.append(updated_class_calendar)
-		for i in updated_class_calendars_list :
+		current_class_calendars = self.get_current_class_calendars_list()
+		expected_class_calendars_list = self.get_expected_class_calendars_list()
+		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
+		expected_lessonplans_list = self.get_expected_lessonplans_list()
+		current_teacher_calendars_list = self.get_current_teacher_calendars_list()
+		current_lessonplans_list = self.get_current_lessonplans_list()
+		current_class_calendars_list = self.current_class_calendars_perticular_class(subscriber_key,current_class_calendars)
+		current_cls_calendars = copy.deepcopy(current_class_calendars_list)
+		exams = self.get_exams_list()
+		exams_list = self.perticular_exams_for_perticular_class(exams,class_key,division,series_code)
+		updated_class_calendars_list = exam_integrator.integrate_class_calendars_on_add_exams(updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events)
+		exam_integrator.integrate_teacher_cals_and_lessonplans_on_add_exam(
+							updated_class_calendars_list,
+							updated_teacher_calendars_list,
+							updated_lessonplans_list,
+							current_class_calendars_list,
+							current_teacher_calendars_list,
+							current_lessonplans_list,
+							exams_list,
+							removed_events
+							)
+
+
+
+		for updated_class_calendar in updated_class_calendars_list :
 			cal = calendar.Calendar(None)
-			class_calendar_dict = cal.make_calendar_dict(i)
+			class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
 			pp.pprint(class_calendar_dict)
-
-		
-
-	
-	code to be moved to integration algorithm
-	def update_class_calendar_with_exam_events(self,current_class_calendar,exam_events) :
-		for exam_event in exam_events :
-			print("EXAM TIME --------",exam_event.from_time,' --- ',exam_event.to_time)
-			updated_class_calendar = self.remove_conflicted_class_events(exam_event,current_class_calendar)		
-		return current_class_calendar
+			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
 
 
-		
+		for updated_teacher_calendar in updated_teacher_calendars_list :
+			cal = calendar.Calendar(None)
+			teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+			pp.pprint(teacher_calendar_dict)
+			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
 
-	def remove_conflicted_class_events(self,exam_event,current_class_calendar) :
-		exam_event_start_time = exam_event.from_time
-		exam_event_end_time = exam_event.to_time
-		for event in current_class_calendar.events :
-			print(event.event_code,"EVENT CODEEEEE---")
-			current_class_calendar_event_start_time = event.from_time
-			current_class_calendar_event_end_time = event.to_time
-			if check_events_conflict(exam_event_start_time,exam_event_end_time,current_class_calendar_event_start_time,current_class_calendar_event_end_time) :
-				print(" ---------- THIS EVENT HAS  CONFLICT -----------",event.from_time,' --- ',event.to_time)
-				current_class_calendar.events.remove(event)
+		for updated_lessonplan in updated_lessonplans_list :
 
-				
-			else :
-				print(" ------------ THIS EVENT HAS NO CONFLICT -------------",event.from_time,' --- ',event.to_time)
-		return current_class_calendar
+			lp = lpnr.LessonPlan(None)
+			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+			pp.pprint(updated_lessonplan_dict)
+			self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
 
 
 
 
-	def check_events_conflict(self,event_start_time,event_end_time,class_calendar_event_start_time,class_calendar_event_end_time) :
-		is_conflict = None
-		event_start_time_year = int(event_start_time[:4])
-		event_start_time_month = int(event_start_time[5:7])
-		event_start_time_day = int(event_start_time[8:10])
-		event_start_time_hour = int(event_start_time[11:13])
-		event_start_time_min = int(event_start_time[14:16])
-		event_start_time_sec = int(event_start_time[-2:])
+	def current_class_calendars_perticular_class(self,subscriber_key,current_class_calendars) :
+		current_class_calendars_list =[]
+		for current_class_calendar in current_class_calendars:
+			if current_class_calendar.subscriber_key == subscriber_key :
+				current_class_calendars_list.append(current_class_calendar)
+		return current_class_calendars_list
 
-		event_end_time_year = int(event_end_time[:4])
-		event_end_time_month = int(event_end_time[5:7])
-		event_end_time_day = int(event_end_time[8:10])
-		event_end_time_hour = int(event_end_time[11:13])
-		event_end_time_min = int(event_end_time[14:16])
-		event_end_time_sec = int(event_end_time[-2:])
+	def perticular_exams_for_perticular_class(self,exams,class_key,division,series_code) :
+		exams_list =[]
+		for exam in exams :
+			if exam.division == division and exam.class_key == class_key and exam.series_code == series_code :
+				exams_list.append(exam)
+		return exams_list
+	def check_lesson_plans(self,updated_lesson_plan,expected_lesson_plan_list) :
+		for expected_lesson_plan in expected_lesson_plan_list :
+			if expected_lesson_plan.lesson_plan_key == updated_lesson_plan.lesson_plan_key :
+				self.check_root_sessions(updated_lesson_plan.sessions,expected_lesson_plan.sessions)
+				self.assertEqual(updated_lesson_plan.lesson_plan_key,expected_lesson_plan.lesson_plan_key)
+				self.assertEqual(updated_lesson_plan.class_key,expected_lesson_plan.class_key)
+				self.assertEqual(updated_lesson_plan.division,expected_lesson_plan.division)
+				self.assertEqual(updated_lesson_plan.subject_code,expected_lesson_plan.subject_code)
+				self.assertEqual(updated_lesson_plan.resources,expected_lesson_plan.resources)
+				self.check_topics(updated_lesson_plan.topics,expected_lesson_plan.topics)
 
-		class_calendar_event_start_time_year = int(class_calendar_event_start_time[:4])
-		class_calendar_event_start_time_month = int(class_calendar_event_start_time[5:7])
-		class_calendar_event_start_time_day = int(class_calendar_event_start_time[8:10])
-		class_calendar_event_start_time_hour = int(class_calendar_event_start_time[11:13])
-		class_calendar_event_start_time_min = int(class_calendar_event_start_time[14:16])
-		class_calendar_event_start_time_sec = int(class_calendar_event_start_time[-2:])
+		gclogger.info(" <<<-------------------------------- UNIT TEST PASSED FOR "+ str(updated_lesson_plan.lesson_plan_key)+" ------------------------------ ")
 
-		class_calendar_event_end_time_year = int(class_calendar_event_end_time[:4])
-		class_calendar_event_end_time_month = int(class_calendar_event_end_time[5:7])
-		class_calendar_event_end_time_day = int(class_calendar_event_end_time[8:10])
-		class_calendar_event_end_time_hour = int(class_calendar_event_end_time[11:13])
-		class_calendar_event_end_time_min = int(class_calendar_event_end_time[14:16])
-		class_calendar_event_end_time_sec = int(class_calendar_event_end_time[-2:])
+	def check_topics(self,updated_lesson_plan_topics,expected_lesson_plan_topics):
+		for index in range(0,len(updated_lesson_plan_topics)) :
+			self.assertEqual(updated_lesson_plan_topics[index].code,expected_lesson_plan_topics[index].code)
+			self.assertEqual(updated_lesson_plan_topics[index].name,expected_lesson_plan_topics[index].name)
+			self.assertEqual(updated_lesson_plan_topics[index].order_index,expected_lesson_plan_topics[index].order_index)
+			self.check_topic(updated_lesson_plan_topics[index].topics,expected_lesson_plan_topics[index].topics)
 
-		class_calendar_event_start_time = dt(class_calendar_event_start_time_year, class_calendar_event_start_time_month, class_calendar_event_start_time_day, class_calendar_event_start_time_hour, class_calendar_event_start_time_min, class_calendar_event_start_time_sec, 000000)
-		class_calendar_event_end_time = dt(class_calendar_event_end_time_year, class_calendar_event_end_time_month, class_calendar_event_end_time_day, class_calendar_event_end_time_hour, class_calendar_event_end_time_min, class_calendar_event_end_time_sec, 000000)
-		event_start_time = dt(event_start_time_year, event_start_time_month, event_start_time_day, event_start_time_hour, event_start_time_min, event_start_time_sec, 000000)
-		event_end_time = dt(event_end_time_year, event_end_time_month, event_end_time_day, event_end_time_hour, event_end_time_min, event_end_time_sec, 000000)
+	def check_topic(self,updated_lesson_plan_topic,expected_lesson_plan_topic):
+		for index in range(0,len(updated_lesson_plan_topic)) :
+			self.assertEqual(updated_lesson_plan_topic[index].code,expected_lesson_plan_topic[index].code)
+			self.assertEqual(updated_lesson_plan_topic[index].description,expected_lesson_plan_topic[index].description)
+			self.assertEqual(updated_lesson_plan_topic[index].name,expected_lesson_plan_topic[index].name)
+			self.assertEqual(updated_lesson_plan_topic[index].order_index,expected_lesson_plan_topic[index].order_index)
+			self.assertEqual(updated_lesson_plan_topic[index].resources,expected_lesson_plan_topic[index].resources)
+			self.check_sessions(updated_lesson_plan_topic[index].sessions,expected_lesson_plan_topic[index].sessions)
 
-		delta = max(event_start_time,class_calendar_event_start_time) - min(event_end_time,class_calendar_event_end_time)
-		if delta.days < 0 :
-			is_conflict = True
-		else :
-			is_conflict = False
-		return is_conflict
+	def check_sessions(self,updated_lesson_plan_sessions,expected_lesson_plan_sessions) :
+		for index in range(len(updated_lesson_plan_sessions)) :
+			self.assertEqual(updated_lesson_plan_sessions[index].code,expected_lesson_plan_sessions[index].code)
+			self.assertEqual(updated_lesson_plan_sessions[index].completion_datetime,expected_lesson_plan_sessions[index].completion_datetime)
+			self.assertEqual(updated_lesson_plan_sessions[index].completion_status,expected_lesson_plan_sessions[index].completion_status)
+			self.assertEqual(updated_lesson_plan_sessions[index].name,expected_lesson_plan_sessions[index].name)
+			self.assertEqual(updated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
+			if hasattr(updated_lesson_plan_sessions[index],'schedule') and hasattr(expected_lesson_plan_sessions[index],'schedule'):
+				self.check_schedule(updated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
+	def check_root_sessions(self,updated_lesson_plan_sessions,expected_lesson_plan_sessions) :
+		for index in range(len(updated_lesson_plan_sessions)) :
+			self.assertEqual(updated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
+			if hasattr(updated_lesson_plan_sessions[index],'schedule') and hasattr(expected_lesson_plan_sessions[index],'schedule'):
+				self.check_schedule(updated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
 
-	def make_exam_events(self,exams_list) :
-		exam_events = []
-		for exam_info in exams_list :
-			exam_event = calendar.Event(None)
-			exam_event.event_code = key.generate_key(3)
-			exam_event.event_type = 'EXAM'
-			exam_event.from_time = get_standard_time(exam_info.from_time,exam_info.date_time)
-			exam_event.to_time = get_standard_time(exam_info.to_time,exam_info.date_time)
-			exam_event.params = self.get_params()
-			exam_events.append(exam_event)
-		return exam_events
+	def check_schedule(self,updated_lesson_plan_shedule,expected_lesson_plan_shedule) :
+		self.assertEqual(updated_lesson_plan_shedule.start_time,expected_lesson_plan_shedule.start_time)
+		self.assertEqual(updated_lesson_plan_shedule.end_time,expected_lesson_plan_shedule.end_time)
+
+	def check_teacher_calendars(self,updated_teacher_calendar,expected_teacher_calendars_list) :
+		for expected_teacher_calendar in expected_teacher_calendars_list :
+			if updated_teacher_calendar.calendar_key == expected_teacher_calendar.calendar_key :
+				self.assertEqual(expected_teacher_calendar.institution_key,updated_teacher_calendar.institution_key )
+				self.assertEqual(expected_teacher_calendar.calendar_date,updated_teacher_calendar.calendar_date )
+				self.assertEqual(expected_teacher_calendar.subscriber_key,updated_teacher_calendar.subscriber_key )
+				self.assertEqual(expected_teacher_calendar.subscriber_type,updated_teacher_calendar.subscriber_type )
+				self.check_events_teacher_calendar(expected_teacher_calendar.events,updated_teacher_calendar.events)
+				gclogger.info("-----[UnitTest] teacher test passed ----------------- "+ str(updated_teacher_calendar.calendar_key)+" ------------------------------ ")
 
 
 
-	def get_standard_time(self,time,date) :
-		splited_date = date.split('-')
-		splited_date = list(map(int,splited_date))
-		time_hour = int(time[0:2])
-		time_minute = int(time[3:5])
-		return datetime.datetime(splited_date[0],splited_date[1],splited_date[2],time_hour,time_minute).isoformat()
+
+	def check_events_teacher_calendar(self,expected_teacher_calendar_events,updated_teacher_calendar_events) :
+		for index in range(0,len(expected_teacher_calendar_events) - 1) :
+			self.assertEqual(expected_teacher_calendar_events[index].event_code , updated_teacher_calendar_events[index].event_code)
+			self.assertEqual(expected_teacher_calendar_events[index].ref_calendar_key , updated_teacher_calendar_events[index].ref_calendar_key)
 
 
-	def get_params(self) :
-		params = []
-		period_info = calendar.Param(None)
-		period_info.key = 'is_cancel_flag'
-		period_info.value = 'true'
-		params.append(period_info)
-		return params
+	def check_class_calendars(self,updated_class_calendar,expected_class_calendars_list) :
+		for expected_class_calendar in expected_class_calendars_list :
+			if updated_class_calendar.calendar_key == expected_class_calendar.calendar_key :
+				self.assertEqual(expected_class_calendar.institution_key,updated_class_calendar.institution_key )
+				self.assertEqual(expected_class_calendar.calendar_date,updated_class_calendar.calendar_date )
+				self.assertEqual(expected_class_calendar.subscriber_key,updated_class_calendar.subscriber_key )
+				self.assertEqual(expected_class_calendar.subscriber_type,updated_class_calendar.subscriber_type )
+				self.check_events(expected_class_calendar.events,updated_class_calendar.events)
+				gclogger.info("-----[UnitTest] class calendar test passed ----------------- "+ str(updated_class_calendar.calendar_key)+" ------------------------------ ")
+
+	def check_events(self,expected_class_calendar_events,generated_class_calendar_events) :
+		for index in range(0,len(expected_class_calendar_events)) :
+			self.assertEqual(expected_class_calendar_events[index].event_type , generated_class_calendar_events[index].event_type)
+			self.assertEqual(expected_class_calendar_events[index].from_time , generated_class_calendar_events[index].from_time)
+			self.assertEqual(expected_class_calendar_events[index].to_time , generated_class_calendar_events[index].to_time)
+			self.check_params(expected_class_calendar_events[index].params,generated_class_calendar_events[index].params)
+
+	def check_params(self,expected_class_calendar_event_params,generated_class_calendar_event_params) :
+		for index in range(0,len(expected_class_calendar_event_params)) :
+			self.assertEqual(expected_class_calendar_event_params[index].key,generated_class_calendar_event_params[index].key)
+			self.assertEqual(expected_class_calendar_event_params[index].value,generated_class_calendar_event_params[index].value)
+
+
+
+
+	def get_current_lessonplans_list(self) :
+		current_lessonplans = []
+		with open('tests/unit/fixtures/add-exams-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
+			lessonplans_list_dict = json.load(lessonplans_list)
+		for lessonplan in lessonplans_list_dict :
+			current_lessonplans.append(lpnr.LessonPlan(lessonplan))
+		return current_lessonplans
+
+	def get_current_teacher_calendars_list(self) :
+		current_teacher_calendars = []
+		with open('tests/unit/fixtures/add-exams-fixtures/current_teacher_calendars_list.json', 'r') as calendar_list:
+			class_calendars_dict = json.load(calendar_list)
+		for class_cal in class_calendars_dict :
+			current_teacher_calendars.append(calendar.Calendar(class_cal))
+		return current_teacher_calendars
 
 	def get_current_class_calendars_list(self) :
 		current_class_calendars = []
@@ -147,6 +204,30 @@ class AddExamIntegratorTest(unittest.TestCase):
 			current_class_calendars.append(calendar.Calendar(class_cal))
 		return current_class_calendars
 
+	def get_expected_class_calendars_list(self) :
+		expected_class_calendars = []
+		with open('tests/unit/fixtures/add-exams-fixtures/expected_class_calendars_list.json', 'r') as calendar_list:
+			class_calendars_dict = json.load(calendar_list)
+		for class_cal in class_calendars_dict :
+			expected_class_calendars.append(calendar.Calendar(class_cal))
+		return expected_class_calendars
+
+	def get_expected_teacher_calendars_list(self) :
+		expected_teacher_calendars = []
+		with open('tests/unit/fixtures/add-exams-fixtures/expected_teacher_calendars_list.json', 'r') as calendar_list:
+			teacher_calendars_dict = json.load(calendar_list)
+		for teacher_cal in teacher_calendars_dict :
+			expected_teacher_calendars.append(calendar.Calendar(teacher_cal))
+		return expected_teacher_calendars
+
+	def get_expected_lessonplans_list(self) :
+		expected_lessonplans = []
+		with open('tests/unit/fixtures/add-exams-fixtures/expected_lessonplans_list.json', 'r') as lessonplan_list:
+			lessonplans_dict = json.load(lessonplan_list)
+		for lessonplan in lessonplans_dict :
+			expected_lessonplans.append(lpnr.LessonPlan(lessonplan))
+		return expected_lessonplans
+
 	def get_exams_list(self) :
 		exams_list = []
 		with open('tests/unit/fixtures/add-exams-fixtures/exams_list.json', 'r') as exam_list:
@@ -155,7 +236,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 			exams_list.append(exam.Exam(exam_dict))
 		return exams_list
 
-	
+
 
 if __name__ == '__main__':
 	unittest.main()

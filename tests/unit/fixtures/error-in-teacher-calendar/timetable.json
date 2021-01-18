@@ -1,0 +1,322 @@
+{
+  "academic_year": "2020-2021",
+  "class_key": "001610357616442257365E3740-01D7-4920-BDA7-0BC669CDCFCA-168810859",
+  "class_name": "TEST-ACADEMIC-20",
+  "division": "A",
+  "school_key": "1e4d12bc2b58050ff084f8da",
+  "time_table_key": "001610358147451728C136D439-3646-460D-80D0-3C06D82F96E7160617075",
+  "timetable": {
+    "day_tables": [
+      {
+        "day_code": "MON",
+        "order_index": 1,
+        "periods": [
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "MON-1",
+            "subject_key": "a m01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "MON-2",
+            "subject_key": "a b01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "MON-3",
+            "subject_key": "a c01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357592567648831899DB-7364-46D7-993F-A87BA0427F3B980232231",
+            "period_code": "MON-4",
+            "subject_key": "a e01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "MON-5",
+            "subject_key": "a m01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "MON-6",
+            "subject_key": "a m02"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357592567648831899DB-7364-46D7-993F-A87BA0427F3B980232231",
+            "period_code": "MON-7",
+            "subject_key": "a p01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "MON-8",
+            "subject_key": "a m02"
+          }
+        ]
+      },
+      {
+        "day_code": "TUE",
+        "order_index": 2,
+        "periods": [
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "TUE-1",
+            "subject_key": "a b01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "TUE-2",
+            "subject_key": "a c01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357592567648831899DB-7364-46D7-993F-A87BA0427F3B980232231",
+            "period_code": "TUE-3",
+            "subject_key": "a e01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "TUE-4",
+            "subject_key": "a m01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "TUE-5",
+            "subject_key": "a m02"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "TUE-6",
+            "subject_key": "a m02"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "TUE-7",
+            "subject_key": "a m01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "TUE-8",
+            "subject_key": "a b01"
+          }
+        ]
+      },
+      {
+        "day_code": "WED",
+        "order_index": 3,
+        "periods": [
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "WED-1",
+            "subject_key": "a c01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "WED-2",
+            "subject_key": "a m01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "WED-3",
+            "subject_key": "a m02"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "WED-4",
+            "subject_key": "a c01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357592567648831899DB-7364-46D7-993F-A87BA0427F3B980232231",
+            "period_code": "WED-5",
+            "subject_key": "a p01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "WED-6",
+            "subject_key": "a b01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "WED-7",
+            "subject_key": "a b01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357592567648831899DB-7364-46D7-993F-A87BA0427F3B980232231",
+            "period_code": "WED-8",
+            "subject_key": "a p01"
+          }
+        ]
+      },
+      {
+        "day_code": "THU",
+        "order_index": 4,
+        "periods": [
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "THU-1",
+            "subject_key": "a b01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357592567648831899DB-7364-46D7-993F-A87BA0427F3B980232231",
+            "period_code": "THU-2",
+            "subject_key": "a e01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "THU-3",
+            "subject_key": "a c01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "THU-4",
+            "subject_key": "a c01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "THU-5",
+            "subject_key": "a m01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "THU-6",
+            "subject_key": "a m02"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "THU-7",
+            "subject_key": "a m02"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357592567648831899DB-7364-46D7-993F-A87BA0427F3B980232231",
+            "period_code": "THU-8",
+            "subject_key": "a p01"
+          }
+        ]
+      },
+      {
+        "day_code": "FRI",
+        "order_index": 1,
+        "periods": [
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "FRI-1",
+            "subject_key": "a m02"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "FRI-2",
+            "subject_key": "a m02"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "FRI-3",
+            "subject_key": "a m01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "FRI-4",
+            "subject_key": "a m01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "001610357478858220732DB489-9C4E-4C2B-A7E4-1583694E5868-72686140",
+            "period_code": "FRI-5",
+            "subject_key": "a b01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "FRI-6",
+            "subject_key": "a c01"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "FRI-7",
+            "subject_key": "a m02"
+          },
+          {
+            "class_info_key": "-",
+            "division_code": "-",
+            "employee_key": "0016103574789436621EB94C1B-2FBA-4ECA-8EEB-4426874A46ED-1706692285",
+            "period_code": "FRI-8",
+            "subject_key": "a m02"
+          }
+        ]
+      }
+    ]
+  }
+}

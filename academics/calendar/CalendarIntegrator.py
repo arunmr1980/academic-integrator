@@ -21,7 +21,7 @@ def remove_event_integrate_calendars(calendar_key,events) :
 	calendar_date = calendar.calendar_date
 	academic_configuration = academic_service.get_academic_year(school_key,calendar_date)
 	academic_year = academic_configuration.academic_year
-	day_code = findDay(calendar.calendar_date).upper()[0:3]
+	day_code = timetable_integrator.findDay(calendar.calendar_date).upper()[0:3]
 	class_info_list = class_info_service.get_classinfo_list(school_key,academic_year)
 	class_calendars = get_class_calendars(class_info_list,calendar_date)
 	if calendar.subscriber_type == 'SCHOOL' :
@@ -158,11 +158,26 @@ def update_teacher_calendar_with_new_event(new_teacher_calendar,calendar_event,u
 	return new_teacher_calendar
 
 
-def get_updated_teacher_calendar(teacher_calendar,updated_class_calendar_events,updated_class_calendar) :
-	teacher_calendar.events = []
+def get_updated_existing_teacher_calendar(teacher_calendar,updated_class_calendar_events,updated_class_calendar,subject_code) :
 	for event in updated_class_calendar_events :
 		employee_key = get_employee_key(event.params)
-		if employee_key == teacher_calendar.subscriber_key :
+		if employee_key != teacher_calendar.subscriber_key :
+			event_code = event.event_code
+			subject_key = get_subject_key(event.params)
+			if subject_key == subject_code :
+				teacher_calendar_event = get_event(teacher_calendar,event.event_code)
+				teacher_calendar.events.remove(teacher_calendar_event)			
+	return teacher_calendar
+
+def get_event(calendar,event_code) :
+	for existing_event in calendar.events :
+		if existing_event.event_code == event_code :
+			return existing_event
+
+def get_updated_new_teacher_calendar(teacher_calendar,updated_class_calendar_events,updated_class_calendar) :
+	for event in updated_class_calendar_events :
+		employee_key = get_employee_key(event.params)
+		if employee_key == teacher_calendar.subscriber_key and is_event_already_exist(event,teacher_calendar.events) == False:
 			event_object = calendar.Event(None)
 			event_object.event_code = event.event_code
 			event_object.ref_calendar_key = updated_class_calendar.calendar_key
@@ -334,7 +349,7 @@ def update_class_calendars_teacher_calendars(subscriber_key,existing_class_calen
 	timetable = timetable_service.get_timetable_by_class_key_and_division(class_key,division)
 	if timetable is not None :
 		holiday_period_list = generate_holiday_period_list(calendar,academic_configuration,timetable,day_code)
-		updated_class_calendar = generate_class_calendar(day_code,timetable,calendar_date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)
+		updated_class_calendar = timetable_integrator.generate_class_calendar(day_code,timetable,calendar_date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)
 		updated_calendars_list.append(updated_class_calendar)
 		updated_class_calendar_events = updated_class_calendar.events
 		employee_key_list = get_employee_key_list(updated_class_calendar_events)
@@ -368,21 +383,6 @@ def get_teacher_calendar_by_emp_key_and_date(employee_key,updated_class_calendar
 	return teacher_calendar
 
 
-
-def make_events(period_list,timetable,date) :
-	events_list =[]
-	for period in period_list :
-		event = calendar.Event(None)
-		event.event_code = key.generate_key(3)
-		event.event_type = 'CLASS_SESSION'
-		time_table_period = get_time_table_period(period.period_code,timetable)
-		event.params = get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
-
-		event.from_time =  get_standard_time(period.start_time,date)
-		event.to_time =  get_standard_time(period.end_time,date)
-		gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
-		events_list.append(event)
-	return events_list
 		
 def get_time_table_period(period_code,timetable) :
 	timetable_configuration_period = None 
@@ -570,6 +570,53 @@ def is_class(param) :
 		is_class = True
 	return is_class
 
+def make_events(period_list,timetable,date) :
+	events_list =[]
+	for period in period_list :
+		event = calendar.Event(None)
+		event.event_code = key.generate_key(3)
+		event.event_type = 'CLASS_SESSION'
+		time_table_period = get_time_table_period(period.period_code,timetable)
+		event.params = timetable_integrator.get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
+
+		event.from_time =  timetable_integrator.get_standard_time(period.start_time,date)
+		event.to_time =  timetable_integrator.get_standard_time(period.end_time,date)
+		gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
+		events_list.append(event)
+	return events_list
+		
+def get_time_table_period(period_code,timetable) :
+	timetable_configuration_period = None 
+	if hasattr(timetable.timetable,'day_tables') :
+		days = timetable.timetable.day_tables
+		for day in days :
+			for time_table_period in day.periods :
+				if time_table_period.period_code == period_code :
+					return time_table_period
+
+		
+def add_events_to_calendar(events,existing_class_calendar) :
+	for event in events :
+		existing_class_calendar.events.append(event)
+	updated_class_calendar = sort_updated_class_calendar_events(existing_class_calendar)
+	return updated_class_calendar
+
+	
+		
+def sort_updated_class_calendar_events(existing_class_calendar) :
+	from operator import attrgetter
+	soreted_events = sorted(existing_class_calendar.events, key = attrgetter('from_time'))
+	existing_class_calendar.events = soreted_events
+	return existing_class_calendar
+
+
+
+
+
+
+
+
+
 def get_events_to_remove(class_calendar,event) :
 	events_to_remove_list = []
 	calendar_event_start_time = event.from_time
@@ -597,6 +644,7 @@ def remove_events_from_class_calendar(events_to_remove_list,class_calendar) :
 	return class_calendar
 
 def check_events_conflict(event_start_time,event_end_time,class_calendar_event_start_time,class_calendar_event_end_time) :
+	
 	is_conflict = None
 	event_start_time_year = int(event_start_time[:4])
 	event_start_time_month = int(event_start_time[5:7])

@@ -24,11 +24,6 @@ class TimetableIntegratorTest(unittest.TestCase):
 			expected_class_calendar = calendar.Calendar(class_calendar)
 			calendar_date = expected_class_calendar.calendar_date
 			generated_class_calendar = generated_class_calendar_dict[calendar_date]
-
-			cal = calendar.Calendar(None)
-			calendar_dict = cal.make_calendar_dict(generated_class_calendar)	
-			pp.pprint(calendar_dict)
-			
 			self.assertEqual(expected_class_calendar.institution_key,generated_class_calendar.institution_key )
 			self.assertEqual(expected_class_calendar.calendar_date,generated_class_calendar.calendar_date )
 			self.assertEqual(expected_class_calendar.subscriber_key,generated_class_calendar.subscriber_key )
@@ -56,7 +51,6 @@ class TimetableIntegratorTest(unittest.TestCase):
 		gclogger.info("")
 		gclogger.info("[UnitTest] testing teacher calendar .....")
 
-		expected_teacher_calendar_dict = {}
 		time_table=self.get_time_table()
 		academic_configuration=self.get_academic_configuration()
 		class_calendar_holiday_list=self.class_calendar_holiday_list()
@@ -64,28 +58,39 @@ class TimetableIntegratorTest(unittest.TestCase):
 		generated_class_calendar_dict = integrate_class_timetable(time_table,academic_configuration,class_calendar_holiday_list,school_calendar_holiday_list)
 
 		class_calendar_list = generated_class_calendar_dict.values()
+		for class_calendar in class_calendar_list :	
+			cal = calendar.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(class_calendar)	
+			pp.pprint(calendar_dict)
+
 		teacher_calendars_dict = integrate_teacher_timetable(class_calendar_list)
-		teacher_calendar_dict_list = self.get_teacher_calendar_list()
-		for teacher_calendar in teacher_calendar_dict_list :
-			teacher_calendar = calendar.Calendar(teacher_calendar)
-			calendar_date = teacher_calendar.calendar_date
-			subscriber_key = teacher_calendar.subscriber_key
-			expected_teacher_calendar_dict[calendar_date + subscriber_key] = teacher_calendar
-
-		for teacher_calendar_key in teacher_calendars_dict :
-			expected_teacher_calendar = expected_teacher_calendar_dict[teacher_calendar_key]
-			teacher_calendar = teacher_calendars_dict[teacher_calendar_key]
-			self.assertEqual(expected_teacher_calendar.institution_key,teacher_calendar.institution_key )
-			self.assertEqual(expected_teacher_calendar.calendar_date,teacher_calendar.calendar_date )
-			self.assertEqual(expected_teacher_calendar.subscriber_key,teacher_calendar.subscriber_key )
-			self.assertEqual(expected_teacher_calendar.subscriber_type,teacher_calendar.subscriber_type )
-		gclogger.info("-----[UnitTest] Teacher calendar test passed -----------------")
+		teacher_calendar_list = teacher_calendars_dict.values()
+		for teacher_calendar in teacher_calendar_list :
+			cal = calendar.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(teacher_calendar)	
+			pp.pprint(calendar_dict)
+			for event in teacher_calendar.events :
+				class_calendar_key = event.ref_calendar_key
+				event_code = event.event_code
+				class_calendar = self.get_class_calendar(class_calendar_list,class_calendar_key)
+				self.assertIsNotNone(class_calendar,"referenced calendar not None")
+				is_exist = self.is_event_code_exist_in_class_calendar(class_calendar,event_code)
+				self.assertEqual(is_exist,True)
+			gclogger.info("----- [IntegrationTest] Teacher calendar test passed for teacher calendar --> " + teacher_calendar.calendar_key + " -----------------")
 
 
-	def get_teacher_calendar_list(self) :
-		with open('tests/unit/fixtures/teacher_calendar_list.json', 'r') as calendar_list:
-			teacher_calendar_dict_list = json.load(calendar_list)
-		return teacher_calendar_dict_list
+	def is_event_code_exist_in_class_calendar(self,class_calendar,event_code) :
+		is_exist = False
+		for existing_event in class_calendar.events :
+			if existing_event.event_code == event_code :
+				is_exist = True
+		return is_exist
+
+	def get_class_calendar(self,class_calendar_list,class_calendar_key) :
+		for class_calendar in class_calendar_list :
+			if class_calendar.calendar_key == class_calendar_key :
+				return class_calendar
+
 
 	def class_calendar_holiday_list(self) :
 		class_calendar_holiday_list = []

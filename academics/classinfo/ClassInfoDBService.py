@@ -45,3 +45,13 @@ def add_or_update_class_info(class_info):
         Item = class_info
     )
     return response
+
+def delete_class_info(class_info_key):
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table(CLASSINFO_TABLE)
+    response = table.delete_item(
+        Key = {
+            'class_info_key': class_info_key
+        }
+    )
+    return response

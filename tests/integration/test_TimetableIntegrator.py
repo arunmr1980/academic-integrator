@@ -66,7 +66,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 			self.check_events(expected_class_calendar.events,generated_class_calendar.events)
 
 
-		# gclogger.info("--------------- Class calendar test passed -----------------")
+		gclogger.info(" ----------- [IntegrationTest] --------------- Class calendar test passed -----------------")
 
 
 	def check_events(self,expected_class_calendar_events,generated_class_calendar_events) :
@@ -87,34 +87,36 @@ class TimetableIntegratorTest(unittest.TestCase):
 
 
 	def test_teacher_calendar(self) :
-		expected_teacher_calendars_dict = {}
-		teacher_calendars_dict = {}
+		class_calendar_list = calendar_service.get_all_calendars_by_key_and_type('8B1B22E72AE-A','CLASS-DIV')
+		for class_calendar in class_calendar_list :	
+			cal = calendar.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(class_calendar)	
+			pp.pprint(calendar_dict)
+		teacher_calendar_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
+		for teacher_calendar in teacher_calendar_list :
+			cal = calendar.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(teacher_calendar)	
+			pp.pprint(calendar_dict)
+			for event in teacher_calendar.events :
+				class_calendar_key = event.ref_calendar_key
+				event_code = event.event_code
+				class_calendar = self.get_class_calendar(class_calendar_list,class_calendar_key)
+				self.assertIsNotNone(class_calendar,"referenced calendar not None")
+				is_exist = self.is_event_code_exist_in_class_calendar(class_calendar,event_code)
+				self.assertEqual(is_exist,True)
+			gclogger.info("-----[IntegrationTest] Teacher calendar test passed for teacher calendar " + teacher_calendar.calendar_key + " -----------------")
 
-		expected_teacher_calendar_list = []
-		expected_teacher_calendar_dict_list = self.get_teacher_calendar_list()
-		for teacher_calendar in expected_teacher_calendar_dict_list :
-			teacher_calendar = calendar.Calendar(teacher_calendar)
-			expected_teacher_calendar_list.append(teacher_calendar)
+	def is_event_code_exist_in_class_calendar(self,class_calendar,event_code) :
+		is_exist = False
+		for existing_event in class_calendar.events :
+			if existing_event.event_code == event_code :
+				is_exist = True
+		return is_exist
 
-		for expected_teacher_calendar in expected_teacher_calendar_list :
-			subscriber_key = expected_teacher_calendar.subscriber_key
-			calendar_date = expected_teacher_calendar.calendar_date
-			expected_teacher_calendars_dict[calendar_date + subscriber_key] = expected_teacher_calendar
-
-		teacher_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
-		for teacher_calender in teacher_calender_list :
-			subscriber_key = teacher_calender.subscriber_key
-			calendar_date = teacher_calender.calendar_date
-			teacher_calendars_dict[calendar_date + subscriber_key] = teacher_calender
-
-		for teacher_calendar_key in teacher_calendars_dict :
-			expected_teacher_calendar = expected_teacher_calendars_dict[teacher_calendar_key]
-			teacher_calendar = teacher_calendars_dict[teacher_calendar_key]
-			self.assertEqual(expected_teacher_calendar.institution_key,teacher_calendar.institution_key )
-			self.assertEqual(expected_teacher_calendar.calendar_date,teacher_calendar.calendar_date )
-			self.assertEqual(expected_teacher_calendar.subscriber_key,teacher_calendar.subscriber_key )
-			self.assertEqual(expected_teacher_calendar.subscriber_type,teacher_calendar.subscriber_type )
-		gclogger.info("------------------Teacher calendar test passed -----------------")
+	def get_class_calendar(self,class_calendar_list,class_calendar_key) :
+		for class_calendar in class_calendar_list :
+			if class_calendar.calendar_key == class_calendar_key :
+				return class_calendar
 
 
 	@classmethod
@@ -147,6 +149,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 		gclogger.info("---------------Test Academic Configuration deleted  " + academic_configuration.academic_config_key + "-----------------")
 
 
+
 	def get_timetable_from_json(self) :
 		with open('tests/unit/fixtures/timetable.json', 'r') as calendar_list:
 			timetable = json.load(calendar_list)
@@ -168,11 +171,6 @@ class TimetableIntegratorTest(unittest.TestCase):
 			academic_configuration = json.load(academic_configure)
 		return academic_configuration
 
-
-	def get_teacher_calendar_list(self) :
-		with open('tests/unit/fixtures/teacher_calendar_list.json', 'r') as calendar_list:
-			teacher_calendar_dict_list = json.load(calendar_list)
-		return teacher_calendar_dict_list
 
 
 	def get_class_calendar_list(self) :

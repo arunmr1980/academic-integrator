@@ -49,3 +49,16 @@ def delete_lessonplan(lesson_plan_key) :
       }
     )
     return response
+
+def get_lessonplan_by_school_key(school_key) :
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table(LESSON_PLAN)
+    response = table.query(
+        IndexName='school_key-index',
+        KeyConditionExpression=Key('school_key').eq(school_key) 
+    )
+    lesson_plan_list = []
+    for item in response['Items']:
+        lesson_plan = lessonplan.LessonPlan(item)
+        lesson_plan_list.append(lesson_plan)
+    return lesson_plan_list
