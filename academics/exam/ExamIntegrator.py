@@ -346,6 +346,14 @@ def get_updated_class_calendar_events(exam_event,current_class_calendar,removed_
 				updated_events.append(exam_event)
 		else :
 			updated_events.append(calendar_event)
+			exam_date = datetime.datetime.strptime(exam_event.from_time[0:10],'%Y-%m-%d')
+			calendar_date = datetime.datetime.strptime(current_class_calendar.calendar_date,'%Y-%m-%d')
+			if exam_date == calendar_date :
+				if exam_event not in updated_events :
+					updated_events.append(exam_event)
+			
+
+
 	current_class_calendar.events = updated_events
 	print(removed_events," --------------- REMOVED EVENTS --------------- ")
 	return current_class_calendar
@@ -682,7 +690,7 @@ def get_params(exam_key,series_code,subject_code) :
 	param_exam_info.value = series_code
 	params.append(param_exam_info)
 	param_exam_info = calendar.Param(None)
-	param_exam_info.key = 'subject_code'
+	param_exam_info.key = 'subject_key'
 	param_exam_info.value = subject_code
 	params.append(param_exam_info)
 	return params
