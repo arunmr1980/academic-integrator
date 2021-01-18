@@ -21,3 +21,21 @@ pip3 install --target ./packages requests --system
 Note :
 
 --system may not be required on all systems
+
+
+Supported Operations
+======================
+
+### 1. Timetable to calendar integration
+
+When timetable is created, it is used to generate class calendars and employee calendars
+
+#### Trigger source
+
+SQS queue
+
+#### Request Format
+
+```
+
+```
