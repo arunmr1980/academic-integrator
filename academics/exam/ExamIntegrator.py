@@ -167,11 +167,15 @@ def save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_
 
 
 def get_affected_class_calendars(exams_list) :
+	current_class_calendar = None
 	current_class_calendars_list = []
 	for exam in exams_list :
 		subscriber_key = exam.class_key + '-' + exam.division
 		calendar_date = exam.date_time
+		institution_key = exam.institution_key
 		current_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
+		if current_class_calendar is None :
+			current_class_calendar = calendar_integrator.generate_class_calendar(class_key,division,calendar_date,institution_key)
 		if check_calendar_already_exist(current_class_calendar,current_class_calendars_list) == False :
 			current_class_calendars_list.append(current_class_calendar)
 	return current_class_calendars_list
@@ -315,9 +319,9 @@ def integrate_add_exam_on_calendar(series_code,class_key,division) :
 
 def integrate_class_calendars_on_add_exams(updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events) :
 	exam_events = make_exam_events(exams_list)
-	print("----------- EXAM EVENTS -----")
-	for exam_event in exam_events :
-		pp.pprint(vars(exam_event))
+	# print("----------- EXAM EVENTS -----")
+	# for exam_event in exam_events :
+	# 	pp.pprint(vars(exam_event))
 	updated_class_calendars_list = get_updated_current_class_calendars(updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events)
 	return updated_class_calendars_list
 
@@ -346,6 +350,14 @@ def get_updated_class_calendar_events(exam_event,current_class_calendar,removed_
 				updated_events.append(exam_event)
 		else :
 			updated_events.append(calendar_event)
+			exam_date = datetime.datetime.strptime(exam_event.from_time[0:10],'%Y-%m-%d')
+			calendar_date = datetime.datetime.strptime(current_class_calendar.calendar_date,'%Y-%m-%d')
+			if exam_date == calendar_date :
+				if exam_event not in updated_events :
+					updated_events.append(exam_event)
+			
+
+
 	current_class_calendar.events = updated_events
 	print(removed_events," --------------- REMOVED EVENTS --------------- ")
 	return current_class_calendar
@@ -573,23 +585,6 @@ def add_sessions_on_root(current_lesson_plan,event,schedule_added) :
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def remove_all_existing_schedules(current_lessonplan) :
 	if  hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :
 			for main_topic in current_lessonplan.topics :
@@ -682,7 +677,7 @@ def get_params(exam_key,series_code,subject_code) :
 	param_exam_info.value = series_code
 	params.append(param_exam_info)
 	param_exam_info = calendar.Param(None)
-	param_exam_info.key = 'subject_code'
+	param_exam_info.key = 'subject_key'
 	param_exam_info.value = subject_code
 	params.append(param_exam_info)
 	return params

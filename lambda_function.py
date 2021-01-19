@@ -6,7 +6,7 @@ from academics.calendar.CalendarLessonPlanIntegrator import calendars_lesson_pla
 from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars, integrate_update_period_calendars_and_lessonplans
 import academics.logger.GCLogger as logger
 from academics.exam.ExamIntegrator import integrate_add_exam_on_calendar,integrate_cancel_exam,integrate_update_exam_on_calendar
-from academics.leave.LeaveIntegrator import integrate_add_leave_on_calendar,integrate_leave_cancel
+from academics.leave.LeaveIntegrator import integrate_add_leave_on_calendar,integrate_leave_cancel,integrate_lessonplan_on_substitute_teacher
 from academics.lessonplan.LessonplanIntegrator import integrate_add_class_session_events
 
 def lambda_handler(event, context):
@@ -41,6 +41,8 @@ def lambda_handler(event, context):
 				special_class_session_integration(request)
 		if request_type == 'EXAM_UPDATE_CALENDAR_SYNC':
 				update_exam_integration(request)
+		if request_type == 'TEACHER_SUBSTITUTE_SYNC':
+				teacher_substitution_integration(request)
 	except:
 		traceback.print_exc()
 		logger.info("Unexpected error ...")
@@ -171,6 +173,17 @@ def update_exam_integration(request) :
 		logger.info("Error in input. series_code,class_info_key or division not present")
 		send_response(400,"input validation error")
 
+def teacher_substitution_integration(request) :
+	try :
+		calendar_key = request['calendar_key']
+		event_code = request['event_code']
+		substitution_emp_key = request['substitution_emp_key']
+		previous_substitution_emp_key = request['previous_substitution_emp_key']
+		previous_substitution_subject_code = request['previous_substitution_subject_code']
+		integrate_lessonplan_on_substitute_teacher(calendar_key,event_code,substitution_emp_key,previous_substitution_emp_key,previous_substitution_subject_code)
+	except KeyError as ke:
+		logger.info("Error in input. calendar_key,event_code,substitution_emp_key,previous_substitution_emp_key or previous_substitution_subject_code not present")
+		send_response(400,"input validation error")
 
 def add_leave_integration(request) :
 	try :

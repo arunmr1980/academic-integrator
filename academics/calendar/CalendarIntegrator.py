@@ -185,7 +185,7 @@ def get_updated_new_teacher_calendar(teacher_calendar,updated_class_calendar_eve
 	return teacher_calendar
 
 def generate_employee_calendar(employee_key,updated_class_calendar) :
-	employee_calendar=calendar.Calendar(None)
+	employee_calendar = calendar.Calendar(None)
 	employee_calendar.calendar_date = updated_class_calendar.calendar_date
 	employee_calendar.calendar_key = key.generate_key(16)
 	employee_calendar.institution_key = updated_class_calendar.institution_key
@@ -193,6 +193,16 @@ def generate_employee_calendar(employee_key,updated_class_calendar) :
 	employee_calendar.subscriber_type = 'EMPLOYEE'
 	employee_calendar.events = []
 	return employee_calendar
+
+def generate_class_calendar(class_key,division,calendar_date,institution_key) :
+	class_calendar = calendar.Calendar(None)
+	class_calendar.calendar_date = calendar_date
+	class_calendar.calendar_key = key.generate_key(16)
+	class_calendar.institution_key = institution_key
+	class_calendar.subscriber_key = class_key + division
+	class_calendar.subscriber_type = 'CLASS-DIV'
+	class_calendar.events = []
+	return class_calendar
 
 def Get_teacher_calendar(updated_class_calendar,subscriber_key) :
 	existing_teacher_calendar = calendar_service.get_calendar_by_date_and_key(updated_class_calendar.calendar_date,subscriber_key)
