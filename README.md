@@ -37,5 +37,8 @@ SQS queue
 #### Request Format
 
 ```
+{
+
+}
 
 ```
