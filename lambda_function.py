@@ -174,12 +174,16 @@ def update_exam_integration(request) :
 		send_response(400,"input validation error")
 
 def teacher_substitution_integration(request) :
+	previous_substitution_emp_key = None
+	previous_substitution_subject_code = None
 	try :
 		calendar_key = request['calendar_key']
 		event_code = request['event_code']
 		substitution_emp_key = request['substitution_emp_key']
-		previous_substitution_emp_key = request['previous_substitution_emp_key']
-		previous_substitution_subject_code = request['previous_substitution_subject_code']
+		if request.__contains__('previous_substitution_emp_key') :
+			previous_substitution_emp_key = request['previous_substitution_emp_key']
+		if request.__contains__('previous_substitution_subject_code') :
+			previous_substitution_subject_code = request['previous_substitution_subject_code']
 		integrate_lessonplan_on_substitute_teacher(calendar_key,event_code,substitution_emp_key,previous_substitution_emp_key,previous_substitution_subject_code)
 	except KeyError as ke:
 		logger.info("Error in input. calendar_key,event_code,substitution_emp_key,previous_substitution_emp_key or previous_substitution_subject_code not present")
