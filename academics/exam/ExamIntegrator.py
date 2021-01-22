@@ -18,6 +18,7 @@ import academics.calendar.Calendar as calendar
 from academics.lessonplan.LessonplanIntegrator import *
 import academics.lessonplan.LessonplanIntegrator as lessonplan_integrator
 from academics.exam import ExamDBService as exam_service
+from academics.exam import SQSService as sqs_service
 from academics.lessonplan import LessonplanDBService as lessonplan_service
 import academics.academic.AcademicDBService as academic_service
 import academics.lessonplan.LessonPlan as lpnr
@@ -46,7 +47,7 @@ def integrate_cancel_exam(exam_series_list,school_key,academic_year) :
 		"exam_series" : exam_series_list
 
 	}
-	exam_service.send_to_sqs(message_body)
+	sqs_service.send_to_sqs(message_body)
 
 def perticular_exams_for_perticular_classes(clazz,series_code) :
 	exams_list = []

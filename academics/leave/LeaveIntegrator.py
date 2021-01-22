@@ -63,6 +63,7 @@ def get_updated_lessonplans_on_substitute_teacher(updated_calendar,current_lesso
 		schedule_to_be_removed = lessonplan_integrator.create_schedule(event_to_be_removed,updated_calendar)
 		schedules_to_be_removed.append(schedule_to_be_removed)
 		updated_lessonplan = get_removed_event_updated_lessonplan_(current_lessonplan,schedules_to_be_removed)
+		gclogger.info(previous_substitution_subject_code +"( Previous subject ) lesson plan updated with deleting event of event_code " + schedule_to_be_removed.event_code + ' ---////--------/////--------////-- ')
 		updated_lessonplans_list.append(updated_lessonplan)
 	events_to_be_added = []
 	subscriber_key = updated_calendar.subscriber_key
