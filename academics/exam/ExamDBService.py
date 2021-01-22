@@ -64,17 +64,5 @@ def make_exam_obj(exams):
 
 
 
-queue_url = 'https://sqs.us-west-2.amazonaws.com/272936841180/exam-reports' 
-queue_name = 'exam-reports'
 
-sqs = boto3.client('sqs')
-
-def send_to_sqs(message_body):
-    response = sqs.send_message(
-        QueueUrl = queue_url,
-        MessageBody = (
-             json.dumps(message_body)
-            )
-    )
-    print(response,"---------------- RESPONSE --------------------")
     
