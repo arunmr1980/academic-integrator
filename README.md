@@ -30,6 +30,9 @@ Supported Operations
 
 When timetable is created, it is used to generate class calendars and employee calendars
 
+1. Creates events in class calendar for the subjects assigned in timetable
+2. Add events in teacher calendar for those who are involved in handling the sessions. Class calendar events are linked to the teacher calendar event
+
 #### Trigger source
 
 SQS queue
@@ -47,6 +50,7 @@ https://sqs.us-west-2.amazonaws.com/272936841180/academic-integrator-q.fifo
 
 
 ```
+
 
 ### 2.Calendar to lessonplan integration
 
