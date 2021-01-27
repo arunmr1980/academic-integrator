@@ -185,7 +185,7 @@ https://sqs.us-west-2.amazonaws.com/272936841180/academic-integrator-q.fifo
 ```
 ### 7.Update period integration
 
-We can update a period (subject changing with teacher ) ,it is used to update class calendars,teacher calendars and lessonplans 
+We can update a the subject assigned in a particular period in timetable. It is used to update class calendars,teacher calendars and lessonplans 
 
 #### Trigger source
 
@@ -207,7 +207,7 @@ https://sqs.us-west-2.amazonaws.com/272936841180/academic-integrator-q.fifo
 
 ### 8.Update subject teacher integration
 
-We can update subject teacher ( teacher is changing with out subject )  ,it is used to update class calendars,teacher calendars, and timetables 
+We can update the teacher handling a subject. This is a class configuration. it is used to update class calendars,teacher calendars, and timetables 
 
 #### Trigger source
 
