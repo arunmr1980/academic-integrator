@@ -63,7 +63,8 @@ def add_event_calendar_lessonplan_integration(request) :
 def remove_event_calendar_lessonplan_integration(request) :
 	try :
 		calendar_key = request['calendar_key']
-		remove_event_integrate_calendars(calendar_key)
+		events = request['events']
+		remove_event_integrate_calendars(calendar_key,events)
 	except KeyError as ke:
 		logger.info("Error in input. calendar_key not present")
 		send_response(400,"input validation error")
@@ -191,7 +192,7 @@ def teacher_substitution_integration(request) :
 
 def add_leave_integration(request) :
 	try :
-		leave_key= request['leave_key']
+		leave_key = request['leave_key']
 		integrate_add_leave_on_calendar(leave_key)
 	except KeyError as ke:
 		traceback.print_exc()
@@ -200,7 +201,7 @@ def add_leave_integration(request) :
 
 def cancel_leave_integration(request) :
 	try :
-		leave_key= request['leave_key']
+		leave_key = request['leave_key']
 		integrate_leave_cancel(leave_key)
 	except KeyError as ke:
 		traceback.print_exc()
