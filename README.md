@@ -54,7 +54,8 @@ https://sqs.us-west-2.amazonaws.com/272936841180/academic-integrator-q.fifo
 
 ### 2.Calendar to lessonplan integration
 
-When calendars is created, it is used to generate lessonplans of each subjects
+When class calendars are created, it is linked to the lesson plans if present. This will also set the available sessions in the lesson plan even though those sessions may not be planned yet.
+
 
 #### Trigger source
 
@@ -76,7 +77,7 @@ https://sqs.us-west-2.amazonaws.com/272936841180/academic-integrator-q.fifo
 
 ### 3.Timetable to lessonplan integration
 
-When timetable is created, it is used to generate class calendars and employee calendars and lessonplans
+When timetable is created, it is used to generate class calendars and employee calendars and lessonplans. This is the operations #1 and #2 done in a sequence
 
 #### Trigger source
 
@@ -98,7 +99,7 @@ https://sqs.us-west-2.amazonaws.com/272936841180/academic-integrator-q.fifo
 
 ### 4.Add class session event integration
 
-We can add more class session events to class calendar ,it is used to update teacher calendars and lessonplans 
+We can add more class session events to class calendar. This is the case of special classes. It is used to update teacher calendars and lessonplans 
 
 #### Trigger source
 
