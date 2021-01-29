@@ -347,7 +347,7 @@ def generate_holiday_period_list(calendar,academic_configuration,timetable,day_c
 		if is_class(event.params[0]) == False :
 			start_time = event.from_time
 			end_time = event.to_time
-			partial_holiday_periods = get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
+			partial_holiday_periods = timetable_integrator.get_holiday_period_list(start_time,end_time,day_code,academic_configuration,timetable,calendar.calendar_date)
 			for partial_holiday_period in partial_holiday_periods :
 				holiday_period_list.append(partial_holiday_period)
 	return holiday_period_list

@@ -20,11 +20,11 @@ pp = pprint.PrettyPrinter(indent=4)
 class CancelExamIntegratorTest(unittest.TestCase):
 	def setUp(self) :
 
-		timetables = self.get_timetables_list_from_json()
+		timetables = self.get_timetables_list_as_json()
 		for timetable in timetables :
 			response = timetable_service.create_timetable(timetable)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' time table uploaded '+str(timetable['time_table_key']))
-		academic_configuration = self.get_academic_config_from_json()
+		academic_configuration = self.get_academic_config_as_json()
 		response = academic_service.create_academic_config(academic_configuration)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Academic configuration uploaded '+str(academic_configuration['academic_config_key']))
 
@@ -38,7 +38,7 @@ class CancelExamIntegratorTest(unittest.TestCase):
 			response = calendar_service.add_or_update_calendar(current_calendar)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Existing teacher calendar uploaded --------- '+str(current_calendar['calendar_key']))
 
-		current_lessonplans = self.get_current_lessonplans_from_json()
+		current_lessonplans = self.get_current_lessonplans_as_json()
 		for current_lessonplan in current_lessonplans :
 			response = lessonplan_service.create_lessonplan(current_lessonplan)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Existing lesson plan uploaded '+str(current_lessonplan['lesson_plan_key']))
@@ -49,7 +49,7 @@ class CancelExamIntegratorTest(unittest.TestCase):
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Exan uploaded --------- '+str(exam['exam_key']))
 
 	def test_calendars_and_lessonplan(self) :
-		timetables = self.get_timetables_list_from_json()
+		timetables = self.get_timetables_list_as_json()
 		academic_year = timetables[0]['academic_year']
 		school_key = timetables[0]['school_key']
 		expected_teacher_calendar_dict = {}
@@ -136,7 +136,7 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		        "name": "June Series"
 		      }
 		]
-		timetables = self.get_timetables_list_from_json()
+		timetables = self.get_timetables_list_as_json()
 		for timetable in timetables :
 			timetable_service.delete_timetable(timetable['time_table_key'])
 			gclogger.info("--------------- Test Timetable deleted  " + timetable['time_table_key']+"  -----------------")
@@ -379,17 +379,17 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		return expected_lessonplans
 	
 
-	def get_timetables_list_from_json(self) :
+	def get_timetables_list_as_json(self) :
 		with open('tests/unit/fixtures/cancel-exam-fixtures/test_timetables_list.json', 'r') as calendar_list:
 			timetable = json.load(calendar_list)
 		return timetable
 
-	def get_academic_config_from_json(self) :
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configure:
+	def get_academic_config_as_json(self) :
+		with open('tests/unit/fixtures/cancel-exam-fixtures/academic_configuration.json', 'r') as academic_configure:
 			academic_configuration = json.load(academic_configure)
 		return academic_configuration
 
-	def get_current_lessonplans_from_json(self) :
+	def get_current_lessonplans_as_json(self) :
 		with open('tests/unit/fixtures/cancel-exam-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
 			current_lessonplans = json.load(lessonplans_list)
 		return current_lessonplans
@@ -405,7 +405,7 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		return current_class_calendars
 
 	def get_exams_list_json(self) :
-		with open('tests/unit/fixtures/add-exams-fixtures/exams_list.json', 'r') as exam_list:
+		with open('tests/unit/fixtures/cancel-exam-fixtures/exams_list.json', 'r') as exam_list:
 			exams_list = json.load(exam_list)
 		return exams_list
 

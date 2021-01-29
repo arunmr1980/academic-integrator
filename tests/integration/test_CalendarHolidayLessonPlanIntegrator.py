@@ -23,19 +23,19 @@ pp = pprint.PrettyPrinter(indent=4)
 class CalendarHolidayLessonPlanIntegratorTest(unittest.TestCase):
 
 	def setUp(self) :
-		test_timetable_one = self.get_test_timetable_one_from_json()
+		test_timetable_one = self.get_test_timetable_one_as_json()
 		response = timetable_service.create_timetable(test_timetable_one)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -----------  time table one uploaded  ---------- '+str(test_timetable_one['time_table_key']))
 
-		test_timetable_two = self.get_test_timetable_two_from_json()
+		test_timetable_two = self.get_test_timetable_two_as_json()
 		response = timetable_service.create_timetable(test_timetable_two)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -----------  time table two uploaded  ---------- '+str(test_timetable_two['time_table_key']))
 
-		test_timetable_three = self.get_test_timetable_three_from_json()
+		test_timetable_three = self.get_test_timetable_three_as_json()
 		response = timetable_service.create_timetable(test_timetable_three)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -----------  time table three uploaded  ---------- '+str(test_timetable_three['time_table_key']))
 
-		academic_configuration = self.get_academic_config_from_json()
+		academic_configuration = self.get_academic_config_as_json()
 		response = academic_service.create_academic_config(academic_configuration)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  Academic configuration uploaded  ------------- '+str(academic_configuration['academic_config_key']))
 		holiday_calendars = self.get_holiday_calendars()
@@ -255,36 +255,26 @@ class CalendarHolidayLessonPlanIntegratorTest(unittest.TestCase):
 				return schedule
 
 
-	def get_academic_config_from_json(self) :
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configure:
+	def get_academic_config_as_json(self) :
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/academic_configuration.json', 'r') as academic_configure:
 			academic_configuration = json.load(academic_configure)
 		return academic_configuration
 
-	def get_time_table(self):
-		with open('tests/unit/fixtures/timetable.json', 'r') as timetable:
-			timetable = json.load(timetable)
-		return ttable.TimeTable(timetable)
 
-	def get_test_timetable_one_from_json(self) :
+	def get_test_timetable_one_as_json(self) :
 		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/test_timetable_one.json', 'r') as calendar_list:
 			timetable = json.load(calendar_list)
 		return timetable
 
-	def get_test_timetable_two_from_json(self) :
+	def get_test_timetable_two_as_json(self) :
 		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/test_timetable_two.json', 'r') as calendar_list:
 			timetable = json.load(calendar_list)
 		return timetable
 
-	def get_test_timetable_three_from_json(self) :
+	def get_test_timetable_three_as_json(self) :
 		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/test_timetable_three.json', 'r') as calendar_list:
 			timetable = json.load(calendar_list)
 		return timetable
-
-	def get_academic_configuration(self):
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configuration:
-			academic_configuration_dict = json.load(academic_configuration)
-			academic_configuration = academic_config.AcademicConfiguration(academic_configuration_dict)
-		return academic_configuration
 
 
 	def get_current_lesson_plan_list(self) :

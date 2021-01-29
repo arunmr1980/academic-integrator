@@ -120,13 +120,13 @@ class CalendarHolidayLessonPlanIntegratorTest(unittest.TestCase):
 
 
 	def get_time_table(self):
-		with open('tests/unit/fixtures/timetable.json', 'r') as timetable:
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/timetable.json', 'r') as timetable:
 			timetable = json.load(timetable)
 		return ttable.TimeTable(timetable)
 
 
 	def get_academic_configuration(self):
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configuration:
+		with open('tests/unit/fixtures/calendar-lessonplan-fixtures/academic_configuration.json', 'r') as academic_configuration:
 			academic_configuration_dict = json.load(academic_configuration)
 			academic_configuration = academic_config.AcademicConfiguration(academic_configuration_dict)
 		return academic_configuration

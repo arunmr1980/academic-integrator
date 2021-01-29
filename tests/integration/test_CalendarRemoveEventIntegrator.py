@@ -156,14 +156,10 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 		return t
 
 
-	def get_academic_configuration(self):
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configuration:
-			academic_configuration_dict = json.load(academic_configuration)
-			academic_configuration = academic_config.AcademicConfiguration(academic_configuration_dict)
-		return academic_configuration
+	
 
 	def get_academic_config_from_json(self) :
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configure:
+		with open('tests/unit/fixtures/school-calendar-remove-fixtures/academic_configuration.json', 'r') as academic_configure:
 			academic_configuration = json.load(academic_configure)
 		return academic_configuration
 

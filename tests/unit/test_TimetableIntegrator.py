@@ -14,12 +14,12 @@ class TimetableIntegratorTest(unittest.TestCase):
 	def test_class_calender(self) :
 		gclogger.info("")
 		gclogger.info("[UnitTest] testing class calendar .....")
-		time_table=self.get_time_table()
+		time_table = self.get_time_table()
 		academic_configuration=self.get_academic_configuration()
 		class_calendar_holiday_list=self.class_calendar_holiday_list()
 		school_calendar_holiday_list=self.school_calendar_holiday_list()
 		generated_class_calendar_dict = integrate_class_timetable(time_table,academic_configuration,class_calendar_holiday_list,school_calendar_holiday_list)
-		class_calendar_dict_list = self.get_calendar_list()
+		class_calendar_dict_list = self.get_expected_calendar_list()
 		for class_calendar in class_calendar_dict_list :
 			expected_class_calendar = calendar.Calendar(class_calendar)
 			calendar_date = expected_class_calendar.calendar_date
@@ -94,7 +94,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 
 	def class_calendar_holiday_list(self) :
 		class_calendar_holiday_list = []
-		with open('tests/unit/fixtures/class_calendar_holiday_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/timetable-calendar-fixtures/class_calendar_holiday_list.json', 'r') as calendar_list:
 			class_calendar_holiday_json_list = json.load(calendar_list)
 		for class_calendar_holiday in class_calendar_holiday_json_list :
 			class_calendar_holiday = calendar.Calendar(class_calendar_holiday)
@@ -103,27 +103,27 @@ class TimetableIntegratorTest(unittest.TestCase):
 
 	def school_calendar_holiday_list(self) :
 		school_calendar_holiday_list = []
-		with open('tests/unit/fixtures/school_calendar_holiday_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/timetable-calendar-fixtures/school_calendar_holiday_list.json', 'r') as calendar_list:
 			school_calendar_holiday_json_list = json.load(calendar_list)
 		for school_calendar_holiday in school_calendar_holiday_json_list :
 			school_calendar_holiday = calendar.Calendar(school_calendar_holiday)
 			school_calendar_holiday_list.append(school_calendar_holiday)
 		return school_calendar_holiday_list
 
-	def get_calendar_list(self) :
-		with open('tests/unit/fixtures/class_calendar_list.json', 'r') as calendar_list:
+	def get_expected_calendar_list(self) :
+		with open('tests/unit/fixtures/timetable-calendar-fixtures/class_calendar_list.json', 'r') as calendar_list:
 			class_calendar_dict_list = json.load(calendar_list)
 		return class_calendar_dict_list
 
 
 	def get_time_table(self):
-		with open('tests/unit/fixtures/timetable.json', 'r') as timetable:
+		with open('tests/unit/fixtures/timetable-calendar-fixtures/timetable.json', 'r') as timetable:
 			timetable = json.load(timetable)
 		return ttable.TimeTable(timetable)
 
 
 	def get_academic_configuration(self):
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configuration:
+		with open('tests/unit/fixtures/timetable-calendar-fixtures/academic_configuration.json', 'r') as academic_configuration:
 			academic_configuration_dict = json.load(academic_configuration)
 			academic_configuration = academic_config.AcademicConfiguration(academic_configuration_dict)
 		return academic_configuration
