@@ -259,7 +259,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 
 
 	def get_academic_configuration(self):
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configuration:
+		with open('tests/unit/fixtures/update-exams-fixtures/academic_configuration.json', 'r') as academic_configuration:
 			academic_configuration_dict = json.load(academic_configuration)
 			academic_configuration = academic_config.AcademicConfiguration(academic_configuration_dict)
 		return academic_configuration
@@ -269,6 +269,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 			tiemtable_dict = json.load(tiemtable)
 			tiemtable = ttable.TimeTable(tiemtable_dict)
 		return tiemtable
+		
 	def get_current_lessonplans_list(self) :
 		current_lessonplans = []
 		with open('tests/unit/fixtures/update-exams-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:

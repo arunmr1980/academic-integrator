@@ -704,6 +704,7 @@ def integrate_teacher_timetable(class_calendar_list) :
 				set_teacher_calendar_dict(teacher_calendars_dict,employee_key,class_calendar)
 				key = class_calendar.calendar_date + employee_key
 				teacher_calendar = teacher_calendars_dict[key]
+				teacher_calendar = remove_unwanted_events(class_calendar_list,teacher_calendar)
 				gclogger.info("--- >>>> Teacher Calendar for employee key " + employee_key + " and date " + class_calendar.calendar_date )
 				event_object = calendar.Event(None)
 				event_object.event_code = event.event_code
@@ -713,9 +714,31 @@ def integrate_teacher_timetable(class_calendar_list) :
 
 	return teacher_calendars_dict
 
+def remove_unwanted_events(class_calendar_list,teacher_calendar) :
+	for event in teacher_calendar.events :
+		class_calendar = get_class_calendar_from_list(event.ref_calendar_key,class_calendar_list)
+		if class_calendar is not None :
+			if check_event_exist_in_calendar_or_not(class_calendar,event.event_code) == False :
+				teacher_calendar.events.remove(event)
+	return teacher_calendar
+
+def check_event_exist_in_calendar_or_not(class_calendar,event_code) :
+	is_exist = False
+	for event in class_calendar.events :
+		if event.event_code == event_code :
+			is_exist = True
+	return is_exist
+
+
+
+def get_class_calendar_from_list(calendar_key,class_calendar_list) :
+	for class_calendar in class_calendar_list :
+		if class_calendar.calendar_key == calendar_key :
+			return class_calendar
+
+
 
 def get_employee_key(params) :
-
 	for param in params :
 		if param.key == 'teacher_emp_key' :
 			return param.value

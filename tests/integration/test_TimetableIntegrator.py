@@ -51,7 +51,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 			class_calendars_dict[calendar_date] = class_calendar
 
 		expected_class_calendar_list = []
-		expected_class_calendar_dict_list = self.get_class_calendar_list()
+		expected_class_calendar_dict_list = self.get_expected_class_calendar_list()
 		for class_calendar in expected_class_calendar_dict_list :
 			class_calendar = calendar.Calendar(class_calendar)
 			expected_class_calendar_list.append(class_calendar)
@@ -151,30 +151,30 @@ class TimetableIntegratorTest(unittest.TestCase):
 
 
 	def get_timetable_from_json(self) :
-		with open('tests/unit/fixtures/timetable.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/timetable-calendar-fixtures/timetable.json', 'r') as calendar_list:
 			timetable = json.load(calendar_list)
 		return timetable
 
 	def get_holiday_class_calendar_list_from_json(self) :
-		with open('tests/unit/fixtures/class_calendar_holiday_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/timetable-calendar-fixtures/class_calendar_holiday_list.json', 'r') as calendar_list:
 			class_calendar_holiday_list = json.load(calendar_list)
 		return class_calendar_holiday_list
 
 	def get_holiday_school_calendar_list_from_json(self) :
-		with open('tests/unit/fixtures/school_calendar_holiday_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/timetable-calendar-fixtures/school_calendar_holiday_list.json', 'r') as calendar_list:
 			school_calendar_holiday_list = json.load(calendar_list)
 		return school_calendar_holiday_list
 
 
 	def get_academic_config_from_json(self) :
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configure:
+		with open('tests/unit/fixtures/timetable-calendar-fixtures/academic_configuration.json', 'r') as academic_configure:
 			academic_configuration = json.load(academic_configure)
 		return academic_configuration
 
 
 
-	def get_class_calendar_list(self) :
-		with open('tests/unit/fixtures/class_calendar_list.json', 'r') as calendar_list:
+	def get_expected_class_calendar_list(self) :
+		with open('tests/unit/fixtures/timetable-calendar-fixtures/class_calendar_list.json', 'r') as calendar_list:
 			class_calendar_dict_list = json.load(calendar_list)
 		return class_calendar_dict_list
 
