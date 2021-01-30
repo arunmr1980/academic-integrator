@@ -4,12 +4,12 @@
   "end_date": "2020-08-10",
   "academic_config_key" :"academic-test-key",
   "academic_year" :"2020-2021",
-  "school_key" :"test-school-key-1",
+  "school_key" :"test-school-1",
   "time_table_configuration":{
     "time_table_schedules":[
       {
         "applied_classes":[
-          "test-class-key-1",
+          "8B1B22E72AE",
           "8B1B22E72AY"
          
         ],

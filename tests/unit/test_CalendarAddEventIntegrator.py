@@ -34,10 +34,16 @@ class CalendarAddEventIntegratorTest(unittest.TestCase):
 			events_to_remove_list = get_all_events_to_remove(class_calendars,event)
 			for class_calendar in class_calendars :
 				updated_class_calendar = update_class_calendar(class_calendar,calendar)
+				cal = cldr.Calendar(None)
+				calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+				pp.pprint(calendar_dict)
 				self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
 				gclogger.info("-----[UnitTest] Class calendar test passed ----------------- " + updated_class_calendar.calendar_key + "-----------------")
 			for teacher_calendar in teacher_calendars :
 				updated_teacher_calendar = update_teacher_calendar(events_to_remove_list,teacher_calendar)
+				cal = cldr.Calendar(None)
+				calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+				pp.pprint(calendar_dict)
 				self.check_teacher_calendar(updated_teacher_calendar,expected_teacher_calendars_list)
 				gclogger.info("-----[UnitTest] Teacher calendar test passed ----------------- " + updated_teacher_calendar.calendar_key + "-----------------")
 

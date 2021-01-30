@@ -527,6 +527,9 @@ def get_event_updated_class_calendar_on_leave_cancel(event,current_class_calenda
 			del existing_event.status 
 			existing_event.params[1].value = timetable_period.subject_key
 			existing_event.params[2].value = timetable_period.employee_key
+			#-------------- need updation ---------------#
+			# remove_event_from_substituted_employee()
+			# remove_event_from_lessonplan()
 			updated_removed_events.append(existing_event)
 	return current_class_calendar
 

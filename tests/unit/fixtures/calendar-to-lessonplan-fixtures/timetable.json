@@ -1,6 +1,6 @@
 {
    "academic_year":"2020-2021",
-   "class_key":"8B1B22E72AE",
+   "class_key":"test-class-key-2",
    "class_name":"LKG",
    "config_parameters":{
       "subject_preferences":[
@@ -132,7 +132,7 @@
       ]
    },
    "division":"A",
-   "school_key":"test-school-1",
+   "school_key":"test-school-key-2",
    "time_table_key":"test-time-table-1",
    "timetable":{
       "day_tables":[
