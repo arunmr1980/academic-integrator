@@ -256,7 +256,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 		return timetable
 
 	def get_academic_config_from_json(self) :
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configure:
+		with open('tests/unit/fixtures/update-exams-fixtures/academic_configuration.json', 'r') as academic_configure:
 			academic_configuration = json.load(academic_configure)
 		return academic_configuration
 	

@@ -16,8 +16,8 @@
 				"to_time":"2020-08-03T12:01:00"
 			}
 		],
-		"institution_key":"test-school-1",
-		"subscriber_key":"8B1B22E72AE-A",
+		"institution_key":"sample-school-2",
+		"subscriber_key":"class-key-sample-1-A",
 		"subscriber_type":"CLASS-DIV"
 	},
 	{
@@ -39,7 +39,7 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-2"
+						"value":"employee-test-2"
 					}
 				],
 				"to_time":"2020-08-04T10:40:00"
@@ -59,7 +59,7 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-2"
+						"value":"employee-test-2"
 					}
 				],
 				"to_time":"2020-08-04T11:20:00"
@@ -79,14 +79,14 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-3"
+						"value":"employee-test-3"
 					}
 				],
 				"to_time":"2020-08-04T12:10:00"
 			}
 		],
-		"institution_key":"test-school-1",
-		"subscriber_key":"8B1B22E72AE-A",
+		"institution_key":"sample-school-2",
+		"subscriber_key":"class-key-sample-1-A",
 		"subscriber_type":"CLASS-DIV"
 	},
 	{
@@ -108,7 +108,7 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-2"
+						"value":"employee-test-2"
 					}
 				],
 				"to_time":"2020-08-10T10:40:00"
@@ -128,7 +128,7 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-3"
+						"value":"employee-test-3"
 					}
 				],
 				"to_time":"2020-08-10T11:20:00"
@@ -148,14 +148,14 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-1"
+						"value":"employee-test-1"
 					}
 				],
 				"to_time":"2020-08-10T12:10:00"
 			}
 		],
-		"institution_key":"test-school-1",
-		"subscriber_key":"8B1B22E72AE-A",
+		"institution_key":"sample-school-2",
+		"subscriber_key":"class-key-sample-1-A",
 		"subscriber_type":"CLASS-DIV"
 	},
 	{
@@ -177,7 +177,7 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-1"
+						"value":"employee-test-1"
 					}
 				],
 				"to_time":"2020-08-10T11:20:00"
@@ -197,14 +197,14 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-3"
+						"value":"employee-test-3"
 					}
 				],
 				"to_time":"2020-08-10T12:10:00"
 			}
 		],
-		"institution_key":"test-school-1",
-		"subscriber_key":"8B1B22E72AE-B",
+		"institution_key":"sample-school-2",
+		"subscriber_key":"class-key-sample-1-B",
 		"subscriber_type":"CLASS-DIV"
 	},
 	{
@@ -226,7 +226,7 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-3"
+						"value":"employee-test-3"
 					}
 				],
 				"to_time":"2020-08-04T10:40:00"
@@ -246,7 +246,7 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-2"
+						"value":"employee-test-2"
 					}
 				],
 				"to_time":"2020-08-04T11:20:00"
@@ -266,14 +266,14 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-2"
+						"value":"employee-test-2"
 					}
 				],
 				"to_time":"2020-08-04T12:10:00"
 			}
 		],
-		"institution_key":"test-school-1",
-		"subscriber_key":"8B1B22E72AE-B",
+		"institution_key":"sample-school-2",
+		"subscriber_key":"class-key-sample-1-B",
 		"subscriber_type":"CLASS-DIV"
 	}
 ]

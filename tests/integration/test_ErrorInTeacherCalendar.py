@@ -37,7 +37,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 		gclogger.info(" Setup complete ......")
 		gclogger.info(" ")
 
-	# def test_class_calendar(self) :
+	# def class_calendar(self) :
 	# 	class_calendars_dict={}
 	# 	class_calendar_list = []
 	# 	timetable = timetable_service.get_time_table('test-time-table-1')
@@ -86,7 +86,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 
 
 
-	def test_teacher_calendar(self) :
+	def teacher_calendar(self) :
 		# expected_teacher_calendars_dict = {}
 		# teacher_calendars_dict = {}
 
@@ -129,34 +129,34 @@ class TimetableIntegratorTest(unittest.TestCase):
 				return class_calendar
 
 
-	@classmethod
-	def tearDownClass(self):
-		gclogger.info(" ")
-		gclogger.info(" Tear down timetable integrator test ......")
-		timetable = timetable_service.get_time_table('test-time-table-1')
-		school_key = timetable.school_key
-		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
-		class_calender_list = calendar_service.get_all_calendars_by_key_and_type('8B1B22E72AE-A','CLASS-DIV')
-		for calendar in class_calender_list :
-			calendar_service.delete_calendar(calendar.calendar_key)
-			gclogger.info("--------------- Class calendar deleted " + calendar.calendar_key+" -----------------")
+	# @classmethod
+	# def tearDownClass(self):
+	# 	gclogger.info(" ")
+	# 	gclogger.info(" Tear down timetable integrator test ......")
+	# 	timetable = timetable_service.get_time_table('test-time-table-1')
+	# 	school_key = timetable.school_key
+	# 	academic_configuration = academic_service.get_academig(school_key,'2020-2021')
+	# 	class_calender_list = calendar_service.get_all_calendars_by_key_and_type('8B1B22E72AE-A','CLASS-DIV')
+	# 	for calendar in class_calender_list :
+	# 		calendar_service.delete_calendar(calendar.calendar_key)
+	# 		gclogger.info("--------------- Class calendar deleted " + calendar.calendar_key+" -----------------")
 
 
-		teacher_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
-		for calendar in teacher_calender_list :
-			calendar_service.delete_calendar(calendar.calendar_key)
-			gclogger.info("--------------- Teacher calendar deleted " + calendar.calendar_key+" -----------------")
+	# 	teacher_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
+	# 	for calendar in teacher_calender_list :
+	# 		calendar_service.delete_calendar(calendar.calendar_key)
+	# 		gclogger.info("--------------- Teacher calendar deleted " + calendar.calendar_key+" -----------------")
 
-		school_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','SCHOOL')
-		for calendar in school_calender_list :
-			calendar_service.delete_calendar(calendar.calendar_key)
-			gclogger.info("--------------- School calendar deleted " + calendar.calendar_key+" -----------------")
+	# 	school_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','SCHOOL')
+	# 	for calendar in school_calender_list :
+	# 		calendar_service.delete_calendar(calendar.calendar_key)
+	# 		gclogger.info("--------------- School calendar deleted " + calendar.calendar_key+" -----------------")
 
 
-		timetable_service.delete_timetable(timetable.time_table_key)
-		gclogger.info("--------------- Test Timetable deleted  " + timetable.time_table_key+"  -----------------")
-		academic_service.delete_academic_config(academic_configuration.academic_config_key)
-		gclogger.info("---------------Test Academic Configuration deleted  " + academic_configuration.academic_config_key + "-----------------")
+	# 	timetable_service.delete_timetable(timetable.time_table_key)
+	# 	gclogger.info("--------------- Test Timetable deleted  " + timetable.time_table_key+"  -----------------")
+	# 	academic_service.delete_academic_config(academic_configuration.academic_config_key)
+	# 	gclogger.info("---------------Test Academic Configuration deleted  " + academic_configuration.academic_config_key + "-----------------")
 
 
 

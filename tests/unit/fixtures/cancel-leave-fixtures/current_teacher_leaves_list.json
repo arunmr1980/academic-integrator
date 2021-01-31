@@ -1,10 +1,10 @@
 [
   {
     "from_date":"2020-08-03",
-    "institution_key":"test-school-1",
+    "institution_key":"sample-school-2",
     "leave_key":"test-leave-key-1",
     "reason":"personal",
-    "subscriber_key":"employee-1",
+    "subscriber_key":"employee-test-1",
     "subscriber_type":"EMPLOYEE",
     "to_date":"2020-08-10",
     "status" :"CANCELLED"
@@ -13,10 +13,10 @@
   {
     "from_date":"2020-08-04",
     "from_time":"2020-08-04T09:00:00",
-    "institution_key":"test-school-1",
+    "institution_key":"sample-school-2",
     "leave_key":"test-leave-key-2",
     "reason":"personal",
-    "subscriber_key":"employee-2",
+    "subscriber_key":"employee-test-2",
     "subscriber_type":"EMPLOYEE",
     "to_date":"2020-08-04",
     "to_time":"2020-08-04T13:00:00",

@@ -1,6 +1,6 @@
 [
 	{
-		"class_key":"8B1B22E72AE",
+		"class_key":"sample-class-key-1",
 		"division":"A",
 		"lesson_plan_key":"test-lessonplan-1",
 		"sessions":[
@@ -68,7 +68,7 @@
 		]
 	},
 	{
-		"class_key":"8B1B22E72AE",
+		"class_key":"sample-class-key-1",
 		"division":"A",
 		"lesson_plan_key":"test-lessonplan-2",
 		"sessions":[
@@ -134,7 +134,7 @@
 		]
 	},
 	{
-		"class_key":"8B1B22E72AE",
+		"class_key":"sample-class-key-1",
 		"division":"A",
 		"lesson_plan_key":"test-lessonplan-3",
 		"resources":[
@@ -200,7 +200,7 @@
 		]
 	},
 	{
-		"class_key":"8B1B22E72AE",
+		"class_key":"sample-class-key-1",
 		"division":"B",
 		"lesson_plan_key":"test-lessonplan-4",
 		"sessions":[
@@ -267,7 +267,7 @@
 		]
 	},
 	{
-		"class_key":"8B1B22E72AE",
+		"class_key":"sample-class-key-1",
 		"division":"B",
 		"lesson_plan_key":"test-lessonplan-5",
 		"sessions":[
@@ -318,7 +318,7 @@
 		]
 	},
 	{
-		"class_key":"8B1B22E72AE",
+		"class_key":"sample-class-key-1",
 		"division":"B",
 		"lesson_plan_key":"test-lessonplan-6",
 		"resources":[
