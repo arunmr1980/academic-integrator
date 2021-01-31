@@ -56,9 +56,9 @@ class AddLeaveIntegratorTest(unittest.TestCase):
 
 		leave_integrator.integrate_add_leave_on_calendar(leave_key)
 
-		updated_class_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','CLASS-DIV')
-		updated_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
-		class_info_list = class_info_service.get_classinfo_list('test-school-1', '2020-2021')
+		updated_class_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('sample-school-1','CLASS-DIV')
+		updated_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('sample-school-1','EMPLOYEE')
+		class_info_list = class_info_service.get_classinfo_list('sample-school-1', '2020-2021')
 		for class_info in class_info_list :
 			if hasattr(class_info, 'divisions') :
 				for div in class_info.divisions :
@@ -94,12 +94,12 @@ class AddLeaveIntegratorTest(unittest.TestCase):
 
 	
 	def tearDown(self) :
-		updated_class_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','CLASS-DIV')
+		updated_class_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('sample-school-1','CLASS-DIV')
 		for updated_class_calendar in updated_class_calendars_list :
 			calendar_service.delete_calendar(updated_class_calendar.calendar_key)
 			gclogger.info("--------------- A updated class calendar deleted " + updated_class_calendar.calendar_key+" -----------------")
 
-		updated_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')	
+		updated_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('sample-school-1','EMPLOYEE')	
 		for updated_teacher_calendar in updated_teacher_calendars_list :
 			calendar_service.delete_calendar(updated_teacher_calendar.calendar_key)
 			gclogger.info("--------------- A updated teacher calendar deleted " + updated_teacher_calendar.calendar_key+" -----------------")

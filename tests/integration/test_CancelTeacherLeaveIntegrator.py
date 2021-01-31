@@ -70,9 +70,9 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 			subscriber_key = teacher_calendar.subscriber_key
 			expected_teacher_calendar_dict[calendar_date + subscriber_key] = teacher_calendar
 			gclogger.info("-----[UnitTest] teacher calendar test passed ----------------- "+ str(teacher_calendar.calendar_key)+" ------------------------------ ")
-		updated_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
-		updated_class_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','CLASS-DIV')
-		class_info_list = class_info_service.get_classinfo_list('test-school-1', '2020-2021')
+		updated_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('sample-school-2','EMPLOYEE')
+		updated_class_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('sample-school-2','CLASS-DIV')
+		class_info_list = class_info_service.get_classinfo_list('sample-school-2', '2020-2021')
 		for class_info in class_info_list :
 			if hasattr(class_info, 'divisions') :
 				for div in class_info.divisions :
@@ -114,8 +114,8 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 			timetable_service.delete_timetable(timetable['time_table_key'])
 			gclogger.info("--------------- Test Timetable deleted  " + timetable['time_table_key']+"  -----------------")
 		school_key = timetable['school_key']
-		academic_configuration = academic_service.get_academig('test-school-1','2020-2021')
-		updated_class_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','CLASS-DIV')
+		academic_configuration = academic_service.get_academig('sample-school-2','2020-2021')
+		updated_class_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('sample-school-2','CLASS-DIV')
 		for updated_class_calendar in updated_class_calendars_list :
 			calendar_service.delete_calendar(updated_class_calendar.calendar_key)
 			gclogger.info("--------------- A updated class calendar deleted " + updated_class_calendar.calendar_key+" -----------------")
@@ -295,7 +295,7 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 		return timetable
 
 	def get_academic_config_from_json(self) :
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configure:
+		with open('tests/unit/fixtures/cancel-leave-fixtures/academic_configuration.json', 'r') as academic_configure:
 			academic_configuration = json.load(academic_configure)
 		return academic_configuration
 

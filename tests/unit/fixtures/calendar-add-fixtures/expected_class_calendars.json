@@ -1,18 +1,18 @@
 [
-   {  "institution_key" :"test-school-1",
+   {  "institution_key" :"test-school-key-3",
       "calendar_key":"test-key-1",
       "calendar_date":"2020-08-03",
-      "subscriber_key":"8B1B22E72AE-A",
+      "subscriber_key":"test-class-key-3-A",
       "subscriber_type":"CLASS-DIV",
       "events":[
         
       ]
    },
    {
-      "institution_key" :"test-school-1",
+      "institution_key" :"test-school-key-3",
       "calendar_key":"test-key-2",
       "calendar_date":"2020-08-04",
-      "subscriber_key":"8B1B22E72AE-A",
+      "subscriber_key":"test-class-key-3-A",
       "subscriber_type":"CLASS-DIV",
       "events":[
          {   "event_code": "5e5a27",
@@ -22,17 +22,17 @@
                [   
                   {"key": "period_code", "value": "TUE-3"},
                   {"key": "subject_key", "value": "bio1"},
-                  {   "key": "teacher_emp_key","value": "employee-3" } 
+                  {   "key": "teacher_emp_key","value": "employee-key-3" } 
                ],
                 "to_time": "2020-08-04T12:10:00"
          }
       ]
    },
    {
-      "institution_key" :"test-school-1",
+      "institution_key" :"test-school-key-3",
       "calendar_key":"test-key-3",
       "calendar_date":"2020-08-10",
-      "subscriber_key":"8B1B22E72AE-A",
+      "subscriber_key":"test-class-key-3-A",
       "subscriber_type":"CLASS-DIV",
       "events":[
          {   "event_code": "b19d7a",
@@ -42,7 +42,7 @@
                [   
                   {"key": "period_code", "value": "MON-3"},
                   {"key": "subject_key", "value": "bio3"},
-                  {   "key": "teacher_emp_key","value": "employee-1" } 
+                  {   "key": "teacher_emp_key","value": "employee-key-1" } 
                ],
                 "to_time": "2020-08-10T12:10:00"
          }
@@ -50,10 +50,10 @@
       ]
    },
    {
-      "institution_key" :"test-school-1",
+      "institution_key" :"test-school-key-3",
       "calendar_key":"test-key-4",
       "calendar_date":"2020-08-10",
-      "subscriber_key":"8B1B22E72AE-B",
+      "subscriber_key":"test-class-key-3-B",
       "subscriber_type":"CLASS-DIV",
       "events":[
          {   "event_code": "lklk788",
@@ -63,7 +63,7 @@
                [   
                   {"key": "period_code", "value": "MON-3"},
                   {"key": "subject_key", "value": "bio3"},
-                  {   "key": "teacher_emp_key","value": "employee-2" } 
+                  {   "key": "teacher_emp_key","value": "employee-key-2" } 
                ],
                 "to_time": "2020-08-10T12:10:00"
          }

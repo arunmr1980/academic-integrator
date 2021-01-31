@@ -547,14 +547,14 @@ def Update_teacher_calendar(events_to_remove_list,teacher_calendar) :
 	return teacher_calendar
 
 def get_teacher_calendar(teacher_calendars_list,employee_key,calendar_date) :
-	for teacher_calendar in teacher_calendars_list :
-		if teacher_calendar.subscriber_key == employee_key and teacher_calendar.calendar_date == calendar_date :
-			return teacher_calendar
-	else :
-		print("calndar date emo key", employee_key , calendar_date)
+	teacher_calendar = None
+	for calendar in teacher_calendars_list :
+		if calendar.subscriber_key == employee_key and calendar.calendar_date == calendar_date :
+			teacher_calendar = calendar
+	if teacher_calendar is None :
 		teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,employee_key)
 		teacher_calendars_list.append(teacher_calendar)
-		return teacher_calendar
+	return teacher_calendar
 
 
 def get_all_events_to_remove(class_calendars,calendar) :
@@ -643,7 +643,7 @@ def get_events_to_remove(class_calendar,event) :
 			gclogger.info("-----------NEED TO REMOVE THE EVENT  ----------" +event.event_code + '----')
 			events_to_remove_list.append(event)
 		else :
-			gclogger.info("-------------NO CONFLICT WITH THE EVENT ---------- " + event.event_code)
+			gclogger.info("------------- NO CONFLICT WITH THE EVENT ---------- " + event.event_code)
 	return events_to_remove_list
 
 

@@ -135,21 +135,21 @@ class CalendarAddEventIntegratorTest(unittest.TestCase):
 
 
 	def tearDown(self) :
-		academic_configuration = academic_service.get_academig('test-school-1','2020-2021')
+		academic_configuration = academic_service.get_academig('test-school-key-3','2020-2021')
 		academic_service.delete_academic_config(academic_configuration.academic_config_key)
 		gclogger.info("---------------Test Academic Configuration deleted ----------  " + academic_configuration.academic_config_key + "-----------------")
 
-		current_class_calendars = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','CLASS-DIV')
+		current_class_calendars = calendar_service.get_all_calendars_by_school_key_and_type('test-school-key-3','CLASS-DIV')
 		for calendar in current_class_calendars :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- A class calendar deleted ---------- " + calendar.calendar_key+" -----------------")
 
-		current_school_calendars = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','SCHOOL')
+		current_school_calendars = calendar_service.get_all_calendars_by_school_key_and_type('test-school-key-3','SCHOOL')
 		for calendar in current_class_calendars :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- A school calendar deleted ---------- " + calendar.calendar_key+" -----------------")
 
-		current_teacher_calendars = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
+		current_teacher_calendars = calendar_service.get_all_calendars_by_school_key_and_type('test-school-key-3','EMPLOYEE')
 		for calendar in current_teacher_calendars :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- A Teacher calendar deleted ---------- " + calendar.calendar_key+" -----------------")

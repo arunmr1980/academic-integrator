@@ -2,15 +2,15 @@
 {
   "start_date": "2020-08-01",
   "end_date": "2020-08-10",
-  "academic_config_key" :"academic-test-key",
+  "academic_config_key" :"academic-test-key-1",
   "academic_year" :"2020-2021",
-  "school_key" :"test-school-1",
+  "school_key" :"sample-school-2",
   "time_table_configuration":{
     "time_table_schedules":[
       {
         "applied_classes":[
-          "8B1B22E72AE",
-          "8B1B22E72AY"
+          "class-key-sample-1",
+          "class-key-sample-2"
          
         ],
         "code":"TMKG01",

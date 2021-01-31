@@ -220,19 +220,6 @@ def generate_employee_calendar(calendar_date,employee_key,school_key) :
 	return employee_calendar
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 def integrate_teacher_timetable(class_calendar_list) :
 	teacher_calendars_dict = {}
 	teacher_calendar_list = []
@@ -305,29 +292,30 @@ def integrate_add_leave_on_calendar(leave_key) :
 			teacher_cals_to_be_updated.append(teacher_calendar)
 			for event in teacher_calendar.events :
 				calendar_key = event.ref_calendar_key
-				event_code = event.event_code
-				current_class_calendar = calendar_service.get_calendar(calendar_key) 
-				if is_class_class_calendar_already_exist(class_cals_to_be_updated,current_class_calendar) == False :
-					class_cals_to_be_updated.append(current_class_calendar)
-				class_event = get_class_calendar_event(current_class_calendar,event_code,removed_events)
-				if class_event is not None:
-					if from_time is not None and to_time is not None :
-						if exam_integrator.check_events_conflict(class_event.from_time,class_event.to_time,from_time,to_time) == True :
+				if calendar_key is not None :
+					event_code = event.event_code
+					current_class_calendar = calendar_service.get_calendar(calendar_key) 
+					if is_class_class_calendar_already_exist(class_cals_to_be_updated,current_class_calendar) == False :
+						class_cals_to_be_updated.append(current_class_calendar)
+					class_event = get_class_calendar_event(current_class_calendar,event_code,removed_events)
+					if class_event is not None:
+						if from_time is not None and to_time is not None :
+							if exam_integrator.check_events_conflict(class_event.from_time,class_event.to_time,from_time,to_time) == True :
+								if is_this_event_already_exist(current_class_calendar,class_event,removed_events) == False :
+									removed_events.append(class_event)
+									if current_class_calendar.subscriber_key in events_with_sub_key :
+											events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
+									else :
+										events_with_sub_key[current_class_calendar.subscriber_key] = []
+										events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
+						else :
 							if is_this_event_already_exist(current_class_calendar,class_event,removed_events) == False :
-								removed_events.append(class_event)
-								if current_class_calendar.subscriber_key in events_with_sub_key :
+									removed_events.append(class_event)
+									if current_class_calendar.subscriber_key in events_with_sub_key :
+											events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
+									else :
+										events_with_sub_key[current_class_calendar.subscriber_key] = []
 										events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
-								else :
-									events_with_sub_key[current_class_calendar.subscriber_key] = []
-									events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
-					else :
-						if is_this_event_already_exist(current_class_calendar,class_event,removed_events) == False :
-								removed_events.append(class_event)
-								if current_class_calendar.subscriber_key in events_with_sub_key :
-										events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
-								else :
-									events_with_sub_key[current_class_calendar.subscriber_key] = []
-									events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
 
 							
 	current_lessonplans = get_lessonplans_list(events_with_sub_key.keys())
