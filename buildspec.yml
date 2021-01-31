@@ -22,6 +22,9 @@ phases:
       - echo Build started on `date`
       - zip -vr academics academics -i '*.py'
       - zip -u academics.zip lambda_function.py
+      - cd packages
+      - zip -r9 ../academics.zip .
+      - cd ..
     finally:
       - echo This always runs even if the install command fails
   post_build:
