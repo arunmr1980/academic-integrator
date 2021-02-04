@@ -14,34 +14,50 @@ def lambda_handler(event, context):
 		payload=record["body"]
 		request = json.loads(payload)
 	try:
+		logger.info(request)
+		logger.info("-------------- SQS Request ------------")
 		request_type = request['request_type']
 		if request_type == 'TIMETABLE_CALENDAR_LESSON_PLAN_GEN':
+				logger.info("--------- This SQS Request is to generate calendar,lessonplan from timetable ------------")
 				timetable_to_calendar_and_lessonplan_integration(request)
 		if request_type == 'TIMETABLE_TO_CALENDAR_GEN':
+				logger.info("--------- This SQS Request is to generate calendar from timetable ------------")
 				timetable_to_calendar_integration(request)
 		if request_type == 'CALENDAR_TO_LESSON_PLAN_GEN':
+				logger.info("--------- This SQS Request is to generate lessnplan from calendar ------------")
 				calendar_to_lessonplan_integration(request)
 		if request_type == 'HOLIDAY_LESSONPLAN_SYNC':
+				logger.info("--------- This SQS Request is to add holiday on calendar ------------")
 				add_event_calendar_lessonplan_integration(request)
 		if request_type == 'REMOVE_EVENT_LESSONPLAN_SYNC':
+				logger.info("--------- This SQS Request is to remove an event from calendar ------------")
 				remove_event_calendar_lessonplan_integration(request)
 		if request_type == 'PERIOD_UPDATE_SYNC':
+				logger.info("--------- This SQS Request is to update period from timetable ------------")
 				update_period_calendar_lessonplan_integration(request)
 		if request_type == 'UPDATE_SUBJECT_TEACHER_SYNC':
+				logger.info("--------- This SQS Request is to update subject teacher ------------")
 				update_subject_teacher_integration(request)
 		if request_type == 'EXAM_CALENDAR_SYNC':
+				logger.info("--------- This SQS Request is to add exam in calendar ------------")
 				add_exam_integration(request)
 		if request_type == 'EXAM-DELETE-SYNC':
+				logger.info("--------- This SQS Request is to delete exam from calendar ------------")
 				cancel_exam_integration(request)
 		if request_type == 'TEACHER_LEAVE_SYNC':
+				logger.info("--------- This SQS Request is to add teacher leave ------------")
 				add_leave_integration(request)
 		if request_type == 'TEACHER_LEAVE_CANCEL':
+				logger.info("--------- This SQS Request is to cancel teacher leave ------------")
 				cancel_leave_integration(request)
 		if request_type == 'CLASS_SESSION_EVENT_SYNC':
+				logger.info("--------- This SQS Request is to add class session on calendar (special class) ------------")
 				special_class_session_integration(request)
 		if request_type == 'EXAM_UPDATE_CALENDAR_SYNC':
+				logger.info("--------- This SQS Request is to update exam ------------")
 				update_exam_integration(request)
 		if request_type == 'TEACHER_SUBSTITUTE_SYNC':
+				logger.info("--------- This SQS Request is to substitute teacher ------------")
 				teacher_substitution_integration(request)
 	except:
 		traceback.print_exc()
