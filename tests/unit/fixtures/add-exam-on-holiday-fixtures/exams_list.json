@@ -1,0 +1,114 @@
+[
+  {
+    "academic_year":"2020-2021",
+    "assessment_type":"FORMATIVE",
+    "audit_logs":[
+      {
+        "date_time":"2020-08-04 13:46:41.211",
+        "message":"Exam Generated"
+      }
+    ],
+    "class_key":"sample-class-1",
+    "date_time":"2020-08-04",
+    "division":"A",
+    "exam_key":"test-exam-key-1",
+    "from_time":"11:00 AM",
+    "institution_key":"test-school-1",
+    "max_score":100,
+    "name":"NEGATIVE_INITIAL_TEST",
+    "schedulable":"YES",
+    "schedule_flag":"true",
+    "schedule_status":"APPROVED",
+    "series_code":"NEG111",
+    "status":"MARK_ENTRY",
+    "subject_code":"bio1",
+    "subject_name":"biology",
+    "to_time":"01:00 PM",
+    "type":"WRITTEN",
+    "visibility":"SCHOOL"
+  },
+  {
+    "academic_year":"2020-2021",
+    "assessment_type":"FORMATIVE",
+    "audit_logs":[
+      {
+        "date_time":"2020-08-10 13:46:41.211",
+        "message":"Exam Generated"
+      }
+    ],
+    "class_key":"sample-class-1",
+    "date_time":"2020-08-10",
+    "division":"A",
+    "exam_key":"test-exam-key-2",
+    "from_time":"09:00 AM",
+    "institution_key":"test-school-1",
+    "max_score":100,
+    "name":"NEGATIVE_INITIAL_TEST",
+    "schedulable":"YES",
+    "schedule_flag":"true",
+    "schedule_status":"APPROVED",
+    "series_code":"NEG111",
+    "status":"MARK_ENTRY",
+    "subject_code":"bio2",
+    "subject_name":"biology",
+    "to_time":"11:00 AM",
+    "type":"WRITTEN",
+    "visibility":"SCHOOL"
+  },
+  {
+    "academic_year":"2020-2021",
+    "assessment_type":"FORMATIVE",
+    "audit_logs":[
+      {
+        "date_time":"2020-08-04 13:46:41.211",
+        "message":"Exam Generated"
+      }
+    ],
+    "class_key":"sample-class-1",
+    "date_time":"2020-08-08",
+    "division":"A",
+    "exam_key":"test-exam-key-3",
+    "from_time":"11:00 AM",
+    "institution_key":"test-school-1",
+    "max_score":100,
+    "name":"NEGATIVE_INITIAL_TEST",
+    "schedulable":"YES",
+    "schedule_flag":"true",
+    "schedule_status":"APPROVED",
+    "series_code":"NEG111",
+    "status":"MARK_ENTRY",
+    "subject_code":"bio3",
+    "subject_name":"biology",
+    "to_time":"01:00 PM",
+    "type":"WRITTEN",
+    "visibility":"SCHOOL"
+  },
+  {
+    "academic_year":"2020-2021",
+    "assessment_type":"FORMATIVE",
+    "audit_logs":[
+      {
+        "date_time":"2020-08-04 13:46:41.211",
+        "message":"Exam Generated"
+      }
+    ],
+    "class_key":"8B1B22E72AB",
+    "date_time":"2020-08-10",
+    "division":"B",
+    "exam_key":"test-exam-key-4",
+    "from_time":"11:00 AM",
+    "institution_key":"test-school-1",
+    "max_score":100,
+    "name":"NEGATIVE_INITIAL_TEST",
+    "schedulable":"YES",
+    "schedule_flag":"true",
+    "schedule_status":"APPROVED",
+    "series_code":"NEG111",
+    "status":"MARK_ENTRY",
+    "subject_code":"bio3",
+    "subject_name":"biology",
+    "to_time":"01:00 PM",
+    "type":"WRITTEN",
+    "visibility":"SCHOOL"
+  }
+]

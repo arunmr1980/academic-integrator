@@ -199,7 +199,7 @@ def generate_class_calendar(class_key,division,calendar_date,institution_key) :
 	class_calendar.calendar_date = calendar_date
 	class_calendar.calendar_key = key.generate_key(16)
 	class_calendar.institution_key = institution_key
-	class_calendar.subscriber_key = class_key + division
+	class_calendar.subscriber_key = class_key +'-'+ division
 	class_calendar.subscriber_type = 'CLASS-DIV'
 	class_calendar.events = []
 	return class_calendar

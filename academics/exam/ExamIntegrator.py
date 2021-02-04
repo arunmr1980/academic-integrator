@@ -151,6 +151,8 @@ def save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_
 	for updated_class_calendar in updated_class_calendars_list :
 		cal = calendar.Calendar(None)
 		class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+		pp.pprint(class_calendar_dict)
+		print("UPADTED CLASS CALENDAR ----------->>>>>>>>>>>>")
 		response = calendar_service.add_or_update_calendar(class_calendar_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated class calendar uploaded --------- '+str(class_calendar_dict['calendar_key']))
 
@@ -171,7 +173,9 @@ def get_affected_class_calendars(exams_list) :
 	current_class_calendar = None
 	current_class_calendars_list = []
 	for exam in exams_list :
-		subscriber_key = exam.class_key + '-' + exam.division
+		class_key = exam.class_key
+		division = exam.division
+		subscriber_key = class_key + '-' + division
 		calendar_date = exam.date_time
 		institution_key = exam.institution_key
 		current_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
@@ -344,19 +348,28 @@ def get_remove_conflicted_class_events(exam_events,current_class_calendar,remove
 
 def get_updated_class_calendar_events(exam_event,current_class_calendar,removed_events) :
 	updated_events = []
-	for calendar_event in current_class_calendar.events :
-		if check_events_conflict(exam_event.from_time,exam_event.to_time,calendar_event.from_time,calendar_event.to_time) == True :
-			removed_events.append(calendar_event)
-			if exam_event not in updated_events :
-				updated_events.append(exam_event)
-		else :
-			updated_events.append(calendar_event)
-			exam_date = datetime.datetime.strptime(exam_event.from_time[0:10],'%Y-%m-%d')
-			calendar_date = datetime.datetime.strptime(current_class_calendar.calendar_date,'%Y-%m-%d')
-			if exam_date == calendar_date :
+	if len(current_class_calendar.events) > 0 :
+		for calendar_event in current_class_calendar.events :
+			if check_events_conflict(exam_event.from_time,exam_event.to_time,calendar_event.from_time,calendar_event.to_time) == True :
+				removed_events.append(calendar_event)
 				if exam_event not in updated_events :
 					updated_events.append(exam_event)
-			
+			else :
+				updated_events.append(calendar_event)
+				exam_date = datetime.datetime.strptime(exam_event.from_time[0:10],'%Y-%m-%d')
+				calendar_date = datetime.datetime.strptime(current_class_calendar.calendar_date,'%Y-%m-%d')
+				if exam_date == calendar_date :
+					if exam_event not in updated_events :
+						updated_events.append(exam_event)
+	else :
+		exam_date = datetime.datetime.strptime(exam_event.from_time[0:10],'%Y-%m-%d')
+		calendar_date = datetime.datetime.strptime(current_class_calendar.calendar_date,'%Y-%m-%d')
+		if exam_date == calendar_date :
+			if exam_event not in updated_events :
+				updated_events.append(exam_event)
+
+
+	
 
 
 	current_class_calendar.events = updated_events
