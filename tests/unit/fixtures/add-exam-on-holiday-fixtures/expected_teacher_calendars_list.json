@@ -8,8 +8,8 @@
             "ref_calendar_key":"test-key-2"
          }
       ],
-      "institution_key":"test-school-1",
-      "subscriber_key":"employee-1",
+      "institution_key":"test-school-a",
+      "subscriber_key":"teacher-a",
       "subscriber_type":"EMPLOYEE"
    },
    {
@@ -21,8 +21,8 @@
             "ref_calendar_key":"test-key-3"
          }
       ],
-      "institution_key":"test-school-1",
-      "subscriber_key":"employee-3",
+      "institution_key":"test-school-a",
+      "subscriber_key":"teacher-c",
       "subscriber_type":"EMPLOYEE"
    },
    {
@@ -31,8 +31,8 @@
       "events":[
          
       ],
-      "institution_key":"test-school-1",
-      "subscriber_key":"employee-2",
+      "institution_key":"test-school-a",
+      "subscriber_key":"teacher-b",
       "subscriber_type":"EMPLOYEE"
    }
 ]

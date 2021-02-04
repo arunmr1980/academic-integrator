@@ -41,7 +41,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 
 	def test_calendars_and_lessonplan(self) :
 		series_code = "NEG111"
-		class_key = "8B1B22E72AE"
+		class_key = "sample-class-1"
 		division = "A"
 		subscriber_key = class_key + '-' + division
 		exam_integrator.integrate_add_exam_on_calendar(series_code,class_key,division)
@@ -79,7 +79,7 @@ class AddExamIntegratorTest(unittest.TestCase):
 
 	def tearDown(self) :
 		series_code = "NEG111"
-		class_key = "8B1B22E72AE"
+		class_key = "sample-class-1"
 		division = "A"
 		subscriber_key = class_key + '-' + division
 		updated_class_calendars_list = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
