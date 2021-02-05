@@ -470,6 +470,11 @@ def add_event_integrate_calendars(event_code,calendar_key) :
 		for class_calendar in class_calendars :
 			updated_calendars = update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_calendars_list)
 			updated_calendars_list.extend(updated_calendars)
+
+	if calendar.subscriber_type == 'CLASS-DIV' and is_class(event.params[0]) == False :
+		updated_calendars = update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_calendars_list)
+		updated_calendars_list.extend(updated_calendars)
+
 	upload_updated_calendars(updated_calendars_list)
 	integrate_holiday_lessonplan(event_code,calendar_key)
 
