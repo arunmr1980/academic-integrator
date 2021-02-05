@@ -17,7 +17,9 @@ import copy
 def get_subject_teachers_from_class_info(class_div) :
 	subject_teachers_list = []
 	for subject_teacher in class_div.subject_teachers :
-		subject_teachers_list.append(subject_teacher.teacher_employee_key)
+		if check_employee_key_already_exist(subject_teacher.teacher_employee_key,subject_teachers_list) == False :
+			print(subject_teacher.teacher_employee_key,"EMP KEY ----------")
+			subject_teachers_list.append(subject_teacher.teacher_employee_key)
 	return subject_teachers_list
 
 
@@ -25,3 +27,10 @@ def get_division_from_class_info(class_info,division) :
 	for div in class_info.divisions :
 		if div.code == division and div.name == division :
 			return div
+
+def check_employee_key_already_exist(teacher_employee_key,subject_teachers_list) :
+	is_exist = False 
+	for employee_key in subject_teachers_list :
+		if employee_key == teacher_employee_key :
+			is_exist = True
+	return is_exist

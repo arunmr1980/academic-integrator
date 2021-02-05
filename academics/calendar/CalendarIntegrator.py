@@ -45,6 +45,8 @@ def remove_event_integrate_calendars(calendar_key,events) :
 		employee_key_list = get_employee_key_list(updated_class_calendar_events)
 		for employee_key in employee_key_list :
 			teacher_calendar = get_teacher_calendar_by_emp_key_and_date(employee_key,updated_class_calendar)
+			if teacher_calendar is None :
+				teacher_calendar = generate_employee_calendar(subscriber_key,updated_class_calendar)
 			update_teacher_calendar_by_adding_conflicted_periods(updated_class_calendar_events,teacher_calendar,updated_class_calendar,updated_calendars_list)
 
 	upload_updated_calendars(updated_calendars_list)

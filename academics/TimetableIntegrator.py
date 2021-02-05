@@ -12,7 +12,8 @@ import academics.calendar.CalendarDBService as calendar_service
 import academics.timetable.KeyGeneration as key
 import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.calendar.CalendarIntegrator as calendar_integrator
-import academics.calendar.ClassIntegrator as class_integrator
+import academics.classinfo.ClassIntegrator as class_integrator
+import academics.leave.LeaveIntegrator as leave_integrator
 import academics.calendar.Calendar as calendar
 import copy
 
@@ -351,15 +352,20 @@ def generate_and_save_calenders(time_table_key,academic_year):
 	gclogger.info("Number of teacher calendars generated " + str(len(generated_teacher_calendar_dict)))
 
 	teacher_calendar_list = generated_teacher_calendar_dict.values()
-
-	# save_or_update_calendars(class_calendar_list, teacher_calendar_list)
-	class_key = timetable.class_key
-	division = timetable.division
-	class_info = class_info_service.get_classinfo(class_key)
-	class_div = class_integrator.get_division_from_class_info(class_info,division)
-	subject_teachers = class_integrator.get_subject_teachers_from_class_info(class_div)
-	for subject_teacher in subject_teachers :
-		print(subject_teacher,"ITH------>>>")
+	save_or_update_calendars(class_calendar_list, teacher_calendar_list)
+	# class_key = timetable.class_key
+	# division = timetable.division
+	# class_info = class_info_service.get_classinfo(class_key)
+	# class_div = class_integrator.get_division_from_class_info(class_info,division)
+	# subject_teachers = class_integrator.get_subject_teachers_from_class_info(class_div)
+	# teacher_leaves = leave_integrator.get_teacher_leaves_in_academic_year(academic_configuration,subject_teachers)
+	# for teacher_leave in teacher_leaves :
+	# 	print(teacher_leave['subscriber_key'],"subscriber key------->>")
+		# print(teacher_leave['leave_key'] ,"leave key --------->>>>")
+		# leave_integrator.integrate_add_leave_on_calendar(teacher_leave['leave_key'])
+	
+	
+	
 
 
 
