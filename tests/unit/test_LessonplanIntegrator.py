@@ -19,9 +19,8 @@ class LessonplanIntegratorTest(unittest.TestCase):
 	def test_lessonplan(self) :
 		expected_lesson_plan_list = self.get_expected_lesson_plan_list()
 		current_lesson_plan_list = self.get_current_lesson_plan_list()
-		class_calendar_dict= self.get_current_class_calendar()
-		class_calendar_dict_obj = calendar.Calendar(class_calendar_dict)
-		generated_lesson_plan_list = integrate_calendar_to_lesson_plan(class_calendar_dict_obj,current_lesson_plan_list)
+		class_calendar = self.get_current_class_calendar()
+		generated_lesson_plan_list = integrate_calendar_to_lesson_plan(class_calendar,current_lesson_plan_list)
 
 		generated_lesson_plans_dict = self.get_generated_lesson_plans_dict(generated_lesson_plan_list)
 		for expected_lesson_plan in expected_lesson_plan_list :
@@ -81,15 +80,15 @@ class LessonplanIntegratorTest(unittest.TestCase):
 
 
 	def get_generated_lesson_plans_dict(self,generated_lesson_plan_list) :
-		generated_lesson_plans_dict ={}
+		generated_lesson_plans_dict = {}
 		for generated_lesson_plan in generated_lesson_plan_list :
 			generated_lesson_plans_dict[generated_lesson_plan.lesson_plan_key] =  generated_lesson_plan
 		return generated_lesson_plans_dict
 
 
 	def get_expected_lesson_plan_list(self) :
-		expected_lesson_plan_list =[]
-		with open('tests/unit/fixtures/expected_lesson_plan_single_cal.json', 'r') as lesson_plan_list:
+		expected_lesson_plan_list = []
+		with open('tests/unit/fixtures/calendar-to-lessonplan-fixtures/expected_lesson_plan_single_cal.json', 'r') as lesson_plan_list:
 			expected_lessonplan_json_list = json.load(lesson_plan_list)
 			for expected_lesson_plan in expected_lessonplan_json_list :
 				expected_lesson_plan_list.append(lessonplan.LessonPlan(expected_lesson_plan))
@@ -97,42 +96,22 @@ class LessonplanIntegratorTest(unittest.TestCase):
 
 
 	def get_current_lesson_plan_list(self) :
-		current_lesson_plan_list =[]
-		with open('tests/unit/fixtures/current_lesson_plan_single_session.json', 'r') as lesson_plan_list:
+		current_lesson_plan_list = []
+		with open('tests/unit/fixtures/calendar-to-lessonplan-fixtures/current_lesson_plan_single_session.json', 'r') as lesson_plan_list:
 			current_lessonplan_json_list = json.load(lesson_plan_list)
 			for current_lesson_plan in current_lessonplan_json_list :
 				current_lesson_plan_list.append(lessonplan.LessonPlan(current_lesson_plan))
 		return current_lesson_plan_list
 
-	def get_teacher_calendar_list(self) :
-		with open('tests/unit/fixtures/teacher_calendar_list.json', 'r') as calendar_list:
-			teacher_calendar_dict_list = json.load(calendar_list)
-		return teacher_calendar_dict_list
 
-	def get_class_calendar_list(self) :
-		class_calendar_obj_list = []
-		with open('tests/unit/fixtures/class_calendar_list.json', 'r') as calendar_list:
-			class_calendar_dict_list = json.load(calendar_list)
-		for class_cal in class_calendar_dict_list :
-			class_calendar_obj_list.append(calendar.Calendar(class_cal))
-		return class_calendar_obj_list
 
 	def get_current_class_calendar(self) :
-	    with open('tests/unit/fixtures/current_class_calendar.json', 'r') as calendar:
-		    class_calendar_dict = json.load(calendar)
-	    return class_calendar_dict
+	    with open('tests/unit/fixtures/calendar-to-lessonplan-fixtures/current_class_calendar.json', 'r') as calendar_json:
+		    class_calendar_dict = json.load(calendar_json)
+		    class_calendar = calendar.Calendar(class_calendar_dict)
+	    return class_calendar
 
-	def get_time_table(self):
-		with open('tests/unit/fixtures/timetable.json', 'r') as timetable:
-			timetable = json.load(timetable)
-		return ttable.TimeTable(timetable)
-
-
-	def get_academic_configuration(self):
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configuration:
-			academic_configuration_dict = json.load(academic_configuration)
-			academic_configuration = academic_config.AcademicConfiguration(academic_configuration_dict)
-		return academic_configuration
+	
 
 
 

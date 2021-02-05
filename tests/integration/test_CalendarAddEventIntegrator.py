@@ -135,21 +135,21 @@ class CalendarAddEventIntegratorTest(unittest.TestCase):
 
 
 	def tearDown(self) :
-		academic_configuration = academic_service.get_academig('test-school-1','2020-2021')
+		academic_configuration = academic_service.get_academig('test-school-key-3','2020-2021')
 		academic_service.delete_academic_config(academic_configuration.academic_config_key)
 		gclogger.info("---------------Test Academic Configuration deleted ----------  " + academic_configuration.academic_config_key + "-----------------")
 
-		current_class_calendars = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','CLASS-DIV')
+		current_class_calendars = calendar_service.get_all_calendars_by_school_key_and_type('test-school-key-3','CLASS-DIV')
 		for calendar in current_class_calendars :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- A class calendar deleted ---------- " + calendar.calendar_key+" -----------------")
 
-		current_school_calendars = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','SCHOOL')
+		current_school_calendars = calendar_service.get_all_calendars_by_school_key_and_type('test-school-key-3','SCHOOL')
 		for calendar in current_class_calendars :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- A school calendar deleted ---------- " + calendar.calendar_key+" -----------------")
 
-		current_teacher_calendars = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
+		current_teacher_calendars = calendar_service.get_all_calendars_by_school_key_and_type('test-school-key-3','EMPLOYEE')
 		for calendar in current_teacher_calendars :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- A Teacher calendar deleted ---------- " + calendar.calendar_key+" -----------------")
@@ -200,12 +200,12 @@ class CalendarAddEventIntegratorTest(unittest.TestCase):
 		return holiday_calendars_list
 
 	def get_academic_config_from_json(self) :
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configure:
+		with open('tests/unit/fixtures/calendar-add-fixtures/academic_configuration.json', 'r') as academic_configure:
 			academic_configuration = json.load(academic_configure)
 		return academic_configuration
 
 	def get_class_info(self) :
-		with open('tests/unit/fixtures/add-teacher-leave-fixtures/class_info.json', 'r') as class_info_two:
+		with open('tests/unit/fixtures/calendar-add-fixtures/class_info.json', 'r') as class_info_two:
 			class_info_two_dict = json.load(class_info_two)
 		return class_info_two_dict
 

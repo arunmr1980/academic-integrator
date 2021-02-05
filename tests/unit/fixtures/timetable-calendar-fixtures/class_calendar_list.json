@@ -1,8 +1,8 @@
 [
-   {  "institution_key" :"test-school-1",
+   {  "institution_key" :"test-school-key-1",
       "calendar_key":"test-key-1",
       "calendar_date":"2020-08-03",
-      "subscriber_key":"8B1B22E72AE-A",
+      "subscriber_key":"test-class-key-1-A",
       "subscriber_type":"CLASS-DIV",
       "events":[
          {   "event_code": "event-1",
@@ -19,10 +19,10 @@
       ]
    },
    {
-      "institution_key" :"test-school-1",
+      "institution_key" :"test-school-key-1",
       "calendar_key":"test-key-2",
       "calendar_date":"2020-08-04",
-      "subscriber_key":"8B1B22E72AE-A",
+      "subscriber_key":"test-class-key-1-A",
       "subscriber_type":"CLASS-DIV",
       "events":[
          {   "event_code": "event-1",
@@ -45,10 +45,10 @@
       ]
    },
    {
-      "institution_key" :"test-school-1",
+      "institution_key" :"test-school-key-1",
       "calendar_key":"test-key-3",
       "calendar_date":"2020-08-10",
-      "subscriber_key":"8B1B22E72AE-A",
+      "subscriber_key":"test-class-key-1-A",
       "subscriber_type":"CLASS-DIV",
       "events":[
          {   "event_code": "event-3",

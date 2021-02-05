@@ -26,7 +26,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Updated class calendar uploaded --------- '+str(updated_calendar['calendar_key']))
 
 
-		current_lessonplans = self.get_current_lessonplans_from_json()
+		current_lessonplans = self.get_current_lessonplans_as_json()
 		for current_lessonplan in current_lessonplans :
 			response = lessonplan_service.create_lessonplan(current_lessonplan)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + '------- Existing lesson plan uploaded -------- '+str(current_lessonplan['lesson_plan_key']))
@@ -145,26 +145,10 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			updated_class_calendars = json.load(calendar_list)
 		return updated_class_calendars
 
-	def get_current_lessonplans_from_json(self) :
+	def get_current_lessonplans_as_json(self) :
 		with open('tests/unit/fixtures/add-class-session-events-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
 			current_lessonplans = json.load(lessonplans_list)
 		return current_lessonplans
-
-	def get_current_lessonplans_list(self) :
-		current_lessonplans = []
-		with open('tests/unit/fixtures/add-class-session-events-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
-			lessonplans_list_dict = json.load(lessonplans_list)
-		for lessonplan in lessonplans_list_dict :
-			current_lessonplans.append(lpnr.LessonPlan(lessonplan))
-		return current_lessonplans
-
-	def get_updated_class_calendars_list(self) :
-		updated_class_calendars = []
-		with open('tests/unit/fixtures/add-class-session-events-fixtures/updated_class_calendars_list.json', 'r') as calendar_list:
-			class_calendars_dict = json.load(calendar_list)
-		for class_cal in class_calendars_dict :
-			updated_class_calendars.append(calendar.Calendar(class_cal))
-		return updated_class_calendars
 
 	def get_expected_lessonplans_list(self) :
 		expected_lesson_plan_list =[]

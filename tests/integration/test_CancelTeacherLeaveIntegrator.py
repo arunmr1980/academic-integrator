@@ -23,7 +23,7 @@ pp = pprint.PrettyPrinter(indent=4)
 class CancelLeaveIntegratorTest(unittest.TestCase):
 	def setUp(self) :
 
-		timetables = self.get_timetables_list_from_json()
+		timetables = self.get_timetables_list_as_json()
 		for timetable in timetables :
 			response = timetable_service.create_timetable(timetable)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' time table uploaded '+str(timetable['time_table_key']))
@@ -41,7 +41,7 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 			response = calendar_service.add_or_update_calendar(current_calendar)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Existing teacher calendar uploaded --------- '+str(current_calendar['calendar_key']))
 
-		current_lessonplans = self.get_current_lessonplans_from_json()
+		current_lessonplans = self.get_current_lessonplans_as_json()
 		for current_lessonplan in current_lessonplans :
 			response = lessonplan_service.create_lessonplan(current_lessonplan)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Existing lesson plan uploaded '+str(current_lessonplan['lesson_plan_key']))
@@ -60,8 +60,6 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 
 	def test_calendars_and_lessonplan(self) :
 		leave_key = 'test-leave-key-1'
-
-
 		leave_integrator.integrate_leave_cancel(leave_key)	
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
 		expected_lessonplans_list = self.get_expected_lessonplans_list()
@@ -71,12 +69,10 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 			calendar_date = teacher_calendar.calendar_date
 			subscriber_key = teacher_calendar.subscriber_key
 			expected_teacher_calendar_dict[calendar_date + subscriber_key] = teacher_calendar
-		
-		
 			gclogger.info("-----[UnitTest] teacher calendar test passed ----------------- "+ str(teacher_calendar.calendar_key)+" ------------------------------ ")
-		updated_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
-		updated_class_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','CLASS-DIV')
-		class_info_list = class_info_service.get_classinfo_list('test-school-1', '2020-2021')
+		updated_teacher_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('sample-school-2','EMPLOYEE')
+		updated_class_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('sample-school-2','CLASS-DIV')
+		class_info_list = class_info_service.get_classinfo_list('sample-school-2', '2020-2021')
 		for class_info in class_info_list :
 			if hasattr(class_info, 'divisions') :
 				for div in class_info.divisions :
@@ -113,13 +109,13 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
  
 	def tearDown(self) :
 		
-		timetables = self.get_timetables_list_from_json()
+		timetables = self.get_timetables_list_as_json()
 		for timetable in timetables :
 			timetable_service.delete_timetable(timetable['time_table_key'])
 			gclogger.info("--------------- Test Timetable deleted  " + timetable['time_table_key']+"  -----------------")
 		school_key = timetable['school_key']
-		academic_configuration = academic_service.get_academig('test-school-1','2020-2021')
-		updated_class_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','CLASS-DIV')
+		academic_configuration = academic_service.get_academig('sample-school-2','2020-2021')
+		updated_class_calendars_list = calendar_service.get_all_calendars_by_school_key_and_type('sample-school-2','CLASS-DIV')
 		for updated_class_calendar in updated_class_calendars_list :
 			calendar_service.delete_calendar(updated_class_calendar.calendar_key)
 			gclogger.info("--------------- A updated class calendar deleted " + updated_class_calendar.calendar_key+" -----------------")
@@ -293,17 +289,17 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 			expected_lessonplans.append(lpnr.LessonPlan(lessonplan))
 		return expected_lessonplans
 
-	def get_timetables_list_from_json(self) :
+	def get_timetables_list_as_json(self) :
 		with open('tests/unit/fixtures/cancel-leave-fixtures/test_timetables_list.json', 'r') as calendar_list:
 			timetable = json.load(calendar_list)
 		return timetable
 
 	def get_academic_config_from_json(self) :
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configure:
+		with open('tests/unit/fixtures/cancel-leave-fixtures/academic_configuration.json', 'r') as academic_configure:
 			academic_configuration = json.load(academic_configure)
 		return academic_configuration
 
-	def get_current_lessonplans_from_json(self) :
+	def get_current_lessonplans_as_json(self) :
 		with open('tests/unit/fixtures/cancel-leave-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
 			current_lessonplans = json.load(lessonplans_list)
 		return current_lessonplans

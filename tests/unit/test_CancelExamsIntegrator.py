@@ -337,7 +337,7 @@ class CancelExamIntegratorTest(unittest.TestCase):
 
 
 	def get_academic_configuration(self):
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configuration:
+		with open('tests/unit/fixtures/cancel-exam-fixtures/academic_configuration.json', 'r') as academic_configuration:
 			academic_configuration_dict = json.load(academic_configuration)
 			academic_configuration = academic_config.AcademicConfiguration(academic_configuration_dict)
 		return academic_configuration

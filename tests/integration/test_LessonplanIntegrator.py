@@ -19,10 +19,10 @@ pp = pprint.PrettyPrinter(indent=4)
 class LessonplanIntegratorTest(unittest.TestCase):
 
 	def setUp(self) :
-		timetable = self.get_timetable_from_json()
+		timetable = self.get_timetable_as_json()
 		response = timetable_service.create_timetable(timetable)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' time table uploaded '+str(timetable['time_table_key']))
-		academic_configuration = self.get_academic_config_from_json()
+		academic_configuration = self.get_academic_config_as_json()
 		response = academic_service.create_academic_config(academic_configuration)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Academic configuration uploaded '+str(academic_configuration['academic_config_key']))
 		current_lesson_plan_list = self.get_current_lesson_plan_list()
@@ -39,10 +39,10 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		school_key = timetable.school_key
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
 		generate_and_save_calenders(timetable.time_table_key,academic_configuration.academic_year)
-		class_calender_list = calendar_service.get_all_calendars_by_key_and_type('8B1B22E72AE-A','CLASS-DIV')
+		class_calender_list = calendar_service.get_all_calendars_by_key_and_type('test-class-key-2-A','CLASS-DIV')
 		expected_lesson_plan_list = self.get_expected_lesson_plan_list()
 		integrate_calendars_to_lesson_plan(class_calender_list)
-		generated_lesson_plan_list = lessonplan_service.get_lesson_plan_list('8B1B22E72AE','A')
+		generated_lesson_plan_list = lessonplan_service.get_lesson_plan_list('test-class-key-2','A')
 		generated_lesson_plans_dict = self.get_generated_lesson_plans_dict(generated_lesson_plan_list)
 		self.check_lesson_plan(expected_lesson_plan_list, generated_lesson_plans_dict)
 
@@ -119,7 +119,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		timetable = timetable_service.get_time_table('test-time-table-1')
 		school_key = timetable.school_key
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
-		class_calender_list = calendar_service.get_all_calendars_by_key_and_type('8B1B22E72AE-A','CLASS-DIV')
+		class_calender_list = calendar_service.get_all_calendars_by_key_and_type('test-class-key-2-A','CLASS-DIV')
 		for calendar in class_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- Class calendar deleted " + calendar.calendar_key+" -----------------")
@@ -135,7 +135,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		gclogger.info("--------------- Test Timetable deleted  " + timetable.time_table_key+"  -----------------")
 		academic_service.delete_academic_config(academic_configuration.academic_config_key)
 		gclogger.info("---------------Test Academic Configuration deleted  " + academic_configuration.academic_config_key + "-----------------")
-		generated_lesson_plan_list = lessonplan_service.get_lesson_plan_list('8B1B22E72AE','A')
+		generated_lesson_plan_list = lessonplan_service.get_lesson_plan_list('test-class-key-2','A')
 		for generated_lesson_plan in generated_lesson_plan_list :
 			lessonplan_service.delete_lessonplan(generated_lesson_plan.lesson_plan_key)
 			gclogger.info("---------------Test Lesson Plan deleted  " + generated_lesson_plan.lesson_plan_key + "-----------------")
@@ -157,7 +157,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 
 	def get_expected_lesson_plan_list(self) :
 		expected_lesson_plan_list =[]
-		with open('tests/unit/fixtures/expected_lesson_plan.json', 'r') as lesson_plan_list:
+		with open('tests/unit/fixtures/calendar-to-lessonplan-fixtures/expected_lesson_plan.json', 'r') as lesson_plan_list:
 			expected_lessonplan_json_list = json.load(lesson_plan_list)
 			for expected_lesson_plan in expected_lessonplan_json_list :
 				expected_lesson_plan_list.append(lessonplan.LessonPlan(expected_lesson_plan))
@@ -165,47 +165,36 @@ class LessonplanIntegratorTest(unittest.TestCase):
 
 	def get_expected_lesson_plan_single_calendar(self) :
 		expected_lesson_plan_list =[]
-		with open('tests/unit/fixtures/expected_lesson_plan_single_cal.json', 'r') as lesson_plan_list:
+		with open('tests/unit/fixtures/calendar-to-lessonplan-fixtures/expected_lesson_plan_single_cal.json', 'r') as lesson_plan_list:
 			expected_lessonplan_json_list = json.load(lesson_plan_list)
 			for expected_lesson_plan in expected_lessonplan_json_list :
 				expected_lesson_plan_list.append(lessonplan.LessonPlan(expected_lesson_plan))
 		return expected_lesson_plan_list
 
 
-
 	def get_current_lesson_plan_list(self) :
-		with open('tests/unit/fixtures/current_lesson_plan.json', 'r') as lesson_plan_list:
+		with open('tests/unit/fixtures/calendar-to-lessonplan-fixtures/current_lesson_plan.json', 'r') as lesson_plan_list:
 			current_lessonplan_json_list = json.load(lesson_plan_list)
 		return current_lessonplan_json_list
 
 	def get_current_lesson_plan_list_for_single_calendar(self) :
-		with open('tests/unit/fixtures/current_lesson_plan_single_session.json', 'r') as lesson_plan_list:
+		with open('tests/unit/fixtures/calendar-to-lessonplan-fixtures/current_lesson_plan_single_session.json', 'r') as lesson_plan_list:
 			current_lessonplan_json_list = json.load(lesson_plan_list)
 		return current_lessonplan_json_list
 
-	def get_teacher_calendar_list(self) :
-		with open('tests/unit/fixtures/teacher_calendar_list.json', 'r') as calendar_list:
-			teacher_calendar_dict_list = json.load(calendar_list)
-		return teacher_calendar_dict_list
-
-	def get_calendar_list(self) :
-		with open('tests/unit/fixtures/class_calendar_list.json', 'r') as calendar_list:
-			class_calendar_dict_list = json.load(calendar_list)
-		return class_calendar_dict_list
-
 	def get_current_class_calendar(self) :
-	    with open('tests/unit/fixtures/current_class_calendar.json', 'r') as calendar:
+	    with open('tests/unit/fixtures/calendar-to-lessonplan-fixtures/current_class_calendar.json', 'r') as calendar:
 		    class_calendar_dict = json.load(calendar)
 	    return class_calendar_dict
 
-	def get_timetable_from_json(self) :
-		with open('tests/unit/fixtures/timetable.json', 'r') as calendar_list:
+	def get_timetable_as_json(self) :
+		with open('tests/unit/fixtures/calendar-to-lessonplan-fixtures/timetable.json', 'r') as calendar_list:
 			timetable = json.load(calendar_list)
 		return timetable
 
 
-	def get_academic_config_from_json(self) :
-		with open('tests/unit/fixtures/academic_configuration.json', 'r') as academic_configure:
+	def get_academic_config_as_json(self) :
+		with open('tests/unit/fixtures/calendar-to-lessonplan-fixtures/academic_configuration.json', 'r') as academic_configure:
 			academic_configuration = json.load(academic_configure)
 		return academic_configuration
 

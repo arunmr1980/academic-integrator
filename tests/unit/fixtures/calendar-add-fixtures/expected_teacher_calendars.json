@@ -8,8 +8,8 @@
             "ref_calendar_key":"test-key"
          }
       ],
-      "institution_key":"test-school-1",
-      "subscriber_key":"employee-3",
+      "institution_key":"test-school-key-3",
+      "subscriber_key":"employee-key-3",
       "subscriber_type":"EMPLOYEE"
    },
    {
@@ -21,8 +21,8 @@
             "ref_calendar_key":"test-key-3"
          }
       ],
-      "institution_key":"test-school-1",
-      "subscriber_key":"employee-1",
+      "institution_key":"test-school-key-3",
+      "subscriber_key":"employee-key-1",
       "subscriber_type":"EMPLOYEE"
    },
    {
@@ -34,8 +34,8 @@
             "ref_calendar_key":"test-key-4"
          }
       ],
-      "institution_key":"test-school-1",
-      "subscriber_key":"employee-2",
+      "institution_key":"test-school-key-3",
+      "subscriber_key":"employee-key-2",
       "subscriber_type":"EMPLOYEE"
    }
 ]

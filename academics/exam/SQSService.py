@@ -15,7 +15,6 @@ import academics.calendar.CalendarIntegrator as calendar_integrator
 import academics.timetable.KeyGeneration as key
 import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.calendar.Calendar as calendar
-from academics.lessonplan.LessonplanIntegrator import *
 import academics.lessonplan.LessonplanIntegrator as lessonplan_integrator
 from academics.exam import ExamDBService as exam_service
 from academics.lessonplan import LessonplanDBService as lessonplan_service
@@ -24,8 +23,12 @@ import academics.lessonplan.LessonPlan as lpnr
 import academics.lessonplan.LessonplanIntegrator as lesssonplan_integrator
 import copy
 import pprint
-pp = pprint.PrettyPrinter(indent=4)
+import boto3
+import json
+from boto3.dynamodb.conditions import Key,Attr
 import os
+pp = pprint.PrettyPrinter(indent=4)
+
 
 
 
