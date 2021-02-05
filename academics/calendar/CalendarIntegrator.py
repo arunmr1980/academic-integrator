@@ -46,7 +46,7 @@ def remove_event_integrate_calendars(calendar_key,events) :
 		for employee_key in employee_key_list :
 			teacher_calendar = get_teacher_calendar_by_emp_key_and_date(employee_key,updated_class_calendar)
 			if teacher_calendar is None :
-				teacher_calendar = 
+				teacher_calendar = generate_employee_calendar(subscriber_key,updated_class_calendar)
 			update_teacher_calendar_by_adding_conflicted_periods(updated_class_calendar_events,teacher_calendar,updated_class_calendar,updated_calendars_list)
 
 	upload_updated_calendars(updated_calendars_list)
@@ -470,6 +470,11 @@ def add_event_integrate_calendars(event_code,calendar_key) :
 		for class_calendar in class_calendars :
 			updated_calendars = update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_calendars_list)
 			updated_calendars_list.extend(updated_calendars)
+
+	if calendar.subscriber_type == 'CLASS-DIV' and is_class(event.params[0]) == False :
+		updated_calendars = update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_calendars_list)
+		updated_calendars_list.extend(updated_calendars)
+
 	upload_updated_calendars(updated_calendars_list)
 	integrate_holiday_lessonplan(event_code,calendar_key)
 
