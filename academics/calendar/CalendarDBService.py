@@ -115,8 +115,6 @@ def make_calendar_obj(calendars):
     return cal_obj_list
 
 def add_or_update_calendar(calendar):
-    print("INSIDE UPLOADING FUNCTION ------>>")
-    print(calendar['calendar_key'], '------------->>')
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(CALENDAR_TBL)
     response = table.put_item(
