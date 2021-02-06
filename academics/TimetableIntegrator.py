@@ -362,12 +362,6 @@ def generate_and_save_calenders(time_table_key,academic_year):
 		for teacher_leave in teacher_leaves :
 			update_calendars_with_pre_leaves(class_calendar_list,teacher_calendar_list,teacher_leave)
 
-	for teacher_leave in teacher_leaves :
-		leave_integrator.integrate_add_leave_on_calendar(teacher_leave['leave_key'])
-
-
-
-
 	save_or_update_calendars(class_calendar_list, teacher_calendar_list)
 	
 
@@ -376,7 +370,6 @@ def update_calendars_with_pre_leaves(class_calendar_list,teacher_calendar_list,l
 	updated_class_calendars_list = []
 	updated_teacher_calendars_list = []
 	updated_lessonplans_list = []
-	events_with_sub_key = {}
 	employee_key = leave['subscriber_key']
 	from_time = None
 	to_time = None
@@ -401,19 +394,9 @@ def update_calendars_with_pre_leaves(class_calendar_list,teacher_calendar_list,l
 								if exam_integrator.check_events_conflict(class_event.from_time,class_event.to_time,from_time,to_time) == True :
 									if leave_integrator.is_this_event_already_exist(current_class_calendar,class_event,removed_events) == False :
 										removed_events.append(class_event)
-										if current_class_calendar.subscriber_key in events_with_sub_key :
-												events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
-										else :
-											events_with_sub_key[current_class_calendar.subscriber_key] = []
-											events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
 							else :
 								if leave_integrator.is_this_event_already_exist(current_class_calendar,class_event,removed_events) == False :
 										removed_events.append(class_event)
-										if current_class_calendar.subscriber_key in events_with_sub_key :
-												events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
-										else :
-											events_with_sub_key[current_class_calendar.subscriber_key] = []
-											events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
 	update_teacher_cals_and_class_cals(removed_events,teacher_calendar_list,class_calendar_list)
 
 
