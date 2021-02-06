@@ -279,7 +279,6 @@ def update_class_cals_on_cancel_leave(removed_events,class_cals,updated_class_ca
 	return updated_removed_events
 
 def integrate_add_leave_on_calendar(leave_key) :
-	print(leave_key,"LEAVE KEY IN MAIN FUNCTION ---------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
 	removed_events = []
 	class_cals_to_be_updated = []
 	teacher_cals_to_be_updated = []
@@ -300,11 +299,9 @@ def integrate_add_leave_on_calendar(leave_key) :
 	teacher_cals = get_teacher_calendars_on_dates(from_date,to_date,employee_key)
 	for teacher_calendar in teacher_cals :
 		if teacher_calendar is not None :
-			print(teacher_calendar.calendar_key,"TEACHER CALENDAR KEY --------_>>><<<<<<<<<<<")
 			teacher_cals_to_be_updated.append(teacher_calendar)
 			for event in teacher_calendar.events :
 				calendar_key = event.ref_calendar_key
-				print(calendar_key,"CALENDAR KEY ------>>>><<<<<<<<<<<<<<<<<<")
 				if calendar_key is not None :
 					event_code = event.event_code
 					current_class_calendar = calendar_service.get_calendar(calendar_key) 

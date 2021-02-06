@@ -131,7 +131,7 @@ def get_employee_leaves(subscriber_key,from_date,to_date) :
         leaves = get_leaves_with_same_end_date(to_date,leaves)
         leaves_list.extend(leaves)
 
-    #getting leaves having from date in academic from date and to date
+    #getting leaves having from date in between academic from date and to date
     if len(get_leaves_by_subscriber_key_and_from_date_inbetween(subscriber_key, from_date, to_date)) > 0 :
         leaves = get_leaves_by_subscriber_key_and_from_date_inbetween(subscriber_key, from_date, to_date)
         leaves = get_uncancelled_leaves(leaves)
@@ -156,6 +156,25 @@ def get_employee_leaves(subscriber_key,from_date,to_date) :
         leaves_list.extend(leaves)
 
     logger.info(str(len(leaves))+ '   ----------- Count of leaves list --------   ')
+    leaves_list = remove_duplicates(leaves_list)
+
     return leaves_list
    
+def remove_duplicates(leaves_list) :
+    final_leave_list = []
+    for leave in leaves_list :
+        if check_leave_already_exist(final_leave_list,leave) == False :
+            final_leave_list.append(leave)
+    return final_leave_list
+
+def check_leave_already_exist(final_leave_list,leave) :
+    is_exist = False
+    for final_leave in final_leave_list :
+        if final_leave['leave_key'] == leave['leave_key'] :
+            is_exist = True
+    return is_exist
+
+
+
+
     

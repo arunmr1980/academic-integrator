@@ -32,27 +32,27 @@
       "subject_teachers": [
         {
           "subject_code": "bio1",
-          "teacher_employee_key": "employee-1"
+          "teacher_employee_key": "emp-1"
         },
         {
           "subject_code": "bio2",
-          "teacher_employee_key": "employee-1"
+          "teacher_employee_key": "emp-1"
         },
         {
           "subject_code": "bio3",
-          "teacher_employee_key": "employee-1"
+          "teacher_employee_key": "emp-1"
         },
         {
           "subject_code": "bio2",
-          "teacher_employee_key": "employee-2"
+          "teacher_employee_key": "emp-2"
         },
         {
           "subject_code": "bio3",
-          "teacher_employee_key": "employee-2"
+          "teacher_employee_key": "emp-2"
         },
         {
           "subject_code": "bio1",
-          "teacher_employee_key": "employee-3"
+          "teacher_employee_key": "emp-3"
         }
       ]
     }

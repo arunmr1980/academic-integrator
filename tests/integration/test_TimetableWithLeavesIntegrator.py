@@ -8,12 +8,13 @@ import academics.timetable.TimeTableDBService as timetable_service
 from academics.timetable.TimeTable import TimeTable
 import academics.timetable.TimeTableDBService as timetable_service
 from academics.TimetableIntegrator import generate_and_save_calenders
+import academics.leave.LeaveDBService as leave_service
 import operator
 from academics.logger import GCLogger as gclogger
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-class TimetableWithLeavesIntegratorTest(unittest.TestCase):
+class TimetableIntegratorTest(unittest.TestCase):
 
 	@classmethod
 	def setUpClass(self) :
@@ -21,23 +22,23 @@ class TimetableWithLeavesIntegratorTest(unittest.TestCase):
 		gclogger.info(" Setting up timetable integrator test......")
 		timetable = self.get_timetable_from_json(self)
 		classinfo = self.get_class_info_from_json(self)
-		response = timetable_service.create_timetable(timetable)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -----------  time table one uploaded  ---------- '+str(timetable['time_table_key']))
+		leaves = self.get_leaves_list_json(self)
+		for leave in leaves :
+			response = leave_service.add_or_update_leave(leave)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Leave uploaded --------- '+str(leave['leave_key']))
 		response = class_info_service.add_or_update_class_info(classinfo)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for uploaded --------- ' +str(classinfo['class_info_key']) )
+		response = timetable_service.create_timetable(timetable)
 		academic_configuration = self.get_academic_config_from_json(self)
 		response = academic_service.create_academic_config(academic_configuration)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' -------------  Academic configuration uploaded  ------------- '+str(academic_configuration['academic_config_key']))
 		class_calendar_holiday_list = self.get_holiday_class_calendar_list_from_json(self)
 
 		school_calendar_holiday_list = self.get_holiday_school_calendar_list_from_json(self)
 
 		for calendar in class_calendar_holiday_list :
 			response = calendar_service.add_or_update_calendar(calendar)
-			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A class calendar holiday uploaded --------- '+str(calendar['calendar_key']))
 
 		for calendar in school_calendar_holiday_list :
-			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A school calendar holiday uploaded --------- '+str(calendar['calendar_key']))
 			response = calendar_service.add_or_update_calendar(calendar)
 
 
@@ -53,27 +54,27 @@ class TimetableWithLeavesIntegratorTest(unittest.TestCase):
 		generate_and_save_calenders(timetable.time_table_key,academic_configuration.academic_year)
 		class_calender_list = calendar_service.get_all_calendars_by_key_and_type('sample-class-2-A','CLASS-DIV')
 
-		# for class_calendar in class_calender_list :
-		# 	calendar_date = class_calendar.calendar_date
-		# 	class_calendars_dict[calendar_date] = class_calendar
+		for class_calendar in class_calender_list :
+			calendar_date = class_calendar.calendar_date
+			class_calendars_dict[calendar_date] = class_calendar
 
-		# expected_class_calendar_list = []
-		# expected_class_calendar_dict_list = self.get_expected_class_calendar_list()
-		# for class_calendar in expected_class_calendar_dict_list :
-		# 	class_calendar = calendar.Calendar(class_calendar)
-		# 	expected_class_calendar_list.append(class_calendar)
+		expected_class_calendar_list = []
+		expected_class_calendar_dict_list = self.get_expected_class_calendar_list()
+		for class_calendar in expected_class_calendar_dict_list :
+			class_calendar = calendar.Calendar(class_calendar)
+			expected_class_calendar_list.append(class_calendar)
 
-		# for expected_class_calendar in expected_class_calendar_list :
-		# 	calendar_date = expected_class_calendar.calendar_date
-		# 	generated_class_calendar = class_calendars_dict[calendar_date]
-		# 	self.assertEqual(expected_class_calendar.institution_key,generated_class_calendar.institution_key )
-		# 	self.assertEqual(expected_class_calendar.calendar_date,generated_class_calendar.calendar_date )
-		# 	self.assertEqual(expected_class_calendar.subscriber_key,generated_class_calendar.subscriber_key )
-		# 	self.assertEqual(expected_class_calendar.subscriber_type,generated_class_calendar.subscriber_type )
-		# 	self.check_events(expected_class_calendar.events,generated_class_calendar.events)
+		for expected_class_calendar in expected_class_calendar_list :
+			calendar_date = expected_class_calendar.calendar_date
+			generated_class_calendar = class_calendars_dict[calendar_date]
+			self.assertEqual(expected_class_calendar.institution_key,generated_class_calendar.institution_key )
+			self.assertEqual(expected_class_calendar.calendar_date,generated_class_calendar.calendar_date )
+			self.assertEqual(expected_class_calendar.subscriber_key,generated_class_calendar.subscriber_key )
+			self.assertEqual(expected_class_calendar.subscriber_type,generated_class_calendar.subscriber_type )
+			self.check_events(expected_class_calendar.events,generated_class_calendar.events)
 
 
-		# gclogger.info(" ----------- [IntegrationTest] --------------- Class calendar test passed -----------------")
+		gclogger.info(" ----------- [IntegrationTest] --------------- Class calendar test passed -----------------")
 
 
 	def check_events(self,expected_class_calendar_events,generated_class_calendar_events) :
@@ -131,9 +132,9 @@ class TimetableWithLeavesIntegratorTest(unittest.TestCase):
 		gclogger.info(" ")
 		gclogger.info(" Tear down timetable integrator test ......")
 		timetable = timetable_service.get_time_table('test-time-table-1')
-		classinfo = class_info_service.get_classinfo('sample-class-2')
 		school_key = timetable.school_key
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
+		classinfo = class_info_service.get_classinfo('sample-class-2')
 		class_calender_list = calendar_service.get_all_calendars_by_key_and_type('sample-class-2-A','CLASS-DIV')
 		for calendar in class_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
@@ -157,16 +158,13 @@ class TimetableWithLeavesIntegratorTest(unittest.TestCase):
 		gclogger.info("---------------Test Academic Configuration deleted  " + academic_configuration.academic_config_key + "-----------------")
 		response = class_info_service.delete_class_info(classinfo.class_info_key)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for deleted --------- ' +str(classinfo.class_info_key) )
-
-
+		leaves = self.get_leaves_list_json(self)
+		for leave in leaves :
+			response = leave_service.delete_leave(leave['leave_key'])
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Leave is Deleted --------- '+str(leave['leave_key']))
 
 	def get_timetable_from_json(self) :
 		with open('tests/unit/fixtures/timetable-calendar-with-leaves-fixtures/timetable.json', 'r') as calendar_list:
-			timetable = json.load(calendar_list)
-		return timetable
-
-	def get_class_info_from_json(self) :
-		with open('tests/unit/fixtures/timetable-calendar-with-leaves-fixtures/class_info.json', 'r') as calendar_list:
 			timetable = json.load(calendar_list)
 		return timetable
 
@@ -189,12 +187,19 @@ class TimetableWithLeavesIntegratorTest(unittest.TestCase):
 
 
 	def get_expected_class_calendar_list(self) :
-		with open('tests/unit/fixtures/timetable-calendar-with-leaves-fixtures/class_calendar_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/timetable-calendar-with-leaves-fixtures/expected_class_calendars_list.json', 'r') as calendar_list:
 			class_calendar_dict_list = json.load(calendar_list)
 		return class_calendar_dict_list
 
+	def get_class_info_from_json(self) :
+		with open('tests/unit/fixtures/timetable-calendar-with-leaves-fixtures/class_info.json', 'r') as calendar_list:
+			timetable = json.load(calendar_list)
+		return timetable
 
-
+	def get_leaves_list_json(self) :
+		with open('tests/unit/fixtures/timetable-calendar-with-leaves-fixtures/pre_teacher_leaves.json', 'r') as leave_list:
+			leaves_list = json.load(leave_list)
+		return leaves_list
 
 if __name__ == '__main__':
     unittest.main()

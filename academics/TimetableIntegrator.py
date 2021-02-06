@@ -347,28 +347,98 @@ def generate_and_save_calenders(time_table_key,academic_year):
 	generated_class_calendar_dict = integrate_class_timetable(timetable,academic_configuration, class_calendars_list, school_calendars_list)
 	gclogger.info("Number of class calendars generated " + str(len(generated_class_calendar_dict)))
 	class_calendar_list = generated_class_calendar_dict.values()
-
 	generated_teacher_calendar_dict = integrate_teacher_timetable(class_calendar_list)
 	gclogger.info("Number of teacher calendars generated " + str(len(generated_teacher_calendar_dict)))
-
 	teacher_calendar_list = generated_teacher_calendar_dict.values()
+
+	class_key = timetable.class_key
+	division = timetable.division
+	class_info = class_info_service.get_classinfo(class_key)
+	class_div = class_integrator.get_division_from_class_info(class_info,division)
+	subject_teachers = class_integrator.get_subject_teachers_from_class_info(class_div)
+	teacher_leaves = leave_integrator.get_teacher_leaves_in_academic_year(academic_configuration,subject_teachers)
+	gclogger.info(str(len(teacher_leaves)) + " <<--------------- NO OF TEACHER LEAVES ")
+	if len(teacher_leaves) > 0 :
+		for teacher_leave in teacher_leaves :
+			update_calendars_with_pre_leaves(class_calendar_list,teacher_calendar_list,teacher_leave)
+
+	for teacher_leave in teacher_leaves :
+		leave_integrator.integrate_add_leave_on_calendar(teacher_leave['leave_key'])
+
+
+
+
 	save_or_update_calendars(class_calendar_list, teacher_calendar_list)
-	# class_key = timetable.class_key
-	# division = timetable.division
-	# class_info = class_info_service.get_classinfo(class_key)
-	# class_div = class_integrator.get_division_from_class_info(class_info,division)
-	# subject_teachers = class_integrator.get_subject_teachers_from_class_info(class_div)
-	# teacher_leaves = leave_integrator.get_teacher_leaves_in_academic_year(academic_configuration,subject_teachers)
-	# for teacher_leave in teacher_leaves :
-	# 	print(teacher_leave['subscriber_key'],"subscriber key------->>")
-		# print(teacher_leave['leave_key'] ,"leave key --------->>>>")
-		# leave_integrator.integrate_add_leave_on_calendar(teacher_leave['leave_key'])
-	
-	
 	
 
+def update_calendars_with_pre_leaves(class_calendar_list,teacher_calendar_list,leave) :
+	removed_events = []
+	updated_class_calendars_list = []
+	updated_teacher_calendars_list = []
+	updated_lessonplans_list = []
+	events_with_sub_key = {}
+	employee_key = leave['subscriber_key']
+	from_time = None
+	to_time = None
+	if leave.__contains__('from_time') :	
+		from_time = leave['from_time']
+	if leave.__contains__('to_time') :		
+		to_time = leave['to_time']
+	from_date = leave['from_date']
+	to_date = leave['to_date']
+	teacher_cals = get_teacher_calendars_on_dates(from_date,to_date,employee_key,teacher_calendar_list)
+	for teacher_calendar in teacher_cals :
+		if teacher_calendar is not None :
+			for event in teacher_calendar.events :
+				calendar_key = event.ref_calendar_key
+				if calendar_key is not None :
+					event_code = event.event_code
+					current_class_calendar = get_class_calendar_from_list(calendar_key,class_calendar_list) 
+					if current_class_calendar is not None :
+						class_event = leave_integrator.get_class_calendar_event(current_class_calendar,event_code,removed_events)
+						if class_event is not None:
+							if from_time is not None and to_time is not None :
+								if exam_integrator.check_events_conflict(class_event.from_time,class_event.to_time,from_time,to_time) == True :
+									if leave_integrator.is_this_event_already_exist(current_class_calendar,class_event,removed_events) == False :
+										removed_events.append(class_event)
+										if current_class_calendar.subscriber_key in events_with_sub_key :
+												events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
+										else :
+											events_with_sub_key[current_class_calendar.subscriber_key] = []
+											events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
+							else :
+								if leave_integrator.is_this_event_already_exist(current_class_calendar,class_event,removed_events) == False :
+										removed_events.append(class_event)
+										if current_class_calendar.subscriber_key in events_with_sub_key :
+												events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
+										else :
+											events_with_sub_key[current_class_calendar.subscriber_key] = []
+											events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
+	update_teacher_cals_and_class_cals(removed_events,teacher_calendar_list,class_calendar_list)
 
 
+def update_teacher_cals_and_class_cals(removed_events,teacher_calendar_list,class_calendar_list) :
+	for current_class_calendar in class_calendar_list :
+		updated_class_calendar = leave_integrator.get_updated_class_calendar(current_class_calendar,removed_events)
+
+	for current_teacher_calendar in teacher_calendar_list :
+		updated_teacher_calendar = leave_integrator.get_updated_teacher_calendar(current_teacher_calendar,removed_events)
+
+	
+		
+def get_teacher_calendars_on_dates(from_date,to_date,employee_key,teacher_calendar_list) :
+	teacher_cals = []
+	dates_list = get_dates(from_date,to_date)
+	for cal_date in dates_list :
+		teacher_calendar = get_teacher_calendar_from_list(cal_date,employee_key,teacher_calendar_list)
+		if teacher_calendar is not None :
+			teacher_cals.append(teacher_calendar)
+	return teacher_cals
+
+def get_teacher_calendar_from_list(cal_date,employee_key,teacher_calendar_list) :
+	for teacher_calendar in teacher_calendar_list :
+		if teacher_calendar.calendar_date == cal_date and teacher_calendar.subscriber_key == employee_key :
+			return teacher_calendar
 
 
 

@@ -1,1 +1,21 @@
-pre_teacher_leaves.json
+[
+  {
+    "from_date":"2020-08-04",
+    "institution_key":"test-school-key-b",
+    "leave_key":"test-leave-key-a",
+    "reason":"personal",
+    "subscriber_key":"employee-c",
+    "subscriber_type":"EMPLOYEE",
+    "to_date":"2020-08-04"
+    
+  },
+  {
+    "from_date":"2020-08-10",
+    "institution_key":"test-school-key-b",
+    "leave_key":"test-leave-key-b",
+    "reason":"personal",
+    "subscriber_key":"employee-a",
+    "subscriber_type":"EMPLOYEE",
+    "to_date":"2020-08-10"
+  }
+]

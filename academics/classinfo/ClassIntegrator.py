@@ -18,7 +18,6 @@ def get_subject_teachers_from_class_info(class_div) :
 	subject_teachers_list = []
 	for subject_teacher in class_div.subject_teachers :
 		if check_employee_key_already_exist(subject_teacher.teacher_employee_key,subject_teachers_list) == False :
-			print(subject_teacher.teacher_employee_key,"EMP KEY ----------")
 			subject_teachers_list.append(subject_teacher.teacher_employee_key)
 	return subject_teachers_list
 
