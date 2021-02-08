@@ -3,7 +3,7 @@ import boto3
 import traceback
 from academics.TimetableIntegrator import generate_and_save_calenders,update_subject_teacher_integrator
 from academics.calendar.CalendarLessonPlanIntegrator import calendars_lesson_plan_integration, calendars_lesson_plan_integration_from_timetable
-from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars, integrate_update_period_calendars_and_lessonplans
+from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars, integrate_update_period_calendars_and_lessonplans,make_event_objects
 import academics.logger.GCLogger as logger
 from academics.exam.ExamIntegrator import integrate_add_exam_on_calendar,integrate_cancel_exam,integrate_update_exam_on_calendar
 from academics.leave.LeaveIntegrator import integrate_add_leave_on_calendar,integrate_leave_cancel,integrate_lessonplan_on_substitute_teacher
@@ -80,6 +80,7 @@ def remove_event_calendar_lessonplan_integration(request) :
 	try :
 		calendar_key = request['calendar_key']
 		events = request['events']
+		events = make_event_objects(events)
 		remove_event_integrate_calendars(calendar_key,events)
 	except KeyError as ke:
 		logger.info("Error in input. calendar_key not present")
