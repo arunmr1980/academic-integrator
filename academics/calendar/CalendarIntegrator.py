@@ -635,7 +635,8 @@ def sort_updated_class_calendar_events(existing_class_calendar) :
 
 
 
-def get_events_to_remove(class_calendar,event) :
+def get_events_to_remove(class_calendar,holiday_event) :
+	event = copy.deepcopy(holiday_event)
 	events_to_remove_list = []
 	calendar_event_start_time = event.from_time
 	calendar_event_end_time = event.to_time
@@ -645,13 +646,14 @@ def get_events_to_remove(class_calendar,event) :
 	gclogger.info('END ' + calendar_event_end_time)
 	gclogger.info('')
 	for event in class_calendar.events :
-		class_calendar_event_start_time = event.from_time
-		class_calendar_event_end_time = event.to_time
-		if check_events_conflict(calendar_event_start_time,calendar_event_end_time,class_calendar_event_start_time,class_calendar_event_end_time) :
-			gclogger.info("-----------NEED TO REMOVE THE EVENT  ----------" +event.event_code + '----')
-			events_to_remove_list.append(event)
-		else :
-			gclogger.info("------------- NO CONFLICT WITH THE EVENT ---------- " + event.event_code)
+		if event.event_type != "HOLIDAY" :
+			class_calendar_event_start_time = event.from_time
+			class_calendar_event_end_time = event.to_time
+			if check_events_conflict(calendar_event_start_time,calendar_event_end_time,class_calendar_event_start_time,class_calendar_event_end_time) :
+				gclogger.info("-----------NEED TO REMOVE THE EVENT  ---------- " +event.event_code + '----')
+				events_to_remove_list.append(event)
+			else :
+				gclogger.info("------------- NO CONFLICT WITH THE EVENT ---------- " + event.event_code)
 	return events_to_remove_list
 
 
