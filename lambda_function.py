@@ -13,9 +13,9 @@ def lambda_handler(event, context):
 	for record in event['Records']:
 		payload=record["body"]
 		request = json.loads(payload)
+	logger.info(request)
+	logger.info("-------------- SQS Request ------------")
 	try:
-		logger.info(request)
-		logger.info("-------------- SQS Request ------------")
 		request_type = request['request_type']
 		if request_type == 'TIMETABLE_CALENDAR_LESSON_PLAN_GEN':
 				logger.info("--------- This SQS Request is to generate calendar,lessonplan from timetable ------------")

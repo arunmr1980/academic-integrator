@@ -1,0 +1,80 @@
+{
+  "academic_year": "2020-2021",
+  "class_code": "IT BATCH-02",
+  "class_info_key": "sample-class-2",
+  "divisions": [
+    {
+      "code": "A",
+      "name": "A",
+      "order_index": 1,
+      "students": [
+        {
+          "electives": [
+            {
+              "code": "MAL",
+              "group": "elective-1"
+            },
+            {
+              "code": "HIND",
+              "group": "elective-1"
+            },
+            {
+              "code": "ENG",
+              "group": "elective-2"
+            }
+          ],
+          "student_key": "001589183624941806C274907F-20F3-4D8A-B8D2-3D1D215FD069331514056"
+        },
+        {
+          "student_key": "001589180441193905FBAB9345-953E-4FB9-9E54-1F8347681369-175585301"
+        }
+      ],
+      "subject_teachers": [
+        {
+          "subject_code": "bio1",
+          "teacher_employee_key": "employee-a"
+        },
+        {
+          "subject_code": "bio2",
+          "teacher_employee_key": "employee-a"
+        },
+        {
+          "subject_code": "bio3",
+          "teacher_employee_key": "employee-a"
+        },
+        {
+          "subject_code": "bio2",
+          "teacher_employee_key": "employee-b"
+        },
+        {
+          "subject_code": "bio3",
+          "teacher_employee_key": "employee-b"
+        },
+        {
+          "subject_code": "bio1",
+          "teacher_employee_key": "employee-c"
+        }
+      ]
+    }
+  ],
+  "name": "IT BATCH-02",
+  "order_index": 250,
+  "school_key": "1e4d12bc2b58050ff084f8da",
+  "subjects": [
+    {
+      "assessment_type": "SUMMATIVE",
+      "code": "a b01",
+      "name": "A BIO",
+      "students": [
+        {
+          "student_key": "001589183624941806C274907F-20F3-4D8A-B8D2-3D1D215FD069331514056"
+        },
+        {
+          "student_key": "001589180441193905FBAB9345-953E-4FB9-9E54-1F8347681369-175585301"
+        }
+      ],
+      "type": "ELECTIVE"
+    }
+  ],
+  "type": "regular"
+}
