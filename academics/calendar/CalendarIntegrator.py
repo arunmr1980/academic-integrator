@@ -544,8 +544,10 @@ def update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_ca
 		employee_key = get_employee_key(event.params)
 		if employee_key is not None :
 			teacher_calendar = get_teacher_calendar(teacher_calendars_list,employee_key,calendar_date)
-			updated_teacher_calendar = Update_teacher_calendar(events_to_remove_list,teacher_calendar)
-			updated_calendars.append(updated_teacher_calendar)
+			if teacher_calendar is None :
+				teacher_calendar = timetable_integrator.generate_employee_calendar(employee_key,updated_class_calendar)
+				updated_teacher_calendar = Update_teacher_calendar(events_to_remove_list,teacher_calendar)
+				updated_calendars.append(updated_teacher_calendar)
 	return updated_calendars
 
 def Update_teacher_calendar(events_to_remove_list,teacher_calendar) :
