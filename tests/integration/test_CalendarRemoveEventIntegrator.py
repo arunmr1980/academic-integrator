@@ -11,7 +11,7 @@ from academics.lessonplan.LessonplanIntegrator import holiday_calendar_to_lesson
 from academics.TimetableIntegrator import generate_holiday_period_list,generate_class_calendar,integrate_teacher_timetable
 import academics.timetable.TimeTable as ttable
 import academics.timetable.TimeTableDBService as timetable_service
-from academics.calendar.CalendarIntegrator import remove_event_integrate_calendars
+from academics.calendar.CalendarIntegrator import remove_event_integrate_calendars,make_event_objects
 import operator
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -72,6 +72,7 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
         				"to_time":"2020-08-04T10:40:00"
 				    }
 				]
+		events = make_event_objects(events)
 		calendar = calendar_service.get_calendar(calendar_key)
 		school_key = calendar.institution_key
 		calendar_date = calendar.calendar_date
