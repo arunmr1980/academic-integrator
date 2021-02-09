@@ -112,6 +112,10 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 		gclogger.info("--------------- Test Timetable deleted  " + timetable.time_table_key+"  -----------------")
 		academic_service.delete_academic_config(academic_configuration.academic_config_key)
 		gclogger.info("---------------Test Academic Configuration deleted  " + academic_configuration.academic_config_key + "-----------------")
+		exams = self.get_exams_list_json()
+		for exam in exams :
+			response = exam_service.delete_exam(exam['exam_key'])
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A exam is Deleted --------- '+str(exam['exam_key']))
 	
 
 	def check_lesson_plans(self,updated_lesson_plan,expected_lesson_plan_list) :

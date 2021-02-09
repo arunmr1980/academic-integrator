@@ -133,7 +133,7 @@
    },
    "division":"A",
    "school_key":"test-school-key-c",
-   "time_table_key":"test-time-table-1",
+   "time_table_key":"test-time-table-c",
    "timetable":{
       "day_tables":[
          {
