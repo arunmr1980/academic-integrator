@@ -9,6 +9,7 @@ from academics.TimetableIntegrator import *
 import academics.TimetableIntegrator as timetable_integrator
 from academics.lessonplan.LessonplanIntegrator import *
 import academics.lessonplan.LessonPlan as lpnr
+from academics.lessonplan.LessonplanIntegrator import integrate_holiday_lessonplan
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 import copy
@@ -50,7 +51,11 @@ def remove_event_integrate_calendars(calendar_key,events) :
 			update_teacher_calendar_by_adding_conflicted_periods(updated_class_calendar_events,teacher_calendar,updated_class_calendar,updated_calendars_list)
 
 	upload_updated_calendars(updated_calendars_list)
-	integrate_cancelled_holiday_lessonplan(calendar_key)
+	if is_class(events[0].params[0]) == False :
+		integrate_cancelled_holiday_lessonplan(calendar_key)
+	else :
+		integrate_holiday_lessonplan(event_code,calendar_key)
+
 
 
 
