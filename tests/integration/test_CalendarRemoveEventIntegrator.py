@@ -83,10 +83,16 @@ class CalendarRemoveEventIntegratorTest(unittest.TestCase):
 		updated_teacher_calendar_list = self.get_updated_teacher_calendars(updated_calendars_list)
 
 		for updated_class_calendar in updated_class_calendar_list :
+			cal = cldr.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+			pp.pprint(calendar_dict)
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)	
 			gclogger.info("-----[Integration Test] Class calendar test passed for ----" + updated_class_calendar.calendar_key + "-----------------")
 
 		for updated_teacher_calendar in updated_teacher_calendar_list :
+			cal = cldr.Calendar(None)
+			calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+			pp.pprint(calendar_dict)
 			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars_list)
 			gclogger.info("-----[Integration Test] Teacher calendar test passed for ----" + updated_teacher_calendar.calendar_key + "-----------------")
 

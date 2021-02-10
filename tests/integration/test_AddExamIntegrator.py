@@ -96,7 +96,11 @@ class AddExamIntegratorTest(unittest.TestCase):
 		for updated_lessonplan in updated_lessonplan_list :
 			lessonplan_service.delete_lessonplan(updated_lessonplan.lesson_plan_key)
 			gclogger.info("--------------- Test Lesson Plan deleted --------- " + updated_lessonplan.lesson_plan_key + "-----------------")
-		
+
+		exams = self.get_exams_list_json()
+		for exam in exams :
+			response = exam_service.delete_exam(exam['exam_key'])
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Exam deleted --------- '+str(exam['exam_key']))
 
 	def check_lesson_plans(self,updated_lesson_plan,expected_lesson_plan_list) :
 		for expected_lesson_plan in expected_lesson_plan_list :

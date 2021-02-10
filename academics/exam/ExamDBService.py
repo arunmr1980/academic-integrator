@@ -29,6 +29,20 @@ def add_or_update_exam(exam):
     return response
 
 
+def get_exams_by_class_key_and_division(class_key,division) :
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table(EXAM_TBL)
+    response = table.query(
+        IndexName='class_key-index',
+        KeyConditionExpression=Key('class_key').eq(class_key) 
+    )
+    exams_list = []
+    if response.__contains__('Items') :
+        for item in response['Items'] :
+            if item['division'] == division :
+                exam = exm.Exam(item)
+                exams_list.append(exam)
+    return exams_list
 
 def get_all_exams_by_class_key_and_series_code(class_key, series_code):
     dynamodb = boto3.resource('dynamodb')

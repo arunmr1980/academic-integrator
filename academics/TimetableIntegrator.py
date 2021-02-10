@@ -11,9 +11,11 @@ import academics.academic.AcademicDBService as academic_service
 import academics.calendar.CalendarDBService as calendar_service
 import academics.timetable.KeyGeneration as key
 import academics.classinfo.ClassInfoDBService as class_info_service
+import academics.exam.ExamDBService as exam_service
 import academics.calendar.CalendarIntegrator as calendar_integrator
 import academics.classinfo.ClassIntegrator as class_integrator
 import academics.leave.LeaveIntegrator as leave_integrator
+import academics.exam.ExamIntegrator as exam_integrator
 import academics.calendar.Calendar as calendar
 import copy
 
@@ -362,8 +364,73 @@ def generate_and_save_calenders(time_table_key,academic_year):
 		for teacher_leave in teacher_leaves :
 			update_calendars_with_pre_leaves(class_calendar_list,teacher_calendar_list,teacher_leave)
 
+	exams_list = exam_service.get_exams_by_class_key_and_division(class_key,division)
+	gclogger.info(str(len(exams_list)) + " <<--------------- NO OF EXAMS ")
+	if len(exams_list) > 0 :
+		series_code_list = get_series_code_list(exams_list)
+		for series_code in series_code_list :
+			update_calendars_with_pre_fixed_exams(series_code,class_key,division,class_calendar_list,teacher_calendar_list)
+
+
 	save_or_update_calendars(class_calendar_list, teacher_calendar_list)
+
+def get_series_code_list(exams_list) :
+	series_code_list = []
+	for exam in exams_list :
+		series_code = exam.series_code
+		if is_series_exist_already(series_code,series_code_list) == False :
+			series_code_list.append(series_code)
+	return series_code_list
+
+def is_series_exist_already(series_code,series_code_list) :
+	is_exist = False
+	for existing_series_code in series_code_list :
+		if existing_series_code == series_code :
+			is_exist = True
+	return is_exist
+
+def update_calendars_with_pre_fixed_exams(series_code,class_key,division,class_calendar_list,teacher_calendar_list) :
+
+	subscriber_key = class_key + '-' + division
+	removed_events = []
+	exams_list = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
+	school_key = exams_list[0].institution_key
+	class_calendar_list = integrate_class_calendars_on_add_exams(class_calendar_list,exams_list,removed_events)
+	integrate_teacher_cals_on_add_exam(class_calendar_list,teacher_calendar_list,exams_list,removed_events)
+						
+
+def integrate_teacher_cals_on_add_exam(class_calendar_list,teacher_calendar_list,exams_list,removed_events) :
+	updated_teacher_calendars_list = get_updated_teacher_calendars_list(removed_events,teacher_calendar_list)
 	
+
+def get_updated_teacher_calendars_list(removed_events,teacher_calendar_list) :
+	for teacher_calendar in teacher_calendar_list :
+		if teacher_calendar is not None :
+			teacher_calendar_events = copy.deepcopy(teacher_calendar.events)
+			for event in teacher_calendar.events :
+				if exam_integrator.is_event_in_remove_events(removed_events,event) == True :
+					exam_integrator.remove_event_from_teacher_calendar_events(event,teacher_calendar_events)
+			teacher_calendar.events = teacher_calendar_events
+			
+
+def integrate_class_calendars_on_add_exams(class_calendar_list,exams_list,removed_events) :
+	exam_events = exam_integrator.make_exam_events(exams_list)
+	# print("----------- EXAM EVENTS -----")
+	# for exam_event in exam_events :
+	# 	pp.pprint(vars(exam_event))
+	get_updated_current_class_calendars(class_calendar_list,exam_events,removed_events)
+	return class_calendar_list
+
+def get_updated_current_class_calendars(class_calendar_list,exam_events,removed_events) :
+	for current_class_calendar in class_calendar_list :
+		updated_class_calendar = get_updated_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events)
+		
+
+def get_updated_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events) :
+	print('CURRENT CLASS CALENDAR ----------->>>>',current_class_calendar.calendar_key)
+	exam_integrator.get_remove_conflicted_class_events(exam_events,current_class_calendar,removed_events)	
+	
+
 
 def update_calendars_with_pre_leaves(class_calendar_list,teacher_calendar_list,leave) :
 	removed_events = []
