@@ -343,9 +343,9 @@ def integrate_cancel_class_session_lessonplan(events,calendar_key) :
 	gclogger.info("class keyyyy------>" + str(class_key))
 	gclogger.info("Division--------->" + str(division))
 	current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
-	for current_lessonplan in current_lesson_plan_list :
+	for lessonplan in current_lesson_plan_list :
 		if lessonplan.class_key == class_key and lessonplan.division == division and lessonplan.subject_code == subject_key :
-			updated_lessonplan = cancel_class_session_to_lessonplan_integrator(current_lessonplan,events[0],calendar)
+			updated_lessonplan = cancel_class_session_to_lessonplan_integrator(lessonplan,events[0],calendar)
 			updated_lessonplan_list.append(updated_lessonplan)
 	# return updated_lessonplan_list	
 	upload_updated_lessonplans(updated_lessonplan_list)
@@ -356,10 +356,6 @@ def cancel_class_session_to_lessonplan_integrator(current_lessonplan,event,calen
 	gclogger.info("LESSON PLAN KEY------------------->  " + str(current_lessonplan.lesson_plan_key))
 
 	schedules = get_schedules(current_lessonplan,event,calendar)
-	gclogger.info("---------- Schedule to remove is   -----------------")
-	for schedule in schedules :
-		gclogger.info("---------- " + str(holiday_period.period_code) + " ---------")
-
 	current_lessonplan = remove_shedules(schedules,current_lessonplan)
 	schedule_list = get_all_remaining_schedules(current_lessonplan)
 
