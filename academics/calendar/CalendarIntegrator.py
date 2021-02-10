@@ -54,7 +54,6 @@ def remove_event_integrate_calendars(calendar_key,events) :
 	if is_class(events[0].params[0]) == False :
 		integrate_cancelled_holiday_lessonplan(calendar_key)
 	else :
-		event_code = events[0].event_code
 		integrate_cancel_class_session_lessonplan(events,calendar_key)
 
 
