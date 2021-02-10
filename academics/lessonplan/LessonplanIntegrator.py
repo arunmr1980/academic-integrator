@@ -328,9 +328,64 @@ def get_current_class_calendars_event_list(current_class_cals) :
 					current_class_calendars_event_list.append(event)
 	return current_class_calendars_event_list
 
+def integrate_cancel_class_session_lessonplan(events,calendar_key) :
+	updated_lessonplan_list = []
+	calendar = calendar_service.get_calendar(calendar_key)
+	school_key = calendar.institution_key
+	academic_configuration = academic_service.get_academic_year(school_key, calendar.calendar_date)
+	gclogger.info("EVENT START TIME AND END TIME ----------------->" + str(events[0].from_time) + str(events[0].to_time))
+	subscriber_key = calendar.subscriber_key
+	gclogger.info("subscriber_key------------------->>>>" + str(subscriber_key))
+	subject_key = get_subject_key(events[0].params)
+	class_key = subscriber_key[:-2]
+	division = subscriber_key[-1:]
+	gclogger.info("school key--------------->" + str(school_key))
+	gclogger.info("class keyyyy------>" + str(class_key))
+	gclogger.info("Division--------->" + str(division))
+	current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+	for current_lessonplan in current_lesson_plan_list :
+		if lessonplan.class_key == class_key and lessonplan.division == division and lessonplan.subject_code == subject_key :
+			updated_lessonplan = cancel_class_session_to_lessonplan_integrator(current_lessonplan,events[0],calendar)
+			updated_lessonplan_list.append(updated_lessonplan)
+	# return updated_lessonplan_list	
+	upload_updated_lessonplans(updated_lessonplan_list)
 
 
+def cancel_class_session_to_lessonplan_integrator(current_lessonplan,event,calendar) :
+	root_sessions = []
+	gclogger.info("LESSON PLAN KEY------------------->  " + str(current_lessonplan.lesson_plan_key))
 
+	schedules = get_schedules(current_lessonplan,event,calendar)
+	gclogger.info("---------- Schedule to remove is   -----------------")
+	for schedule in schedules :
+		gclogger.info("---------- " + str(holiday_period.period_code) + " ---------")
+
+	current_lessonplan = remove_shedules(schedules,current_lessonplan)
+	schedule_list = get_all_remaining_schedules(current_lessonplan)
+
+	current_lessonplan = get_lesson_plan_after_remove_all_shedules(current_lessonplan)
+		#add root schedule to schedule list and delete all root sessions
+	current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,schedule_list,root_sessions)
+	current_lessonplan = get_updated_lesson_plan(schedule_list,current_lessonplan)
+	current_lessonplan = create_remaining_sessions_on_root_when_schedule_removed(schedule_list,current_lessonplan,root_sessions)
+	return current_lessonplan
+
+def get_schedules(current_lessonplan,event,calendar) :
+	schedule_list = []
+	for main_topic in current_lessonplan.topics :
+		for topic in main_topic.topics :
+			for session in topic.sessions :
+				if hasattr (session,'schedule') :
+					schedule = find_schedule(session.schedule,event)
+					if schedule is not None :
+						schedule_list.append(schedule)
+	return schedule_list
+
+def find_schedule(schedule,event) :
+	if schedule.start_time == event.from_time and schedule.end_time == event.to_time :
+		return schedule
+
+	
 
 def integrate_holiday_lessonplan(event_code,calendar_key) :
 	updated_lessonplan_list = []
