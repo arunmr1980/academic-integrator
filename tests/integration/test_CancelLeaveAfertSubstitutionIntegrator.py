@@ -20,7 +20,7 @@ import copy
 import academics.timetable.KeyGeneration as key
 pp = pprint.PrettyPrinter(indent=4)
 
-class CancelLeaveIntegratorTest(unittest.TestCase):
+class CancelLeaveInAfterSubstitutiontegratorTest(unittest.TestCase):
 	def setUp(self) :
 
 		timetables = self.get_timetables_list_as_json()
@@ -229,7 +229,7 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 
 	def get_timetables_list(self) :
 		timetable_list = []
-		with open('tests/unit/fixtures/cancel-leave-fixtures/test_timetables_list.json', 'r') as test_timetables_list:
+		with open('tests/unit/fixtures/cancel-leave-after-substitution-fixtures/test_timetables_list.json', 'r') as test_timetables_list:
 			timetables_dict = json.load(test_timetables_list)
 			for timetable in timetables_dict :
 				timetable_list.append(ttable.TimeTable(timetable))
@@ -237,7 +237,7 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 
 	def get_current_lessonplans_list(self) :
 		current_lessonplans = []
-		with open('tests/unit/fixtures/cancel-leave-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
+		with open('tests/unit/fixtures/cancel-leave-after-substitution-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
 			lessonplans_list_dict = json.load(lessonplans_list)
 		for lessonplan in lessonplans_list_dict :
 			current_lessonplans.append(lpnr.LessonPlan(lessonplan))
@@ -245,7 +245,7 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 
 	def get_current_teacher_calendars_list(self) :
 		current_teacher_calendars = []
-		with open('tests/unit/fixtures/cancel-leave-fixtures/current_teacher_calendars_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/cancel-leave-after-substitution-fixtures/current_teacher_calendars_list.json', 'r') as calendar_list:
 			class_calendars_dict = json.load(calendar_list)
 		for class_cal in class_calendars_dict :
 			current_teacher_calendars.append(calendar.Calendar(class_cal))
@@ -253,21 +253,21 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 
 	def get_current_class_calendars_list(self) :
 		current_class_calendars = []
-		with open('tests/unit/fixtures/cancel-leave-fixtures/current_class_calendars_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/cancel-leave-after-substitution-fixtures/current_class_calendars_list.json', 'r') as calendar_list:
 			class_calendars_dict = json.load(calendar_list)
 		for class_cal in class_calendars_dict :
 			current_class_calendars.append(calendar.Calendar(class_cal))
 		return current_class_calendars
 
 	def get_current_teacher_leaves_list_json(self) :
-		with open('tests/unit/fixtures/cancel-leave-fixtures/current_teacher_leaves_list.json', 'r') as leaves_list:
+		with open('tests/unit/fixtures/cancel-leave-after-substitution-fixtures/current_teacher_leaves_list.json', 'r') as leaves_list:
 			teacher_leaves_dict = json.load(leaves_list)
 		return teacher_leaves_dict
 
 
 	def get_expected_class_calendars_list(self) :
 		expected_class_calendars = []
-		with open('tests/unit/fixtures/cancel-leave-fixtures/expected_class_calendars_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/cancel-leave-after-substitution-fixtures/expected_class_calendars_list.json', 'r') as calendar_list:
 			class_calendars_dict = json.load(calendar_list)
 		for class_cal in class_calendars_dict :
 			expected_class_calendars.append(calendar.Calendar(class_cal))
@@ -275,7 +275,7 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 
 	def get_expected_teacher_calendars_list(self) :
 		expected_teacher_calendars = []
-		with open('tests/unit/fixtures/cancel-leave-fixtures/expected_teacher_calendars_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/cancel-leave-after-substitution-fixtures/expected_teacher_calendars_list.json', 'r') as calendar_list:
 			teacher_calendars_dict = json.load(calendar_list)
 		for teacher_cal in teacher_calendars_dict :
 			expected_teacher_calendars.append(calendar.Calendar(teacher_cal))
@@ -283,39 +283,39 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 
 	def get_expected_lessonplans_list(self) :
 		expected_lessonplans = []
-		with open('tests/unit/fixtures/cancel-leave-fixtures/expected_lessonplans_list.json', 'r') as lessonplan_list:
+		with open('tests/unit/fixtures/cancel-leave-after-substitution-fixtures/expected_lessonplans_list.json', 'r') as lessonplan_list:
 			lessonplans_dict = json.load(lessonplan_list)
 		for lessonplan in lessonplans_dict :
 			expected_lessonplans.append(lpnr.LessonPlan(lessonplan))
 		return expected_lessonplans
 
 	def get_timetables_list_as_json(self) :
-		with open('tests/unit/fixtures/cancel-leave-fixtures/test_timetables_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/cancel-leave-after-substitution-fixtures/test_timetables_list.json', 'r') as calendar_list:
 			timetable = json.load(calendar_list)
 		return timetable
 
 	def get_academic_config_from_json(self) :
-		with open('tests/unit/fixtures/cancel-leave-fixtures/academic_configuration.json', 'r') as academic_configure:
+		with open('tests/unit/fixtures/cancel-leave-after-substitution-fixtures/academic_configuration.json', 'r') as academic_configure:
 			academic_configuration = json.load(academic_configure)
 		return academic_configuration
 
 	def get_current_lessonplans_as_json(self) :
-		with open('tests/unit/fixtures/cancel-leave-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
+		with open('tests/unit/fixtures/cancel-leave-after-substitution-fixtures/current_lessonplans_list.json', 'r') as lessonplans_list:
 			current_lessonplans = json.load(lessonplans_list)
 		return current_lessonplans
 
 	def get_current_teacher_calendars_list_json(self) :
-		with open('tests/unit/fixtures/cancel-leave-fixtures/current_teacher_calendars_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/cancel-leave-after-substitution-fixtures/current_teacher_calendars_list.json', 'r') as calendar_list:
 			current_teacher_calendars = json.load(calendar_list)
 		return current_teacher_calendars
 
 	def get_current_class_calendars_list_json(self) :
-		with open('tests/unit/fixtures/cancel-leave-fixtures/current_class_calendars_list.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/cancel-leave-after-substitution-fixtures/current_class_calendars_list.json', 'r') as calendar_list:
 			current_class_calendars = json.load(calendar_list)
 		return current_class_calendars
 
 	def get_class_info(self) :
-		with open('tests/unit/fixtures/cancel-leave-fixtures/class_info.json', 'r') as class_info_two:
+		with open('tests/unit/fixtures/cancel-leave-after-substitution-fixtures/class_info.json', 'r') as class_info_two:
 			class_info_two_dict = json.load(class_info_two)
 		return class_info_two_dict
 
