@@ -79,6 +79,10 @@ def integrate_update_period_calendars_and_lessonplans(period_code,time_table_key
 
 
 	for current_class_calendar in current_class_calendars_with_day_code :
+		# print("MONDAY CALENDAR --------->>>>>")
+		# cal = calendar.Calendar(None)
+		# calendar_dict = cal.make_calendar_dict(current_class_calendar)
+		# pp.pprint(calendar_dict)
 		event = get_event_with_period_code(current_class_calendar,period_code)
 		if event is not None :
 			existing_event = copy.deepcopy(event)

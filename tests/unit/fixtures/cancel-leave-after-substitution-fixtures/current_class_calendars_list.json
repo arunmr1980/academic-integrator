@@ -35,14 +35,14 @@
 					},
 					{
 						"key":"subject_key",
-						"value":"null"
+						"value":"substitute-subject-1"
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"null"
+						"value":"substitute-employee-1"
 					}
 				],
-				"status":"UN-ASSIGNED",
+				"status":"SUBSTITUTED",
 				"to_time":"2020-08-04T10:40:00"
 			},
 			{
@@ -145,14 +145,14 @@
 					},
 					{
 						"key":"subject_key",
-						"value":"null"
+						"value":"substitute-subject-2"
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"null"
+						"value":"substitute-employee-2"
 					}
 				],
-				"status":"UN-ASSIGNED",
+				"status":"SUBSTITUTED",
 				"to_time":"2020-08-10T12:10:00"
 			}
 		],
@@ -175,14 +175,14 @@
 					},
 					{
 						"key":"subject_key",
-						"value":"null"
+						"value":"substitute-subject-3"
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"null"
+						"value":"substitute-employee-3"
 					}
 				],
-				"status":"UN-ASSIGNED",
+				"status":"SUBSTITUTED",
 				"to_time":"2020-08-10T11:20:00"
 			},
 			{
@@ -245,11 +245,11 @@
 					},
 					{
 						"key":"subject_key",
-						"value":"null"
+						"value":"substitute-subject-4"
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"null"
+						"value":"substitute-employee-4"
 					}
 				],
 				"status":"UN-ASSIGNED",

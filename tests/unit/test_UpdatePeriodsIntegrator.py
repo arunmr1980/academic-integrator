@@ -40,6 +40,10 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 
 
 		for current_class_calendar in current_class_calendars_with_day_code :
+			# print("MONDAY CALENDAR --------->>>>>")
+			# cal = calendar.Calendar(None)
+			# calendar_dict = cal.make_calendar_dict(current_class_calendar)
+			# pp.pprint(calendar_dict)
 			event = get_event_with_period_code(current_class_calendar,period_code)
 			existing_event = copy.deepcopy(event)
 			updated_class_calendar = update_event(event,current_class_calendar,updated_timetable_period) 
@@ -61,7 +65,7 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 			updated_new_subject_lessonplan = update_new_subject_lessonplan(updated_timetable_period, current_lessonplans, updated_class_calendar)
 			if updated_new_subject_lessonplan is not None :
 				updated_lessonplan_list.append(updated_new_subject_lessonplan)
-
+		# print("WITH OUT UPDATE -------------------))")
 		for updated_class_calendar in updated_class_calendars_list :
 
 			cal = calendar.Calendar(None)
