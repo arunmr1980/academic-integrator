@@ -140,7 +140,7 @@ def integrate_leave_cancel(leave_key) :
 	print(len(class_cals_to_be_updated),"LEN CLASS CALENDARS -----------")
 	print(len(teacher_cals),"LEN TEACHER CALENDARS -----------")
 	print("UPDATED CALENDARS -------->>>")
-	for updated_class_calendar in updated_class_calendars_list :
+	for updated_class_calendar in class_cals_to_be_updated :
 		cal = calendar.Calendar(None)
 		teacher_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
 		pp.pprint(teacher_calendar_dict)
