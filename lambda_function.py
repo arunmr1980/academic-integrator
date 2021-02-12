@@ -185,7 +185,7 @@ def cancel_exam_integration(request) :
 def update_exam_integration(request) :
 	try :
 		series_code = request['series_code']
-		class_info_key = request['class_info_key']
+		class_info_key = request['class_key']
 		division = request['division']
 		# integrate_update_exam_on_calendar(series_code,class_info_key,division)
 		class_info = get_classinfo(class_info_key)
