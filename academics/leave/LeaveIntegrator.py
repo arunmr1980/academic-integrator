@@ -137,9 +137,14 @@ def integrate_leave_cancel(leave_key) :
 								else :
 									events_with_sub_key[current_class_calendar.subscriber_key] = []
 									events_with_sub_key[current_class_calendar.subscriber_key].append(class_event)
-
-
-
+	print(len(class_cals_to_be_updated),"LEN CLASS CALENDARS -----------")
+	print(len(teacher_cals),"LEN TEACHER CALENDARS -----------")
+	print("UPDATED CALENDARS -------->>>")
+	for updated_class_calendar in updated_class_calendars_list :
+		cal = calendar.Calendar(None)
+		teacher_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+		pp.pprint(teacher_calendar_dict)
+	print("OK -------")
 	updated_removed_events = update_class_cals_on_cancel_leave(removed_events,class_cals_to_be_updated,updated_class_calendars_list)
 	for class_event in updated_removed_events :
 			gclogger.info(class_event.params[1].value + " subject_key -----------------------__>>>>>>>(2)")
@@ -522,13 +527,18 @@ def get_event_updated_class_calendar_on_leave_cancel(event,current_class_calenda
 			gclogger.info("TIMETABLE PERIOD CODE -- "+ timetable_period.period_code)
 			gclogger.info("TIMETABLE SUBJECT KEY -- "+ timetable_period.subject_key)
 			gclogger.info("TIMETABLE EMPLOYEE KEY -- "+ timetable_period.employee_key)	
-			
 			del existing_event.status 
+			# if existing_event.params[2].value != 'null' :
+			# 	substituted_employee_key = existing_event.params[2].value 
+			# 	calendar_date = current_class_calendar.calendar_date
+			# 	event_code = existing_event.event_code
+			# 	remove_event_from_substituted_employee_calendar(substituted_employee_key,calendar_date,event_code)
+			# if existing_event.params[1].value != 'null' :
+			# 	substituted_subject_key = existing_event.params[1].value 
+			# 	subscriber_key = current_class_calendar.subscriber_key
+			# 	remove_schedule_from_lessonplan(substituted_subject_key,subscriber_key)
 			existing_event.params[1].value = timetable_period.subject_key
 			existing_event.params[2].value = timetable_period.employee_key
-			#-------------- need updation ---------------#
-			# remove_event_from_substituted_employee()
-			# remove_event_from_lessonplan()
 			updated_removed_events.append(existing_event)
 	return current_class_calendar
 

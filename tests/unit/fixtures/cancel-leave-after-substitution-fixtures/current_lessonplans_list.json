@@ -429,5 +429,245 @@
 				]
 			}
 		]
+	},
+	{
+		"assignments":[
+			
+		],
+		"class_key":"class-key-sample-1",
+		"division":"A",
+		"lesson_plan_key":"test-lessonplan-7",
+		"resources":[
+			
+		],
+		"sessions":[
+			
+		],
+		"subject_code":"substitute-subject-1",
+		"topics":[
+			{
+				"code":"TOP3x0jkt-bio2",
+				"comments":[
+					
+				],
+				"name":"chapter 2",
+				"order_index":1,
+				"topics":[
+					{
+						"assignments":[
+							
+						],
+						"code":"CHAP2-TOP1",
+						"description":"edited",
+						"name":"topic 1",
+						"order_index":1,
+						"resources":[
+							
+						],
+						"sessions":[
+							{
+								"code":"SESgy087",
+								"comments":[
+									
+								],
+								"completion_datetime":"NA",
+								"completion_status":false,
+								"name":"Session 1",
+								"order_index":1,
+								"resources":[
+									
+								],
+								"schedule":{
+									"calendar_key":"test-key-5",
+									"end_time":"2020-08-04T10:40:00",
+									"event_code":"event-2",
+									"start_time":"2020-08-04T10:00:00"
+								}
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	{
+		"assignments":[
+			
+		],
+		"class_key":"class-key-sample-1",
+		"division":"A",
+		"lesson_plan_key":"test-lessonplan-8",
+		"resources":[
+			
+		],
+		"sessions":[
+			
+		],
+		"subject_code":"substitute-subject-2",
+		"topics":[
+			{
+				"code":"TOP3x0jkt-bio2",
+				"comments":[
+					
+				],
+				"name":"chapter 2",
+				"order_index":1,
+				"topics":[
+					{
+						"assignments":[
+							
+						],
+						"code":"CHAP2-TOP1",
+						"description":"edited",
+						"name":"topic 1",
+						"order_index":1,
+						"resources":[
+							
+						],
+						"sessions":[
+							{
+								"code":"SESgy087",
+								"comments":[
+									
+								],
+								"completion_datetime":"NA",
+								"completion_status":false,
+								"name":"Session 1",
+								"order_index":1,
+								"resources":[
+									
+								],
+								"schedule":{
+									"calendar_key":"test-key-5",
+									"end_time":"2020-08-10T12:10:00",
+									"event_code":"event-7",
+									"start_time":"2020-08-10T11:30:00"
+								}
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	{
+		"assignments":[
+			
+		],
+		"class_key":"class-key-sample-1",
+		"division":"B",
+		"lesson_plan_key":"test-lessonplan-9",
+		"resources":[
+			
+		],
+		"sessions":[
+			
+		],
+		"subject_code":"substitute-subject-3",
+		"topics":[
+			{
+				"code":"TOP3x0jkt-bio2",
+				"comments":[
+					
+				],
+				"name":"chapter 2",
+				"order_index":1,
+				"topics":[
+					{
+						"assignments":[
+							
+						],
+						"code":"CHAP2-TOP1",
+						"description":"edited",
+						"name":"topic 1",
+						"order_index":1,
+						"resources":[
+							
+						],
+						"sessions":[
+							{
+								"code":"SESgy087",
+								"comments":[
+									
+								],
+								"completion_datetime":"NA",
+								"completion_status":false,
+								"name":"Session 1",
+								"order_index":1,
+								"resources":[
+									
+								],
+								"schedule":{
+									"calendar_key":"test-key-5",
+									"end_time":"2020-08-10T11:20:00",
+									"event_code":"event-8",
+									"start_time":"2020-08-10T10:40:00"
+								}
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	{
+		"assignments":[
+			
+		],
+		"class_key":"class-key-sample-1",
+		"division":"B",
+		"lesson_plan_key":"test-lessonplan-10",
+		"resources":[
+			
+		],
+		"sessions":[
+			
+		],
+		"subject_code":"substitute-subject-4",
+		"topics":[
+			{
+				"code":"TOP3x0jkt-bio2",
+				"comments":[
+					
+				],
+				"name":"chapter 2",
+				"order_index":1,
+				"topics":[
+					{
+						"assignments":[
+							
+						],
+						"code":"CHAP2-TOP1",
+						"description":"edited",
+						"name":"topic 1",
+						"order_index":1,
+						"resources":[
+							
+						],
+						"sessions":[
+							{
+								"code":"SESgy087",
+								"comments":[
+									
+								],
+								"completion_datetime":"NA",
+								"completion_status":false,
+								"name":"Session 1",
+								"order_index":1,
+								"resources":[
+									
+								],
+								"schedule":{
+									"calendar_key":"test-key-5",
+									"end_time":"2020-08-04T11:20:00",
+									"event_code":"event-11",
+									"start_time":"2020-08-04T10:40:00"
+								}
+							}
+						]
+					}
+				]
+			}
+		]
 	}
 ]

@@ -1,18 +1,23 @@
 [
-	
 	{
 		"calendar_date":"2020-08-04",
-		"calendar_key":"new-teacher-sample-1",
+		"calendar_key":"teacher-sample-1",
 		"events":[
 			{
 				"event_code":"event-2",
-				"ref_calendar_key":"test-key-2"
+				"ref_calendar_key":"test-key-2",
+				"status":"LEAVE"
+			},
+			{
+				"event_code":"event-11",
+				"ref_calendar_key":"test-key-5",
+				"status":"LEAVE"
 			}
 		],
 		"institution_key":"test-school-1",
-		"subscriber_key":"substitute-employee-1",
+		"subscriber_key":"employee-test-1",
 		"subscriber_type":"EMPLOYEE"
-	}
+	},
 	{
 		"calendar_date":"2020-08-04",
 		"calendar_key":"teacher-sample-2",
@@ -49,41 +54,21 @@
 	},
 	{
 		"calendar_date":"2020-08-10",
-		"calendar_key":"new-teacher-sample-2",
+		"calendar_key":"teacher-sample-4",
 		"events":[
 			{
 				"event_code":"event-7",
-				"ref_calendar_key":"test-key-3"
-			}
-		],
-		"institution_key":"test-school-1",
-		"subscriber_key":"substitute-employee-2",
-		"subscriber_type":"EMPLOYEE"
-	},
-	{
-		"calendar_date":"2020-08-10",
-		"calendar_key":"new-teacher-sample-3",
-		"events":[
+				"ref_calendar_key":"test-key-3",
+				"status":"LEAVE"
+			},
 			{
 				"event_code":"event-8",
-				"ref_calendar_key":"test-key-4"
+				"ref_calendar_key":"test-key-4",
+				"status":"LEAVE"
 			}
 		],
 		"institution_key":"test-school-1",
-		"subscriber_key":"substitute-employee-3",
-		"subscriber_type":"EMPLOYEE"
-	},
-	{
-		"calendar_date":"2020-08-10",
-		"calendar_key":"new-teacher-sample-3",
-		"events":[
-			{
-				"event_code":"event-11",
-				"ref_calendar_key":"test-key-5"
-			}
-		],
-		"institution_key":"test-school-1",
-		"subscriber_key":"substitute-employee-4",
+		"subscriber_key":"employee-test-1",
 		"subscriber_type":"EMPLOYEE"
 	},
 	{

@@ -252,7 +252,7 @@
 						"value":"substitute-employee-4"
 					}
 				],
-				"status":"UN-ASSIGNED",
+				"status":"SUBSTITUTED",
 				"to_time":"2020-08-04T11:20:00"
 			},
 			{

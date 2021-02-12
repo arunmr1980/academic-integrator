@@ -294,7 +294,7 @@ https://sqs.us-west-2.amazonaws.com/272936841180/academic-integrator-q.fifo
 {
 	"request_type":"EXAM_UPDATE_CALENDAR_SYNC",
 	"division" :"A",
-	"class_info_key":"0016112155079559146EEE03DF-752B-4AA5-9690-0EED878BEBC1-672163534",
+	"class_key":"0016112155079559146EEE03DF-752B-4AA5-9690-0EED878BEBC1-672163534",
 	"series_code" :" bio-1"
 }
 
