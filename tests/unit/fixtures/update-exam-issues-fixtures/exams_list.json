@@ -1,0 +1,163 @@
+[
+	{
+  "academic_year": "2020-2021",
+  "audit_logs": [
+    {
+      "date_time": "2021-02-11 18:43:48.325",
+      "message": "Exam Generated"
+    }
+  ],
+  "class_key": "001611899898395157723962A3-0F3C-40FB-8123-A4CD0965668E236588519",
+  "date_time": "2020-07-13",
+  "division": "B",
+  "exam_key": "001613069028355298D2D5A675-AED4-4774-A4B1-C182518665B91465981672",
+  "from_time": "09:00 AM",
+  "institution_key": "1e4d12bc2b58050ff084f8da",
+  "max_score": 20,
+  "name": "End to end exam",
+  "previous_schedule": {
+    "date_time": "2020-07-13",
+    "from_time": "09:00 AM",
+    "to_time": "12:00 PM"
+  },
+  "schedulable": "YES",
+  "schedule_flag": true,
+  "schedule_status": "PUBLISHED",
+  "series_code": "Endl1kukx",
+  "status": "NEW",
+  "subject_code": "a b01",
+  "subject_name": "A BIO",
+  "to_time": "12:00 PM",
+  "type": "WRITTEN",
+  "visibility": "SCHOOL"
+},
+{
+  "academic_year": "2020-2021",
+  "audit_logs": [
+    {
+      "date_time": "2021-02-11 18:43:48.37",
+      "message": "Exam Generated"
+    }
+  ],
+  "class_key": "001611899898395157723962A3-0F3C-40FB-8123-A4CD0965668E236588519",
+  "date_time": "2020-07-14",
+  "division": "B",
+  "exam_key": "001613069028375502C23ED327-F538-4A5A-B940-F55C40115D171995001884",
+  "from_time": "09:00 AM",
+  "institution_key": "1e4d12bc2b58050ff084f8da",
+  "max_score": 20,
+  "name": "End to end exam",
+  "previous_schedule": {
+    "date_time": "2020-07-14",
+    "from_time": "09:00 AM",
+    "to_time": "12:00 PM"
+  },
+  "schedulable": "YES",
+  "schedule_flag": true,
+  "schedule_status": "PUBLISHED",
+  "series_code": "Endl1kukx",
+  "status": "NEW",
+  "subject_code": "a c02",
+  "subject_name": "A CHE MAIN",
+  "to_time": "12:00 PM",
+  "type": "WRITTEN",
+  "visibility": "SCHOOL"
+},
+{
+  "academic_year": "2020-2021",
+  "audit_logs": [
+    {
+      "date_time": "2021-02-11 18:43:48.392",
+      "message": "Exam Generated"
+    }
+  ],
+  "class_key": "001611899898395157723962A3-0F3C-40FB-8123-A4CD0965668E236588519",
+  "date_time": "2020-07-15",
+  "division": "B",
+  "exam_key": "001613069028396815D1369D9F-F3B4-4DAB-81EA-C17B8B718BBD866742004",
+  "from_time": "01:00 PM",
+  "institution_key": "1e4d12bc2b58050ff084f8da",
+  "max_score": 20,
+  "name": "End to end exam",
+  "previous_schedule": {
+    "date_time": "2020-07-15",
+    "from_time": "09:00 AM",
+    "to_time": "01:00 PM"
+  },
+  "schedulable": "YES",
+  "schedule_flag": true,
+  "schedule_status": "PUBLISHED",
+  "series_code": "Endl1kukx",
+  "status": "NEW",
+  "subject_code": "a m01",
+  "subject_name": "A MAL",
+  "to_time": "04:00 PM",
+  "type": "WRITTEN",
+  "visibility": "SCHOOL"
+},
+{
+  "academic_year": "2020-2021",
+  "audit_logs": [
+    {
+      "date_time": "2021-02-11 18:43:48.413",
+      "message": "Exam Generated"
+    }
+  ],
+  "class_key": "001611899898395157723962A3-0F3C-40FB-8123-A4CD0965668E236588519",
+  "date_time": "2020-07-16",
+  "division": "B",
+  "exam_key": "0016130690284177005709E739-6FE9-46D5-BFA9-5B6283D9943C866734333",
+  "from_time": "09:00 AM",
+  "institution_key": "1e4d12bc2b58050ff084f8da",
+  "max_score": 20,
+  "name": "End to end exam",
+  "previous_schedule": {
+    "date_time": "2020-07-16",
+    "from_time": "09:00 AM",
+    "to_time": "01:00 PM"
+  },
+  "schedulable": "YES",
+  "schedule_flag": true,
+  "schedule_status": "PUBLISHED",
+  "series_code": "Endl1kukx",
+  "status": "NEW",
+  "subject_code": "a m02",
+  "subject_name": "A MATH",
+  "to_time": "01:00 PM",
+  "type": "WRITTEN",
+  "visibility": "SCHOOL"
+},
+{
+  "academic_year": "2020-2021",
+  "audit_logs": [
+    {
+      "date_time": "2021-02-11 18:43:48.431",
+      "message": "Exam Generated"
+    }
+  ],
+  "class_key": "001611899898395157723962A3-0F3C-40FB-8123-A4CD0965668E236588519",
+  "date_time": "2020-07-17",
+  "division": "B",
+  "exam_key": "001613069028436741109D8352-E03C-42C1-8AB8-AAE6802051B1-982240300",
+  "from_time": "10:00 AM",
+  "institution_key": "1e4d12bc2b58050ff084f8da",
+  "max_score": 20,
+  "name": "End to end exam",
+  "previous_schedule": {
+    "date_time": "2020-07-17",
+    "from_time": "10:00 AM",
+    "to_time": "12:00 PM"
+  },
+  "schedulable": "YES",
+  "schedule_flag": true,
+  "schedule_status": "PUBLISHED",
+  "series_code": "Endl1kukx",
+  "status": "NEW",
+  "subject_code": "art01",
+  "subject_name": "Art&Craft",
+  "to_time": "12:00 PM",
+  "type": "WRITTEN",
+  "visibility": "SCHOOL"
+}
+
+]
