@@ -157,6 +157,7 @@ def update_subject_teacher_integration(request):
 		logger.info("Error in input. class_info_key ,division,subject_code,existing_teacher_emp_key or new_teacher_emp_key not present")
 		send_response(400,"input validation error")
 	except:
+		traceback.print_exc()
 		logger.info("Unexpected error ...")
 		send_response(400,"unexpected error")
 

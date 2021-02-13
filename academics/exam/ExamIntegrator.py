@@ -512,9 +512,21 @@ def integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_li
 				if subject_key == current_lessonplan.subject_code :
 					events_to_add_schedule.append(event)
 					print("Adding event to lesson plan ------------------------__:::::::>>>>>>",event.event_code)
-					add_schedules_and_adjust_lessonplan(current_lessonplan,events_to_add_schedule)
+					if check_already_added_or_not(event,current_lessonplan) == False :
+						add_schedules_and_adjust_lessonplan(current_lessonplan,events_to_add_schedule)
 		updated_lessonplans.append(current_lessonplan)
 	return updated_lessonplans
+
+def check_already_added_or_not(event,current_lessonplan) :
+	is_exist = False 
+	if hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :
+			for main_topic in current_lessonplan.topics :
+				for topic in main_topic.topics :
+					for session in topic.sessions :
+						if hasattr(session,'schedule') :
+							if session.schedule.event_code == event.event_code :
+								is_exist = True
+	return is_exist
 
 
 
