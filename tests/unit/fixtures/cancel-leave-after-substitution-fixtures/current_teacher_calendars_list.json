@@ -9,7 +9,7 @@
 				"ref_calendar_key":"test-key-2"
 			}
 		],
-		"institution_key":"test-school-1",
+		"institution_key":"sample-school-2",
 		"subscriber_key":"substitute-employee-1",
 		"subscriber_type":"EMPLOYEE"
 	},
@@ -26,7 +26,7 @@
 				"ref_calendar_key":"test-key-5"
 			}
 		],
-		"institution_key":"test-school-1",
+		"institution_key":"sample-school-2",
 		"subscriber_key":"employee-test-2",
 		"subscriber_type":"EMPLOYEE"
 	},
@@ -43,7 +43,7 @@
 				"ref_calendar_key":"test-key-5"
 			}
 		],
-		"institution_key":"test-school-1",
+		"institution_key":"sample-school-2",
 		"subscriber_key":"employee-test-3",
 		"subscriber_type":"EMPLOYEE"
 	},
@@ -56,7 +56,7 @@
 				"ref_calendar_key":"test-key-3"
 			}
 		],
-		"institution_key":"test-school-1",
+		"institution_key":"sample-school-2",
 		"subscriber_key":"substitute-employee-2",
 		"subscriber_type":"EMPLOYEE"
 	},
@@ -69,7 +69,7 @@
 				"ref_calendar_key":"test-key-4"
 			}
 		],
-		"institution_key":"test-school-1",
+		"institution_key":"sample-school-2",
 		"subscriber_key":"substitute-employee-3",
 		"subscriber_type":"EMPLOYEE"
 	},
@@ -82,7 +82,7 @@
 				"ref_calendar_key":"test-key-5"
 			}
 		],
-		"institution_key":"test-school-1",
+		"institution_key":"sample-school-2",
 		"subscriber_key":"substitute-employee-4",
 		"subscriber_type":"EMPLOYEE"
 	},
@@ -95,7 +95,7 @@
 				"ref_calendar_key":"test-key-3"
 			}
 		],
-		"institution_key":"test-school-1",
+		"institution_key":"sample-school-2",
 		"subscriber_key":"employee-test-2",
 		"subscriber_type":"EMPLOYEE"
 	},
@@ -112,7 +112,7 @@
 				"ref_calendar_key":"test-key-4"
 			}
 		],
-		"institution_key":"test-school-1",
+		"institution_key":"sample-school-2",
 		"subscriber_key":"employee-test-3",
 		"subscriber_type":"EMPLOYEE"
 	},
@@ -131,7 +131,7 @@
 				"status":"LEAVE"
 			}
 		],
-		"institution_key":"test-school-1",
+		"institution_key":"sample-school-2",
 		"subscriber_key":"employee-test-1",
 		"subscriber_type":"EMPLOYEE"
 	},
@@ -150,7 +150,7 @@
 				"status":"LEAVE"
 			}
 		],
-		"institution_key":"test-school-1",
+		"institution_key":"sample-school-2",
 		"subscriber_key":"employee-test-1",
 		"subscriber_type":"EMPLOYEE"
 	}

@@ -145,19 +145,19 @@ def integrate_leave_cancel(leave_key) :
 	# 		teacher_calendar_dict = cal.make_calendar_dict(teacher_calendar)
 	# 		pp.pprint(teacher_calendar_dict)
 	# print("OK -------")
-	print(len(class_cals_to_be_updated),"LEN CLASS CALENDARS -----------")
-	print(len(teacher_cals_to_be_updated),"LEN TEACHER CALENDARS -----------")
-	print(" TO BE UPDATED CALENDARS -------->>>")
-	for teacher_calendar in teacher_cals_to_be_updated :
-		cal = calendar.Calendar(None)
-		teacher_calendar_dict = cal.make_calendar_dict(teacher_calendar)
-		pp.pprint(teacher_calendar_dict)
-	print("OK -------")
-	for class_calendar in class_cals_to_be_updated :
-		cal = calendar.Calendar(None)
-		class_calendar_dict = cal.make_calendar_dict(class_calendar)
-		pp.pprint(class_calendar_dict)
-	print("OK -------")
+	# print(len(class_cals_to_be_updated),"LEN CLASS CALENDARS -----------")
+	# print(len(teacher_cals_to_be_updated),"LEN TEACHER CALENDARS -----------")
+	# print(" TO BE UPDATED CALENDARS -------->>>")
+	# for teacher_calendar in teacher_cals_to_be_updated :
+	# 	cal = calendar.Calendar(None)
+	# 	teacher_calendar_dict = cal.make_calendar_dict(teacher_calendar)
+	# 	pp.pprint(teacher_calendar_dict)
+	# print("OK -------")
+	# for class_calendar in class_cals_to_be_updated :
+	# 	cal = calendar.Calendar(None)
+	# 	class_calendar_dict = cal.make_calendar_dict(class_calendar)
+	# 	pp.pprint(class_calendar_dict)
+	# print("OK -------")
 	updated_removed_events = update_class_cals_on_cancel_leave(removed_events,class_cals_to_be_updated,updated_class_calendars_list)
 	for class_event in updated_removed_events :
 			gclogger.info(class_event.params[1].value + " subject_key -----------------------__>>>>>>>(2)")
@@ -518,7 +518,6 @@ def get_updated_teacher_calendar_on_cancel_leave(current_teacher_calendar,remove
 def get_event_updated_class_calendar(event,current_class_calendar) :
 	for existing_event in current_class_calendar.events :
 		if existing_event.event_code == event.event_code and existing_event.from_time == event.from_time :
-			# current_class_calendar.events.remove(existing_event)
 			existing_event.status = 'UN-ASSIGNED'
 			existing_event.params[1].value = 'null'
 			existing_event.params[2].value = 'null'
@@ -545,7 +544,7 @@ def get_event_updated_class_calendar_on_leave_cancel(event,current_class_calenda
 				substituted_employee_key = existing_event.params[2].value 
 				calendar_date = current_class_calendar.calendar_date
 				event_code = existing_event.event_code
-				print("++++++ REMOVE EVENT FROM " + substituted_employee_key + "T CALENDAR " + "EVENT CODE " + event_code + " DATE >>" + calendar_date)
+				gclogger.info(" REMOVING EVENT FROM " + substituted_employee_key + "T CALENDAR " + "EVENT CODE " + event_code + " DATE --->>" + calendar_date)
 				remove_event_from_substituted_employee_calendar(substituted_employee_key,calendar_date,event_code)
 			if existing_event.params[1].value != 'null' :
 				substituted_subject_key = existing_event.params[1].value 
@@ -555,7 +554,8 @@ def get_event_updated_class_calendar_on_leave_cancel(event,current_class_calenda
 				lessonplan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 				for lessonplan in lessonplan_list :
 					if lessonplan.subject_code == substituted_subject_key :
-						updated_lessonplan = cancel_class_session_to_lessonplan_integrator(lessonplan,existing_event,current_class_calendar)
+						gclogger.info(" REMOVING EVENT " + existing_event.event_code + "FROM "+ lessonplan.lesson_plan_key  )
+						updated_lessonplan = lessonplan_integrator.cancel_class_session_to_lessonplan_integrator(lessonplan,existing_event,current_class_calendar)
 						lp = lpnr.LessonPlan(None)
 						updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 						lessonplan_service.create_lessonplan(updated_lessonplan_dict)
@@ -575,12 +575,10 @@ def remove_event_from_substituted_employee_calendar(substituted_employee_key,cal
 	teacher_calendar.events = updated_events
 	cal = calendar.Calendar(None)
 	teacher_calendar_dict = cal.make_calendar_dict(teacher_calendar)
-	pp.pprint(teacher_calendar_dict)
-	print("UPDATED SUBSTITUTED TEACHER CALENDAR UPLOADED^^^^^^^^^^^^^^^^")
+
 	calendar_service.add_or_update_calendar(teacher_calendar_dict)
 	gclogger.info(" UPDATED TEACHER CALENDAR UPDATED ------>> "+ teacher_calendar.calendar_key)	
-# def remove_schedule_from_lessonplan(lessonplan,removing_event) :
-# 	print("LESSON PLAN TO UPDATED ^^^^^^^^^^^^^^^^^^" + lessonplan.lesson_plan_key + "EVENT TO REMOVE " +removing_event.event_code)
+
 
 
 	

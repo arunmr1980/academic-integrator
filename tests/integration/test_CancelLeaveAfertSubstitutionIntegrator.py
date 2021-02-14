@@ -81,30 +81,30 @@ class CancelLeaveInAfterSubstitutiontegratorTest(unittest.TestCase):
 					print("CLASS KEY ________",class_key)
 					print("DIVISION-_______",division)
 					updated_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key, division)
-					# for updated_lessonplan in updated_lessonplans_list :
-					# 	# lp = lpnr.LessonPlan(None)
-					# 	# updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-					# 	# pp.pprint(updated_lessonplan_dict)
-					# 	self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
+					for updated_lessonplan in updated_lessonplans_list :
+						lp = lpnr.LessonPlan(None)
+						updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+						pp.pprint(updated_lessonplan_dict)
+						self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
 
-		# for updated_class_calendar in updated_class_calendars_list :
-		# 	# cal = calendar.Calendar(None)
-		# 	# class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
-		# 	# pp.pprint(class_calendar_dict)
-		# 	self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
-		# for updated_teacher_calendar in updated_teacher_calendars_list :
-		# 	# cal = calendar.Calendar(None)
-		# 	# teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
-		# 	# pp.pprint(teacher_calendar_dict)
-		# 	teacher_calendar_key = teacher_calendar.calendar_date + teacher_calendar.subscriber_key
-		# 	expected_teacher_calendar = expected_teacher_calendar_dict[teacher_calendar_key]
+		for updated_class_calendar in updated_class_calendars_list :
+			cal = calendar.Calendar(None)
+			class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+			pp.pprint(class_calendar_dict)
+			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
+		for updated_teacher_calendar in updated_teacher_calendars_list :
+			cal = calendar.Calendar(None)
+			teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+			pp.pprint(teacher_calendar_dict)
+			teacher_calendar_key = teacher_calendar.calendar_date + teacher_calendar.subscriber_key
+			expected_teacher_calendar = expected_teacher_calendar_dict[teacher_calendar_key]
 
-		# 	self.assertEqual(expected_teacher_calendar.institution_key,teacher_calendar.institution_key )
-		# 	self.assertEqual(expected_teacher_calendar.calendar_date,teacher_calendar.calendar_date )
-		# 	self.assertEqual(expected_teacher_calendar.subscriber_key,teacher_calendar.subscriber_key )
-		# 	self.assertEqual(expected_teacher_calendar.subscriber_type,teacher_calendar.subscriber_type )
-		# 	self.check_events_teacher_calendar(expected_teacher_calendar.events,teacher_calendar.events)
-		# 	gclogger.info("-----[UnitTest] teacher calendar test passed ----------------- "+ str(teacher_calendar.calendar_key)+" ------------------------------ ")
+			self.assertEqual(expected_teacher_calendar.institution_key,teacher_calendar.institution_key )
+			self.assertEqual(expected_teacher_calendar.calendar_date,teacher_calendar.calendar_date )
+			self.assertEqual(expected_teacher_calendar.subscriber_key,teacher_calendar.subscriber_key )
+			self.assertEqual(expected_teacher_calendar.subscriber_type,teacher_calendar.subscriber_type )
+			self.check_events_teacher_calendar(expected_teacher_calendar.events,teacher_calendar.events)
+			gclogger.info("-----[UnitTest] teacher calendar test passed ----------------- "+ str(teacher_calendar.calendar_key)+" ------------------------------ ")
 
 
 		

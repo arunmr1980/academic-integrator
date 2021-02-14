@@ -133,7 +133,7 @@
       ]
    },
    "division":"A",
-   "school_key":"test-school-1",
+   "school_key":"sample-school-2",
    "time_table_key":"test-time-table-1",
    "timetable":{
       "day_tables":[
@@ -231,7 +231,8 @@
          }
       ]
    }
-},{
+},
+{
    "academic_year":"2020-2021",
    "class_key":"class-key-sample-1",
    "class_name":"LKG",
@@ -365,7 +366,7 @@
       ]
    },
    "division":"B",
-   "school_key":"test-school-1",
+   "school_key":"sample-school-2",
    "time_table_key":"test-time-table-2",
    "timetable":{
       "day_tables":[
