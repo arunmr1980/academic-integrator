@@ -38,8 +38,8 @@ def integrate_cancel_exam(exam_series_list,school_key,academic_year) :
 			updated_class_calendars_list = get_updated_class_calendars_list_on_cancel_exam(current_class_calendars_list,exam_series.code,events_to_be_added)
 			current_teacher_calendars_list = get_current_teacher_calendars_from_current_class_calendars(current_class_calendars_list,school_key)
 			updated_teacher_calendars_list = integrate_teacher_calendars_on_update_exam_and_cancel_exam(current_teacher_calendars_list,updated_class_calendars_list,school_key)
-			updated_lessonplans_list = integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_list,events_to_be_added)
-			save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
+			# updated_lessonplans_list = integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_list,events_to_be_added)
+			save_calendars(updated_class_calendars_list,updated_teacher_calendars_list)
 	message_body = {
 		"request_type" : "NOTIFY_DELETE_EXAM",
 		"school_key" : school_key,
@@ -48,6 +48,22 @@ def integrate_cancel_exam(exam_series_list,school_key,academic_year) :
 
 	}
 	sqs_service.send_to_sqs(message_body)
+
+def save_calendars(updated_class_calendars_list,updated_teacher_calendars_list) :
+	for updated_class_calendar in updated_class_calendars_list :
+		cal = calendar.Calendar(None)
+		class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
+		pp.pprint(class_calendar_dict)
+		print("UPADTED CLASS CALENDAR ----------->>>>>>>>>>>>")
+		response = calendar_service.add_or_update_calendar(class_calendar_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated class calendar uploaded --------- '+str(class_calendar_dict['calendar_key']))
+
+	for updated_teacher_calendar in updated_teacher_calendars_list :
+		cal = calendar.Calendar(None)
+		teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
+		response = calendar_service.add_or_update_calendar(teacher_calendar_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated teacher calendar uploaded --------- '+str(class_calendar_dict['calendar_key']))
+
 
 def perticular_exams_for_perticular_classes(clazz,series_code) :
 	exams_list = []
@@ -512,9 +528,21 @@ def integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_li
 				if subject_key == current_lessonplan.subject_code :
 					events_to_add_schedule.append(event)
 					print("Adding event to lesson plan ------------------------__:::::::>>>>>>",event.event_code)
-					add_schedules_and_adjust_lessonplan(current_lessonplan,events_to_add_schedule)
+					if check_already_added_or_not(event,current_lessonplan) == False :
+						add_schedules_and_adjust_lessonplan(current_lessonplan,events_to_add_schedule)
 		updated_lessonplans.append(current_lessonplan)
 	return updated_lessonplans
+
+def check_already_added_or_not(event,current_lessonplan) :
+	is_exist = False 
+	if hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :
+			for main_topic in current_lessonplan.topics :
+				for topic in main_topic.topics :
+					for session in topic.sessions :
+						if hasattr(session,'schedule') :
+							if session.schedule.event_code == event.event_code :
+								is_exist = True
+	return is_exist
 
 
 
@@ -563,7 +591,7 @@ def add_calendar_schedules_to_lesson_plan(current_lessonplan,events) :
 
 
 def create_schedule(event) :
-	schedule = lnpr.Schedule(None)
+	schedule = lpnr.Schedule(None)
 	schedule.calendar_key = event.ref_calendar_key
 	schedule.event_code = event.event_code
 	schedule.start_time = event.from_time
@@ -724,10 +752,40 @@ def update_current_class_calendars(academic_configuration,timetable,updated_clas
 
 
 def get_class_session_events_added_calendar(academic_configuration,timetable,periods_to_be_added,current_class_calendar,events_to_be_added) :
-	events = make_events_to_add_schdule(periods_to_be_added,timetable,current_class_calendar)
+	events = make_events_to_add_schdule_and_update_lessonplans(periods_to_be_added,timetable,current_class_calendar)
 	events_to_be_added.append(events)
 	updated_class_calendar = calendar_integrator.add_events_to_calendar(events,current_class_calendar)
 	return updated_class_calendar
+
+def make_events_to_add_schdule_and_update_lessonplans(period_list,timetable,class_calendar) :
+	events_list =[]
+	for period in period_list :
+		event = calendar.Event(None)
+		event.event_code = key.generate_key(3)
+		event.event_type = 'CLASS_SESSION'
+		event.ref_calendar_key = class_calendar.calendar_key
+		time_table_period = calendar_integrator.get_time_table_period(period.period_code,timetable)
+		event.params = timetable_integrator.get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
+
+		event.from_time =  timetable_integrator.get_standard_time(period.start_time,class_calendar.calendar_date)
+		event.to_time =  timetable_integrator.get_standard_time(period.end_time,class_calendar.calendar_date)
+		gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
+		events_list.append(event)
+		subject_key = get_subject_code(event)
+		subscriber_key = class_calendar.subscriber_key
+		class_key = subscriber_key[:-2]
+		division = subscriber_key[-1:]
+		current_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key, division)
+		current_lessonplan = lessonplan_integrator.get_lessonplan_by_subject_key(current_lessonplans_list,subject_key)
+		if current_lessonplan is not None :
+			updated_lessonplan = lessonplan_integrator.update_lessonplan_on_add_class_session_events(event,class_calendar,current_lessonplan)
+			lp = lpnr.LessonPlan(None)
+			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+			response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
+			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
+
+
+	return events_list
 
 def make_events_to_add_schdule(period_list,timetable,class_calendar) :
 	events_list =[]
@@ -744,7 +802,6 @@ def make_events_to_add_schdule(period_list,timetable,class_calendar) :
 		gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
 		events_list.append(event)
 	return events_list
-
 def update_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events) :
 	updated_class_calendar = remove_conflicted_class_events(exam_events,current_class_calendar,removed_events)
 	return current_class_calendar

@@ -783,3 +783,8 @@ def add_shedule_after_calendar_date(schedule_list,current_lessonplan) :
 
 
 	return current_lessonplan
+
+def get_lessonplan_by_subject_key(current_lessonplans_list,subject_key) :
+	for current_lessonplan in current_lessonplans_list :
+		if current_lessonplan.subject_code == subject_key :
+			return current_lessonplan
