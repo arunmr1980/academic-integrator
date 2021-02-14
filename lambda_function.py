@@ -8,6 +8,7 @@ import academics.logger.GCLogger as logger
 from academics.exam.ExamIntegrator import integrate_add_exam_on_calendar,integrate_cancel_exam,integrate_update_exam_on_calendar
 from academics.leave.LeaveIntegrator import integrate_add_leave_on_calendar,integrate_leave_cancel,integrate_lessonplan_on_substitute_teacher
 from academics.lessonplan.LessonplanIntegrator import integrate_add_class_session_events
+from academics.classinfo.ClassInfoDBService import get_classinfo 
 
 def lambda_handler(event, context):
 	for record in event['Records']:
@@ -185,9 +186,26 @@ def cancel_exam_integration(request) :
 def update_exam_integration(request) :
 	try :
 		series_code = request['series_code']
-		class_info_key = request['class_info_key']
+		class_info_key = request['class_key']
 		division = request['division']
-		integrate_update_exam_on_calendar(series_code,class_info_key,division)
+		# integrate_update_exam_on_calendar(series_code,class_info_key,division)
+		class_info = get_classinfo(class_info_key)
+		academic_year = class_info.academic_year
+		school_key = class_info.school_key
+		exam_series = [
+		      {
+		        "classes": [
+		          {
+		            "class_key": class_info_key,
+		            "division": division
+		          }
+		        ],
+		        "code": series_code,
+		        "name": "sample"
+		      }
+		]
+		integrate_cancel_exam(exam_series,school_key,academic_year)
+		integrate_add_exam_on_calendar(series_code,class_info_key,division)
 	except KeyError as ke:
 		logger.info("Error in input. series_code,class_info_key or division not present")
 		send_response(400,"input validation error")
