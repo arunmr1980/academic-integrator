@@ -23,6 +23,7 @@ from academics.lessonplan import LessonplanDBService as lessonplan_service
 import academics.academic.AcademicDBService as academic_service
 import academics.lessonplan.LessonPlan as lpnr
 import academics.lessonplan.LessonplanIntegrator as lesssonplan_integrator
+import academics.classinfo.ClassInfoDBService as classinfo_service
 import copy
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -54,7 +55,6 @@ def save_calendars(updated_class_calendars_list,updated_teacher_calendars_list) 
 		cal = calendar.Calendar(None)
 		class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
 		pp.pprint(class_calendar_dict)
-		print("UPADTED CLASS CALENDAR ----------->>>>>>>>>>>>")
 		response = calendar_service.add_or_update_calendar(class_calendar_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated class calendar uploaded --------- '+str(class_calendar_dict['calendar_key']))
 
@@ -160,7 +160,24 @@ def integrate_update_exam_on_calendar(series_code,class_key,division) :
 	save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
 
 
-
+def update_exam_integration(series_code,class_info_key,division) :
+	timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
+	academic_year = timetable.academic_year
+	school_key = timetable.school_key
+	exam_series = [
+	      {
+	        "classes": [
+	          {
+	            "class_key": class_info_key,
+	            "division": division
+	          }
+	        ],
+	        "code": series_code,
+	        "name": "sample"
+	      }
+	]
+	integrate_cancel_exam(exam_series,school_key,academic_year)
+	integrate_add_exam_on_calendar(series_code,class_info_key,division)
 
 
 def save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list) :
