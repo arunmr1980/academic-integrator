@@ -5,7 +5,7 @@ from academics.TimetableIntegrator import generate_and_save_calenders,update_sub
 from academics.calendar.CalendarLessonPlanIntegrator import calendars_lesson_plan_integration, calendars_lesson_plan_integration_from_timetable
 from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars, integrate_update_period_calendars_and_lessonplans,make_event_objects
 import academics.logger.GCLogger as logger
-from academics.exam.ExamIntegrator import integrate_add_exam_on_calendar,integrate_cancel_exam,integrate_update_exam_on_calendar
+from academics.exam.ExamIntegrator import integrate_add_exam_on_calendar,integrate_cancel_exam,integrate_update_exam
 from academics.leave.LeaveIntegrator import integrate_add_leave_on_calendar,integrate_leave_cancel,integrate_lessonplan_on_substitute_teacher
 from academics.lessonplan.LessonplanIntegrator import integrate_add_class_session_events
 from academics.classinfo.ClassInfoDBService import get_classinfo 
@@ -186,26 +186,11 @@ def cancel_exam_integration(request) :
 def update_exam_integration(request) :
 	try :
 		series_code = request['series_code']
-		class_info_key = request['class_key']
-		division = request['division']
-		# integrate_update_exam_on_calendar(series_code,class_info_key,division)
-		class_info = get_classinfo(class_info_key)
-		academic_year = class_info.academic_year
-		school_key = class_info.school_key
-		exam_series = [
-		      {
-		        "classes": [
-		          {
-		            "class_key": class_info_key,
-		            "division": division
-		          }
-		        ],
-		        "code": series_code,
-		        "name": "sample"
-		      }
-		]
-		integrate_cancel_exam(exam_series,school_key,academic_year)
-		integrate_add_exam_on_calendar(series_code,class_info_key,division)
+		classes = request['classes']
+		class_key = classes[0]['class_key']
+		division = classes[0]['division']
+		integrate_update_exam(series_code,class_key,division)
+
 	except KeyError as ke:
 		logger.info("Error in input. series_code,class_info_key or division not present")
 		send_response(400,"input validation error")

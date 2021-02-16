@@ -18,7 +18,7 @@ pp = pprint.PrettyPrinter(indent=4)
 class UpdateExamIntegratorTest(unittest.TestCase):
 
 
-	def test_calendars_and_lessonplan(self) :
+	def calendars_and_lessonplan(self) :
 		series_code = "NEG111"
 		class_key = "8B1B22E72AE"
 		division = "A"

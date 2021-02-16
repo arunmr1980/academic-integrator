@@ -160,7 +160,7 @@ def integrate_update_exam_on_calendar(series_code,class_key,division) :
 	save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
 
 
-def update_exam_integration(series_code,class_info_key,division) :
+def integrate_update_exam(series_code,class_info_key,division) :
 	timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
 	academic_year = timetable.academic_year
 	school_key = timetable.school_key
@@ -185,7 +185,6 @@ def save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_
 		cal = calendar.Calendar(None)
 		class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
 		pp.pprint(class_calendar_dict)
-		print("UPADTED CLASS CALENDAR ----------->>>>>>>>>>>>")
 		response = calendar_service.add_or_update_calendar(class_calendar_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated class calendar uploaded --------- '+str(class_calendar_dict['calendar_key']))
 
@@ -370,7 +369,6 @@ def get_updated_current_class_calendars(updated_class_calendars_list,current_cla
 	return updated_class_calendars_list
 
 def get_updated_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events) :
-	print('CURRENT CLASS CALENDAR ----------->>>>',current_class_calendar.calendar_key)
 	updated_class_calendar = get_remove_conflicted_class_events(exam_events,current_class_calendar,removed_events)	
 	return current_class_calendar
 
@@ -406,7 +404,6 @@ def get_updated_class_calendar_events(exam_event,current_class_calendar,removed_
 
 
 	current_class_calendar.events = updated_events
-	print(removed_events," --------------- REMOVED EVENTS --------------- ")
 	return current_class_calendar
 
 
@@ -1052,6 +1049,12 @@ def remove_event_schedule_from_lessonplan(current_lessonplan,event) :
 						if hasattr(session,'schedule') :
 							if is_need_remove_schedule(event,session.schedule) == True :
 								del session.schedule
+
+	if hasattr(current_lessonplan,'sessions') and len(current_lessonplan.sessions) > 0 :
+		for session in current_lessonplan.sessions :
+			if hasattr(session,'schedule') and session.schedule is not None :
+				if is_need_remove_schedule(event,session.schedule) == True :
+					del session.schedule
 	current_lessonplan = lessonplan_integrator.adjust_lessonplan_after_remove_schedule(current_lessonplan)
 	return current_lessonplan
 

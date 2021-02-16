@@ -53,7 +53,7 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 		division = "A"
 		subscriber_key = class_key + '-' + division
 
-		exam_integrator.update_exam_integration(series_code,class_key,division)
+		exam_integrator.integrate_update_exam(series_code,class_key,division)
 
 
 		expected_class_calendars_list = self.get_expected_class_calendars_list()
