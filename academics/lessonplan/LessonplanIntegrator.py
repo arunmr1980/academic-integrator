@@ -497,11 +497,11 @@ def holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,
 	gclogger.info("LESSON PLAN KEY------------------->  " + str(current_lessonplan.lesson_plan_key))
 	holiday_period_list = generate_holiday_period_list(event,calendar,academic_configuration,timetable,day_code)
 	for holiday_period in holiday_period_list :
-		# gclogger.info("---------- Holiday Period----  " + str(holiday_period.period_code)+' -----------------')
+		gclogger.info("---------- Holiday Period----  " + str(holiday_period.period_code)+' -----------------')
 	schedules = find_schedules(current_lessonplan,holiday_period_list,calendar.calendar_date)
 	gclogger.info("---------- Schedule to remove is   -----------------")
 	for schedule in schedules :
-		# gclogger.info("---------- " + str(holiday_period.period_code) + " ---------")
+		gclogger.info("---------- " + str(holiday_period.period_code) + " ---------")
 
 	current_lessonplan = remove_shedules(schedules,current_lessonplan)
 	schedule_list = get_all_remaining_schedules(current_lessonplan)

@@ -660,7 +660,7 @@ def get_events_to_remove(class_calendar,holiday_event) :
 				# gclogger.info("-----------NEED TO REMOVE THE EVENT  ---------- " +event.event_code + '----')
 				events_to_remove_list.append(event)
 			else :
-				# gclogger.info("------------- NO CONFLICT WITH THE EVENT ---------- " + event.event_code)
+				gclogger.info("------------- NO CONFLICT WITH THE EVENT ---------- " + event.event_code)
 	return events_to_remove_list
 
 
