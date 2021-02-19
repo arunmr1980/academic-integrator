@@ -507,7 +507,7 @@ def upload_updated_calendars(updated_calendars_list) :
 		calendar_dict = cal.make_calendar_dict(calendar)
 		# pp.pprint(calendar_dict)
 		response = calendar_service.add_or_update_calendar(calendar_dict)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A calendar uploaded --------- ' +str(calendar_dict['subscriber_type']) + '-' + str(calendar_dict['calendar_key']))
+		# gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A calendar uploaded --------- ' +str(calendar_dict['subscriber_type']) + '-' + str(calendar_dict['calendar_key']))
 
 
 def get_updated_teacher_event(events_to_remove_list,teacher_calendar) :
@@ -657,7 +657,7 @@ def get_events_to_remove(class_calendar,holiday_event) :
 			class_calendar_event_start_time = event.from_time
 			class_calendar_event_end_time = event.to_time
 			if check_events_conflict(calendar_event_start_time,calendar_event_end_time,class_calendar_event_start_time,class_calendar_event_end_time) :
-				gclogger.info("-----------NEED TO REMOVE THE EVENT  ---------- " +event.event_code + '----')
+				# gclogger.info("-----------NEED TO REMOVE THE EVENT  ---------- " +event.event_code + '----')
 				events_to_remove_list.append(event)
 			else :
 				gclogger.info("------------- NO CONFLICT WITH THE EVENT ---------- " + event.event_code)

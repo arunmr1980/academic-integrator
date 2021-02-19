@@ -14,51 +14,49 @@ def lambda_handler(event, context):
 	for record in event['Records']:
 		payload=record["body"]
 		request = json.loads(payload)
-	logger.info(request)
-	logger.info("-------------- SQS Request ------------")
 	try:
 		request_type = request['request_type']
 		if request_type == 'TIMETABLE_CALENDAR_LESSON_PLAN_GEN':
-				logger.info("--------- This SQS Request is to generate calendar,lessonplan from timetable ------------")
+				# logger.info("--------- This SQS Request is to generate calendar,lessonplan from timetable ------------")
 				timetable_to_calendar_and_lessonplan_integration(request)
 		if request_type == 'TIMETABLE_TO_CALENDAR_GEN':
-				logger.info("--------- This SQS Request is to generate calendar from timetable ------------")
+				# logger.info("--------- This SQS Request is to generate calendar from timetable ------------")
 				timetable_to_calendar_integration(request)
 		if request_type == 'CALENDAR_TO_LESSON_PLAN_GEN':
-				logger.info("--------- This SQS Request is to generate lessnplan from calendar ------------")
+				# logger.info("--------- This SQS Request is to generate lessnplan from calendar ------------")
 				calendar_to_lessonplan_integration(request)
 		if request_type == 'HOLIDAY_LESSONPLAN_SYNC':
-				logger.info("--------- This SQS Request is to add holiday on calendar ------------")
+				# logger.info("--------- This SQS Request is to add holiday on calendar ------------")
 				add_event_calendar_lessonplan_integration(request)
 		if request_type == 'REMOVE_EVENT_LESSONPLAN_SYNC':
-				logger.info("--------- This SQS Request is to remove an event from calendar ------------")
+				# logger.info("--------- This SQS Request is to remove an event from calendar ------------")
 				remove_event_calendar_lessonplan_integration(request)
 		if request_type == 'PERIOD_UPDATE_SYNC':
-				logger.info("--------- This SQS Request is to update period from timetable ------------")
+				# logger.info("--------- This SQS Request is to update period from timetable ------------")
 				update_period_calendar_lessonplan_integration(request)
 		if request_type == 'UPDATE_SUBJECT_TEACHER_SYNC':
-				logger.info("--------- This SQS Request is to update subject teacher ------------")
+				# logger.info("--------- This SQS Request is to update subject teacher ------------")
 				update_subject_teacher_integration(request)
 		if request_type == 'EXAM_CALENDAR_SYNC':
-				logger.info("--------- This SQS Request is to add exam in calendar ------------")
+				# logger.info("--------- This SQS Request is to add exam in calendar ------------")
 				add_exam_integration(request)
 		if request_type == 'EXAM-DELETE-SYNC':
-				logger.info("--------- This SQS Request is to delete exam from calendar ------------")
+				# logger.info("--------- This SQS Request is to delete exam from calendar ------------")
 				cancel_exam_integration(request)
 		if request_type == 'TEACHER_LEAVE_SYNC':
-				logger.info("--------- This SQS Request is to add teacher leave ------------")
+				# logger.info("--------- This SQS Request is to add teacher leave ------------")
 				add_leave_integration(request)
 		if request_type == 'TEACHER_LEAVE_CANCEL':
-				logger.info("--------- This SQS Request is to cancel teacher leave ------------")
+				# logger.info("--------- This SQS Request is to cancel teacher leave ------------")
 				cancel_leave_integration(request)
 		if request_type == 'CLASS_SESSION_EVENT_SYNC':
-				logger.info("--------- This SQS Request is to add class session on calendar (special class) ------------")
+				# logger.info("--------- This SQS Request is to add class session on calendar (special class) ------------")
 				special_class_session_integration(request)
 		if request_type == 'EXAM_UPDATE_CALENDAR_SYNC':
-				logger.info("--------- This SQS Request is to update exam ------------")
+				# logger.info("--------- This SQS Request is to update exam ------------")
 				update_exam_integration(request)
 		if request_type == 'TEACHER_SUBSTITUTE_SYNC':
-				logger.info("--------- This SQS Request is to substitute teacher ------------")
+				# logger.info("--------- This SQS Request is to substitute teacher ------------")
 				teacher_substitution_integration(request)
 	except:
 		traceback.print_exc()
@@ -75,6 +73,9 @@ def add_event_calendar_lessonplan_integration(request) :
 	except KeyError as ke:
 		logger.info("Error in input. event_code or calendar_key not present")
 		send_response(400,"input validation error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to add holiday on calendar ------------")
+	
 
 
 def remove_event_calendar_lessonplan_integration(request) :
@@ -86,6 +87,8 @@ def remove_event_calendar_lessonplan_integration(request) :
 	except KeyError as ke:
 		logger.info("Error in input. calendar_key not present")
 		send_response(400,"input validation error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to remove an event from calendar ------------")
 
 def update_period_calendar_lessonplan_integration(request) :
 	try :
@@ -95,6 +98,8 @@ def update_period_calendar_lessonplan_integration(request) :
 	except KeyError as ke:
 		logger.info("Error in input. calendar_key not present")
 		send_response(400,"input validation error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to update period from timetable ------------")
 
 
 def timetable_to_calendar_and_lessonplan_integration(request):
@@ -111,6 +116,8 @@ def timetable_to_calendar_and_lessonplan_integration(request):
 	except:
 		logger.info("Unexpected error ...")
 		send_response(400,"unexpected error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to generate calendar,lessonplan from timetable ------------")
 
 
 def timetable_to_calendar_integration(request):
@@ -126,6 +133,8 @@ def timetable_to_calendar_integration(request):
 	except:
 		logger.info("Unexpected error ...")
 		send_response(400,"unexpected error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to generate calendar from timetable ------------")
 
 
 def calendar_to_lessonplan_integration(request):
@@ -142,6 +151,8 @@ def calendar_to_lessonplan_integration(request):
 	except:
 		logger.info("Unexpected error ...")
 		send_response(400,"unexpected error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to generate lessnplan from calendar ------------")
 
 
 def update_subject_teacher_integration(request):
@@ -161,6 +172,8 @@ def update_subject_teacher_integration(request):
 		traceback.print_exc()
 		logger.info("Unexpected error ...")
 		send_response(400,"unexpected error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to update subject teacher ------------")
 
 def add_exam_integration(request) :
 	try :
@@ -172,6 +185,8 @@ def add_exam_integration(request) :
 	except KeyError as ke:
 		logger.info("Error in input. series_code,class_info_key or division not present")
 		send_response(400,"input validation error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to add exam in calendar ------------")
 
 def cancel_exam_integration(request) :
 	try :
@@ -182,6 +197,8 @@ def cancel_exam_integration(request) :
 	except KeyError as ke:
 		logger.info("Error in input. series_code,academic_year,school_key not present")
 		send_response(400,"input validation error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to delete exam from calendar ------------")
 
 def update_exam_integration(request) :
 	try :
@@ -194,6 +211,8 @@ def update_exam_integration(request) :
 	except KeyError as ke:
 		logger.info("Error in input. series_code,class_info_key or division not present")
 		send_response(400,"input validation error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to update exam ------------")
 
 def teacher_substitution_integration(request) :
 	previous_substitution_emp_key = None
@@ -210,6 +229,8 @@ def teacher_substitution_integration(request) :
 	except KeyError as ke:
 		logger.info("Error in input. calendar_key,event_code,substitution_emp_key,previous_substitution_emp_key or previous_substitution_subject_code not present")
 		send_response(400,"input validation error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to substitute teacher ------------")
 
 def add_leave_integration(request) :
 	try :
@@ -219,6 +240,8 @@ def add_leave_integration(request) :
 		traceback.print_exc()
 		logger.info("Error in input. leave key not present")
 		send_response(400,"input validation error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to add teacher leave ------------")
 
 def cancel_leave_integration(request) :
 	try :
@@ -228,6 +251,8 @@ def cancel_leave_integration(request) :
 		traceback.print_exc()
 		logger.info("Error in input. leave key not present")
 		send_response(400,"input validation error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to cancel teacher leave ------------")
 
 def special_class_session_integration(request) :
 	try :
@@ -237,6 +262,8 @@ def special_class_session_integration(request) :
 	except KeyError as ke:
 		logger.info("Error in input. events or calendar_key not present")
 		send_response(400,"input validation error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to add class session on calendar (special class) ------------")
 
 def send_response(status_code, message):
 	data = {
