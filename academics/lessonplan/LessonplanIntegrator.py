@@ -195,17 +195,6 @@ def get_current_lesson_plan_with_subject_key(current_lessonplans,subject_key) :
 			return current_lessonplan
 
 
-def Update_lessonplan(current_lessonplan,updated_class_calendar) :
-	if  hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :
-			for main_topic in current_lessonplan.topics :
-				for topic in main_topic.topics :
-					for session in topic.sessions :
-						if hasattr(session,'schedule') :
-							if(need_remove_schedules(current_lessonplan,session.schedule,updated_class_calendar)) == True :
-								gclogger.info("----- A schedule removed ---" + session.schedule.start_time + '---' + session.schedule.end_time +'------')
-								del session.schedule
-	current_lessonplan = adjust_lessonplan_after_remove_schedule(current_lessonplan)
-	return current_lessonplan
 
 def adjust_lessonplan_after_remove_schedule(current_lessonplan) :
 	root_sessions = []
@@ -730,14 +719,18 @@ def remove_shedules(schedules,current_lessonplan) :
 	for schedule in schedules :
 		schedule_start_time = schedule.start_time
 		schedule_end_time = schedule.end_time
-		# print(schedule_start_time,"SCHEDULE START <<<<<<<<<<<<<<<-----------")
-		# print(schedule_end_time,"SCHEDULE END <<<<<<<<<<<<<<<-----------")
-		for main_topic in current_lessonplan.topics :
-			for topic in main_topic.topics :
-				for session in topic.sessions :
-					if hasattr (session,'schedule') :
-						if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
-							del session.schedule
+		if  hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :
+			for main_topic in current_lessonplan.topics :
+				for topic in main_topic.topics :
+					for session in topic.sessions :
+						if hasattr (session,'schedule') :
+							if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
+								del session.schedule
+		if hasattr(current_lessonplan,'sessions') and len(current_lessonplan.sessions) > 0 :
+			for session in current_lessonplan.sessions :
+				if hasattr(session,'schedule') and session.schedule is not None :
+					if is_need_remove_schedule(event,session.schedule) == True :
+						del session.schedule					
 	return current_lessonplan
 
 
