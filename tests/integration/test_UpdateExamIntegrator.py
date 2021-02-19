@@ -47,12 +47,15 @@ class UpdateExamIntegratorTest(unittest.TestCase):
 			response = exam_service.add_or_update_exam(exam)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A Exan uploaded --------- '+str(exam['exam_key']))
 
-	def calendars_and_lessonplan(self) :
+	def test_calendars_and_lessonplan(self) :
 		series_code = "NEG111"
 		class_key = "8B1B22E72AE"
 		division = "A"
 		subscriber_key = class_key + '-' + division
-		exam_integrator.integrate_update_exam_on_calendar(series_code,class_key,division)
+
+		exam_integrator.integrate_update_exam(series_code,class_key,division)
+
+
 		expected_class_calendars_list = self.get_expected_class_calendars_list()
 		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
 		expected_lessonplans_list = self.get_expected_lessonplans_list()
