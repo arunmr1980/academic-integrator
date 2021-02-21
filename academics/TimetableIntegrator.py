@@ -520,7 +520,7 @@ def integrate_class_timetable(timetable, academic_configuration, class_calendars
 	generated_class_calendar = None
 
 	gclogger.info("Processing timetable " + timetable.time_table_key + ' between dates ' + start_date + ' - ' + end_date)
-	if is_exist_employee_key_and_subject_code(timetable) :
+	if is_exist_employee_key_and_subject_code(timetable) == True :
 		dates_list = get_dates(start_date,end_date)
 		for date in dates_list :
 			gclogger.debug(' date - ' + date)
@@ -729,6 +729,26 @@ def get_event(time_table_period,timetable_configuration_periods,date):
 			gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
 			return event
 
+def get_event_list(time_table_period,timetable_configuration_periods,date):
+	events_list = []
+	current_configuration_period = None
+	if timetable_configuration_periods is not None :
+		for timetable_configuration_period in timetable_configuration_periods :
+			if timetable_configuration_period.period_code == time_table_period.period_code :
+				current_configuration_period = timetable_configuration_period
+
+		if current_configuration_period is not None :
+			for employee in time_table_period.employees :
+				event = calendar.Event(None)
+				event.event_code = key.generate_key(3)
+				event.event_type = 'CLASS_SESSION'
+				event.params = get_params(employee.subject_key , employee.employee_key , time_table_period.period_code)
+
+				event.from_time = get_standard_time(current_configuration_period.start_time,date)
+				event.to_time = get_standard_time(current_configuration_period.end_time,date)
+				gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
+				events_list.append(event)
+		return events_list
 
 def get_standard_time(time,date) :
 	splited_date = date.split('-')
@@ -772,7 +792,7 @@ def get_holiday_events(school_calendar_event) :
 
 
 
-def generate_class_calendar(day_code,time_table,date,timetable_configuration,partial_holiday_period_list,existing_class_calendar):
+def generate_class_calendar(day_code,time_table,date,timetable_configuration,partial_holiday_period_list,existing_class_calendar) :
 	timetable_configuration_periods = None
 	class_calendar = None
 	if hasattr(timetable_configuration , 'time_table_schedules'):
@@ -793,10 +813,13 @@ def generate_class_calendar(day_code,time_table,date,timetable_configuration,par
 				events_list = []
 				for time_table_period in periods :
 					if not period_exist_or_not(time_table_period,partial_holiday_period_list):
-
 						if timetable_configuration_periods is not None:
-							event = get_event(time_table_period,timetable_configuration_periods,date)
-							events_list.append(event)
+							try :
+								event = get_event(time_table_period,timetable_configuration_periods,date)
+								events_list.append(event)
+							except AttributeError :
+								events = get_event_list(time_table_period,timetable_configuration_periods,date)
+								events_list.extend(events)
 
 				if (day.day_code == day_code):
 					if existing_class_calendar is not None :
@@ -807,7 +830,7 @@ def generate_class_calendar(day_code,time_table,date,timetable_configuration,par
 						return class_calendar
 					else :
 						if len(events_list) > 0 :
-							class_calendar=calendar.Calendar(None)
+							class_calendar = calendar.Calendar(None)
 							class_calendar.institution_key = time_table.school_key
 							class_calendar.calendar_date = date
 							class_calendar.calendar_key = key.generate_key(16)
@@ -950,16 +973,21 @@ def findDay(date):
 
 
 def is_exist_employee_key_and_subject_code(time_table) :
+	is_exist = True
 	if hasattr(time_table, 'timetable') and time_table.timetable is not None :
 		if hasattr(time_table.timetable,'day_tables') and len(time_table.timetable.day_tables) > 0 :
 			for day in time_table.timetable.day_tables :
 				if hasattr(day,'periods') and len(day.periods) > 0 :
 					for period in day.periods :
 						if hasattr(period ,'subject_key') and hasattr(period,'employee_key'):
-							return True
-						else:
+							pass
+						elif len(period.employees) > 0 :
+							for employee in period.employees :
+								if hasattr(period ,'subject_key') and hasattr(period,'employee_key') :
+									pass
+						else :
+							is_exist = False
 							gclogger.warn('Subject_key or employee key not existing')
-
 				else :
 					gclogger.warn('Periods not existing')
 
@@ -968,6 +996,7 @@ def is_exist_employee_key_and_subject_code(time_table) :
 
 	else:
 		gclogger.warn('Time table not existing')
+	return is_exist
 
 
 def convert24Hr(str1):
