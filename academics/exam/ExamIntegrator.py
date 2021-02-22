@@ -101,6 +101,7 @@ def get_affected_class_calendars_list(exams_list) :
 		current_class_calendar = calendar_service.get_calendar_by_date_and_key(date,subscriber_key)
 		if current_class_calendar is not None and check_calendar_already_in_list(current_class_calendars_list,current_class_calendar) == False :
 			current_class_calendars_list.append(current_class_calendar)
+		
 	return current_class_calendars_list
 
 
@@ -119,44 +120,44 @@ def make_exam_series_objects(exam_series) :
 		exam_series = ExamSeries(exam_series[0])
 		return exam_series
 		
-# def integrate_update_exam_on_calendar(series_code,class_key,division) :
-# 	subscriber_key = class_key + '-' + division
-# 	updated_class_calendars_list = []
-# 	updated_teacher_calendars_list = []
-# 	updated_lessonplans_list = []
-# 	removed_events = []
-# 	exams_list = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
+def integrate_update_exam_on_calendar(series_code,class_key,division) :
+	subscriber_key = class_key + '-' + division
+	updated_class_calendars_list = []
+	updated_teacher_calendars_list = []
+	updated_lessonplans_list = []
+	removed_events = []
+	exams_list = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
 	
-# 	timetable = timetable_service.get_timetable_by_class_key_and_division(class_key,division)
-# 	school_key = timetable.school_key
-# 	academic_year = timetable.academic_year
-# 	academic_configuration = academic_service.get_academig(school_key,academic_year)
-# 	events_to_be_added = []
-# 	current_class_calendars_list = get_updated_current_class_calendars_from_exam_and_schedule(exams_list)
-# 	current_teacher_calendars_list = get_current_teacher_calendars_from_current_class_calendars(current_class_calendars_list,school_key)
-# 	current_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key,division)
-# 	current_class_calendars_list = integrate_class_calendar_on_update_exams(academic_configuration,timetable,exams_list,current_class_calendars_list,events_to_be_added)
-# 	current_teacher_calendars_list = integrate_teacher_calendars_on_update_exam_and_cancel_exam(current_teacher_calendars_list,current_class_calendars_list,school_key)
+	timetable = timetable_service.get_timetable_by_class_key_and_division(class_key,division)
+	school_key = timetable.school_key
+	academic_year = timetable.academic_year
+	academic_configuration = academic_service.get_academig(school_key,academic_year)
+	events_to_be_added = []
+	current_class_calendars_list = get_updated_current_class_calendars_from_exam_and_schedule(exams_list)
+	current_teacher_calendars_list = get_current_teacher_calendars_from_current_class_calendars(current_class_calendars_list,school_key)
+	current_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+	current_class_calendars_list = integrate_class_calendar_on_update_exams(academic_configuration,timetable,exams_list,current_class_calendars_list,events_to_be_added)
+	current_teacher_calendars_list = integrate_teacher_calendars_on_update_exam_and_cancel_exam(current_teacher_calendars_list,current_class_calendars_list,school_key)
 
 
 
-# 	# current_lessonplans_list = integrate_lessonplans_on_update_exams(current_lessonplans_list,current_class_calendars_list)
-# 	current_lessonplans_list = integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_list,events_to_be_added)
-# 	updated_class_calendars_list = integrate_class_calendar_on_add_exams(academic_configuration,timetable,updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events)
+	# current_lessonplans_list = integrate_lessonplans_on_update_exams(current_lessonplans_list,current_class_calendars_list)
+	current_lessonplans_list = integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_list,events_to_be_added)
+	updated_class_calendars_list = integrate_class_calendar_on_add_exams(academic_configuration,timetable,updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events)
 
-# 	integrate_teacher_cal_and_lessonplan_on_add_exam(
-# 							updated_class_calendars_list,
-# 							updated_teacher_calendars_list,
-# 							updated_lessonplans_list,
-# 							current_class_calendars_list,
-# 							current_teacher_calendars_list,
-# 							current_lessonplans_list,
-# 							exams_list,
-# 							removed_events
-# 							)
+	integrate_teacher_cal_and_lessonplan_on_add_exam(
+							updated_class_calendars_list,
+							updated_teacher_calendars_list,
+							updated_lessonplans_list,
+							current_class_calendars_list,
+							current_teacher_calendars_list,
+							current_lessonplans_list,
+							exams_list,
+							removed_events
+							)
 
 
-# 	save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
+	save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_teacher_calendars_list,updated_lessonplans_list)
 
 
 def integrate_update_exam(series_code,class_info_key,division) :
