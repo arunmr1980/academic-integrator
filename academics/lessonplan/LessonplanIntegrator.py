@@ -734,6 +734,20 @@ def remove_shedules(schedules,current_lessonplan) :
 	return current_lessonplan
 
 
+def Update_lessonplan(current_lessonplan,updated_class_calendar) :
+	if  hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :
+			for main_topic in current_lessonplan.topics :
+				for topic in main_topic.topics :
+					for session in topic.sessions :
+						if hasattr(session,'schedule') :
+							if(need_remove_schedules(current_lessonplan,session.schedule,updated_class_calendar)) == True :
+								# gclogger.info("----- A schedule removed ---" + session.schedule.start_time + '---' + session.schedule.end_time +'------')
+								del session.schedule
+	current_lessonplan = adjust_lessonplan_after_remove_schedule(current_lessonplan)
+	return current_lessonplan
+
+
+
 def get_all_remaining_schedules(current_lessonplan) :
 	schedule_list = []
 	for main_topic in current_lessonplan.topics :
