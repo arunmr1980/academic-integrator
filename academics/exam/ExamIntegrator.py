@@ -104,7 +104,7 @@ def get_affected_class_calendars_list(exams_list) :
 		if hasattr(exam,'previous_schedule') :
 			calendar_date = exam.previous_schedule.date_time
 			current_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
-			if (current_class_calendar,current_class_calendars_list) == False :
+			if check_calendar_already_exist(current_class_calendar,current_class_calendars_list) == False :
 				current_class_calendars_list.append(current_class_calendar)
 	return current_class_calendars_list
 
@@ -217,7 +217,7 @@ def get_affected_class_calendars(exams_list) :
 		current_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
 		if current_class_calendar is None :
 			current_class_calendar = calendar_integrator.generate_class_calendar(class_key,division,calendar_date,institution_key)
-		if 	(current_class_calendar,current_class_calendars_list) == False :
+		if 	check_calendar_already_exist(current_class_calendar,current_class_calendars_list) == False :
 			current_class_calendars_list.append(current_class_calendar)
 	return current_class_calendars_list
 
@@ -227,7 +227,7 @@ def get_updated_current_class_calendars_from_exam_and_schedule(exams_list) :
 		subscriber_key = exam.class_key + '-' + exam.division
 		calendar_date = exam.date_time
 		current_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
-		if 	(current_class_calendar,current_class_calendars_list) == False :
+		if 	check_calendar_already_exist(current_class_calendar,current_class_calendars_list) == False :
 			current_class_calendars_list.append(current_class_calendar)
 		if hasattr(exam,'previous_schedule') :
 			calendar_date = exam.previous_schedule.date_time
@@ -250,7 +250,7 @@ def get_current_teacher_calendars_from_current_class_calendars(current_class_cal
 	return current_teacher_calendars_list
 	
 
-def 	(current_class_calendar,current_class_calendars_list) :
+def check_calendar_already_existcheck_calendar_already_exist(current_class_calendar,current_class_calendars_list) :
 	is_exist = False 
 	for calendar in current_class_calendars_list :
 		if current_class_calendar.calendar_key == calendar.calendar_key :
