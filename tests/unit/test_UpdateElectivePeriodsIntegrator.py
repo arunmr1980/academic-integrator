@@ -31,6 +31,7 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 		current_teacher_calendars = self.get_current_teacher_calendar_list()
 		current_lessonplans = self.get_current_lessonplans()
 		expected_class_calendars = self.get_expected_class_calendar_list()
+		expected_teacher_calendars = self.get_expected_teacher_calendar_list()
 		expected_lessonplans = self.get_expected_lessonplan_list()
 		current_class_cals = copy.deepcopy(current_class_calendars)
 
@@ -42,7 +43,7 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 		for current_class_calendar in current_class_calendars_with_day_code :
 			event = get_event_with_period_code(current_class_calendar,period_code)
 			existing_event = copy.deepcopy(event)
-			updated_class_calendar = update_event(events,current_class_calendar,updated_timetable_period) 
+			updated_class_calendar = update_event(event,current_class_calendar,updated_timetable_period) 
 			if updated_class_calendar is not None :
 				updated_class_calendars_list.append(updated_class_calendar)
 
@@ -50,82 +51,104 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 			if updated_previous_teacher_calendar is not None :
 				updated_teacher_calendars_list.append(updated_previous_teacher_calendar)
 
-			updated_new_teacher_calendar = self.update_new_teacher_calendar(updated_class_calendar,period_code,current_teacher_calendars)
-			if updated_new_teacher_calendar is not None :
-				updated_teacher_calendars_list.append(updated_new_teacher_calendar)
+			updated_new_teacher_calendars = self.update_new_teacher_calendars(updated_class_calendar,period_code,current_teacher_calendars,updated_timetable_period)
+			if len(updated_new_teacher_calendars) > 0 :
+				for updated_new_teacher_calendar in updated_new_teacher_calendars :
+					updated_teacher_calendars_list.append(updated_new_teacher_calendar)
 
 			updated_previous_subject_lessonplan = update_previous_subject_lessonplan(existing_event,current_lessonplans, updated_class_calendar)
 			if updated_previous_subject_lessonplan is not None :
 				updated_lessonplan_list.append(updated_previous_subject_lessonplan)
 
-			updated_new_subject_lessonplan = update_new_subject_lessonplan(updated_timetable_period, current_lessonplans, updated_class_calendar)
-			if updated_new_subject_lessonplan is not None :
-				updated_lessonplan_list.append(updated_new_subject_lessonplan)
+			updated_new_subject_lessonplans = update_new_subject_lessonplans(updated_timetable_period, current_lessonplans, updated_class_calendar)
+			if len(updated_new_subject_lessonplans) > 0 :
+				for updated_new_subject_lessonplan in updated_new_subject_lessonplans :	
+					updated_lessonplan_list.append(updated_new_subject_lessonplan)
+
 
 		for updated_class_calendar in updated_class_calendars_list :
-
 			cal = calendar.Calendar(None)
 			calendar_dict = cal.make_calendar_dict(updated_class_calendar)
 			pp.pprint(calendar_dict)
-
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars)	
 			gclogger.info("-----[ Unit Test ] Class calendar test passed for ----" + updated_class_calendar.calendar_key + "-----------------")
 
 		for updated_teacher_calendar in updated_teacher_calendars_list :
-
 			cal = calendar.Calendar(None)
 			calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
 			pp.pprint(calendar_dict)
-
-			self.check_class_calendars(updated_class_calendar,expected_class_calendars)	
+			self.check_teacher_calendars(updated_teacher_calendar,expected_teacher_calendars)	
 			gclogger.info("-----[ Unit Test ] Teacher calendar test passed for ----" + updated_teacher_calendar.calendar_key + "-----------------")
 
 
 		for updated_lessonplan in updated_lessonplan_list :
-
 			lp = lpnr.LessonPlan(None)
 			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 			pp.pprint(updated_lessonplan_dict)
-
 			self.check_lesson_plans(updated_lessonplan,expected_lessonplans)
 			gclogger.info("-----[ Unit Test ] LessonPlan test passed for ----" + updated_lessonplan.lesson_plan_key + "-----------------")
 
 
-	def update_previous_teacher_calendar(self,existing_event,current_class_calendar,get_current_teacher_calendars) :
+	def update_previous_teacher_calendar(self,existing_event,current_class_calendar,current_teacher_calendars) :
 		subscriber_key = get_employee_key(existing_event.params)
-		previous_teacher_calendar = self.get_previous_teacher_calendar(subscriber_key,current_class_calendar,get_current_teacher_calendars)
+		previous_teacher_calendar = self.get_previous_teacher_calendar(subscriber_key,current_class_calendar,current_teacher_calendars)
 		updated_previous_teacher_calendar = update_current_teacher_calendar(existing_event,previous_teacher_calendar,current_class_calendar)
 		return updated_previous_teacher_calendar
 
 
 
-	def get_previous_teacher_calendar(self,subscriber_key,current_class_calendar,get_current_teacher_calendars) :
-		for current_teacher_calendar in get_current_teacher_calendars :
+	def get_previous_teacher_calendar(self,subscriber_key,current_class_calendar,current_teacher_calendars) :
+		print(subscriber_key,"EXISTING TEACHER CALENDAR KEY -------------")
+		for current_teacher_calendar in current_teacher_calendars :
 			if current_teacher_calendar.subscriber_key == subscriber_key :
 				return current_teacher_calendar
 
 
-	def get_existing_teacher_calendar(self,subscriber_key,get_current_teacher_calendars) :
-		for current_teacher_calendar in get_current_teacher_calendars :
+	def get_existing_teacher_calendar(self,subscriber_key,current_teacher_calendars) :
+		for current_teacher_calendar in current_teacher_calendars :
 			if current_teacher_calendar.subscriber_key == subscriber_key :
 				return current_teacher_calendar
 
-	def update_new_teacher_calendar(self,updated_class_calendar, period_code,get_current_teacher_calendars) :
-		updated_class_calendar_events = get_period_code_events(updated_class_calendar, period_code)
-		subscriber_key = get_employee_key(updated_class_calendar_events[0].params)
-		new_teacher_calendar = self.Get_teacher_calendar(updated_class_calendar,subscriber_key,get_current_teacher_calendars)
-		updated_new_teacher_calendar = update_teacher_calendar_with_new_event(new_teacher_calendar,updated_class_calendar_events[0],updated_class_calendar)
-		return updated_new_teacher_calendar
+	def update_new_teacher_calendars(self,updated_class_calendar, period_code,current_teacher_calendars,updated_timetable_period) :
+		updated_new_teacher_calendars_list = []
+		if hasattr(updated_timetable_period,"employees") :
+			for employee in updated_timetable_period.employees :
+				subscriber_key = employee.employee_key
+				subject_key = employee.subject_key
+				new_teacher_calendar = self.Get_teacher_calendar(updated_class_calendar,subscriber_key,current_teacher_calendars)
+				updated_class_calendar_event = get_updated_class_calendar_event(subscriber_key,subject_key,period_code,updated_class_calendar)
+				updated_new_teacher_calendar = update_teacher_calendar_with_new_event(new_teacher_calendar,updated_class_calendar_event,updated_class_calendar)
+				updated_new_teacher_calendars_list.append(updated_new_teacher_calendar)
+		else :
+			updated_class_calendar_events = get_period_code_events(updated_class_calendar, period_code)
+			subscriber_key = get_employee_key(updated_class_calendar_events[0].params)
+			new_teacher_calendar = self.Get_teacher_calendar(updated_class_calendar,subscriber_key,current_teacher_calendars)
+			updated_new_teacher_calendar = update_teacher_calendar_with_new_event(new_teacher_calendar,updated_class_calendar_events[0],updated_class_calendar)
+			updated_new_teacher_calendars_list.append(updated_new_teacher_calendar)
+		return updated_new_teacher_calendars_list
 
-
-	def Get_teacher_calendar(self,updated_class_calendar,subscriber_key,get_current_teacher_calendars) :
-		existing_teacher_calendar = self.get_existing_teacher_calendar(subscriber_key,get_current_teacher_calendars)
+	
+	def Get_teacher_calendar(self,updated_class_calendar,subscriber_key,current_teacher_calendars) :
+		existing_teacher_calendar = self.get_existing_teacher_calendar(subscriber_key,current_teacher_calendars)
 		if existing_teacher_calendar is not None :
 			return existing_teacher_calendar
 		else :
 			employee_calendar = generate_employee_calendar(subscriber_key,updated_class_calendar)
 			return employee_calendar
 
+	def check_teacher_calendars(self,updated_teacher_calendar,expected_teacher_calendars_list) :
+		for expected_teacher_calendar in expected_teacher_calendars_list :
+			if updated_teacher_calendar.calendar_key == expected_teacher_calendar.calendar_key :
+				self.assertEqual(expected_teacher_calendar.institution_key,updated_teacher_calendar.institution_key )
+				self.assertEqual(expected_teacher_calendar.calendar_date,updated_teacher_calendar.calendar_date )
+				self.assertEqual(expected_teacher_calendar.subscriber_key,updated_teacher_calendar.subscriber_key )
+				self.assertEqual(expected_teacher_calendar.subscriber_type,updated_teacher_calendar.subscriber_type )
+				self.check_events_teacher_calendar(expected_teacher_calendar.events,updated_teacher_calendar.events)
+
+	def check_events_teacher_calendar(self,expected_teacher_calendar_events,updated_teacher_calendar_events) :
+		for index in range(0,len(expected_teacher_calendar_events)) :
+			self.assertEqual(expected_teacher_calendar_events[index].event_code , updated_teacher_calendar_events[index].event_code)
+			self.assertEqual(expected_teacher_calendar_events[index].ref_calendar_key , updated_teacher_calendar_events[index].ref_calendar_key)
 
 	def check_lesson_plans(self,updated_lesson_plan,expected_lesson_plan_list) :
 		for expected_lesson_plan in expected_lesson_plan_list :
@@ -165,6 +188,7 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 			self.assertEqual(updated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)
 			if hasattr(updated_lesson_plan_sessions[index],'schedule') :
 				self.check_schedule(updated_lesson_plan_sessions[index].schedule,expected_lesson_plan_sessions[index].schedule)
+
 	def check_root_sessions(self,updated_lesson_plan_sessions,expected_lesson_plan_sessions) :
 		for index in range(len(updated_lesson_plan_sessions)) :
 			self.assertEqual(updated_lesson_plan_sessions[index].order_index,expected_lesson_plan_sessions[index].order_index)

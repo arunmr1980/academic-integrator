@@ -1,6 +1,6 @@
 [
    {
-      "class_key":"8B1B22E72AE",
+      "class_key":"class",
       "division":"A",
       "lesson_plan_key":"test-single-lessonplan-1",
       "resources":[
@@ -40,30 +40,51 @@
                         "resources":[
 
                         ]
-                     },
-                      {
-                        "code":"SESgy0567",
-                        "completion_datetime":"NA",
-                        "completion_status":false,
-                        "name":"Session 1",
-                        "order_index":2,
-                        "schedule": {
-                           "calendar_key": "test-key-3",
-                           "event_code": "event-5",
-                           "start_time": "2020-08-10T12:30:00",
-                           "end_time": "2020-08-10T13:10:00"
-                        },
-                        "resources":[
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   {
+      "class_key":"class",
+      "division":"A",
+      "lesson_plan_key":"test-single-lessonplan-2",
+      "resources":[
 
-                        ]
-                     },
+      ],
+      "subject_code":"bio2",
+      "topics":[
+         {
+            "code":"TOP3x0jkt-bio1",
+            "name":"chapter 1",
+            "order_index":1,
+            "topics":[
+               {
+                  "assignments":[
+
+                  ],
+                  "code":"CHAP1-TOP1",
+                  "description":"edited",
+                  "name":"topic 1",
+                  "order_index":1,
+                  "resources":[
+
+                  ],
+                  "sessions":[
                      {
                         "code":"SESgy0567",
                         "completion_datetime":"NA",
                         "completion_status":false,
                         "name":"Session 1",
-                        "order_index":3,
-                        
+                        "order_index":1,
+                        "schedule": {
+                           "calendar_key": "test-key-3",
+                           "event_code": "event-3",
+                           "start_time": "2020-08-10T10:40:00",
+                           "end_time": "2020-08-10T11:20:00"
+                        },
                         "resources":[
 
                         ]
@@ -75,7 +96,7 @@
       ]
    },
    {
-      "class_key":"8B1B22E72AE",
+      "class_key":"class",
       "division":"A",
       "lesson_plan_key":"test-single-lessonplan-3",
       "resources":[
@@ -112,6 +133,132 @@
                            "start_time": "2020-08-10T11:30:00",
                            "end_time": "2020-08-10T12:10:00"
                         },
+                        "resources":[
+
+                        ]
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   {
+      "class_key":"class",
+      "division":"A",
+      "lesson_plan_key":"test-single-lessonplan-4",
+      "resources":[
+
+      ],
+      "subject_code":"elective-subject-1",
+      "topics":[
+         {
+            "code":"TOP3x0jkt-bio3",
+            "name":"chapter 1",
+            "order_index":1,
+            "topics":[
+               {
+                  "assignments":[
+
+                  ],
+                  "code":"CHAP3-TOP1",
+                  "description":"edited",
+                  "name":"topic 1",
+                  "order_index":1,
+                  "resources":[
+
+                  ],
+                  "sessions":[
+                     {
+                        "code":"SESgy022",
+                        "completion_datetime":"NA",
+                        "completion_status":false,
+                        "name":"Session 1",
+                        "order_index":1,
+                        "resources":[
+
+                        ]
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   {
+      "class_key":"class",
+      "division":"A",
+      "lesson_plan_key":"test-single-lessonplan-5",
+      "resources":[
+
+      ],
+      "subject_code":"elective-subject-2",
+      "topics":[
+         {
+            "code":"TOP3x0jkt-bio3",
+            "name":"chapter 1",
+            "order_index":1,
+            "topics":[
+               {
+                  "assignments":[
+
+                  ],
+                  "code":"CHAP3-TOP1",
+                  "description":"edited",
+                  "name":"topic 1",
+                  "order_index":1,
+                  "resources":[
+
+                  ],
+                  "sessions":[
+                     {
+                        "code":"SESgy022",
+                        "completion_datetime":"NA",
+                        "completion_status":false,
+                        "name":"Session 1",
+                        "order_index":1,
+                        "resources":[
+
+                        ]
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   {
+      "class_key":"class",
+      "division":"A",
+      "lesson_plan_key":"test-single-lessonplan-6",
+      "resources":[
+
+      ],
+      "subject_code":"elective-subject-3",
+      "topics":[
+         {
+            "code":"TOP3x0jkt-bio3",
+            "name":"chapter 1",
+            "order_index":1,
+            "topics":[
+               {
+                  "assignments":[
+
+                  ],
+                  "code":"CHAP3-TOP1",
+                  "description":"edited",
+                  "name":"topic 1",
+                  "order_index":1,
+                  "resources":[
+
+                  ],
+                  "sessions":[
+                     {
+                        "code":"SESgy022",
+                        "completion_datetime":"NA",
+                        "completion_status":false,
+                        "name":"Session 1",
+                        "order_index":1,
                         "resources":[
 
                         ]
