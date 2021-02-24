@@ -16,8 +16,8 @@
 				"to_time":"2020-08-03T12:01:00"
 			}
 		],
-		"institution_key":"test-school-1",
-		"subscriber_key":"8B1B22E72AE-A",
+		"institution_key":"institution-key-test",
+		"subscriber_key":"class-A",
 		"subscriber_type":"CLASS-DIV"
 	},
 	{
@@ -51,14 +51,14 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-3"
+						"value":"employee-third"
 					}
 				],
 				"to_time":"2020-08-04T12:10:00"
 			}
 		],
-		"institution_key":"test-school-1",
-		"subscriber_key":"8B1B22E72AE-A",
+		"institution_key":"institution-key-test",
+		"subscriber_key":"class-A",
 		"subscriber_type":"CLASS-DIV"
 	},
 	{
@@ -80,7 +80,7 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-1"
+						"value":"employee-first"
 					}
 				],
 				"to_time":"2020-08-10T11:20:00"
@@ -100,34 +100,14 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-1"
+						"value":"employee-first"
 					}
 				],
 				"to_time":"2020-08-10T12:10:00"
-			},
-			{
-				"event_code":"event-5",
-				"event_type":"CLASS_SESSION",
-				"from_time":"2020-08-10T12:30:00",
-				"params":[
-					{
-						"key":"period_code",
-						"value":"MON-4"
-					},
-					{
-						"key":"subject_key",
-						"value":"bio1"
-					},
-					{
-						"key":"teacher_emp_key",
-						"value":"employee-1"
-					}
-				],
-				"to_time":"2020-08-10T13:10:00"
 			}
 		],
-		"institution_key":"test-school-1",
-		"subscriber_key":"8B1B22E72AE-A",
+		"institution_key":"institution-key-test",
+		"subscriber_key":"class-A",
 		"subscriber_type":"CLASS-DIV"
 	}
 ]

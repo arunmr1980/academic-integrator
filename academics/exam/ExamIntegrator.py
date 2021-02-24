@@ -1040,10 +1040,11 @@ def get_updated_current_lessonplan(current_lessonplan,events_to_remove) :
 	return current_lessonplan
 
 def is_need_remove_schedule(event,schedule) :
-		is_need_remove = False
+	is_need_remove = False
+	if hasattr(schedule,"start_time") and hasattr(schedule,"end_time") :
 		if event.from_time == schedule.start_time and event.to_time == schedule.end_time :
 			is_need_remove = True
-		return is_need_remove
+	return is_need_remove
 
 def remove_event_schedule_from_lessonplan(current_lessonplan,event) :
 	if  hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :
