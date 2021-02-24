@@ -197,13 +197,14 @@ def update_teacher_calendar_with_new_event(new_teacher_calendar,calendar_event,u
 
 def get_updated_existing_teacher_calendar(teacher_calendar,updated_class_calendar_events,updated_class_calendar,subject_code) :
 	for event in updated_class_calendar_events :
-		employee_key = get_employee_key(event.params)
-		if employee_key != teacher_calendar.subscriber_key :
-			event_code = event.event_code
-			subject_key = get_subject_key(event.params)
-			if subject_key == subject_code :
-				teacher_calendar_event = get_event(teacher_calendar,event.event_code)
-				teacher_calendar.events.remove(teacher_calendar_event)			
+		if event.event_type == "CLASS_SESSION" :
+			employee_key = get_employee_key(event.params)
+			if employee_key != teacher_calendar.subscriber_key :
+				event_code = event.event_code
+				subject_key = get_subject_key(event.params)
+				if subject_key == subject_code :
+					teacher_calendar_event = get_event(teacher_calendar,event.event_code)
+					teacher_calendar.events.remove(teacher_calendar_event)			
 	return teacher_calendar
 
 def get_event(calendar,event_code) :
