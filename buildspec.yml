@@ -1,0 +1,39 @@
+version: 0.2
+
+env:
+  variables:
+    QUEUE_EXAM_REPORTS: "exam-reports"
+
+phases:
+  install:
+    commands:
+      - echo Entered the install phase...
+
+    finally:
+      - echo This always runs even if the update or install command fails
+  pre_build:
+    commands:
+      - echo Entered the pre_build phase...
+    finally:
+      - echo This always runs even if the login command fails
+  build:
+    commands:
+      - echo Entered the build phase...
+      - echo Build started on `date`
+      - zip -vr academics academics -i '*.py'
+      - zip -u academics.zip lambda_function.py
+      - cd packages
+      - zip -r9 ../academics.zip .
+      - cd ..
+    finally:
+      - echo This always runs even if the install command fails
+  post_build:
+    commands:
+      - echo Entered the post_build phase...
+      - echo Deploying academic integrator in lambda
+      - echo Build completed on `date`
+
+artifacts:
+  files:
+    - academics.zip
+  discard-paths: yes
