@@ -232,7 +232,7 @@ def get_updated_current_class_calendars_from_exam_and_schedule(exams_list) :
 		if hasattr(exam,'previous_schedule') :
 			calendar_date = exam.previous_schedule.date_time
 			current_class_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date, subscriber_key)
-			if 	(current_class_calendar,current_class_calendars_list) == False :
+			if check_calendar_already_exist(current_class_calendar,current_class_calendars_list) == False :
 				current_class_calendars_list.append(current_class_calendar)
 	return current_class_calendars_list
 
