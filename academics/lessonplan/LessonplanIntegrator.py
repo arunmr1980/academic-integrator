@@ -3,7 +3,7 @@ from academics.TimetableIntegrator import *
 import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.lessonplan.LessonplanDBService as lessonplan_service
 import academics.TimetableIntegrator as timetable_integrator
-
+import academics.exam.ExamIntegrator as exam_integrator
 import academics.school.SchoolDBService as school_service
 import academics.lessonplan.LessonPlan as lnpr
 import academics.academic.AcademicDBService as academic_service
@@ -729,7 +729,7 @@ def remove_shedules(schedules,current_lessonplan) :
 		if hasattr(current_lessonplan,'sessions') and len(current_lessonplan.sessions) > 0 :
 			for session in current_lessonplan.sessions :
 				if hasattr(session,'schedule') and session.schedule is not None :
-					if is_need_remove_schedule(event,session.schedule) == True :
+					if exam_integrator.is_need_remove_schedule(event,session.schedule) == True :
 						del session.schedule					
 	return current_lessonplan
 
