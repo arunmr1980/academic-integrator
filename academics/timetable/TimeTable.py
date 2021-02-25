@@ -265,9 +265,9 @@ class TimeTable:
                 self.order_index = None
                 self.class_info_key = None
                 self.division_code = None
+                self.employees = []
             else:
                 self.period_code = item['period_code']
-                self.subject_key = item['subject_key']
                 try :
                     self.order_index = item['order_index']
                 except Exception:
@@ -276,6 +276,10 @@ class TimeTable:
                     self.employee_key = item['employee_key']
                 except Exception:
                     logger.debug('KeyError in Period - employee_key not found')
+                try:
+                    self.subject_key = item['subject_key']
+                except Exception:
+                    logger.debug('KeyError in Period - subject_key not found')
 
                 try:
                     self.class_info_key = item['class_info_key']
@@ -286,6 +290,23 @@ class TimeTable:
                     self.division_code = item['division_code']
                 except Exception:
                     logger.debug('KeyError in Period - division_code not found')
+                try:
+                    employee_list = item['employees']
+                    self.employees = []
+                    for employee in employee_list:
+                        self.employees.append(TimeTable.Employee(employee))
+                except KeyError:
+                    logger.debug('[WARN] - KeyError in Period - Employee not found')
+
+    class Employee:
+        def __init__(self, item):
+            if item is None:
+                self.employee_key = None
+                self.subject_key = None
+            else:
+                self.employee_key = item['employee_key']
+                self.subject_key = item['subject_key']
+
 
     class GenerationLog:
 

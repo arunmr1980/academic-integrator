@@ -55,10 +55,6 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		current_class_calendars_list = self.get_affected_class_calendars_list(current_class_calendars,exams_list)
 		updated_class_calendars_list = self.get_updated_class_calendars_list_on_cancel_exam(current_class_calendars_list,exam_series.code,timetables,academic_configuration,events_to_be_added)
 		school_key = academic_configuration.school_key
-		print("EVENTS TO BE ADDED ON LESSONPLANS ------------------------->>>")
-		for events in events_to_be_added :
-			for event in events :
-				pp.pprint(vars(event))
 		updated_teacher_calendars_list = self.integrate_teacher_calendars_on_update_exam_and_cancel_exam(current_teacher_calendars_list,current_class_calendars_list,school_key)
 		updated_lessonplans_list = exam_integrator.integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_list,events_to_be_added)
 
@@ -73,7 +69,7 @@ class CancelExamIntegratorTest(unittest.TestCase):
 		for teacher_calendar in updated_teacher_calendars_list :
 			cal = calendar.Calendar(None)
 			calendar_dict = cal.make_calendar_dict(teacher_calendar)
-			# pp.pprint(calendar_dict)
+			pp.pprint(calendar_dict)
 			teacher_calendar_key = teacher_calendar.calendar_date + teacher_calendar.subscriber_key
 			expected_teacher_calendar = expected_teacher_calendar_dict[teacher_calendar_key]
 

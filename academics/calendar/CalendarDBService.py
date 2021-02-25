@@ -36,8 +36,10 @@ def get_calendar(calendar_key) :
         'calendar_key':calendar_key
       }
     )
-    if response['Item'] is not None:
-        return cal.Calendar(response['Item'])
+    if response.__contains__('Item') :
+        if response['Item'] is not None:
+            return cal.Calendar(response['Item'])
+
 
 
 def get_all_calendars_by_school_key_and_type(institution_key, subscriber_type):

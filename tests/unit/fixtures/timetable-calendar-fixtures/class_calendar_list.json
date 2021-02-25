@@ -38,7 +38,7 @@
                [   
                   {"key": "period_code", "value": "TUE-3"},
                   {"key": "subject_key", "value": "bio1"},
-                  {   "key": "teacher_emp_key","value": "employee-3" } 
+                  {   "key": "teacher_emp_key","value": "emp-3" } 
                ],
                 "to_time": "2020-08-04T12:10:00"
          }
@@ -57,7 +57,7 @@
               "params": [   {"key": "period_code", "value": "MON-2"},
                             {"key": "subject_key", "value": "bio2"},
                             {   "key": "teacher_emp_key",
-                                "value": "employee-1"}],
+                                "value": "emp-1"}],
               "to_time": "2020-08-10T11:20:00"},
               {   "event_code": "event-4",
                   "event_type": "CLASS_SESSION",
@@ -65,7 +65,7 @@
                   "params": [   {"key": "period_code", "value": "MON-3"},
                                 {"key": "subject_key", "value": "bio3"},
                                 {   "key": "teacher_emp_key",
-                                    "value": "employee-1"}],
+                                    "value": "emp-1"}],
                   "to_time": "2020-08-10T12:10:00"}
       ]
    }

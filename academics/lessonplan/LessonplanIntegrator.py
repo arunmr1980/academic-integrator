@@ -36,7 +36,7 @@ def save_lessonplans(updated_lessonplans_list) :
 		lp = lnpr.LessonPlan(None)
 		updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 		response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated lessonplan uploaded --------- '+str(updated_lessonplan_dict['lesson_plan_key']))
+		# gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated lessonplan uploaded --------- '+str(updated_lessonplan_dict['lesson_plan_key']))
 		
 
 def get_event_code_list(events,calendar_key,updated_calendar) :
@@ -195,17 +195,6 @@ def get_current_lesson_plan_with_subject_key(current_lessonplans,subject_key) :
 			return current_lessonplan
 
 
-def Update_lessonplan(current_lessonplan,updated_class_calendar) :
-	if  hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :
-			for main_topic in current_lessonplan.topics :
-				for topic in main_topic.topics :
-					for session in topic.sessions :
-						if hasattr(session,'schedule') :
-							if(need_remove_schedules(current_lessonplan,session.schedule,updated_class_calendar)) == True :
-								gclogger.info("----- A schedule removed ---" + session.schedule.start_time + '---' + session.schedule.end_time +'------')
-								del session.schedule
-	current_lessonplan = adjust_lessonplan_after_remove_schedule(current_lessonplan)
-	return current_lessonplan
 
 def adjust_lessonplan_after_remove_schedule(current_lessonplan) :
 	root_sessions = []
@@ -275,7 +264,7 @@ def Add_schedule_to_lessonplan(current_lessonplan,schedule,calendar,event) :
 						if not hasattr(session , 'schedule') :
 							session.schedule = schedule
 							schedule_added = True
-							gclogger.info(' ------------- schedule added for lessonplan ' + str(current_lessonplan.lesson_plan_key) + ' -------------')
+							# gclogger.info(' ------------- schedule added for lessonplan ' + str(current_lessonplan.lesson_plan_key) + ' -------------')
 	else :
 		if schedule_added == False :
 			add_sessions_on_root(current_lessonplan,event,calendar,schedule_added)
@@ -312,7 +301,7 @@ def add_schedule_to_lessonplan(current_lessonplan,schedule) :
 						if not hasattr(session , 'schedule') :
 							session.schedule = schedule
 							schedule_added = True
-							gclogger.info(' ------------- schedule added for lessonplan ' + str(current_lessonplan.lesson_plan_key) + ' -------------')
+							# gclogger.info(' ------------- schedule added for lessonplan ' + str(current_lessonplan.lesson_plan_key) + ' -------------')
 	return current_lessonplan
 
 
@@ -328,9 +317,60 @@ def get_current_class_calendars_event_list(current_class_cals) :
 					current_class_calendars_event_list.append(event)
 	return current_class_calendars_event_list
 
+def integrate_cancel_class_session_lessonplan(events,calendar_key) :
+	updated_lessonplan_list = []
+	calendar = calendar_service.get_calendar(calendar_key)
+	school_key = calendar.institution_key
+	academic_configuration = academic_service.get_academic_year(school_key, calendar.calendar_date)
+	gclogger.info("EVENT START TIME AND END TIME ----------------->" + str(events[0].from_time) + str(events[0].to_time))
+	subscriber_key = calendar.subscriber_key
+	gclogger.info("subscriber_key------------------->>>>" + str(subscriber_key))
+	subject_key = get_subject_key(events[0].params)
+	class_key = subscriber_key[:-2]
+	division = subscriber_key[-1:]
+	gclogger.info("school key--------------->" + str(school_key))
+	gclogger.info("class keyyyy------>" + str(class_key))
+	gclogger.info("Division--------->" + str(division))
+	current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+	for lessonplan in current_lesson_plan_list :
+		if lessonplan.class_key == class_key and lessonplan.division == division and lessonplan.subject_code == subject_key :
+			updated_lessonplan = cancel_class_session_to_lessonplan_integrator(lessonplan,events[0],calendar)
+			updated_lessonplan_list.append(updated_lessonplan)
+	# return updated_lessonplan_list	
+	upload_updated_lessonplans(updated_lessonplan_list)
 
 
+def cancel_class_session_to_lessonplan_integrator(current_lessonplan,event,calendar) :
+	root_sessions = []
+	gclogger.info("LESSON PLAN KEY------------------->  " + str(current_lessonplan.lesson_plan_key))
 
+	schedules = get_schedules(current_lessonplan,event,calendar)
+	current_lessonplan = remove_shedules(schedules,current_lessonplan)
+	schedule_list = get_all_remaining_schedules(current_lessonplan)
+
+	current_lessonplan = get_lesson_plan_after_remove_all_shedules(current_lessonplan)
+		#add root schedule to schedule list and delete all root sessions
+	current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,schedule_list,root_sessions)
+	current_lessonplan = get_updated_lesson_plan(schedule_list,current_lessonplan)
+	current_lessonplan = create_remaining_sessions_on_root_when_schedule_removed(schedule_list,current_lessonplan,root_sessions)
+	return current_lessonplan
+
+def get_schedules(current_lessonplan,event,calendar) :
+	schedule_list = []
+	for main_topic in current_lessonplan.topics :
+		for topic in main_topic.topics :
+			for session in topic.sessions :
+				if hasattr (session,'schedule') :
+					schedule = find_schedule(session.schedule,event)
+					if schedule is not None :
+						schedule_list.append(schedule)
+	return schedule_list
+
+def find_schedule(schedule,event) :
+	if schedule.start_time == event.from_time and schedule.end_time == event.to_time :
+		return schedule
+
+	
 
 def integrate_holiday_lessonplan(event_code,calendar_key) :
 	updated_lessonplan_list = []
@@ -359,7 +399,7 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 					lp = lnpr.LessonPlan(None)
 					updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 					response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-					gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
+					# gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
 					updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
 					updated_lessonplan_list.append(updated_lessonplan)
 
@@ -381,7 +421,7 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 								lp = lnpr.LessonPlan(None)
 								updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 								response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-								gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
+								# gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
 								updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
 								updated_lessonplan_list.append(updated_lessonplan)
 	# return updated_lessonplan_list
@@ -392,7 +432,7 @@ def upload_updated_lessonplans(updated_lessonplan_list) :
 		lp = lnpr.LessonPlan(None)
 		lessonplan_dict = lp.make_lessonplan_dict(lesson_plan)
 		response = lessonplan_service.create_lessonplan(lessonplan_dict)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated lesson plan uploaded '+str(lessonplan_dict['lesson_plan_key']))
+		# gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated lesson plan uploaded '+str(lessonplan_dict['lesson_plan_key']))
 
 
 def integrate_cancelled_holiday_lessonplan(calendar_key) :
@@ -414,7 +454,7 @@ def integrate_cancelled_holiday_lessonplan(calendar_key) :
 				lp = lnpr.LessonPlan(None)
 				updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 				response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-				gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
+				# gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
 				updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
 				updated_lessonplan_list.append(updated_lessonplan)
 	else :
@@ -437,7 +477,7 @@ def integrate_cancelled_holiday_lessonplan(calendar_key) :
 								lp = lnpr.LessonPlan(None)
 								updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 								response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-								gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
+								# gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
 								updated_lessonplan = lessonplan_service.get_lessonplan(updated_lessonplan_dict['lesson_plan_key'])
 								updated_lessonplan_list.append(updated_lessonplan)
 	# return updated_lessonplan_list
@@ -528,7 +568,7 @@ def delete_calendar_schedules_of_calendar_date(calendar_date,current_lessonplan)
 			for session in topic.sessions :
 				if hasattr(session , 'schedule') :
 					if is_schedule_on_calendar_date(session.schedule,calendar_date) == True :
-						print("DELETED SHEDULE ----",session.schedule.start_time,'--',session.schedule.end_time)
+						# print("DELETED SHEDULE ----",session.schedule.start_time,'--',session.schedule.end_time)
 						del session.schedule
 	return current_lessonplan
 
@@ -565,7 +605,7 @@ def add_shedule_after_calendar_date(schedule_list,current_lessonplan) :
 				if not hasattr(session , 'schedule') :
 					if len(schedule_list) > 0 :
 						session.schedule = schedule_list[0]
-						gclogger.info('A schedule is added ' + str(schedule_list[0].start_time) + ' --- ' + str(schedule_list[0].start_time) )
+						# gclogger.info('A schedule is added ' + str(schedule_list[0].start_time) + ' --- ' + str(schedule_list[0].start_time) )
 						schedule_list.remove(schedule_list[0])
 
 
@@ -607,7 +647,7 @@ def remove_schedule_after_calendar_date(current_lessonplan,calendar_date,after_c
 					schedule_date = get_schedule_date(session.schedule)
 					if is_calendar_date_after_schdule_date(schedule_date,calendar_date) :
 						after_calendar_date_schedules_list.append(session.schedule)
-						gclogger.info("The schedule " + str(session.schedule.start_time) +' --- '+str(session.schedule.end_time) +' -------')
+						# gclogger.info("The schedule " + str(session.schedule.start_time) +' --- '+str(session.schedule.end_time) +' -------')
 						del session.schedule
 
 	#check is there sessions and schedule if there append to  after_calendar_date_schedules_list and delete root session
@@ -679,14 +719,18 @@ def remove_shedules(schedules,current_lessonplan) :
 	for schedule in schedules :
 		schedule_start_time = schedule.start_time
 		schedule_end_time = schedule.end_time
-		# print(schedule_start_time,"SCHEDULE START <<<<<<<<<<<<<<<-----------")
-		# print(schedule_end_time,"SCHEDULE END <<<<<<<<<<<<<<<-----------")
-		for main_topic in current_lessonplan.topics :
-			for topic in main_topic.topics :
-				for session in topic.sessions :
-					if hasattr (session,'schedule') :
-						if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
-							del session.schedule
+		if  hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :
+			for main_topic in current_lessonplan.topics :
+				for topic in main_topic.topics :
+					for session in topic.sessions :
+						if hasattr (session,'schedule') :
+							if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
+								del session.schedule
+		if hasattr(current_lessonplan,'sessions') and len(current_lessonplan.sessions) > 0 :
+			for session in current_lessonplan.sessions :
+				if hasattr(session,'schedule') and session.schedule is not None :
+					if is_need_remove_schedule(event,session.schedule) == True :
+						del session.schedule					
 	return current_lessonplan
 
 
@@ -715,7 +759,7 @@ def get_updated_lesson_plan(schedule_list,current_lessonplan) :
 					if len(schedule_list) > 0 :
 						session.schedule = schedule_list[0]
 						if session.schedule is not None :
-							gclogger.info('A schedule is added ' + str(schedule_list[0].start_time) + ' --- ' + str(schedule_list[0].start_time) )
+							# gclogger.info('A schedule is added ' + str(schedule_list[0].start_time) + ' --- ' + str(schedule_list[0].start_time) )
 							schedule_list.remove(schedule_list[0])
 	return current_lessonplan
 
@@ -727,8 +771,13 @@ def add_shedule_after_calendar_date(schedule_list,current_lessonplan) :
 				if not hasattr(session , 'schedule') :
 					if len(schedule_list) > 0 :
 						session.schedule = schedule_list[0]
-						gclogger.info('A schedule is added ' + str(schedule_list[0].start_time) + ' --- ' + str(schedule_list[0].start_time) )
+						# gclogger.info('A schedule is added ' + str(schedule_list[0].start_time) + ' --- ' + str(schedule_list[0].start_time) )
 						schedule_list.remove(schedule_list[0])
 
 
 	return current_lessonplan
+
+def get_lessonplan_by_subject_key(current_lessonplans_list,subject_key) :
+	for current_lessonplan in current_lessonplans_list :
+		if current_lessonplan.subject_code == subject_key :
+			return current_lessonplan

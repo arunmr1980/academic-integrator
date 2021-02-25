@@ -1,0 +1,81 @@
+[
+   {  "institution_key" :"test-school-key-b",
+      "calendar_key":"test-key-3",
+      "calendar_date":"2020-08-05",
+      "subscriber_key":"test-school-key-b",
+      "subscriber_type":"SCHOOL",
+      "events":[
+         {
+            "event_code":"event-1",
+            "event_type":"HOLIDAY",
+            "from_time":"2020-08-05T10:00:00",
+            "to_time":"2020-08-05T12:10:00",
+            "params": [
+               {
+                  "key" :"cancel_class_flag",
+                  "value" : "true"
+               }
+            ] 
+         }       
+      ]
+   },
+   {
+      "institution_key" :"test-school-key-b",
+      "calendar_key":"test-key-4",
+      "calendar_date":"2020-08-04",
+      "subscriber_key":"test-school-key-b",
+      "subscriber_type":"SCHOOL",
+      "events":[
+         {
+            "event_code":"event-1",
+            "event_type":"HOLIDAY",
+            "from_time":"2020-08-04T10:00:00",  
+            "to_time":"2020-08-04T10:40:00",
+            "params": [
+               {
+                  "key" :"cancel_class_flag",
+                  "value" : "true"
+               }
+            ] 
+         }      
+      ]
+   },
+   {
+      "institution_key" :"test-school-key-b",
+      "calendar_key":"test-key-5",
+      "calendar_date":"2020-08-10",
+      "subscriber_key":"test-school-key-b",
+      "subscriber_type":"SCHOOL",
+      "events":[
+         {
+            "event_code":"event-1",
+            "event_type":"PTA_MEETING",
+            "from_time":"2020-08-10T10:00:00",
+            "to_time":"2020-08-10T10:40:00",
+            "params": [
+               {
+                  "key" :"cancel_class_flag",
+                  "value" : "true"
+               }
+               ]      
+         },
+         {
+            "event_code":"event-1",
+            "event_type":"SPORTS_DAY",
+            "from_time":"2020-08-10T10:40:00",
+            "to_time":"2020-08-10T11:20:00",
+            "params": [
+               {
+                  "key" :"cancel_class_flag",
+                  "value" : "false"
+               }
+            ]  
+         }
+      ]
+   }
+]
+
+
+
+
+

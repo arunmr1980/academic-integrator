@@ -2,7 +2,7 @@ import unittest
 import json
 import academics.calendar.Calendar as calendar
 import academics.calendar.CalendarDBService as calendar_service
-
+import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.academic.AcademicDBService as academic_service
 import academics.timetable.TimeTableDBService as timetable_service
 from academics.timetable.TimeTable import TimeTable
@@ -20,6 +20,9 @@ class TimetableIntegratorTest(unittest.TestCase):
 		gclogger.info(" ")
 		gclogger.info(" Setting up timetable integrator test......")
 		timetable = self.get_timetable_from_json(self)
+		classinfo = self.get_class_info_from_json(self)
+		response = class_info_service.add_or_update_class_info(classinfo)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for uploaded --------- ' +str(classinfo['class_info_key']) )
 		response = timetable_service.create_timetable(timetable)
 		academic_configuration = self.get_academic_config_from_json(self)
 		response = academic_service.create_academic_config(academic_configuration)
@@ -126,6 +129,7 @@ class TimetableIntegratorTest(unittest.TestCase):
 		timetable = timetable_service.get_time_table('test-time-table-1')
 		school_key = timetable.school_key
 		academic_configuration = academic_service.get_academig(school_key,'2020-2021')
+		classinfo = class_info_service.get_classinfo('test-class-key-1')
 		class_calender_list = calendar_service.get_all_calendars_by_key_and_type('test-class-key-1-A','CLASS-DIV')
 		for calendar in class_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
@@ -147,7 +151,8 @@ class TimetableIntegratorTest(unittest.TestCase):
 		gclogger.info("--------------- Test Timetable deleted  " + timetable.time_table_key+"  -----------------")
 		academic_service.delete_academic_config(academic_configuration.academic_config_key)
 		gclogger.info("---------------Test Academic Configuration deleted  " + academic_configuration.academic_config_key + "-----------------")
-
+		response = class_info_service.delete_class_info(classinfo.class_info_key)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for deleted --------- ' +str(classinfo.class_info_key) )
 
 
 	def get_timetable_from_json(self) :
@@ -178,6 +183,10 @@ class TimetableIntegratorTest(unittest.TestCase):
 			class_calendar_dict_list = json.load(calendar_list)
 		return class_calendar_dict_list
 
+	def get_class_info_from_json(self) :
+		with open('tests/unit/fixtures/timetable-calendar-fixtures/class_info.json', 'r') as calendar_list:
+			timetable = json.load(calendar_list)
+		return timetable
 
 
 

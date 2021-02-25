@@ -11,7 +11,11 @@ import academics.academic.AcademicDBService as academic_service
 import academics.calendar.CalendarDBService as calendar_service
 import academics.timetable.KeyGeneration as key
 import academics.classinfo.ClassInfoDBService as class_info_service
+import academics.exam.ExamDBService as exam_service
 import academics.calendar.CalendarIntegrator as calendar_integrator
+import academics.classinfo.ClassIntegrator as class_integrator
+import academics.leave.LeaveIntegrator as leave_integrator
+import academics.exam.ExamIntegrator as exam_integrator
 import academics.calendar.Calendar as calendar
 import copy
 
@@ -288,7 +292,11 @@ def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,pe
 	if hasattr(existing_teacher_timetable.timetable,'day_tables') :
 		for day in existing_teacher_timetable.timetable.day_tables :
 			for period in day.periods :
-				order_index = int(period.order_index)
+				order_index = None
+				if hasattr(period,"order_index") :
+					order_index = int(period.order_index)
+				else :
+					order_index = int(period.period_code[-1])
 				if period.subject_key == subject_code :
 					period_list.append(period)
 					period_copy = copy.deepcopy(period)
@@ -345,14 +353,147 @@ def generate_and_save_calenders(time_table_key,academic_year):
 	generated_class_calendar_dict = integrate_class_timetable(timetable,academic_configuration, class_calendars_list, school_calendars_list)
 	gclogger.info("Number of class calendars generated " + str(len(generated_class_calendar_dict)))
 	class_calendar_list = generated_class_calendar_dict.values()
-
 	generated_teacher_calendar_dict = integrate_teacher_timetable(class_calendar_list)
 	gclogger.info("Number of teacher calendars generated " + str(len(generated_teacher_calendar_dict)))
-
 	teacher_calendar_list = generated_teacher_calendar_dict.values()
+
+	class_key = timetable.class_key
+	division = timetable.division
+	class_info = class_info_service.get_classinfo(class_key)
+	class_div = class_integrator.get_division_from_class_info(class_info,division)
+	subject_teachers = class_integrator.get_subject_teachers_from_class_info(class_div)
+	teacher_leaves = leave_integrator.get_teacher_leaves_in_academic_year(academic_configuration,subject_teachers)
+	gclogger.info(str(len(teacher_leaves)) + " <<--------------- NO OF TEACHER LEAVES ")
+	if len(teacher_leaves) > 0 :
+		for teacher_leave in teacher_leaves :
+			update_calendars_with_pre_leaves(class_calendar_list,teacher_calendar_list,teacher_leave)
+
+	exams_list = exam_service.get_exams_by_class_key_and_division(class_key,division)
+	gclogger.info(str(len(exams_list)) + " <<--------------- NO OF EXAMS ")
+	if len(exams_list) > 0 :
+		series_code_list = get_series_code_list(exams_list)
+		for series_code in series_code_list :
+			update_calendars_with_pre_fixed_exams(series_code,class_key,division,class_calendar_list,teacher_calendar_list)
 
 
 	save_or_update_calendars(class_calendar_list, teacher_calendar_list)
+
+def get_series_code_list(exams_list) :
+	series_code_list = []
+	for exam in exams_list :
+		series_code = exam.series_code
+		if is_series_exist_already(series_code,series_code_list) == False :
+			series_code_list.append(series_code)
+	return series_code_list
+
+def is_series_exist_already(series_code,series_code_list) :
+	is_exist = False
+	for existing_series_code in series_code_list :
+		if existing_series_code == series_code :
+			is_exist = True
+	return is_exist
+
+def update_calendars_with_pre_fixed_exams(series_code,class_key,division,class_calendar_list,teacher_calendar_list) :
+
+	subscriber_key = class_key + '-' + division
+	removed_events = []
+	exams_list = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
+	school_key = exams_list[0].institution_key
+	class_calendar_list = integrate_class_calendars_on_add_exams(class_calendar_list,exams_list,removed_events)
+	integrate_teacher_cals_on_add_exam(class_calendar_list,teacher_calendar_list,exams_list,removed_events)
+						
+
+def integrate_teacher_cals_on_add_exam(class_calendar_list,teacher_calendar_list,exams_list,removed_events) :
+	updated_teacher_calendars_list = get_updated_teacher_calendars_list(removed_events,teacher_calendar_list)
+	
+
+def get_updated_teacher_calendars_list(removed_events,teacher_calendar_list) :
+	for teacher_calendar in teacher_calendar_list :
+		if teacher_calendar is not None :
+			teacher_calendar_events = copy.deepcopy(teacher_calendar.events)
+			for event in teacher_calendar.events :
+				if exam_integrator.is_event_in_remove_events(removed_events,event) == True :
+					exam_integrator.remove_event_from_teacher_calendar_events(event,teacher_calendar_events)
+			teacher_calendar.events = teacher_calendar_events
+			
+
+def integrate_class_calendars_on_add_exams(class_calendar_list,exams_list,removed_events) :
+	exam_events = exam_integrator.make_exam_events(exams_list)
+	# print("----------- EXAM EVENTS -----")
+	# for exam_event in exam_events :
+	# 	pp.pprint(vars(exam_event))
+	get_updated_current_class_calendars(class_calendar_list,exam_events,removed_events)
+	return class_calendar_list
+
+def get_updated_current_class_calendars(class_calendar_list,exam_events,removed_events) :
+	for current_class_calendar in class_calendar_list :
+		updated_class_calendar = get_updated_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events)
+		
+
+def get_updated_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events) :
+	print('CURRENT CLASS CALENDAR ----------->>>>',current_class_calendar.calendar_key)
+	exam_integrator.get_remove_conflicted_class_events(exam_events,current_class_calendar,removed_events)	
+	
+
+
+def update_calendars_with_pre_leaves(class_calendar_list,teacher_calendar_list,leave) :
+	removed_events = []
+	updated_class_calendars_list = []
+	updated_teacher_calendars_list = []
+	updated_lessonplans_list = []
+	employee_key = leave['subscriber_key']
+	from_time = None
+	to_time = None
+	if leave.__contains__('from_time') :	
+		from_time = leave['from_time']
+	if leave.__contains__('to_time') :		
+		to_time = leave['to_time']
+	from_date = leave['from_date']
+	to_date = leave['to_date']
+	teacher_cals = get_teacher_calendars_on_dates(from_date,to_date,employee_key,teacher_calendar_list)
+	for teacher_calendar in teacher_cals :
+		if teacher_calendar is not None :
+			for event in teacher_calendar.events :
+				calendar_key = event.ref_calendar_key
+				if calendar_key is not None :
+					event_code = event.event_code
+					current_class_calendar = get_class_calendar_from_list(calendar_key,class_calendar_list) 
+					if current_class_calendar is not None :
+						class_event = leave_integrator.get_class_calendar_event(current_class_calendar,event_code,removed_events)
+						if class_event is not None :
+							if from_time is not None and to_time is not None :
+								if exam_integrator.check_events_conflict(class_event.from_time,class_event.to_time,from_time,to_time) == True :
+									if leave_integrator.is_this_event_already_exist(current_class_calendar,class_event,removed_events) == False :
+										removed_events.append(class_event)
+							else :
+								if leave_integrator.is_this_event_already_exist(current_class_calendar,class_event,removed_events) == False :
+										removed_events.append(class_event)
+	update_teacher_cals_and_class_cals(removed_events,teacher_calendar_list,class_calendar_list)
+
+
+def update_teacher_cals_and_class_cals(removed_events,teacher_calendar_list,class_calendar_list) :
+	for current_class_calendar in class_calendar_list :
+		updated_class_calendar = leave_integrator.get_updated_class_calendar(current_class_calendar,removed_events)
+
+	for current_teacher_calendar in teacher_calendar_list :
+		updated_teacher_calendar = leave_integrator.get_updated_teacher_calendar(current_teacher_calendar,removed_events)
+
+	
+		
+def get_teacher_calendars_on_dates(from_date,to_date,employee_key,teacher_calendar_list) :
+	teacher_cals = []
+	dates_list = get_dates(from_date,to_date)
+	for cal_date in dates_list :
+		teacher_calendar = get_teacher_calendar_from_list(cal_date,employee_key,teacher_calendar_list)
+		if teacher_calendar is not None :
+			teacher_cals.append(teacher_calendar)
+	return teacher_cals
+
+def get_teacher_calendar_from_list(cal_date,employee_key,teacher_calendar_list) :
+	for teacher_calendar in teacher_calendar_list :
+		if teacher_calendar.calendar_date == cal_date and teacher_calendar.subscriber_key == employee_key :
+			return teacher_calendar
+
 
 
 def save_or_update_calendars(class_calendar_list, teacher_calendar_list):
@@ -379,7 +520,7 @@ def integrate_class_timetable(timetable, academic_configuration, class_calendars
 	generated_class_calendar = None
 
 	gclogger.info("Processing timetable " + timetable.time_table_key + ' between dates ' + start_date + ' - ' + end_date)
-	if is_exist_employee_key_and_subject_code(timetable) :
+	if is_exist_employee_key_and_subject_code(timetable) == True :
 		dates_list = get_dates(start_date,end_date)
 		for date in dates_list :
 			gclogger.debug(' date - ' + date)
@@ -588,6 +729,26 @@ def get_event(time_table_period,timetable_configuration_periods,date):
 			gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
 			return event
 
+def get_event_list(time_table_period,timetable_configuration_periods,date):
+	events_list = []
+	current_configuration_period = None
+	if timetable_configuration_periods is not None :
+		for timetable_configuration_period in timetable_configuration_periods :
+			if timetable_configuration_period.period_code == time_table_period.period_code :
+				current_configuration_period = timetable_configuration_period
+
+		if current_configuration_period is not None :
+			for employee in time_table_period.employees :
+				event = calendar.Event(None)
+				event.event_code = key.generate_key(3)
+				event.event_type = 'CLASS_SESSION'
+				event.params = get_params(employee.subject_key , employee.employee_key , time_table_period.period_code)
+
+				event.from_time = get_standard_time(current_configuration_period.start_time,date)
+				event.to_time = get_standard_time(current_configuration_period.end_time,date)
+				gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
+				events_list.append(event)
+		return events_list
 
 def get_standard_time(time,date) :
 	splited_date = date.split('-')
@@ -631,7 +792,7 @@ def get_holiday_events(school_calendar_event) :
 
 
 
-def generate_class_calendar(day_code,time_table,date,timetable_configuration,partial_holiday_period_list,existing_class_calendar):
+def generate_class_calendar(day_code,time_table,date,timetable_configuration,partial_holiday_period_list,existing_class_calendar) :
 	timetable_configuration_periods = None
 	class_calendar = None
 	if hasattr(timetable_configuration , 'time_table_schedules'):
@@ -652,10 +813,13 @@ def generate_class_calendar(day_code,time_table,date,timetable_configuration,par
 				events_list = []
 				for time_table_period in periods :
 					if not period_exist_or_not(time_table_period,partial_holiday_period_list):
-
 						if timetable_configuration_periods is not None:
-							event = get_event(time_table_period,timetable_configuration_periods,date)
-							events_list.append(event)
+							try :
+								event = get_event(time_table_period,timetable_configuration_periods,date)
+								events_list.append(event)
+							except AttributeError :
+								events = get_event_list(time_table_period,timetable_configuration_periods,date)
+								events_list.extend(events)
 
 				if (day.day_code == day_code):
 					if existing_class_calendar is not None :
@@ -666,7 +830,7 @@ def generate_class_calendar(day_code,time_table,date,timetable_configuration,par
 						return class_calendar
 					else :
 						if len(events_list) > 0 :
-							class_calendar=calendar.Calendar(None)
+							class_calendar = calendar.Calendar(None)
 							class_calendar.institution_key = time_table.school_key
 							class_calendar.calendar_date = date
 							class_calendar.calendar_key = key.generate_key(16)
@@ -809,16 +973,21 @@ def findDay(date):
 
 
 def is_exist_employee_key_and_subject_code(time_table) :
+	is_exist = True
 	if hasattr(time_table, 'timetable') and time_table.timetable is not None :
 		if hasattr(time_table.timetable,'day_tables') and len(time_table.timetable.day_tables) > 0 :
 			for day in time_table.timetable.day_tables :
 				if hasattr(day,'periods') and len(day.periods) > 0 :
 					for period in day.periods :
 						if hasattr(period ,'subject_key') and hasattr(period,'employee_key'):
-							return True
-						else:
+							pass
+						elif len(period.employees) > 0 :
+							for employee in period.employees :
+								if hasattr(period ,'subject_key') and hasattr(period,'employee_key') :
+									pass
+						else :
+							is_exist = False
 							gclogger.warn('Subject_key or employee key not existing')
-
 				else :
 					gclogger.warn('Periods not existing')
 
@@ -827,6 +996,7 @@ def is_exist_employee_key_and_subject_code(time_table) :
 
 	else:
 		gclogger.warn('Time table not existing')
+	return is_exist
 
 
 def convert24Hr(str1):

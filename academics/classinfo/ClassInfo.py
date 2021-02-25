@@ -6,6 +6,7 @@ class ClassInfo:
         if(item is not None):
             self.class_info_key = item["class_info_key"]
             self.school_key = item["school_key"]
+            self.academic_year = item["academic_year"]
             try:
                 self.class_code = item["class_code"]
             except KeyError as ke:
