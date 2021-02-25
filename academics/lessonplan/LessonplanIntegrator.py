@@ -728,9 +728,10 @@ def remove_shedules(schedules,current_lessonplan) :
 								del session.schedule
 		if hasattr(current_lessonplan,'sessions') and len(current_lessonplan.sessions) > 0 :
 			for session in current_lessonplan.sessions :
-				if hasattr(session,'schedule') and session.schedule is not None :
-					if exam_integrator.is_need_remove_schedule(event,session.schedule) == True :
-						del session.schedule					
+				if hasattr(session,'schedule') :
+					if hasattr(schedule,"start_time") and hasattr(schedule,"end_time") :
+						if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
+							del session.schedule				
 	return current_lessonplan
 
 
