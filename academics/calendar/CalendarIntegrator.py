@@ -627,7 +627,8 @@ def get_teacher_calendar(teacher_calendars_list,employee_key,calendar_date) :
 			teacher_calendar = calendar
 	if teacher_calendar is None :
 		teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,employee_key)
-		teacher_calendars_list.append(teacher_calendar)
+		if teacher_calendar is not None :
+			teacher_calendars_list.append(teacher_calendar)
 	return teacher_calendar
 
 
