@@ -322,15 +322,15 @@ def integrate_cancel_class_session_lessonplan(events,calendar_key) :
 	calendar = calendar_service.get_calendar(calendar_key)
 	school_key = calendar.institution_key
 	academic_configuration = academic_service.get_academic_year(school_key, calendar.calendar_date)
-	gclogger.info("EVENT START TIME AND END TIME ----------------->" + str(events[0].from_time) + str(events[0].to_time))
+	# gclogger.info("EVENT START TIME AND END TIME ----------------->" + str(events[0].from_time) + str(events[0].to_time))
 	subscriber_key = calendar.subscriber_key
-	gclogger.info("subscriber_key------------------->>>>" + str(subscriber_key))
+	# gclogger.info("subscriber_key------------------->>>>" + str(subscriber_key))
 	subject_key = get_subject_key(events[0].params)
 	class_key = subscriber_key[:-2]
 	division = subscriber_key[-1:]
-	gclogger.info("school key--------------->" + str(school_key))
-	gclogger.info("class keyyyy------>" + str(class_key))
-	gclogger.info("Division--------->" + str(division))
+	# gclogger.info("school key--------------->" + str(school_key))
+	# gclogger.info("class keyyyy------>" + str(class_key))
+	# gclogger.info("Division--------->" + str(division))
 	current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 	for lessonplan in current_lesson_plan_list :
 		if lessonplan.class_key == class_key and lessonplan.division == division and lessonplan.subject_code == subject_key :
@@ -342,7 +342,7 @@ def integrate_cancel_class_session_lessonplan(events,calendar_key) :
 
 def cancel_class_session_to_lessonplan_integrator(current_lessonplan,event,calendar) :
 	root_sessions = []
-	gclogger.info("LESSON PLAN KEY------------------->  " + str(current_lessonplan.lesson_plan_key))
+	# gclogger.info("LESSON PLAN KEY------------------->  " + str(current_lessonplan.lesson_plan_key))
 
 	schedules = get_schedules(current_lessonplan,event,calendar)
 	current_lessonplan = remove_shedules(schedules,current_lessonplan)
@@ -379,7 +379,7 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 	academic_configuration = academic_service.get_academic_year(school_key, calendar.calendar_date)
 	academic_year = academic_configuration.academic_year
 	event = get_event_from_calendar(calendar,event_code)
-	gclogger.info("EVENT START TIME AND END TIME ----------------->" + str(event.from_time) + str(event.to_time))
+	# gclogger.info("EVENT START TIME AND END TIME ----------------->" + str(event.from_time) + str(event.to_time))
 	day_code = timetable_integrator.findDay(calendar.calendar_date).upper()[0:3]
 	subscriber_key = calendar.subscriber_key
 	gclogger.info("subscriber_key------------------->>>>" + str(subscriber_key))
@@ -389,9 +389,9 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 		division = subscriber_key[-1:]
 		timetable = timetable_service.get_timetable_entry(class_key, division)
 		if timetable is not None :
-			gclogger.info("school key--------------->" + str(school_key))
-			gclogger.info("class keyyyy------>" + str(class_key))
-			gclogger.info("Division--------->" + str(division))
+			# gclogger.info("school key--------------->" + str(school_key))
+			# gclogger.info("class keyyyy------>" + str(class_key))
+			# gclogger.info("Division--------->" + str(division))
 			current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 			for current_lessonplan in current_lesson_plan_list :
 				if current_lessonplan.class_key == class_key and current_lessonplan.division == division :
@@ -413,8 +413,8 @@ def integrate_holiday_lessonplan(event_code,calendar_key) :
 					if division != 'NONE':
 						timetable = timetable_service.get_timetable_entry(class_key, division)
 						if timetable is not None :
-							gclogger.info("class keyyyy------> " + str(class_key))
-							gclogger.info("Division---------> " + str(division))
+							# gclogger.info("class keyyyy------> " + str(class_key))
+							# gclogger.info("Division---------> " + str(division))
 							current_lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
 							for current_lessonplan in current_lesson_plan_list :
 								updated_lessonplan = holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code)
@@ -494,14 +494,14 @@ def get_event_from_calendar(calendar,event_code) :
 
 def holiday_calendar_to_lessonplan_integrator(current_lessonplan,event,calendar,academic_configuration,timetable,day_code) :
 	root_sessions = []
-	gclogger.info("LESSON PLAN KEY------------------->  " + str(current_lessonplan.lesson_plan_key))
+	# gclogger.info("LESSON PLAN KEY------------------->  " + str(current_lessonplan.lesson_plan_key))
 	holiday_period_list = generate_holiday_period_list(event,calendar,academic_configuration,timetable,day_code)
-	for holiday_period in holiday_period_list :
-		gclogger.info("---------- Holiday Period----  " + str(holiday_period.period_code)+' -----------------')
+	# for holiday_period in holiday_period_list :
+	# 	gclogger.info("---------- Holiday Period----  " + str(holiday_period.period_code)+' -----------------')
 	schedules = find_schedules(current_lessonplan,holiday_period_list,calendar.calendar_date)
-	gclogger.info("---------- Schedule to remove is   -----------------")
-	for schedule in schedules :
-		gclogger.info("---------- " + str(holiday_period.period_code) + " ---------")
+	# gclogger.info("---------- Schedule to remove is   -----------------")
+	# for schedule in schedules :
+	# 	gclogger.info("---------- " + str(holiday_period.period_code) + " ---------")
 
 	current_lessonplan = remove_shedules(schedules,current_lessonplan)
 	schedule_list = get_all_remaining_schedules(current_lessonplan)
@@ -529,7 +529,7 @@ def cancelled_holiday_calendar_to_lessonplan_integrator(current_lessonplan,calen
 	after_calendar_date_schedules_list = []
 	root_sessions = []
 	events = get_class_session_events(calendar.events)
-	gclogger.info("LESSON PLAN KEY ------------------->  " + str(current_lessonplan.lesson_plan_key))
+	# gclogger.info("LESSON PLAN KEY ------------------->  " + str(current_lessonplan.lesson_plan_key))
 	current_lessonplan = remove_schedule_after_calendar_date(current_lessonplan,events[0].from_time,after_calendar_date_schedules_list)
 	# current_lessonplan = delete_calendar_schedules_of_calendar_date(calendar.calendar_date,current_lessonplan)
 	current_lessonplan = add_root_schedule_to_schedule_list(current_lessonplan,after_calendar_date_schedules_list,root_sessions)
@@ -596,20 +596,6 @@ def get_class_session_events(events) :
 		if event.event_type == 'CLASS_SESSION':
 			event_list.append(event)
 	return event_list
-
-def add_shedule_after_calendar_date(schedule_list,current_lessonplan) :
-	gclogger.info('Adding schedules after calendar date -------------')
-	for main_topic in current_lessonplan.topics :
-		for topic in main_topic.topics :
-			for session in topic.sessions :
-				if not hasattr(session , 'schedule') :
-					if len(schedule_list) > 0 :
-						session.schedule = schedule_list[0]
-						# gclogger.info('A schedule is added ' + str(schedule_list[0].start_time) + ' --- ' + str(schedule_list[0].start_time) )
-						schedule_list.remove(schedule_list[0])
-
-
-	return current_lessonplan
 
 
 def create_schedule(event,calendar) :
@@ -728,9 +714,10 @@ def remove_shedules(schedules,current_lessonplan) :
 								del session.schedule
 		if hasattr(current_lessonplan,'sessions') and len(current_lessonplan.sessions) > 0 :
 			for session in current_lessonplan.sessions :
-				if hasattr(session,'schedule') and session.schedule is not None :
-					if exam_integrator.is_need_remove_schedule(event,session.schedule) == True :
-						del session.schedule					
+				if hasattr(session,'schedule') :
+					if hasattr(schedule,"start_time") and hasattr(schedule,"end_time") :
+						if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
+							del session.schedule				
 	return current_lessonplan
 
 
