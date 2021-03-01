@@ -158,6 +158,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 					gclogger.info(" ----------- Getting new teacher timetable from List ----------- " + str(new_teacher_timetable.time_table_key) + '-----------')
 		if new_teacher_timetable is None :
 			timetable = self.get_timetable_from_current_class_timetable(current_class_timetable)
+			timetable = copy.deepcopy(timetable)
 			timetable = self.reset_periods(timetable,new_teacher_emp_key,subject_code)
 			new_teacher_timetable = generate_teacher_timetable(new_teacher_emp_key,timetable,current_class_timetable)
 			gclogger.info(" ------------ Generating new teacher timetable  ------------- "+ str(new_teacher_timetable.time_table_key) + '-----------')
@@ -176,15 +177,6 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 	def get_timetable_from_current_class_timetable(self,current_class_timetable) :
 		if hasattr(current_class_timetable,'timetable') :
 			return current_class_timetable.timetable
-
-	def generate_teacher_timetable(self,existing_teacher_emp_key,timetable,current_class_timetable) :
-		teacher_timetable = ttable.TimeTable(None)
-		teacher_timetable.academic_year = current_class_timetable.academic_year
-		teacher_timetable.employee_key = existing_teacher_emp_key
-		teacher_timetable.school_key = current_class_timetable.school_key
-		teacher_timetable.time_table_key = key.generate_key(16)
-		teacher_timetable.timetable = timetable
-		return teacher_timetable
 
 
 	def get_class_info(self,class_info_key,class_info_list) :

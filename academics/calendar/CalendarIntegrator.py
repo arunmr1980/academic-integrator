@@ -610,8 +610,8 @@ def update_class_calendars_and_teacher_calendars(class_calendar,event,teacher_ca
 			teacher_calendar = get_teacher_calendar(teacher_calendars_list,employee_key,calendar_date)
 			if teacher_calendar is None :
 				teacher_calendar = timetable_integrator.generate_employee_calendar(employee_key,updated_class_calendar)
-				updated_teacher_calendar = Update_teacher_calendar(events_to_remove_list,teacher_calendar)
-				updated_calendars.append(updated_teacher_calendar)
+			updated_teacher_calendar = Update_teacher_calendar(events_to_remove_list,teacher_calendar)
+			updated_calendars.append(updated_teacher_calendar)
 	return updated_calendars
 
 def Update_teacher_calendar(events_to_remove_list,teacher_calendar) :
@@ -627,7 +627,8 @@ def get_teacher_calendar(teacher_calendars_list,employee_key,calendar_date) :
 			teacher_calendar = calendar
 	if teacher_calendar is None :
 		teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,employee_key)
-		teacher_calendars_list.append(teacher_calendar)
+		if teacher_calendar is not None :
+			teacher_calendars_list.append(teacher_calendar)
 	return teacher_calendar
 
 

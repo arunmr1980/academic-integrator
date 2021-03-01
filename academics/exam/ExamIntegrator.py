@@ -250,12 +250,13 @@ def get_current_teacher_calendars_from_current_class_calendars(current_class_cal
 	return current_teacher_calendars_list
 	
 
-def check_calendar_already_existcheck_calendar_already_exist(current_class_calendar,current_class_calendars_list) :
+def check_calendar_already_exist(current_class_calendar,current_class_calendars_list) :
 	is_exist = False 
 	for calendar in current_class_calendars_list :
 		if current_class_calendar.calendar_key == calendar.calendar_key :
 			is_exist = True 
 	return is_exist
+	
 def integrate_teacher_calendars_on_update_exam_and_cancel_exam(current_teacher_calendars_list,updated_class_calendars_list,school_key) :
 	updated_teacher_calendars_list =[]
 	for updated_class_calendar in updated_class_calendars_list :
