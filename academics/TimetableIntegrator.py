@@ -847,6 +847,7 @@ def generate_class_calendar(day_code,time_table,date,timetable_configuration,par
 					if existing_class_calendar is not None :
 						for event in events_list :
 							existing_class_calendar = check_is_event_exist_and_remove(event, existing_class_calendar)
+						for event in events_list :
 							existing_class_calendar.events.append(event)
 						class_calendar = existing_class_calendar
 						return class_calendar
