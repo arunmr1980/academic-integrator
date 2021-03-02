@@ -36,9 +36,9 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		expected_teacher_calendars = self.get_expected_teacher_calendars_list()
 		expected_teacher_calendars_list = self.update_teacher_calendars_to_future_date(expected_teacher_calendars)
 		division = "A"
-		class_info_key = '8B1B22E72AE'
-		subject_code = 'bio3'
-		existing_teacher_emp_key = 'employee-3'
+		class_info_key = 'LKG'
+		subject_code = 'elective-subject_key-3'
+		existing_teacher_emp_key = 'elective-em-3'
 		new_teacher_emp_key = 'employee-1'
 		current_class_timetable = self.get_class_timetable(class_info_key,division,current_class_timetables_list)
 		existing_teacher_timetable = self.get_existing_teacher_timetable(subject_code,existing_teacher_emp_key,current_teacher_timetables_list,current_class_timetable)
@@ -139,7 +139,6 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 	def get_existing_teacher_timetable(self,subject_code,existing_teacher_emp_key,current_teacher_timetables_list,current_class_timetable) :
 		existing_teacher_timetable = None
 		for current_teacher_timetable in current_teacher_timetables_list :
-			print(current_teacher_timetable.time_table_key,"TIMETABLE KEYYYYY")
 			if current_teacher_timetable.employee_key == existing_teacher_emp_key :
 				existing_teacher_timetable = current_teacher_timetable
 				gclogger.info(" ----------- Getting previous teacher timetable from List ----------- " + str(existing_teacher_timetable.time_table_key) + '-----------')
@@ -263,10 +262,12 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			updated_timetable_period = self.get_updated_timetable_period(expected_periods,order_index)
 			self.assertEqual(updated_timetable_period.class_info_key,period.class_info_key)
 			self.assertEqual(updated_timetable_period.division_code,period.division_code)
-			self.assertEqual(updated_timetable_period.employee_key,period.employee_key)
+			if hasattr(period,"employee_key") :
+				self.assertEqual(updated_timetable_period.employee_key,period.employee_key)
 			self.assertEqual(updated_timetable_period.order_index,period.order_index)
 			self.assertEqual(updated_timetable_period.period_code,period.period_code)
-			self.assertEqual(updated_timetable_period.subject_key,period.subject_key)
+			if hasattr(period,"subject_key") :
+				self.assertEqual(updated_timetable_period.subject_key,period.subject_key)
 
 	def get_updated_timetable_period(self,expected_periods,order_index) :
 		for period in expected_periods :
@@ -280,7 +281,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 
 	def get_expected_class_calendars_list(self) :
 		expected_class_calendars = []
-		with open('tests/unit/fixtures/update-subject-teacher-fixtures/expected_class_calendars.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/update-elective-subject-teacher-fixtures/expected_class_calendars.json', 'r') as calendar_list:
 			class_calendars_dict = json.load(calendar_list)
 		for class_cal in class_calendars_dict :
 			expected_class_calendars.append(calendar.Calendar(class_cal))
@@ -288,7 +289,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 
 	def get_expected_teacher_calendars_list(self) :
 		expected_teacher_calendars = []
-		with open('tests/unit/fixtures/update-subject-teacher-fixtures/expected_teacher_calendars.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/update-elective-subject-teacher-fixtures/expected_teacher_calendars.json', 'r') as calendar_list:
 			teacher_calendars_dict = json.load(calendar_list)
 		for teacher_cal in teacher_calendars_dict :
 			expected_teacher_calendars.append(calendar.Calendar(teacher_cal))
@@ -296,7 +297,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 
 	def get_current_class_calendars_list(self) :
 		current_class_calendars = []
-		with open('tests/unit/fixtures/update-subject-teacher-fixtures/current_class_calendars.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/update-elective-subject-teacher-fixtures/current_class_calendars.json', 'r') as calendar_list:
 			class_calendars_dict = json.load(calendar_list)
 		for class_cal in class_calendars_dict :
 			current_class_calendars.append(calendar.Calendar(class_cal))
@@ -304,7 +305,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 
 	def get_current_teacher_calendars_list(self) :
 		current_teacher_calendars = []
-		with open('tests/unit/fixtures/update-subject-teacher-fixtures/current_teacher_calendars.json', 'r') as calendar_list:
+		with open('tests/unit/fixtures/update-elective-subject-teacher-fixtures/current_teacher_calendars.json', 'r') as calendar_list:
 			teacher_calendars_dict = json.load(calendar_list)
 		for teacher_cal in teacher_calendars_dict :
 			current_teacher_calendars.append(calendar.Calendar(teacher_cal))
@@ -312,7 +313,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 
 	def get_expected_class_timetables_list(self) :
 		expected_class_timetables = []
-		with open('tests/unit/fixtures/update-subject-teacher-fixtures/expected_class_timetables.json', 'r') as timetables_list:
+		with open('tests/unit/fixtures/update-elective-subject-teacher-fixtures/expected_class_timetables.json', 'r') as timetables_list:
 			class_timetables_dict = json.load(timetables_list)
 		for current_class_timetable in class_timetables_dict :
 			expected_class_timetables.append(ttable.TimeTable(current_class_timetable))
@@ -320,7 +321,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 
 	def get_expected_teacher_timetables_list(self) :
 		expected_teacher_timetables = []
-		with open('tests/unit/fixtures/update-subject-teacher-fixtures/expected_teacher_timetables.json', 'r') as timetables_list:
+		with open('tests/unit/fixtures/update-elective-subject-teacher-fixtures/expected_teacher_timetables.json', 'r') as timetables_list:
 			teacher_timetables_dict = json.load(timetables_list)
 		for current_teacher_timetable in teacher_timetables_dict :
 			expected_teacher_timetables.append(ttable.TimeTable(current_teacher_timetable))
@@ -328,7 +329,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 
 	def get_current_class_timetables_list(self) :
 		current_class_timetables_list = []
-		with open('tests/unit/fixtures/update-subject-teacher-fixtures/current_class_timetables.json', 'r') as current_class_timetables:
+		with open('tests/unit/fixtures/update-elective-subject-teacher-fixtures/current_class_timetables.json', 'r') as current_class_timetables:
 			current_class_timetables_dict = json.load(current_class_timetables)
 			for current_class_timetable in current_class_timetables_dict :
 				current_class_timetables_list.append(ttable.TimeTable(current_class_timetable))
@@ -336,7 +337,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 
 	def get_current_teacher_timetables_list(self) :
 		current_teacher_timetable_list = []
-		with open('tests/unit/fixtures/update-subject-teacher-fixtures/current_teacher_timetables.json', 'r') as current_teacher_timetables:
+		with open('tests/unit/fixtures/update-elective-subject-teacher-fixtures/current_teacher_timetables.json', 'r') as current_teacher_timetables:
 			current_teacher_timetables_dict = json.load(current_teacher_timetables)
 			for current_teacher_timetable in current_teacher_timetables_dict :
 				current_teacher_timetable_list.append(ttable.TimeTable(current_teacher_timetable))

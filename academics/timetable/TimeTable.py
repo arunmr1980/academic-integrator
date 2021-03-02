@@ -128,10 +128,35 @@ class TimeTable:
             }
             periods = []
             for period in day_table.periods:
-                periods.append(vars(period))
+                if hasattr(period,'employees') :
+                    period = self.get_period_dict(period)
+                    periods.append(period)
+                else :
+                    periods.append(vars(period))
             item['periods'] = periods
             day_table_items.append(item)
         return day_table_items;
+
+    def get_period_dict(self,period) :
+        period_dict = {
+            'class_info_key' : period.class_info_key,
+            'division_code' : period.division_code,
+            'order_index' : period.order_index,
+            'period_code' : period.period_code
+        }
+        period_dict['employees'] = self.get_employees(period.employees)
+        return period_dict
+
+    def get_employees(self,employees) :
+        employees_list =[]
+        for employee in employees :
+            employee_dict = {
+                'employee_key' : employee.employee_key,
+                'subject_key' : employee.subject_key
+            }
+            employees_list.append(employee_dict)
+        return employees_list
+
 
 
     def get_subject_preferences_dict(self,subject_preferences):
