@@ -386,6 +386,8 @@ def get_updated_class_calendar_events(exam_event,current_class_calendar,removed_
 	updated_events = []
 	if len(current_class_calendar.events) > 0 :
 		for calendar_event in current_class_calendar.events :
+			if calendar_event.event_type == "EXAM" :
+				pass
 			if check_events_conflict(exam_event.from_time,exam_event.to_time,calendar_event.from_time,calendar_event.to_time) == True :
 				removed_events.append(calendar_event)
 				if exam_event not in updated_events :
