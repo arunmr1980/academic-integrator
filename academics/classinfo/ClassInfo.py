@@ -37,6 +37,10 @@ class Subject:
                 self.name = item["name"]
             except KeyError as ke:
                 gclogger.debug(' KeyError in Subject - subject name not found'.format(str(ke)))
+            try:
+                self.type = item["type"]
+            except KeyError as ke:
+                gclogger.debug(' KeyError in Subject - subject type not found'.format(str(ke)))
             self.code = item["code"]
             try:
                 elective_subject_items = item['elective_subjects']

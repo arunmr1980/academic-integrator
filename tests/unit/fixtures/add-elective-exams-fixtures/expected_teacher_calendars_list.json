@@ -8,8 +8,8 @@
             "ref_calendar_key":"test-key-2"
          }
       ],
-      "institution_key":"test-school-1",
-      "subscriber_key":"employee-1",
+      "institution_key":"elective-exam-school",
+      "subscriber_key":"elective-exam-employee-1",
       "subscriber_type":"EMPLOYEE"
    },
    {
@@ -17,12 +17,16 @@
       "calendar_key":"teacher-sample-3",
       "events":[
          {
+            "event_code":"event-5",
+            "ref_calendar_key":"test-key-3"
+         },
+         {
             "event_code":"event-1000000000",
             "ref_calendar_key":"test-key-3"
          }
       ],
-      "institution_key":"test-school-1",
-      "subscriber_key":"employee-3",
+      "institution_key":"elective-exam-school",
+      "subscriber_key":"elective-exam-employee-3",
       "subscriber_type":"EMPLOYEE"
    },
    {
@@ -31,8 +35,8 @@
       "events":[
          
       ],
-      "institution_key":"test-school-1",
-      "subscriber_key":"employee-2",
+      "institution_key":"elective-exam-school",
+      "subscriber_key":"elective-exam-employee-2",
       "subscriber_type":"EMPLOYEE"
    }
 ]
