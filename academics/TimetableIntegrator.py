@@ -292,6 +292,11 @@ def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,pe
 	if hasattr(existing_teacher_timetable.timetable,'day_tables') :
 		for day in existing_teacher_timetable.timetable.day_tables :
 			for period in day.periods :
+				if period.subject_key == subject_code :
+					period_list.append(period)
+					
+		for day in existing_teacher_timetable.timetable.day_tables :
+			for period in day.periods :
 				order_index = None
 				if hasattr(period,"order_index") :
 					order_index = int(period.order_index)
@@ -302,6 +307,7 @@ def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,pe
 					period_copy = copy.deepcopy(period)
 					updated_period = update_previous_employee_period(period_copy)
 					day.periods[order_index - 1] = updated_period
+
 	return existing_teacher_timetable
 
 
