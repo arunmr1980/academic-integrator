@@ -303,7 +303,6 @@ def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,pe
 				else :
 					order_index = int(period.period_code[-1])
 				if period.subject_key == subject_code :
-					period_list.append(period)
 					period_copy = copy.deepcopy(period)
 					updated_period = update_previous_employee_period(period_copy)
 					day.periods[order_index - 1] = updated_period
