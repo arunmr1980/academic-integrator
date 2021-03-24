@@ -410,9 +410,13 @@ def get_updated_class_calendar_events(exam_event,current_class_calendar,removed_
 								if exam_event not in updated_events :
 									updated_events.append(exam_event)
 				else :
-					removed_events.append(calendar_event)
-					if exam_event not in updated_events :
-						updated_events.append(exam_event)
+					if calendar_event.event_type != "CLASS_SESSION" :
+						if exam_event not in updated_events :
+							updated_events.append(exam_event)
+					else :
+						removed_events.append(calendar_event)
+						if exam_event not in updated_events :
+							updated_events.append(exam_event)
 
 			else :
 				updated_events.append(calendar_event)
