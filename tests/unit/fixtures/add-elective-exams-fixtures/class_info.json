@@ -1,0 +1,68 @@
+{
+  "academic_year": "2020-2021",
+  "class_code": "IV",
+  "class_info_key": "elective-exam",
+  "divisions": [
+    {
+      "code": "A",
+      "name": "A"
+    },
+    {
+      "code": "B",
+      "name": "B"
+    }
+  ],
+  "eligible_classes": [
+
+  ],
+  "name": "IV",
+  "order_index": 41,
+  "school_key": "elective-exam-school",
+  "type": "regular",
+  "subjects": [
+    {
+      "code": "bio1",
+      "name": "Biology1",
+      "type": "ELECTIVE",
+      "assessment_type": "SUMMATIVE"
+    },
+    {
+      "assessment_type": "SUMMATIVE",
+      "code": "bio2",
+      "name": "Biology2",
+      "type": "ELECTIVE"
+    },
+    {
+      "assessment_type": "SUMMATIVE",
+      "code": "hin-el-1",
+      "name": "Hindi",
+      "type": "ELECTIVE"
+    },
+    {
+      "code": "Elec379tqa",
+      "elective_subjects": [
+        {
+          "code": "bio1"
+        },
+        {
+          "code": "bio2"
+        }
+      ],
+      "name": "Elective 1",
+      "type": "MANDATORY"
+    },
+    {
+      "code": "elec2",
+      "elective_subjects": [
+        {
+          "code": "che1"
+        },
+        {
+          "code": "che2"
+        }
+      ],
+      "name": "Elective 2",
+      "type": "MANDATORY"
+    }
+  ]
+}

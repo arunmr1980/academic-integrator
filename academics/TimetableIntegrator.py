@@ -111,15 +111,24 @@ def get_timetable_from_updated_class_timetable(updated_class_timetable) :
 	if hasattr(updated_class_timetable,'timetable') :
 		return updated_class_timetable.timetable
 
-def generate_teacher_timetable(updated_employee_key,timetable,updated_class_timetable) :
+def generate_teacher_timetable(existing_teacher_emp_key,class_timetable,current_class_timetable) :
+	timetable = make_teacher_timetable_period(class_timetable)
 	teacher_timetable = ttable.TimeTable(None)
-	teacher_timetable.academic_year = updated_class_timetable.academic_year
-	teacher_timetable.employee_key = updated_employee_key
-	teacher_timetable.school_key = updated_class_timetable.school_key
+	teacher_timetable.academic_year = current_class_timetable.academic_year
+	teacher_timetable.employee_key = existing_teacher_emp_key
+	teacher_timetable.school_key = current_class_timetable.school_key
 	teacher_timetable.time_table_key = key.generate_key(16)
 	teacher_timetable.timetable = timetable
 	return teacher_timetable
 
+def make_teacher_timetable_period(class_timetable) :
+	for day in class_timetable.day_tables :
+		for period in day.periods:
+			if hasattr(period,"employees") :
+				del period.employees
+				period.employee_key = None
+				period.subject_key = None
+	return class_timetable
 
 
 
@@ -292,21 +301,24 @@ def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,pe
 	if hasattr(existing_teacher_timetable.timetable,'day_tables') :
 		for day in existing_teacher_timetable.timetable.day_tables :
 			for period in day.periods :
-				if period.subject_key == subject_code :
-					period_list.append(period)
-					
-		for day in existing_teacher_timetable.timetable.day_tables :
-			for period in day.periods :
 				order_index = None
 				if hasattr(period,"order_index") :
 					order_index = int(period.order_index)
 				else :
 					order_index = int(period.period_code[-1])
-				if period.subject_key == subject_code :
-					period_copy = copy.deepcopy(period)
-					updated_period = update_previous_employee_period(period_copy)
-					day.periods[order_index - 1] = updated_period
-
+				if hasattr(period,'employees') :
+					for employee in period.employees :
+						if employee.subject_key == subject_key :
+							period_list.append(period)
+							period_copy = copy.deepcopy(period)
+							updated_period = update_previous_employee_period(period_copy)
+							day.periods[order_index - 1] = updated_period
+				else :
+					if period.subject_key == subject_code :
+						period_list.append(period)
+						period_copy = copy.deepcopy(period)
+						updated_period = update_previous_employee_period(period_copy)
+						day.periods[order_index - 1] = updated_period
 	return existing_teacher_timetable
 
 
@@ -327,8 +339,13 @@ def update_current_class_timetable(current_class_timetable,subject_code,updated_
 			for day in current_class_timetable.timetable.day_tables :
 				if hasattr(day,'periods') and len(day.periods) > 0 :
 					for period in day.periods :
-						if period.subject_key == subject_code :
-							period.employee_key = updated_employee_key
+						if hasattr(period,'employees') :
+							for employee in period.employees :
+								if employee.subject_key == subject_code :
+									employee.employee_key = updated_employee_key
+						else :
+							if period.subject_key == subject_code :
+								period.employee_key = updated_employee_key
 				else :
 					gclogger.warn('Periods not existing')
 		else:
@@ -830,6 +847,7 @@ def generate_class_calendar(day_code,time_table,date,timetable_configuration,par
 					if existing_class_calendar is not None :
 						for event in events_list :
 							existing_class_calendar = check_is_event_exist_and_remove(event, existing_class_calendar)
+						for event in events_list :
 							existing_class_calendar.events.append(event)
 						class_calendar = existing_class_calendar
 						return class_calendar

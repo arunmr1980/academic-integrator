@@ -12,6 +12,7 @@ from academics.calendar.CalendarLessonPlanIntegrator import integrate_calendars_
 import academics.timetable.TimeTableDBService as timetable_service
 from academics.TimetableIntegrator import generate_and_save_calenders
 import academics.calendar.CalendarDBService as calendar_service
+import academics.classinfo.ClassInfoDBService as class_info_service
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -33,6 +34,10 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		for current_lesson_plan in current_lesson_plan_list_single_cal :
 			response = lessonplan_service.create_lessonplan(current_lesson_plan)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Current lesson plan single calendar uploaded '+str(current_lesson_plan['lesson_plan_key']))
+
+		class_info_one_dict = self.get_class_info()
+		response = class_info_service.add_or_update_class_info(class_info_one_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for uploaded --------- ' +str(class_info_one_dict['class_info_key']) )
 
 	def test_lessonplan_with_calendar_list(self) :
 		timetable = timetable_service.get_time_table('test-time-table-1')
@@ -125,7 +130,7 @@ class LessonplanIntegratorTest(unittest.TestCase):
 			gclogger.info("--------------- Class calendar deleted " + calendar.calendar_key+" -----------------")
 
 
-		teacher_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-1','EMPLOYEE')
+		teacher_calender_list = calendar_service.get_all_calendars_by_school_key_and_type('test-school-key-2','EMPLOYEE')
 		for calendar in teacher_calender_list :
 			calendar_service.delete_calendar(calendar.calendar_key)
 			gclogger.info("--------------- Teacher calendar deleted " + calendar.calendar_key+" -----------------")
@@ -139,7 +144,9 @@ class LessonplanIntegratorTest(unittest.TestCase):
 		for generated_lesson_plan in generated_lesson_plan_list :
 			lessonplan_service.delete_lessonplan(generated_lesson_plan.lesson_plan_key)
 			gclogger.info("---------------Test Lesson Plan deleted  " + generated_lesson_plan.lesson_plan_key + "-----------------")
-
+		class_info = self.get_class_info()
+		response = class_info_service.delete_class_info(class_info['class_info_key'])
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------------- A Class info for deleted --------- ' +str(class_info['class_info_key']) )
 
 	def get_generated_lesson_plan_dict_list(self,generated_lesson_plan_list) :
 		generated_lesson_plan_dict_list = []
@@ -198,6 +205,10 @@ class LessonplanIntegratorTest(unittest.TestCase):
 			academic_configuration = json.load(academic_configure)
 		return academic_configuration
 
+	def get_class_info(self) :
+		with open('tests/unit/fixtures/calendar-to-lessonplan-fixtures/class_info.json', 'r') as class_info_two:
+			class_info_two_dict = json.load(class_info_two)
+		return class_info_two_dict
 
 
 if __name__ == '__main__':

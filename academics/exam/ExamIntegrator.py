@@ -3,14 +3,13 @@ import datetime
 from datetime import datetime as dt
 import calendar as cal
 import academics.timetable.TimeTableDBService as timetable_service
-import academics.TimetableIntegrator as timetable_integrator
+from academics import TimetableIntegrator as timetable_integrator
 from academics.logger import GCLogger as gclogger
 import academics.timetable.TimeTable as ttable
 import academics.timetable.KeyGeneration as key
 import academics.calendar.Calendar as calendar
 import academics.academic.AcademicDBService as academic_service
 import academics.calendar.CalendarDBService as calendar_service
-import academics.TimetableIntegrator as timetable_integrator
 import academics.calendar.CalendarIntegrator as calendar_integrator
 import academics.timetable.KeyGeneration as key
 import academics.classinfo.ClassInfoDBService as class_info_service
@@ -188,7 +187,7 @@ def save_updated_calendars_and_lessonplans(updated_class_calendars_list,updated_
 	for updated_class_calendar in updated_class_calendars_list :
 		cal = calendar.Calendar(None)
 		class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
-		pp.pprint(class_calendar_dict)
+		# pp.pprint(class_calendar_dict)
 		response = calendar_service.add_or_update_calendar(class_calendar_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated class calendar uploaded --------- '+str(class_calendar_dict['calendar_key']))
 
@@ -383,13 +382,37 @@ def get_remove_conflicted_class_events(exam_events,current_class_calendar,remove
 	return updated_class_calendar
 
 def get_updated_class_calendar_events(exam_event,current_class_calendar,removed_events) :
+	exam_subject_code = timetable_integrator.get_subject_code(exam_event)
 	updated_events = []
 	if len(current_class_calendar.events) > 0 :
 		for calendar_event in current_class_calendar.events :
 			if check_events_conflict(exam_event.from_time,exam_event.to_time,calendar_event.from_time,calendar_event.to_time) == True :
-				removed_events.append(calendar_event)
-				if exam_event not in updated_events :
-					updated_events.append(exam_event)
+				calendar_exam_subject_code = timetable_integrator.get_subject_code(calendar_event)
+				if calendar_event.event_type == "EXAM" :
+					subscriber_key = current_class_calendar.subscriber_key
+					class_info_key = subscriber_key[:-2]
+					class_info = classinfo_service.get_classinfo(class_info_key)
+					class_info_subject = get_class_info_subject(calendar_exam_subject_code,class_info)
+					if class_info_subject is not None :
+						if class_info_subject.type != "ELECTIVE" :
+							removed_events.append(calendar_event)
+							if exam_event not in updated_events :
+								updated_events.append(exam_event)
+						else :
+							elective_group = get_elective_group(class_info_subject.code,class_info)
+							if check_exam_subject_whether_include_in_elective_group_or_not(elective_group,exam_subject_code) == True :
+								updated_events.append(calendar_event)
+								if exam_event not in updated_events :
+									updated_events.append(exam_event)
+							else :
+								removed_events.append(calendar_event)
+								if exam_event not in updated_events :
+									updated_events.append(exam_event)
+				else :
+					removed_events.append(calendar_event)
+					if exam_event not in updated_events :
+						updated_events.append(exam_event)
+
 			else :
 				updated_events.append(calendar_event)
 				exam_date = datetime.datetime.strptime(exam_event.from_time[0:10],'%Y-%m-%d')
@@ -1120,3 +1143,25 @@ class Class :
 		else :
 			self.class_key = item['class_key']
 			self.division = item['division']
+
+def get_class_info_subject(calendar_exam_subject_code,class_info) :
+	if hasattr(class_info,"subjects") :
+		for subject in class_info.subjects :
+			if subject.code == calendar_exam_subject_code :
+				return subject
+
+def get_elective_group(code,class_info) :
+	for subject in class_info.subjects :
+		if hasattr(subject,"elective_subjects") :
+			for elective_subject in subject.elective_subjects :
+				if elective_subject.code == code :
+					return subject
+
+def check_exam_subject_whether_include_in_elective_group_or_not(elective_group,exam_subject_code) :
+	is_exist = False
+	if hasattr(elective_group,"elective_subjects") :
+		for elective_subject in elective_group.elective_subjects :
+			if elective_subject.code == exam_subject_code :
+				is_exist = True
+	return is_exist
+
