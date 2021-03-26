@@ -3,14 +3,13 @@ import datetime
 from datetime import datetime as dt
 import calendar as cal
 import academics.timetable.TimeTableDBService as timetable_service
-import academics.TimetableIntegrator as timetable_integrator
+from academics import TimetableIntegrator as timetable_integrator
 from academics.logger import GCLogger as gclogger
 import academics.timetable.TimeTable as ttable
 import academics.timetable.KeyGeneration as key
 import academics.calendar.Calendar as calendar
 import academics.academic.AcademicDBService as academic_service
 import academics.calendar.CalendarDBService as calendar_service
-import academics.TimetableIntegrator as timetable_integrator
 import academics.calendar.CalendarIntegrator as calendar_integrator
 import academics.timetable.KeyGeneration as key
 import academics.classinfo.ClassInfoDBService as class_info_service
