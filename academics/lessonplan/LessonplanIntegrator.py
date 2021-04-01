@@ -219,7 +219,8 @@ def update_lessonplan(current_lessonplan,updated_class_calendar_events,updated_c
 				for topic in main_topic.topics :
 					for session in topic.sessions :
 						if hasattr(session , 'schedule') :
-							current_lessonplan = add_schedules(updated_class_calendar_events,current_lessonplan,updated_class_calendar)
+							if session.schedule is not None :
+								current_lessonplan = add_schedules(updated_class_calendar_events,current_lessonplan,updated_class_calendar)
 	return current_lessonplan
 
 
@@ -361,9 +362,10 @@ def get_schedules(current_lessonplan,event,calendar) :
 		for topic in main_topic.topics :
 			for session in topic.sessions :
 				if hasattr (session,'schedule') :
-					schedule = find_schedule(session.schedule,event)
-					if schedule is not None :
-						schedule_list.append(schedule)
+					if session.schedule is not None :
+						schedule = find_schedule(session.schedule,event)
+						if schedule is not None :
+							schedule_list.append(schedule)
 	return schedule_list
 
 def find_schedule(schedule,event) :
@@ -520,7 +522,8 @@ def add_root_schedule_to_schedule_list(current_lessonplan,schedule_list,root_ses
 	if hasattr(current_lessonplan,'sessions') :
 		for session in current_lessonplan.sessions :
 			if hasattr(session,"schedule") :
-				schedule_list.append(session.schedule)
+				if session.schedule is not None :
+					schedule_list.append(session.schedule)
 	current_lessonplan.sessions = []
 	return current_lessonplan
 
@@ -566,10 +569,11 @@ def delete_calendar_schedules_of_calendar_date(calendar_date,current_lessonplan)
 	for main_topic in current_lessonplan.topics :
 		for topic in main_topic.topics :
 			for session in topic.sessions :
-				if hasattr(session , 'schedule') :
-					if is_schedule_on_calendar_date(session.schedule,calendar_date) == True :
-						# print("DELETED SHEDULE ----",session.schedule.start_time,'--',session.schedule.end_time)
-						del session.schedule
+				if hasattr(session ,'schedule') :
+					if session.schedule is not None :
+						if is_schedule_on_calendar_date(session.schedule,calendar_date) == True :
+							# print("DELETED SHEDULE ----",session.schedule.start_time,'--',session.schedule.end_time)
+							del session.schedule
 	return current_lessonplan
 
 def is_schedule_on_calendar_date(schedule,calendar_date) :
@@ -630,11 +634,12 @@ def remove_schedule_after_calendar_date(current_lessonplan,calendar_date,after_c
 		for topic in main_topic.topics :
 			for session in topic.sessions :
 				if hasattr(session , 'schedule') :
-					schedule_date = get_schedule_date(session.schedule)
-					if is_calendar_date_after_schdule_date(schedule_date,calendar_date) :
-						after_calendar_date_schedules_list.append(session.schedule)
-						# gclogger.info("The schedule " + str(session.schedule.start_time) +' --- '+str(session.schedule.end_time) +' -------')
-						del session.schedule
+					if session.schedule is not None :
+						schedule_date = get_schedule_date(session.schedule)
+						if is_calendar_date_after_schdule_date(schedule_date,calendar_date) :
+							after_calendar_date_schedules_list.append(session.schedule)
+							# gclogger.info("The schedule " + str(session.schedule.start_time) +' --- '+str(session.schedule.end_time) +' -------')
+							del session.schedule
 
 	#check is there sessions and schedule if there append to  after_calendar_date_schedules_list and delete root session
 	return current_lessonplan
@@ -710,14 +715,16 @@ def remove_shedules(schedules,current_lessonplan) :
 				for topic in main_topic.topics :
 					for session in topic.sessions :
 						if hasattr (session,'schedule') :
-							if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
-								del session.schedule
+							if session.schedule is not None :
+								if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
+									del session.schedule
 		if hasattr(current_lessonplan,'sessions') and len(current_lessonplan.sessions) > 0 :
 			for session in current_lessonplan.sessions :
 				if hasattr(session,'schedule') :
-					if hasattr(schedule,"start_time") and hasattr(schedule,"end_time") :
-						if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
-							del session.schedule				
+					if session.schedule is not None :
+						if hasattr(schedule,"start_time") and hasattr(schedule,"end_time") :
+							if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
+								del session.schedule				
 	return current_lessonplan
 
 
@@ -727,7 +734,8 @@ def get_all_remaining_schedules(current_lessonplan) :
 		for topic in main_topic.topics :
 			for session in topic.sessions :
 				if hasattr(session , 'schedule') :
-					schedule_list.append(session.schedule)
+					if session.schedule is not None :
+						schedule_list.append(session.schedule)
 	return schedule_list
 
 def get_lesson_plan_after_remove_all_shedules(current_lessonplan) :
@@ -735,7 +743,8 @@ def get_lesson_plan_after_remove_all_shedules(current_lessonplan) :
 		for topic in main_topic.topics :
 			for session in topic.sessions :
 				if hasattr(session , 'schedule') :
-					del session.schedule
+					if session.schedule is not None :
+						del session.schedule
 	return current_lessonplan
 
 def get_updated_lesson_plan(schedule_list,current_lessonplan) :
