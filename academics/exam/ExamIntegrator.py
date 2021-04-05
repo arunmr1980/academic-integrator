@@ -811,27 +811,34 @@ def make_events_to_add_schdule_and_update_lessonplans(period_list,timetable,clas
 		event.event_type = 'CLASS_SESSION'
 		event.ref_calendar_key = class_calendar.calendar_key
 		time_table_period = calendar_integrator.get_time_table_period(period.period_code,timetable)
-		event.params = timetable_integrator.get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
-
-		event.from_time =  timetable_integrator.get_standard_time(period.start_time,class_calendar.calendar_date)
-		event.to_time =  timetable_integrator.get_standard_time(period.end_time,class_calendar.calendar_date)
-		gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
-		events_list.append(event)
-		subject_key = get_subject_code(event)
-		subscriber_key = class_calendar.subscriber_key
-		class_key = subscriber_key[:-2]
-		division = subscriber_key[-1:]
-		current_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key, division)
-		current_lessonplan = lessonplan_integrator.get_lessonplan_by_subject_key(current_lessonplans_list,subject_key)
-		if current_lessonplan is not None :
-			updated_lessonplan = lessonplan_integrator.update_lessonplan_on_add_class_session_events(event,class_calendar,current_lessonplan)
-			lp = lpnr.LessonPlan(None)
-			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-			response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
-
+		try :
+			event.params = timetable_integrator.get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
+			event.from_time =  timetable_integrator.get_standard_time(period.start_time,class_calendar.calendar_date)
+			event.to_time =  timetable_integrator.get_standard_time(period.end_time,class_calendar.calendar_date)
+			gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
+			events_list.append(event)
+			update_lesson_plan_on_cancel_exam(event,class_calendar)
+		except AttributeError :
+			events = timetable_integrator.get_event_list(time_table_period,period_list,date)
+			events_list.extend(events)
+			for event in events :
+				update_lesson_plan_on_cancel_exam(event,class_calendar)
 
 	return events_list
+
+def update_lesson_plan_on_cancel_exam(event,class_calendar) :
+	subject_key = get_subject_code(event)
+	subscriber_key = class_calendar.subscriber_key
+	class_key = subscriber_key[:-2]
+	division = subscriber_key[-1:]
+	current_lessonplans_list = lessonplan_service.get_lesson_plan_list(class_key, division)
+	current_lessonplan = lessonplan_integrator.get_lessonplan_by_subject_key(current_lessonplans_list,subject_key)
+	if current_lessonplan is not None :
+		updated_lessonplan = lessonplan_integrator.update_lessonplan_on_add_class_session_events(event,class_calendar,current_lessonplan)
+		lp = lpnr.LessonPlan(None)
+		updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+		response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Updated Lesson Plan  uploaded '+str(updated_lessonplan_dict['lesson_plan_key']))
 
 def make_events_to_add_schdule(period_list,timetable,class_calendar) :
 	events_list =[]
