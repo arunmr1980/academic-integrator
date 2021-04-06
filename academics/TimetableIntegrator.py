@@ -744,12 +744,15 @@ def get_event(time_table_period,timetable_configuration_periods,date):
 			event = calendar.Event(None)
 			event.event_code = key.generate_key(3)
 			event.event_type = 'CLASS_SESSION'
-			event.params = get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
+			if time_table_period.employee_key is None :
+				raise AttributeError("employee key is getting None")
+			else :
+				event.params = get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
 
-			event.from_time = get_standard_time(current_configuration_period.start_time,date)
-			event.to_time = get_standard_time(current_configuration_period.end_time,date)
-			gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
-			return event
+				event.from_time = get_standard_time(current_configuration_period.start_time,date)
+				event.to_time = get_standard_time(current_configuration_period.end_time,date)
+				gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
+				return event
 
 def get_event_list(time_table_period,timetable_configuration_periods,date):
 	events_list = []
