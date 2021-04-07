@@ -521,7 +521,7 @@ def get_event_updated_class_calendar_on_leave_cancel(event,current_class_calenda
 			timetable_period = get_period_code_from_timetable(timetable,event_period_code)
 			gclogger.info("TIMETABLE PERIOD CODE -- "+ timetable_period.period_code)
 			gclogger.info("TIMETABLE SUBJECT KEY -- "+ timetable_period.subject_key)
-			gclogger.info("TIMETABLE EMPLOYEE KEY -- "+ timetable_period.employee_key)	
+			# gclogger.info("TIMETABLE EMPLOYEE KEY -- "+ timetable_period.employee_key)	
 			
 			del existing_event.status 
 			try :
@@ -588,5 +588,5 @@ def get_teacher_calendars_on_dates(from_date,to_date,employee_key) :
 	
 def get_subscriber(timetable_period,employee_key) :
 	for employee in timetable_period.employees :
-		if employee.empolyee_key == employee_key :
-			return timetable_period
+		if employee.employee_key == employee_key :
+			return employee
