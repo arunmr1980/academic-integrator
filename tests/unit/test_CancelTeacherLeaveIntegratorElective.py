@@ -30,16 +30,9 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 		updated_class_calendars_list = []
 		expected_teacher_calendar_dict = {}
 		timetables = self.get_timetables_list()
-		expected_teacher_calendars_list = self.get_expected_teacher_calendars_list()
-		expected_lessonplans_list = self.get_expected_lessonplans_list()
 		expected_class_calendars_list = self.get_expected_class_calendars_list()
-		for teacher_calendar in expected_teacher_calendars_list :
-			calendar_date = teacher_calendar.calendar_date
-			subscriber_key = teacher_calendar.subscriber_key
-			expected_teacher_calendar_dict[calendar_date + subscriber_key] = teacher_calendar
 		current_class_calendars_list= self.get_current_class_calendars_list()
-		current_teacher_calendars_list = self.get_current_teacher_calendars_list()
-		current_lessonplans_list = self.get_current_lessonplans_list()
+		current_teacher_calendars_list = self.get_current_teacher_calendars_list()	
 		current_teacher_leaves_list = self.get_current_teacher_leaves_list()
 		from_time = None
 		to_time = None
@@ -87,44 +80,13 @@ class CancelLeaveIntegratorTest(unittest.TestCase):
 
 		
 		updated_removed_events = self.update_class_cals_on_cancel_leave(removed_events,class_cals_to_be_updated,updated_class_calendars_list,timetables,employee_key)
-		for class_event in updated_removed_events :
-			print(class_event.params[1].value,"subject_key -----------------------__>>>>>>>(2)")
-		school_key = updated_class_calendars_list[0].institution_key
-		updated_teacher_calendars_list = self.integrate_teacher_calendars_on_cancel_leave(current_teacher_calendars_list,updated_class_calendars_list,school_key)
-		current_lessonplans = self.get_lessonplans_list(events_with_sub_key.keys(),current_lessonplans_list)
-		updated_lessonplans_list = leave_integrator.update_lessonplans_with_adding_events(current_lessonplans,updated_class_calendars_list,updated_removed_events)
-		for updated_teacher_calendar in updated_teacher_calendars_list :
-			cal = calendar.Calendar(None)
-			teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
-			pp.pprint(teacher_calendar_dict)
-		
-
-
-
-		for teacher_calendar in updated_teacher_calendars_list :
-			teacher_calendar_key = teacher_calendar.calendar_date + teacher_calendar.subscriber_key
-			expected_teacher_calendar = expected_teacher_calendar_dict[teacher_calendar_key]
-
-			self.assertEqual(expected_teacher_calendar.institution_key,teacher_calendar.institution_key )
-			self.assertEqual(expected_teacher_calendar.calendar_date,teacher_calendar.calendar_date )
-			self.assertEqual(expected_teacher_calendar.subscriber_key,teacher_calendar.subscriber_key )
-			self.assertEqual(expected_teacher_calendar.subscriber_type,teacher_calendar.subscriber_type )
-			# self.check_events_teacher_calendar(expected_teacher_calendar.events,teacher_calendar.events)
-			gclogger.info("-----[UnitTest] teacher calendar test passed ----------------- "+ str(teacher_calendar.calendar_key)+" ------------------------------ ")
-
 		for updated_class_calendar in current_class_calendars_list :
 			cal = calendar.Calendar(None)
 			class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
 			pp.pprint(class_calendar_dict)
 			self.check_class_calendars(updated_class_calendar,expected_class_calendars_list)
 
-		
-
-		for updated_lessonplan in updated_lessonplans_list :
-			lp = lpnr.LessonPlan(None)
-			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
-			pp.pprint(updated_lessonplan_dict)
-			self.check_lesson_plans(updated_lessonplan,expected_lessonplans_list)
+	
  
 	def integrate_teacher_calendars_on_cancel_leave(self,current_teacher_calendars_list,updated_class_calendars_list,school_key) :
 			updated_teacher_calendars_list =[]

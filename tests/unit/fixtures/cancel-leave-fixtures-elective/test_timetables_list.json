@@ -172,13 +172,27 @@
             "day_code":"TUE",
             "order_index":2,
             "periods":[
-               {
+                {
                   "class_info_key":null,
                   "division_code":null,
-                  "employee_key":"employee-test-2",
+                  "employee_key" : null,
+                  "employees" :[
+                     {
+                        "employee_key" : "employee-test-1",
+                        "subject_key" : "bio2"
+                     },
+                     {
+                        "employee_key" : "test-emp-1",
+                        "subject_key" : "test-sub-1"
+                     },
+                      {
+                        "employee_key" : "test-emp-2",
+                        "subject_key" : "test-sub-2"
+                     }
+                  ],
                   "order_index":1,
                   "period_code":"TUE-1",
-                  "subject_key":"bio2"
+                  "subject_key" :"elective-subs"
                },
                {
                   "class_info_key":null,

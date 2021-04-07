@@ -46,6 +46,46 @@
 				"to_time":"2020-08-04T10:40:00"
 			},
 			{
+				"event_code":"event-2a",
+				"event_type":"CLASS_SESSION",
+				"from_time":"2020-08-04T10:00:00",
+				"params":[
+					{
+						"key":"period_code",
+						"value":"TUE-1"
+					},
+					{
+						"key":"subject_key",
+						"value":"test-sub-1"
+					},
+					{
+						"key":"teacher_emp_key",
+						"value":"test-emp-1"
+					}
+				],
+				"to_time":"2020-08-04T10:40:00"
+			},
+			{
+				"event_code":"event-2b",
+				"event_type":"CLASS_SESSION",
+				"from_time":"2020-08-04T10:00:00",
+				"params":[
+					{
+						"key":"period_code",
+						"value":"TUE-1"
+					},
+					{
+						"key":"subject_key",
+						"value":"test-sub-2"
+					},
+					{
+						"key":"teacher_emp_key",
+						"value":"test-emp-2"
+					}
+				],
+				"to_time":"2020-08-04T10:40:00"
+			},
+			{
 				"event_code":"event-3",
 				"event_type":"CLASS_SESSION",
 				"from_time":"2020-08-04T10:40:00",
