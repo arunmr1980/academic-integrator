@@ -28,8 +28,16 @@ def update_subject_teacher_integrator(division,class_info_key,subject_code,exist
 	current_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
 	current_cls_timetable = copy.deepcopy(current_class_timetable)
 	existing_teacher_timetable = get_existing_teacher_timetable(existing_teacher_emp_key,current_cls_timetable,subject_code)
-	new_teacher_timetable = get_new_teacher_timetable(new_teacher_emp_key,current_cls_timetable,subject_code)
+	t = ttable.TimeTable(None)
+	calendar_dict = t.make_timetable_dict(existing_teacher_timetable)
+	gclogger.info(calendar_dict)
+	gclogger.info("<<<<<---------Existing Timetable to update --------->>>>>>>>")
 
+	new_teacher_timetable = get_new_teacher_timetable(new_teacher_emp_key,current_cls_timetable,subject_code)
+	t = ttable.TimeTable(None)
+	calendar_dict = t.make_timetable_dict(new_teacher_timetable)
+	gclogger.info(calendar_dict)
+	gclogger.info("<<<<<---------New Teacher Timetable to update --------->>>>>>>>")
 
 
 	period_list =[]
@@ -160,26 +168,26 @@ def save_updated_calendars_and_timetables(updated_teacher_calendars_list,updated
 		class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
 	
 		response = calendar_service.add_or_update_calendar(class_calendar_dict)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated calendar-- ( '+str(class_calendar_dict['subscriber_type'])+' )  uploaded --------- '+str(class_calendar_dict['calendar_key']))
+		# gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated calendar-- ( '+str(class_calendar_dict['subscriber_type'])+' )  uploaded --------- '+str(class_calendar_dict['calendar_key']))
 	for updated_teacher_calendar in updated_teacher_calendars_list :
 		cal = calendar.Calendar(None)
 		teacher_calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
 	
 		response = calendar_service.add_or_update_calendar(teacher_calendar_dict)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated calendar-- ( '+str(class_calendar_dict['subscriber_type'])+' )  uploaded --------- '+str(class_calendar_dict['calendar_key']))
+		# gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated calendar-- ( '+str(class_calendar_dict['subscriber_type'])+' )  uploaded --------- '+str(class_calendar_dict['calendar_key']))
 
 	for updated_class_timetable in updated_class_timetables_list :
 		timtable_obj = ttable.TimeTable(None)
 		updated_class_timetable_dict = timtable_obj.make_timetable_dict(updated_class_timetable)
 	
 		response = timetable_service.create_timetable(updated_class_timetable_dict)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + '--------- A updated class time table uploaded -------- '+str(updated_class_timetable_dict['time_table_key']))
+		# gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + '--------- A updated class time table uploaded -------- '+str(updated_class_timetable_dict['time_table_key']))
 	for updated_teacher_timetable in updated_teacher_timetables_list :
 		timtable_obj = ttable.TimeTable(None)
 		updated_teacher_timetable_dict = timtable_obj.make_timetable_dict(updated_teacher_timetable)
 
 		response = timetable_service.create_timetable(updated_teacher_timetable_dict)
-		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + '--------- A updated teacher time table uploaded -------- '+str(updated_teacher_timetable_dict['time_table_key']))
+		# gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + '--------- A updated teacher time table uploaded -------- '+str(updated_teacher_timetable_dict['time_table_key']))
 
 
 def integrate_update_subject_teacher(
@@ -198,6 +206,9 @@ def integrate_update_subject_teacher(
 	updated_class_timetable = update_current_class_timetable(current_class_timetable,subject_code,new_teacher_timetable.employee_key)
 	updated_class_timetables_list.append(updated_class_timetable)
 	updated_existing_teacher_timetable = update_existing_teacher_timetable(existing_teacher_timetable,subject_code,period_list)
+	for p in period_list :
+		gclogger.info(str(p.period_code) + str(p.employee_key) + str(p.subject_key))
+	gclogger.info("<<<<<------ Periods to Update Collected when after existing teacher timetable----------->>>>>")
 	updated_teacher_timetables_list.append(updated_existing_teacher_timetable)
 	updated_new_teacher_timetable = update_new_teacher_timetable(new_teacher_timetable,period_list)
 	updated_teacher_timetables_list.append(updated_new_teacher_timetable)
@@ -268,10 +279,22 @@ def get_period_code(event) :
 
 
 def update_new_teacher_timetable(new_teacher_timetable,period_list) :
+	gclogger.info("~~~~~~~~~~~~~~INSIDE THE NEW TEACHER TIMETABLE UPDATION FUNCTION ~~~~~~~~~~~~~~~")
+	for p in period_list :
+		gclogger.info(str(p.period_code) + str(p.employee_key) + str(p.subject_key))
+	gclogger.info("<<<<<------ Periods to Update ~2~ ----------->>>>>")
+	gclogger.info("<<<<<<<<<<UPDATING EMPLOYEE TO NEW EMPLOYEE KEY >>>>>>>>>>>>")
+
 	period_list = updated_employee_key(period_list,new_teacher_timetable,new_teacher_timetable.employee_key)
+	for p in period_list :
+		gclogger.info(str(p.period_code) + str(p.employee_key) + str(p.subject_key))
+	gclogger.info("<<<<<------ Periods updated to new employee key  ~3~ ----------->>>>>")
 	for period in period_list :
 		if hasattr(period,'order_index') :
 			new_teacher_timetable = add_period_on_new_teacher_timetable(period,new_teacher_timetable)
+	for p in period_list :
+		gclogger.info(str(p.period_code) + str(p.employee_key) + str(p.subject_key))
+	gclogger.info("<<<<<------ Periods updated to new employee key  ~3~ ----------->>>>>")
 	return new_teacher_timetable
 
 def updated_employee_key(period_list,new_teacher_timetable,new_teacher_emp_key) :
@@ -290,7 +313,11 @@ def add_period_on_new_teacher_timetable(period,new_teacher_timetable) :
 
 
 def add_or_update_period(existing_periods,period) :
-	order_index = int(period.order_index)
+	order_index = None
+	if hasattr(period,"order_index") :	
+		order_index = int(period.order_index)
+	else :		
+		order_index = int(period.period_code[-1])
 	for existing_period in existing_periods :
 		if existing_period.order_index == order_index :
 			existing_periods[order_index-1] = period
@@ -300,7 +327,8 @@ def add_or_update_period(existing_periods,period) :
 def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,period_list) :
 	if hasattr(existing_teacher_timetable.timetable,'day_tables') :
 		for day in existing_teacher_timetable.timetable.day_tables :
-			for period in day.periods :
+			for period in day.periods :	
+				gclogger.info(str(period.period_code) + str(period.employee_key) + str(period.subject_key))
 				order_index = None
 				if hasattr(period,"order_index") :
 					order_index = int(period.order_index)
@@ -319,6 +347,7 @@ def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,pe
 						period_copy = copy.deepcopy(period)
 						updated_period = update_previous_employee_period(period_copy)
 						day.periods[order_index - 1] = updated_period
+	gclogger.info("<<<<<------ Periods to Update Collected when existing teacher timetable before update------------>>>>>")
 	return existing_teacher_timetable
 
 

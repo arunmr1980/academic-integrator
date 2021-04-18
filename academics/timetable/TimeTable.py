@@ -141,9 +141,10 @@ class TimeTable:
         period_dict = {
             'class_info_key' : period.class_info_key,
             'division_code' : period.division_code,
-            'order_index' : period.order_index,
             'period_code' : period.period_code
         }
+        if hasattr(period,"order_index") :
+           period_dict['order_index'] : period.order_index
         period_dict['employees'] = self.get_employees(period.employees)
         return period_dict
 

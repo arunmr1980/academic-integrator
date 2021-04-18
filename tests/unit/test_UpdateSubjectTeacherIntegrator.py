@@ -43,6 +43,20 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		current_class_timetable = self.get_class_timetable(class_info_key,division,current_class_timetables_list)
 		existing_teacher_timetable = self.get_existing_teacher_timetable(subject_code,existing_teacher_emp_key,current_teacher_timetables_list,current_class_timetable)
 		new_teacher_timetable = self.get_new_teacher_timetable(new_teacher_emp_key,subject_code,current_teacher_timetables_list,current_class_timetable)
+		t = ttable.TimeTable(None)
+		calendar_dict = t.make_timetable_dict(existing_teacher_timetable)
+		gclogger.info(calendar_dict)
+		gclogger.info("<<<<<---------Existing Teacher Timetable to update --------->>>>>>>>")
+
+		gclogger.info("")
+		gclogger.info("")
+		gclogger.info("")
+		gclogger.info("")
+		t = ttable.TimeTable(None)
+		calendar_dict = t.make_timetable_dict(new_teacher_timetable)
+		gclogger.info(calendar_dict)
+		gclogger.info("<<<<<---------New Teacher Timetable to update --------->>>>>>>>")
+
 		if current_class_timetable is not None :
 			gclogger.info("class key------> " + str(class_info_key))
 			gclogger.info("Division---------> " + str(division))
