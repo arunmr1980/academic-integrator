@@ -215,6 +215,9 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 	def check_class_timetables(self,updated_class_timetable,expected_class_timetables_list) :
 		for expected_class_timetable in expected_class_timetables_list :
 			if updated_class_timetable.time_table_key == expected_class_timetable.time_table_key :
+				t = ttable.TimeTable(None)
+				calendar_dict = t.make_timetable_dict(updated_class_timetable)
+				pp.pprint(calendar_dict)
 				self.assertEqual(updated_class_timetable.academic_year , expected_class_timetable.academic_year)
 				self.assertEqual(updated_class_timetable.class_key , expected_class_timetable.class_key)
 				self.assertEqual(updated_class_timetable.class_name , expected_class_timetable.class_name)
@@ -224,6 +227,9 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 	def check_teacher_timetables(self,updated_teacher_timetable,expected_teacher_timetables_list) :
 		for expected_teacher_timetable in expected_teacher_timetables_list :
 			if updated_teacher_timetable.time_table_key == expected_teacher_timetable.time_table_key :
+				t = ttable.TimeTable(None)
+				calendar_dict = t.make_timetable_dict(updated_teacher_timetable)
+				pp.pprint(calendar_dict)
 				self.assertEqual(updated_teacher_timetable.academic_year , expected_teacher_timetable.academic_year)
 				self.assertEqual(updated_teacher_timetable.school_key , expected_teacher_timetable.school_key)
 				self.assertEqual(updated_teacher_timetable.employee_key , expected_teacher_timetable.employee_key)
