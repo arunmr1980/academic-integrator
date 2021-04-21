@@ -207,7 +207,7 @@ def integrate_update_subject_teacher(
 	updated_class_timetables_list.append(updated_class_timetable)
 	updated_existing_teacher_timetable = update_existing_teacher_timetable(existing_teacher_timetable,subject_code,period_list)
 	updated_teacher_timetables_list.append(updated_existing_teacher_timetable)
-	updated_new_teacher_timetable = update_new_teacher_timetable(new_teacher_timetable,period_list)
+	updated_new_teacher_timetable = update_new_teacher_timetable(new_teacher_timetable,period_list,subject_code)
 	updated_teacher_timetables_list.append(updated_new_teacher_timetable)
 	updated_class_calendars = get_updated_class_calendars(current_class_calendars_list,period_list)
 	updated_class_calendars_list.extend(updated_class_calendars)
@@ -275,8 +275,8 @@ def get_period_code(event) :
 				return param.value
 
 
-def update_new_teacher_timetable(new_teacher_timetable,period_list) :
-	period_list = updated_employee_key(period_list,new_teacher_timetable,new_teacher_timetable.employee_key)
+def update_new_teacher_timetable(new_teacher_timetable,period_list,subject_code) :
+	period_list = updated_employee_key(period_list,new_teacher_timetable,new_teacher_timetable.employee_key,subject_code)
 	for period in period_list :
 		if hasattr(period,'order_index') :
 			new_teacher_timetable = add_period_on_new_teacher_timetable(period,new_teacher_timetable)
@@ -285,9 +285,14 @@ def update_new_teacher_timetable(new_teacher_timetable,period_list) :
 			new_teacher_timetable = add_period_on_new_teacher_timetable(period,new_teacher_timetable)
 	return new_teacher_timetable
 
-def updated_employee_key(period_list,new_teacher_timetable,new_teacher_emp_key) :
+def updated_employee_key(period_list,new_teacher_timetable,new_teacher_emp_key,subject_code) :
 	for period in period_list :
-		period.employee_key = new_teacher_emp_key
+		if hasattr(period,'employees') :
+			for employee in period.employees :
+				if employee.subject_key == subject_code :
+					employee.employee_key = new_teacher_emp_key
+		else :
+			period.employee_key = new_teacher_emp_key
 	return period_list
 
 def add_period_on_new_teacher_timetable(period,new_teacher_timetable) :
