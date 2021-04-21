@@ -141,7 +141,8 @@ class TimeTable:
         period_dict = {
             'class_info_key' : period.class_info_key,
             'division_code' : period.division_code,
-            'period_code' : period.period_code
+            'period_code' : period.period_code,
+            'period_code' :period.period_code
         }
         if hasattr(period,"order_index") :
            period_dict['order_index'] : period.order_index

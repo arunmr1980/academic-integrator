@@ -322,7 +322,6 @@ def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,pe
 	if hasattr(existing_teacher_timetable.timetable,'day_tables') :
 		for day in existing_teacher_timetable.timetable.day_tables :
 			for period in day.periods :	
-				gclogger.info(str(period.period_code) + str(period.employee_key) + str(period.subject_key))
 				order_index = None
 				if hasattr(period,"order_index") :
 					order_index = int(period.order_index)
@@ -330,7 +329,7 @@ def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,pe
 					order_index = int(period.period_code[-1])
 				if hasattr(period,'employees') :
 					for employee in period.employees :
-						if employee.subject_key == subject_key :
+						if employee.subject_key == subject_code :
 							period_list.append(period)
 							period_copy = copy.deepcopy(period)
 							updated_period = update_previous_employee_period(period_copy)
@@ -341,7 +340,6 @@ def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,pe
 						period_copy = copy.deepcopy(period)
 						updated_period = update_previous_employee_period(period_copy)
 						day.periods[order_index - 1] = updated_period
-	gclogger.info("<<<<<------ Periods to Update Collected when existing teacher timetable before update------------>>>>>")
 	return existing_teacher_timetable
 
 
