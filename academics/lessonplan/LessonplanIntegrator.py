@@ -722,7 +722,7 @@ def remove_shedules(schedules,current_lessonplan) :
 			for session in current_lessonplan.sessions :
 				if hasattr(session,'schedule') :
 					if session.schedule is not None :
-						if hasattr(schedule,"start_time") and hasattr(schedule,"end_time") :
+						if hasattr(session.schedule,"start_time") and hasattr(session.schedule,"end_time") :
 							if session.schedule.start_time == schedule_start_time and session.schedule.end_time == schedule_end_time :
 								del session.schedule				
 	return current_lessonplan
