@@ -118,7 +118,7 @@ def integrate_update_period_calendars_and_lessonplans(period_code,time_table_key
 		# gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated lessonplan uploaded -------- '+str(updated_lessonplan_dict['lesson_plan_key']))
 
 def update_previous_subject_lessonplan(existing_event,current_lessonplans, updated_class_calendar) :
-	current_lessonplan = None
+	updated_lessonplan = None
 	subject_key = get_subject_key(existing_event.params)
 	current_lessonplan = get_current_lesson_plan_with_subject_key(current_lessonplans,subject_key)
 	if current_lessonplan is not None :
