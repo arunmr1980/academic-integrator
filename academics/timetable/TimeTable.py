@@ -141,10 +141,16 @@ class TimeTable:
         period_dict = {
             'class_info_key' : period.class_info_key,
             'division_code' : period.division_code,
-            'order_index' : period.order_index,
-            'period_code' : period.period_code
+            'period_code' : period.period_code,
         }
-        period_dict['employees'] = self.get_employees(period.employees)
+        if hasattr(period,"subject_key") :
+            period_dict['subject_key'] = period.subject_key
+        if hasattr(period,"order_index") :
+           period_dict['order_index'] = period.order_index
+        if hasattr(period,"employee_key") :
+            period_dict['employee_key'] = period.employee_key
+        if hasattr(period,"employees") :
+            period_dict['employees'] = self.get_employees(period.employees)
         return period_dict
 
     def get_employees(self,employees) :
