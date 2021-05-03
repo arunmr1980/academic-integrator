@@ -664,11 +664,15 @@ def make_events(period_list,timetable,date) :
 		event.event_type = 'CLASS_SESSION'
 		time_table_period = get_time_table_period(period.period_code,timetable)
 		try :
-			event.params = timetable_integrator.get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
-			event.from_time =  timetable_integrator.get_standard_time(period.start_time,date)
-			event.to_time =  timetable_integrator.get_standard_time(period.end_time,date)
-			gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
-			events_list.append(event)
+			if time_table_period.employee_key is None :
+				events = timetable_integrator.get_event_list(time_table_period,period_list,date)
+				events_list.extend(events)
+			else :
+				event.params = timetable_integrator.get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
+				event.from_time =  timetable_integrator.get_standard_time(period.start_time,date)
+				event.to_time =  timetable_integrator.get_standard_time(period.end_time,date)
+				gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
+				events_list.append(event)
 		except AttributeError :
 			events = timetable_integrator.get_event_list(time_table_period,period_list,date)
 			events_list.extend(events)
