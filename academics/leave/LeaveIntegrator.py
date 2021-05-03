@@ -140,7 +140,7 @@ def integrate_leave_cancel(leave_key) :
 
 
 
-	updated_removed_events = update_class_cals_on_cancel_leave(removed_events,class_cals_to_be_updated,updated_class_calendars_list)
+	updated_removed_events = update_class_cals_on_cancel_leave(removed_events,class_cals_to_be_updated,updated_class_calendars_list,employee_key)
 	for class_event in updated_removed_events :
 			gclogger.info(class_event.params[1].value + " subject_key -----------------------__>>>>>>>(2)")
 	school_key = updated_class_calendars_list[0].institution_key
@@ -267,14 +267,14 @@ def set_teacher_calendar_dict(teacher_calendars_dict,employee_key,class_calendar
 		gclogger.info("Teacher calendar present in Dict")
 
 
-def update_class_cals_on_cancel_leave(removed_events,class_cals,updated_class_calendars_list) :
+def update_class_cals_on_cancel_leave(removed_events,class_cals,updated_class_calendars_list,employee_key) :
 	updated_removed_events = []
 	for current_class_calendar in class_cals :
 		subscriber_key = current_class_calendar.subscriber_key
 		class_key = subscriber_key[:-2]
 		division = subscriber_key[-1:]
 		timetable = timetable_service.get_timetable_by_class_key_and_division(class_key,division)
-		updated_class_calendar = get_updated_class_calendar_on_cancel_leave(current_class_calendar,removed_events,timetable,updated_removed_events)
+		updated_class_calendar = get_updated_class_calendar_on_cancel_leave(current_class_calendar,removed_events,timetable,updated_removed_events,employee_key)
 		updated_class_calendars_list.append(updated_class_calendar)
 	return updated_removed_events
 
@@ -481,9 +481,9 @@ def get_updated_class_calendar(current_class_calendar,removed_events) :
 		 current_class_calendar = get_event_updated_class_calendar(event,current_class_calendar)
 	return current_class_calendar
 
-def get_updated_class_calendar_on_cancel_leave(current_class_calendar,removed_events,timetable,updated_removed_events) :
+def get_updated_class_calendar_on_cancel_leave(current_class_calendar,removed_events,timetable,updated_removed_events,employee_key) :
 	for event in removed_events :
-		 current_class_calendar = get_event_updated_class_calendar_on_leave_cancel(event,current_class_calendar,timetable,updated_removed_events)
+		 current_class_calendar = get_event_updated_class_calendar_on_leave_cancel(event,current_class_calendar,timetable,updated_removed_events,employee_key)
 	return current_class_calendar
 	
 
@@ -507,7 +507,7 @@ def get_event_updated_class_calendar(event,current_class_calendar) :
 
 	return current_class_calendar
 
-def get_event_updated_class_calendar_on_leave_cancel(event,current_class_calendar,timetable,updated_removed_events) :
+def get_event_updated_class_calendar_on_leave_cancel(event,current_class_calendar,timetable,updated_removed_events,employee_key) :
 	
 	for existing_event in current_class_calendar.events :
 		event_period_code = existing_event.params[0].value
@@ -521,14 +521,22 @@ def get_event_updated_class_calendar_on_leave_cancel(event,current_class_calenda
 			timetable_period = get_period_code_from_timetable(timetable,event_period_code)
 			gclogger.info("TIMETABLE PERIOD CODE -- "+ timetable_period.period_code)
 			gclogger.info("TIMETABLE SUBJECT KEY -- "+ timetable_period.subject_key)
-			gclogger.info("TIMETABLE EMPLOYEE KEY -- "+ timetable_period.employee_key)	
+			# gclogger.info("TIMETABLE EMPLOYEE KEY -- "+ timetable_period.employee_key)	
 			
 			del existing_event.status 
-			existing_event.params[1].value = timetable_period.subject_key
-			existing_event.params[2].value = timetable_period.employee_key
-			#-------------- need updation ---------------#
-			# remove_event_from_substituted_employee()
-			# remove_event_from_lessonplan()
+			try :
+				if timetable_period.employee_key is None :
+					raise AttributeError("getting employee key None ")
+				else :
+					existing_event.params[1].value = timetable_period.subject_key
+					existing_event.params[2].value = timetable_period.employee_key
+
+			except AttributeError :
+				employee = get_subscriber(timetable_period,employee_key)
+				if employee is not None :
+					existing_event.params[1].value = employee.subject_key
+					existing_event.params[2].value = employee_key
+
 			updated_removed_events.append(existing_event)
 	return current_class_calendar
 
@@ -578,3 +586,7 @@ def get_teacher_calendars_on_dates(from_date,to_date,employee_key) :
 
 									
 	
+def get_subscriber(timetable_period,employee_key) :
+	for employee in timetable_period.employees :
+		if employee.employee_key == employee_key :
+			return employee
