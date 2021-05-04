@@ -207,7 +207,8 @@ def get_updated_existing_teacher_calendar(teacher_calendar,updated_class_calenda
 				subject_key = get_subject_key(event.params)
 				if subject_key == subject_code :
 					teacher_calendar_event = get_event(teacher_calendar,event.event_code)
-					teacher_calendar.events.remove(teacher_calendar_event)			
+					if teacher_calendar_event is not None :
+						teacher_calendar.events.remove(teacher_calendar_event)			
 	return teacher_calendar
 
 def get_event(calendar,event_code) :
@@ -723,7 +724,8 @@ def get_events_to_remove(class_calendar,holiday_event) :
 	gclogger.info('END ' + calendar_event_end_time)
 	gclogger.info('')
 	for event in class_calendar.events :
-		if event.event_type != "HOLIDAY" :
+		# if event.event_type != "HOLIDAY" :
+		if is_class(events[0].params[0]) == True :
 			class_calendar_event_start_time = event.from_time
 			class_calendar_event_end_time = event.to_time
 			if check_events_conflict(calendar_event_start_time,calendar_event_end_time,class_calendar_event_start_time,class_calendar_event_end_time) :
