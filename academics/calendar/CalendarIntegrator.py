@@ -724,7 +724,7 @@ def get_events_to_remove(class_calendar,holiday_event) :
 	gclogger.info('END ' + calendar_event_end_time)
 	gclogger.info('')
 	for event in class_calendar.events :
-		if event.event_type != "HOLIDAY" :
+		if event.event_type == "CLASS_SESSION" :
 			class_calendar_event_start_time = event.from_time
 			class_calendar_event_end_time = event.to_time
 			if check_events_conflict(calendar_event_start_time,calendar_event_end_time,class_calendar_event_start_time,class_calendar_event_end_time) :
