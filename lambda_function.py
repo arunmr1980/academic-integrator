@@ -178,12 +178,13 @@ def update_subject_teacher_integration(request):
 def add_exam_integration(request) :
 	try :
 		series_code = request['series_code']
-		class_info_key = request['class_info_key']
-		division = request['division']
-
-		integrate_add_exam_on_calendar(series_code,class_info_key,division)
+		classes = request['classes']
+		for clazz in classes :
+			class_key = clazz['class_key']
+			division = clazz['division']
+			integrate_add_exam_on_calendar(series_code,class_key,division)
 	except KeyError as ke:
-		logger.info("Error in input. series_code,class_info_key or division not present")
+		logger.info("Error in input. series_code or classes not present")
 		send_response(400,"input validation error")
 	logger.info(request)
 	logger.info("--------- This SQS Request is to add exam in calendar ------------")
@@ -204,12 +205,12 @@ def update_exam_integration(request) :
 	try :
 		series_code = request['series_code']
 		classes = request['classes']
-		class_key = classes[0]['class_key']
-		division = classes[0]['division']
-		integrate_update_exam(series_code,class_key,division)
-
+		for clazz in classes :	
+			class_key = clazz['class_key']
+			division = clazz['division']
+			integrate_update_exam(series_code,class_key,division)
 	except KeyError as ke:
-		logger.info("Error in input. series_code,class_info_key or division not present")
+		logger.info("Error in input. series_code or classes present")
 		send_response(400,"input validation error")
 	logger.info(request)
 	logger.info("--------- This SQS Request is to update exam ------------")
