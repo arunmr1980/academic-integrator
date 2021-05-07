@@ -482,12 +482,6 @@ def add_events_to_calendar(events,existing_class_calendar) :
 	return updated_class_calendar
 
 	
-		
-def sort_updated_class_calendar_events(existing_class_calendar) :
-	from operator import attrgetter
-	soreted_events = sorted(existing_class_calendar.events, key = attrgetter('from_time'))
-	existing_class_calendar.events = soreted_events
-	return existing_class_calendar
 
 
 def get_employee_key_list(updated_class_calendar_events) :

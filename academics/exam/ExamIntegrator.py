@@ -812,12 +812,15 @@ def make_events_to_add_schdule_and_update_lessonplans(period_list,timetable,clas
 		event.ref_calendar_key = class_calendar.calendar_key
 		time_table_period = calendar_integrator.get_time_table_period(period.period_code,timetable)
 		try :
-			event.params = timetable_integrator.get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
-			event.from_time =  timetable_integrator.get_standard_time(period.start_time,class_calendar.calendar_date)
-			event.to_time =  timetable_integrator.get_standard_time(period.end_time,class_calendar.calendar_date)
-			gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
-			events_list.append(event)
-			update_lesson_plan_on_cancel_exam(event,class_calendar)
+			if time_table_period.employee_key is None :
+				raise AttributeError("Employee key is None")
+			else :
+				event.params = timetable_integrator.get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
+				event.from_time =  timetable_integrator.get_standard_time(period.start_time,class_calendar.calendar_date)
+				event.to_time =  timetable_integrator.get_standard_time(period.end_time,class_calendar.calendar_date)
+				gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
+				events_list.append(event)
+				update_lesson_plan_on_cancel_exam(event,class_calendar)
 		except AttributeError :
 			events = timetable_integrator.get_event_list(time_table_period,period_list,date)
 			events_list.extend(events)
