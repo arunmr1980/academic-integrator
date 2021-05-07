@@ -822,7 +822,7 @@ def make_events_to_add_schdule_and_update_lessonplans(period_list,timetable,clas
 				events_list.append(event)
 				update_lesson_plan_on_cancel_exam(event,class_calendar)
 		except AttributeError :
-			events = timetable_integrator.get_event_list(time_table_period,period_list,date)
+			events = timetable_integrator.get_event_list(time_table_period,period_list,class_calendar.calendar_date)
 			events_list.extend(events)
 			for event in events :
 				update_lesson_plan_on_cancel_exam(event,class_calendar)
