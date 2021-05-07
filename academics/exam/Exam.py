@@ -8,7 +8,7 @@ class Exam:
             self.division = item["division"]
             self.from_time = item["from_time"]
             self.to_time = item["to_time"]
-            self.max_score = item["max_score"]
+            # self.max_score = item["max_score"]
             self.subject_code = item["subject_code"]
             self.subject_name = item["subject_name"]
             self.series_code = item["series_code"]
@@ -19,6 +19,10 @@ class Exam:
                 self.status = item["status"]
             except KeyError as ke:
                 gclogger.debug(' KeyError in Exam -  status not found'.format(str(ke)))
+            try:
+                self.max_score = item["max_score"]
+            except KeyError as ke:
+                gclogger.debug(' KeyError in Exam -  max_score not found'.format(str(ke)))
             try:
                 self.academic_year = item["academic_year"]
             except KeyError as ke:
