@@ -73,6 +73,7 @@ def get_updated_lessonplans_on_substitute_teacher(updated_calendar,current_lesso
 	events_to_be_added.append(event_to_be_added)
 	subject_key = calendar_integrator.get_subject_key(event_to_be_added.params)
 	current_lessonplan = get_current_lessonplan(current_lessonplans_list,subject_key,class_key,division)
+	events_to_be_added = events_to_be_added_to_lesson_plan(events_to_be_added,current_lessonplan)
 	updated_lessonplan = lessonplan_integrator.add_schedules_and_adjust_lessonplan(current_lessonplan,events_to_be_added,updated_calendar)
 	updated_lessonplans_list.append(updated_lessonplan)
 	return updated_lessonplans_list
@@ -590,3 +591,10 @@ def get_subscriber(timetable_period,employee_key) :
 	for employee in timetable_period.employees :
 		if employee.employee_key == employee_key :
 			return employee
+
+def events_to_be_added_to_lesson_plan(events_to_be_added,current_lessonplan) :
+	updated_events = []
+	for event in events_to_be_added :
+		if lessonplan_integrator.event_exist_in_lessonplan(event,current_lessonplan) == False :
+			updated_events.append(event)
+	return updated_events
