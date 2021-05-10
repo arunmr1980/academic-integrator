@@ -32,6 +32,7 @@ def integrate_cancel_exam(exam_series_list,school_key,academic_year) :
 	exam_series = make_exam_series_objects(exam_series_list)
 	for clazz in exam_series.classes :	
 		exams_list = perticular_exams_for_perticular_classes(clazz,exam_series.code)
+		exams_list = get_exams_of_perticular_division(clazz.division,exams_list)
 		current_class_calendars_list = get_affected_class_calendars_list(exams_list)
 		if len(current_class_calendars_list) > 0 :
 			current_lessonplans_list = get_current_lessonplans(exam_series.classes)
@@ -340,6 +341,7 @@ def integrate_add_exam_on_calendar(series_code,class_key,division) :
 	updated_lessonplans_list = []
 	removed_events = []
 	exams_list = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
+	exams_list = get_exams_of_perticular_division(division,exams_list)
 	current_class_calendars_list = get_affected_class_calendars(exams_list)
 	school_key = current_class_calendars_list[0].institution_key
 	current_cls_calendars = copy.deepcopy(current_class_calendars_list)
@@ -1178,4 +1180,22 @@ def check_exam_subject_whether_include_in_elective_group_or_not(elective_group,e
 			if elective_subject.code == exam_subject_code :
 				is_exist = True
 	return is_exist
+
+def get_exams_of_perticular_division(division,exams_list) :
+	exams = []
+	for exam in exams_list :
+		if exam.division == division :
+			exams.append(exam)
+	return exams
+
+
+
+
+
+
+
+
+
+
+
 
