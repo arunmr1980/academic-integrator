@@ -154,11 +154,12 @@ def get_updated_class_calendar_event(subscriber_key,subject_key,period_code,upda
 			return event
 
 def update_previous_teacher_calendar(existing_event,current_class_calendar) :
-
+	updated_previous_teacher_calendar = None 
 	subscriber_key = get_employee_key(existing_event.params)
-	previous_teacher_calendar = calendar_service.get_calendar_by_date_and_key(current_class_calendar.calendar_date,subscriber_key)
+	if subscriber_key is not None :
+		previous_teacher_calendar = calendar_service.get_calendar_by_date_and_key(current_class_calendar.calendar_date,subscriber_key)
 
-	updated_previous_teacher_calendar = update_current_teacher_calendar(existing_event,previous_teacher_calendar,current_class_calendar)
+		updated_previous_teacher_calendar = update_current_teacher_calendar(existing_event,previous_teacher_calendar,current_class_calendar)
 	return updated_previous_teacher_calendar
 
 
