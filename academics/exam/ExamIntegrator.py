@@ -32,7 +32,6 @@ def integrate_cancel_exam(exam_series_list,school_key,academic_year) :
 	exam_series = make_exam_series_objects(exam_series_list)
 	for clazz in exam_series.classes :	
 		exams_list = perticular_exams_for_perticular_classes(clazz,exam_series.code)
-		exams_list = get_exams_of_perticular_division(clazz.division,exams_list)
 		current_class_calendars_list = get_affected_class_calendars_list(exams_list)
 		if len(current_class_calendars_list) > 0 :
 			current_lessonplans_list = get_current_lessonplans(exam_series.classes)
@@ -53,7 +52,7 @@ def save_calendars(updated_class_calendars_list,updated_teacher_calendars_list) 
 	for updated_class_calendar in updated_class_calendars_list :
 		cal = calendar.Calendar(None)
 		class_calendar_dict = cal.make_calendar_dict(updated_class_calendar)
-		pp.pprint(class_calendar_dict)
+		# pp.pprint(class_calendar_dict)
 		response = calendar_service.add_or_update_calendar(class_calendar_dict)
 		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated class calendar uploaded --------- '+str(class_calendar_dict['calendar_key']))
 
