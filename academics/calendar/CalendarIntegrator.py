@@ -100,13 +100,13 @@ def update_previous_subject_lessonplan(existing_event,current_lessonplans, updat
 	return updated_lessonplan
 
 
-def update_new_teacher_calendars(updated_class_calendar, period_code,updated_timetable_period) :
+def update_new_teacher_calendars(updated_class_calendar, period_code,updated_timetable_period,updated_calendars_list) :
 	updated_new_teacher_calendars_list = []
 	if hasattr(updated_timetable_period,"employees") :
 		for employee in updated_timetable_period.employees :
 			subscriber_key = employee.employee_key
 			subject_key = employee.subject_key
-			new_teacher_calendar = Get_teacher_calendar(updated_class_calendar,subscriber_key)
+			new_teacher_calendar = Get_teacher_calendar(updated_class_calendar,subscriber_key,updated_calendars_list)
 			updated_class_calendar_event = get_updated_class_calendar_event(subscriber_key,subject_key,period_code,updated_class_calendar)
 			updated_new_teacher_calendar = update_teacher_calendar_with_new_event(new_teacher_calendar,updated_class_calendar_event,updated_class_calendar)
 			updated_new_teacher_calendars_list.append(updated_new_teacher_calendar)
@@ -114,7 +114,7 @@ def update_new_teacher_calendars(updated_class_calendar, period_code,updated_tim
 		updated_class_calendar_events = get_period_code_events(updated_class_calendar, period_code)
 		subscriber_key = get_employee_key(updated_class_calendar_events[0].params)
 		if subscriber_key is not None :
-			new_teacher_calendar = Get_teacher_calendar(updated_class_calendar,subscriber_key)
+			new_teacher_calendar = Get_teacher_calendar(updated_class_calendar,subscriber_key,updated_calendars_list)
 			updated_new_teacher_calendar = update_teacher_calendar_with_new_event(new_teacher_calendar,updated_class_calendar_events[0],updated_class_calendar)
 			updated_new_teacher_calendars_list.append(updated_new_teacher_calendar)
 	return updated_new_teacher_calendars_list
@@ -153,12 +153,14 @@ def update_new_subject_lessonplans(updated_timetable_period, current_lessonplans
 			period_code = updated_timetable_period.period_code
 			updated_class_calendar_events = get_subject_event_matching_period_code(updated_class_calendar, updated_timetable_period.period_code,employee_key,subject_key)
 			current_lessonplan = get_current_lesson_plan_with_subject_key(current_lessonplans,subject_key)
+			updated_class_calendar_events = events_to_be_added_to_lesson_plan(updated_class_calendar_events,current_lessonplan)
 			if current_lessonplan is not None :
 				updated_lessonplan = add_schedules(updated_class_calendar_events,current_lessonplan,updated_class_calendar)
 				updated_new_subject_lessonplans_list.append(updated_lessonplan)
 	else :
 		updated_class_calendar_events = get_subject_events_matching_period_code(updated_class_calendar, updated_timetable_period.period_code)
 		current_lessonplan = get_current_lesson_plan_with_subject_key(current_lessonplans,updated_timetable_period.subject_key)
+		updated_class_calendar_events = events_to_be_added_to_lesson_plan(updated_class_calendar_events,current_lessonplan)
 		if current_lessonplan is not None :
 			updated_lessonplan = add_schedules(updated_class_calendar_events,current_lessonplan,updated_class_calendar)
 			updated_new_subject_lessonplans_list.append(updated_lessonplan)
@@ -169,7 +171,8 @@ def update_teacher_calendar_with_new_event(new_teacher_calendar,calendar_event,u
 		event_object = cldr.Event(None)
 		event_object.event_code = calendar_event.event_code
 		event_object.ref_calendar_key = updated_class_calendar.calendar_key
-		new_teacher_calendar.events.append(event_object)
+		if chcek_teacher_calendar_event_already_exist(event_object,new_teacher_calendar) == False :
+			new_teacher_calendar.events.append(event_object)
 	return new_teacher_calendar
 
 
@@ -221,13 +224,14 @@ def generate_class_calendar(class_key,division,calendar_date,institution_key) :
 	class_calendar.events = []
 	return class_calendar
 
-def Get_teacher_calendar(updated_class_calendar,subscriber_key) :
-	existing_teacher_calendar = calendar_service.get_calendar_by_date_and_key(updated_class_calendar.calendar_date,subscriber_key)
-	if existing_teacher_calendar is not None :
-		return existing_teacher_calendar
-	else :
-		employee_calendar = generate_employee_calendar(subscriber_key,updated_class_calendar)
-		return employee_calendar
+def Get_teacher_calendar(updated_class_calendar,subscriber_key,updated_calendars_list) :
+	teacher_calendar = None
+	teacher_calendar = calendar_service.get_calendar_by_date_and_key(updated_class_calendar.calendar_date,subscriber_key)
+	if teacher_calendar is None :
+		teacher_calendar = get_teacher_calendar_from_updated_calendars_list(updated_calendars_list,updated_class_calendar.calendar_date,subscriber_key)
+	if teacher_calendar is None :
+		teacher_calendar = generate_employee_calendar(subscriber_key,updated_class_calendar)
+	return teacher_calendar
 
 def get_period_code_events(updated_class_calendar, period_code) :
 	event_list = []
@@ -316,13 +320,15 @@ def update_event(existing_event,current_class_calendar,updated_timetable_period)
 	if hasattr(updated_timetable_period,"employees") :
 		for employee in updated_timetable_period.employees :
 			event = make_new_event(employee,existing_event,updated_timetable_period)
-			current_class_calendar.events.append(event)	
+			if chcek_event_already_exist(event,current_class_calendar) == False :
+				current_class_calendar.events.append(event)	
 	else :
 		updated_params = update_params(existing_event.params,current_class_calendar,updated_timetable_period)
 		del existing_event.params
 		existing_event.params = updated_params
 	if hasattr(updated_timetable_period,"employees") :
-		current_class_calendar.events.remove(existing_event)	
+		if existing_event in current_class_calendar.events :
+			current_class_calendar.events.remove(existing_event)	
 	return current_class_calendar
 
 def make_new_event(employee,existing_event,updated_timetable_period) :
@@ -768,7 +774,7 @@ def update_calendars_and_lessonplans_when_update_period(events_list,current_clas
 			if updated_previous_teacher_calendar is not None :
 				updated_calendars_list.append(updated_previous_teacher_calendar)
 
-			updated_new_teacher_calendars = update_new_teacher_calendars(updated_class_calendar,period_code,updated_timetable_period)
+			updated_new_teacher_calendars = update_new_teacher_calendars(updated_class_calendar,period_code,updated_timetable_period,updated_calendars_list)
 			if len(updated_new_teacher_calendars) > 0 :
 				for updated_new_teacher_calendar in updated_new_teacher_calendars :
 					updated_calendars_list.append(updated_new_teacher_calendar)
@@ -799,10 +805,6 @@ def update_class_calendars_and_lessonplans_by_removing_events(current_class_cale
 		update_previous_subject_lessonplan(existing_event,current_lessonplans, current_class_calendar)
 	
 
-
-
-
-
 def get_existing_event_from_calendar(event_code,current_class_calendar) :
 	for event in current_class_calendar.events :
 		if event.event_code == event_code :
@@ -810,10 +812,37 @@ def get_existing_event_from_calendar(event_code,current_class_calendar) :
 
 
 
+def chcek_event_already_exist(event,current_class_calendar) :
+	is_exist = False 
+	event_employee_key = timetable_integrator.get_employee_key(event.params)
+	event_subject_key = timetable_integrator.get_subject_code(event)
+	for existing_event in current_class_calendar.events :
+		employee_key = timetable_integrator.get_employee_key(existing_event.params)
+		subject_key = timetable_integrator.get_subject_code(existing_event)
+		if existing_event.from_time == event.from_time and existing_event.to_time == event.to_time and employee_key == event_employee_key and subject_key == event_subject_key :
+			is_exist = True
+	return is_exist
+			
+def chcek_teacher_calendar_event_already_exist(event,current_teacher_calendar) :
+	is_exist = False 
+	for existing_event in current_teacher_calendar.events :
+		if existing_event.event_code == event.event_code and existing_event.ref_calendar_key == event.ref_calendar_key :
+			is_exist = True
+	return is_exist
+
+def events_to_be_added_to_lesson_plan(events_to_be_added,current_lessonplan) :
+	updated_events = []
+	for event in events_to_be_added :
+		if event_exist_in_lessonplan(event,current_lessonplan) == False :
+			updated_events.append(event)
+	return updated_events
 
 
-
-
+def get_teacher_calendar_from_updated_calendars_list(updated_calendars_list,calendar_date,subscriber_key) :
+	teacher_calendar = None
+	for calendar in updated_calendars_list :
+		if calendar.calendar_date == calendar_date and calendar.subscriber_key == subscriber_key :
+			return calendar
 
 
 
