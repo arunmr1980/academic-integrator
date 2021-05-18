@@ -69,41 +69,15 @@ def integrate_update_period_calendars_and_lessonplans(period_code,time_table_key
 	division = updated_timetable.division
 	subscriber_key = class_key + '-' + division
 	current_class_calendars = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
-
 	current_lessonplans = lessonplan_service.get_lesson_plan_list(class_key,division)
 	current_class_cals = copy.deepcopy(current_class_calendars)
-
 	current_class_calendars_with_day_code = get_current_class_calendars_with_day_code(period_code[:3],current_class_calendars)
 	current_class_calendars_with_day_code_copy = copy.deepcopy(current_class_calendars_with_day_code)
 	updated_timetable_period = get_updated_period_from_timetable(period_code,updated_timetable)
 
-
 	for current_class_calendar in current_class_calendars_with_day_code :
-		event = get_event_with_period_code(current_class_calendar,period_code)
-		if event is not None :
-			existing_event = copy.deepcopy(event)
-			updated_class_calendar = update_event(event,current_class_calendar,updated_timetable_period)
-			if updated_class_calendar is not None :
-				updated_calendars_list.append(updated_class_calendar)
-
-			updated_previous_teacher_calendar = update_previous_teacher_calendar(existing_event,updated_class_calendar)
-			if updated_previous_teacher_calendar is not None :
-				updated_calendars_list.append(updated_previous_teacher_calendar)
-
-			updated_new_teacher_calendars = update_new_teacher_calendars(updated_class_calendar,period_code,updated_timetable_period)
-			if len(updated_new_teacher_calendars) > 0 :
-				for updated_new_teacher_calendar in updated_new_teacher_calendars :
-					updated_calendars_list.append(updated_new_teacher_calendar)
-
-			updated_previous_subject_lessonplan = update_previous_subject_lessonplan(existing_event,current_lessonplans, updated_class_calendar)
-			if updated_previous_subject_lessonplan is not None :
-				updated_lessonplan_list.append(updated_previous_subject_lessonplan)
-
-			updated_new_subject_lessonplans = update_new_subject_lessonplans(updated_timetable_period, current_lessonplans, updated_class_calendar)
-			if len(updated_new_subject_lessonplans) > 0 :
-				for updated_new_subject_lessonplan in updated_new_subject_lessonplans :	
-					updated_lessonplan_list.append(updated_new_subject_lessonplan)
-
+		events_list = get_event_with_period_code(current_class_calendar,period_code)
+		update_calendars_and_lessonplans_when_update_period(events_list,current_class_calendar,updated_timetable_period,updated_calendars_list,updated_lessonplan_list,period_code,current_lessonplans)
 
 	for updated_calendar in updated_calendars_list :
 		cal = cldr.Calendar(None)
@@ -325,10 +299,12 @@ def is_match_period_code(event,period_code) :
 
 
 def get_event_with_period_code(current_class_calendar,period_code) :
+	event_list = []
 	if hasattr(current_class_calendar,'events') :
 		for event in current_class_calendar.events :
 			if is_need_update_parms(event,period_code) == True :
-				return event
+				event_list.append(event)
+	return event_list
 
 
 def is_need_update_parms(event,period_code) :
@@ -778,3 +754,66 @@ def check_events_conflict(event_start_time,event_end_time,class_calendar_event_s
 	else :
 		is_conflict = False
 	return is_conflict
+def update_calendars_and_lessonplans_when_update_period(events_list,current_class_calendar,updated_timetable_period,updated_calendars_list,updated_lessonplan_list,period_code,current_lessonplans) :
+	if len(events_list) > 1 :
+		update_class_calendars_and_lessonplans_by_removing_events(current_class_calendar,events_list,current_lessonplans)
+	for event in events_list :
+		if event is not None :
+			existing_event = copy.deepcopy(event)
+			updated_class_calendar = update_event(event,current_class_calendar,updated_timetable_period)
+			if updated_class_calendar is not None :
+				updated_calendars_list.append(updated_class_calendar)
+
+			updated_previous_teacher_calendar = update_previous_teacher_calendar(existing_event,updated_class_calendar)
+			if updated_previous_teacher_calendar is not None :
+				updated_calendars_list.append(updated_previous_teacher_calendar)
+
+			updated_new_teacher_calendars = update_new_teacher_calendars(updated_class_calendar,period_code,updated_timetable_period)
+			if len(updated_new_teacher_calendars) > 0 :
+				for updated_new_teacher_calendar in updated_new_teacher_calendars :
+					updated_calendars_list.append(updated_new_teacher_calendar)
+
+			updated_previous_subject_lessonplan = update_previous_subject_lessonplan(existing_event,current_lessonplans, updated_class_calendar)
+			if updated_previous_subject_lessonplan is not None :
+				updated_lessonplan_list.append(updated_previous_subject_lessonplan)
+
+			updated_new_subject_lessonplans = update_new_subject_lessonplans(updated_timetable_period, current_lessonplans, updated_class_calendar)
+			if len(updated_new_subject_lessonplans) > 0 :
+				for updated_new_subject_lessonplan in updated_new_subject_lessonplans :	
+					updated_lessonplan_list.append(updated_new_subject_lessonplan)
+
+def update_class_calendars_and_lessonplans_by_removing_events(current_class_calendar,events_list,current_lessonplans) :
+	for event in events_list[:-1] :
+		existing_event = get_existing_event_from_calendar(event.event_code,current_class_calendar)
+		print("DELTE CHEYYENDA EVENT ----*---",existing_event.event_code)
+		current_class_calendar.events.remove(existing_event)
+		subscriber_key = timetable_integrator.get_employee_key(event.params)
+		subject_key = timetable_integrator.get_subject_code(event)
+		employee_calendar = calendar_service.get_calendar_by_date_and_key(current_class_calendar.calendar_date,subscriber_key)
+		if employee_calendar is not None :
+			existing_event = get_existing_event_from_calendar(event.event_code,employee_calendar)
+			employee_calendar.events.remove(existing_event)
+			class_calendar_dict = cldr.Calendar(None)
+			class_calendar_dict = class_calendar_dict.make_calendar_dict(employee_calendar)
+			calendar_service.add_or_update_calendar(class_calendar_dict)
+		update_previous_subject_lessonplan(existing_event,current_lessonplans, current_class_calendar)
+	
+
+
+
+
+
+def get_existing_event_from_calendar(event_code,current_class_calendar) :
+	for event in current_class_calendar.events :
+		if event.event_code == event_code :
+			return event
+
+
+
+
+
+
+
+
+
+
