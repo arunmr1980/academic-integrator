@@ -43,6 +43,7 @@ sqs = boto3.client('sqs')
 def send_to_sqs(message_body):
     response = sqs.send_message(
         QueueUrl = queue_url,
+        MessageGroupId = "test",
         MessageBody = (
              json.dumps(message_body)
             )
