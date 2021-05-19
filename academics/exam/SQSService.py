@@ -41,11 +41,16 @@ queue_name = 'exam-reports'
 sqs = boto3.client('sqs')
 
 def send_to_sqs(message_body):
+	deduplication_id = key.generate_key(16)
     response = sqs.send_message(
         QueueUrl = queue_url,
-        MessageGroupId = "test",
+        MessageGroupId = queue_name,
+        MessageDeduplicationId = deduplication_id,
         MessageBody = (
              json.dumps(message_body)
             )
     )
     gclogger.info(str(response) + " ---------------- SQS RESPONSE --------------------")
+
+
+
