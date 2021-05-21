@@ -32,6 +32,7 @@ def integrate_cancel_exam(exam_series_list,school_key,academic_year) :
 	exam_series = make_exam_series_objects(exam_series_list)
 	for clazz in exam_series.classes :	
 		exams_list = perticular_exams_for_perticular_classes(clazz,exam_series.code)
+		exams_list = get_exams_of_perticular_division(clazz.division,exams_list)
 		current_class_calendars_list = get_affected_class_calendars_list(exams_list)
 		if len(current_class_calendars_list) > 0 :
 			current_lessonplans_list = get_current_lessonplans(exam_series.classes)
@@ -340,6 +341,7 @@ def integrate_add_exam_on_calendar(series_code,class_key,division) :
 	updated_lessonplans_list = []
 	removed_events = []
 	exams_list = exam_service.get_all_exams_by_class_key_and_series_code(class_key, series_code)
+	exams_list = get_exams_of_perticular_division(division,exams_list)
 	current_class_calendars_list = get_affected_class_calendars(exams_list)
 	school_key = current_class_calendars_list[0].institution_key
 	current_cls_calendars = copy.deepcopy(current_class_calendars_list)
@@ -812,14 +814,17 @@ def make_events_to_add_schdule_and_update_lessonplans(period_list,timetable,clas
 		event.ref_calendar_key = class_calendar.calendar_key
 		time_table_period = calendar_integrator.get_time_table_period(period.period_code,timetable)
 		try :
-			event.params = timetable_integrator.get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
-			event.from_time =  timetable_integrator.get_standard_time(period.start_time,class_calendar.calendar_date)
-			event.to_time =  timetable_integrator.get_standard_time(period.end_time,class_calendar.calendar_date)
-			gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
-			events_list.append(event)
-			update_lesson_plan_on_cancel_exam(event,class_calendar)
+			if time_table_period.employee_key is None :
+				raise AttributeError("Employee key is None")
+			else :
+				event.params = timetable_integrator.get_params(time_table_period.subject_key , time_table_period.employee_key , time_table_period.period_code)
+				event.from_time =  timetable_integrator.get_standard_time(period.start_time,class_calendar.calendar_date)
+				event.to_time =  timetable_integrator.get_standard_time(period.end_time,class_calendar.calendar_date)
+				gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
+				events_list.append(event)
+				update_lesson_plan_on_cancel_exam(event,class_calendar)
 		except AttributeError :
-			events = timetable_integrator.get_event_list(time_table_period,period_list,date)
+			events = timetable_integrator.get_event_list(time_table_period,period_list,class_calendar.calendar_date)
 			events_list.extend(events)
 			for event in events :
 				update_lesson_plan_on_cancel_exam(event,class_calendar)
@@ -1175,4 +1180,22 @@ def check_exam_subject_whether_include_in_elective_group_or_not(elective_group,e
 			if elective_subject.code == exam_subject_code :
 				is_exist = True
 	return is_exist
+
+def get_exams_of_perticular_division(division,exams_list) :
+	exams = []
+	for exam in exams_list :
+		if exam.division == division :
+			exams.append(exam)
+	return exams
+
+
+
+
+
+
+
+
+
+
+
 
