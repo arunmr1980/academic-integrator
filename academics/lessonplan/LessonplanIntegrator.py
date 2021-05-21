@@ -572,7 +572,6 @@ def delete_calendar_schedules_of_calendar_date(calendar_date,current_lessonplan)
 				if hasattr(session ,'schedule') :
 					if session.schedule is not None :
 						if is_schedule_on_calendar_date(session.schedule,calendar_date) == True :
-							# print("DELETED SHEDULE ----",session.schedule.start_time,'--',session.schedule.end_time)
 							del session.schedule
 	return current_lessonplan
 

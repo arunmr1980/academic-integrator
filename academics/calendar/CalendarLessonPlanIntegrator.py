@@ -51,8 +51,6 @@ def get_generated_lesson_plan_dict_list(generated_lesson_plan_list) :
 	return generated_lesson_plan_dict_list
 
 def integrate_calendar_to_lesson_plan(generated_class_calendar,current_lesson_plan_list):
-	print(generated_class_calendar.calendar_key,'CALENDAR KEY---------->>>>')
-
 	if hasattr(generated_class_calendar ,'events') :
 		for event in generated_class_calendar.events :
 			schedule_added = False

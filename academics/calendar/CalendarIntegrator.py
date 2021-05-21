@@ -64,7 +64,6 @@ def integrate_update_period_calendars_and_lessonplans(period_code,time_table_key
 	updated_lessonplan_list = []
 	updated_class_calendar_subject_key_list = []
 	updated_timetable = timetable_service.get_time_table(time_table_key)
-	print("UPDATED TIME TABLE ----->>>",updated_timetable)
 	school_key = updated_timetable.school_key
 	class_key = updated_timetable.class_key
 	division = updated_timetable.division
@@ -75,7 +74,6 @@ def integrate_update_period_calendars_and_lessonplans(period_code,time_table_key
 	current_class_calendars_with_day_code = get_current_class_calendars_with_day_code(period_code[:3],current_class_calendars)
 	current_class_calendars_with_day_code_copy = copy.deepcopy(current_class_calendars_with_day_code)
 	updated_timetable_period = get_updated_period_from_timetable(period_code,updated_timetable)
-	print("UPDATED TIME TABLE PERIOD ----->>>",updated_timetable_period)
 
 	for current_class_calendar in current_class_calendars_with_day_code :
 		events_list = get_event_with_period_code(current_class_calendar,period_code)
@@ -134,8 +132,8 @@ def update_previous_teacher_calendar(existing_event,current_class_calendar) :
 	subscriber_key = get_employee_key(existing_event.params)
 	if subscriber_key is not None :
 		previous_teacher_calendar = calendar_service.get_calendar_by_date_and_key(current_class_calendar.calendar_date,subscriber_key)
-
-		updated_previous_teacher_calendar = update_current_teacher_calendar(existing_event,previous_teacher_calendar,current_class_calendar)
+		if previous_teacher_calendar is not None :
+			updated_previous_teacher_calendar = update_current_teacher_calendar(existing_event,previous_teacher_calendar,current_class_calendar)
 	return updated_previous_teacher_calendar
 
 
@@ -276,7 +274,6 @@ def make_event_objects(events) :
 	for event in events :		
 		event_obj = cldr.Event(event)
 		events_obj.append(event_obj)
-	print(events_obj)
 	return events_obj
 
 
@@ -793,7 +790,6 @@ def update_calendars_and_lessonplans_when_update_period(events_list,current_clas
 def update_class_calendars_and_lessonplans_by_removing_events(current_class_calendar,events_list,current_lessonplans) :
 	for event in events_list[:-1] :
 		existing_event = get_existing_event_from_calendar(event.event_code,current_class_calendar)
-		print("DELTE CHEYYENDA EVENT ----*---",existing_event.event_code)
 		current_class_calendar.events.remove(existing_event)
 		subscriber_key = timetable_integrator.get_employee_key(event.params)
 		subject_key = timetable_integrator.get_subject_code(event)

@@ -361,9 +361,6 @@ def integrate_add_exam_on_calendar(series_code,class_key,division) :
 
 def integrate_class_calendars_on_add_exams(updated_class_calendars_list,exams_list,current_class_calendars_list,removed_events) :
 	exam_events = make_exam_events(exams_list)
-	# print("----------- EXAM EVENTS -----")
-	# for exam_event in exam_events :
-	# 	pp.pprint(vars(exam_event))
 	updated_class_calendars_list = get_updated_current_class_calendars(updated_class_calendars_list,current_class_calendars_list,exam_events,removed_events)
 	return updated_class_calendars_list
 
@@ -574,7 +571,6 @@ def integrate_lessonplans_on_update_exams_and_cancel_exam(current_lessonplans_li
 				subject_key = lesssonplan_integrator.get_subject_key(event.params)
 				if subject_key == current_lessonplan.subject_code :
 					events_to_add_schedule.append(event)
-					print("Adding event to lesson plan ------------------------__:::::::>>>>>>",event.event_code)
 					if check_already_added_or_not(event,current_lessonplan) == False :
 						add_schedules_and_adjust_lessonplan(current_lessonplan,events_to_add_schedule)
 		updated_lessonplans.append(current_lessonplan)
@@ -1001,10 +997,6 @@ def check_event_exist_in_class_calendars(event,updated_class_calendars_list) :
 
 
 def check_events_conflict(event_start_time,event_end_time,class_calendar_event_start_time,class_calendar_event_end_time) :
-	# print("EXAM EVENT START TIME ----->",event_start_time)
-	# print("EXAM EVENT START TIME ----->",event_end_time)
-	# print("CLASS SESSION  START TIME ------>",class_calendar_event_start_time)
-	# print("CLASS SESSION END TIME ------>",class_calendar_event_end_time)
 	is_conflict = False
 	event_start_time_year = int(event_start_time[:4])
 	event_start_time_month = int(event_start_time[5:7])
@@ -1042,7 +1034,6 @@ def check_events_conflict(event_start_time,event_end_time,class_calendar_event_s
 	delta = max(event_start_time,class_calendar_event_start_time) - min(event_end_time,class_calendar_event_end_time)
 	if delta.days < 0 :
 		is_conflict = True
-	# print("CONFLICT VALUE",is_conflict)
 	return is_conflict
 
 
