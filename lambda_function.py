@@ -2,7 +2,7 @@ import json
 import boto3
 import traceback
 from academics.TimetableIntegrator import generate_and_save_calenders,update_subject_teacher_integrator
-from academics.calendar.CalendarLessonPlanIntegrator import calendars_lesson_plan_integration, calendars_lesson_plan_integration_from_timetable
+from academics.calendar.CalendarLessonPlanIntegrator import calendars_lesson_plan_integration, calendars_lesson_plan_integration_from_timetable,integrate_calendar_to_single_lessonplan
 from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars, integrate_update_period_calendars_and_lessonplans,make_event_objects
 import academics.logger.GCLogger as logger
 from academics.exam.ExamIntegrator import integrate_add_exam_on_calendar,integrate_cancel_exam,integrate_update_exam
@@ -58,6 +58,9 @@ def lambda_handler(event, context):
 		if request_type == 'TEACHER_SUBSTITUTE_SYNC':
 				# logger.info("--------- This SQS Request is to substitute teacher ------------")
 				teacher_substitution_integration(request)
+		if request_type == "LESSONPLAN_CALENDAR_SYNC" :
+				calendars_to_single_lessonplan_integration(request)
+
 	except:
 		traceback.print_exc()
 		logger.info("Unexpected error ...")
@@ -281,6 +284,18 @@ def special_class_session_integration(request) :
 		send_response(400,"input validation error")
 	logger.info(request)
 	logger.info("--------- This SQS Request is to add class session on calendar (special class) ------------")
+
+def calendars_to_single_lessonplan_integration(request) :
+	try :
+		lesson_plan_key = request['lesson_plan_key']
+		integrate_calendar_to_single_lessonplan(lesson_plan_key)
+	except KeyError as ke:
+		traceback.print_exc()
+		logger.info("Error in input. lesson_plan_key not present")
+		send_response(400,"input validation error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to integrate calendars to single lessonplan ------------")
+
 
 def send_response(status_code, message):
 	data = {

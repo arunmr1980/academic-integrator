@@ -4,8 +4,50 @@ import academics.calendar.CalendarDBService as calendar_service
 from academics.lessonplan import LessonplanDBService as lessonplan_service
 import academics.timetable.TimeTableDBService as timetable_service
 import academics.timetable.KeyGeneration as key
+
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
+
+
+
+def integrate_calendar_to_single_lessonplan(lesson_plan_key) :
+	current_lessonplan = lessonplan_service.get_lessonplan(lesson_plan_key)
+	class_key = current_lessonplan.class_key
+	division = current_lessonplan.division
+	subscriber_key = class_key +'-' + division
+	class_calender_list = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
+	updated_lessonplan = integrate_calendars_to_single_lessonplan(class_calender_list,current_lessonplan)
+	lp = lessonplan.LessonPlan(None)
+	updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+	response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
+	# gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated lessonplan uploaded --------- '+str(updated_lessonplan_dict['lesson_plan_key']))
+
+def integrate_calendars_to_single_lessonplan(class_calender_list,current_lesson_plan) :
+	for generated_class_calendar in class_calender_list :
+		if hasattr(generated_class_calendar ,'events') :
+			for event in generated_class_calendar.events :
+				schedule_added = False
+				subject_code = get_subject_code(event)
+				if current_lesson_plan.subject_code == subject_code :
+					if hasattr(current_lesson_plan ,'topics') and schedule_added == False:
+						for topics in current_lesson_plan.topics :
+							for topic in topics.topics :
+								if schedule_added == False:
+									for session in topic.sessions :
+										if schedule_added == False:
+											if not hasattr(session ,'schedule') :
+												schedule = create_schedule(event,generated_class_calendar)
+												session.schedule = schedule
+												schedule_added = True
+												logger.info(' ---schedule added for lessonplan ' + str(current_lesson_plan.lesson_plan_key) + ' ---')
+						else :
+							if schedule_added == False : 
+								add_sessions_on_root(current_lesson_plan,event,generated_class_calendar,schedule_added)
+
+	return current_lesson_plan
+
+	
+
 
 def calendars_lesson_plan_integration(subscriber_key) :
 	class_calender_list = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
