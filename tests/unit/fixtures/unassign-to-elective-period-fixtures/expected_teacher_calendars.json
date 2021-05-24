@@ -16,10 +16,7 @@
       "calendar_date":"2020-08-10",
       "calendar_key":"tcalendar3",
       "events":[
-         {
-            "event_code":"c6343e",
-            "ref_calendar_key":"cal-key-3"
-         }
+         
       ],
       "institution_key":"school-1",
       "subscriber_key":"elemp1",
@@ -29,10 +26,7 @@
       "calendar_date":"2020-08-10",
       "calendar_key":"tcalendar4",
       "events":[
-         {
-            "event_code":"d4d78a",
-            "ref_calendar_key":"cal-key-3"
-         }
+         
       ],
       "institution_key":"school-1",
       "subscriber_key":"elemp2",
@@ -55,10 +49,7 @@
       "calendar_date":"2020-08-10",
       "calendar_key":"tcalendar5",
       "events":[
-         {
-            "event_code":"68871a",
-            "ref_calendar_key":"cal-key-3"
-         }
+         
       ],
       "institution_key":"school-1",
       "subscriber_key":"elemp3",

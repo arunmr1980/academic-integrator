@@ -86,7 +86,7 @@
 				"to_time":"2020-08-10T11:20:00"
 			},
 			{
-				"event_code":"c6343e",
+				"event_code":"event-12",
 				"event_type":"CLASS_SESSION",
 				"from_time":"2020-08-10T11:30:00",
 				"params":[
@@ -96,51 +96,11 @@
 					},
 					{
 						"key":"subject_key",
-						"value":"elsub1"
+						"value":"None"
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"elemp1"
-					}
-				],
-				"to_time":"2020-08-10T12:10:00"
-			},
-			{
-				"event_code":"d4d78a",
-				"event_type":"CLASS_SESSION",
-				"from_time":"2020-08-10T11:30:00",
-				"params":[
-					{
-						"key":"period_code",
-						"value":"MON-3"
-					},
-					{
-						"key":"subject_key",
-						"value":"elsub2"
-					},
-					{
-						"key":"teacher_emp_key",
-						"value":"elemp2"
-					}
-				],
-				"to_time":"2020-08-10T12:10:00"
-			},
-			{
-				"event_code":"68871a",
-				"event_type":"CLASS_SESSION",
-				"from_time":"2020-08-10T11:30:00",
-				"params":[
-					{
-						"key":"period_code",
-						"value":"MON-3"
-					},
-					{
-						"key":"subject_key",
-						"value":"elsub3"
-					},
-					{
-						"key":"teacher_emp_key",
-						"value":"elemp3"
+						"value":"None"
 					}
 				],
 				"to_time":"2020-08-10T12:10:00"
