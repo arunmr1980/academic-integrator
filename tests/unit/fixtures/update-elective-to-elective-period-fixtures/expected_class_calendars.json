@@ -1,7 +1,7 @@
 [
 	{
 		"calendar_date":"2020-08-03",
-		"calendar_key":"test-key-1",
+		"calendar_key":"c-key-1",
 		"events":[
 			{
 				"event_code":"event-1",
@@ -16,13 +16,13 @@
 				"to_time":"2020-08-03T12:01:00"
 			}
 		],
-		"institution_key":"test-school-1",
-		"subscriber_key":"8B1B22E72AE-A",
+		"institution_key":"school-1",
+		"subscriber_key":"class-test-1-A",
 		"subscriber_type":"CLASS-DIV"
 	},
 	{
 		"calendar_date":"2020-08-04",
-		"calendar_key":"test-key-2",
+		"calendar_key":"c-key-2",
 		"events":[
 			{
 				"event_code":"event-1",
@@ -51,19 +51,19 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-3"
+						"value":"emp3"
 					}
 				],
 				"to_time":"2020-08-04T12:10:00"
 			}
 		],
-		"institution_key":"test-school-1",
-		"subscriber_key":"8B1B22E72AE-A",
+		"institution_key":"school-1",
+		"subscriber_key":"class-test-1-A",
 		"subscriber_type":"CLASS-DIV"
 	},
 	{
 		"calendar_date":"2020-08-10",
-		"calendar_key":"test-key-3",
+		"calendar_key":"c-key-3",
 		"events":[
 			{
 				"event_code":"event-3",
@@ -80,13 +80,13 @@
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-1"
+						"value":"emp1"
 					}
 				],
 				"to_time":"2020-08-10T11:20:00"
 			},
 			{
-				"event_code":"event-4",
+				"event_code":"event-10",
 				"event_type":"CLASS_SESSION",
 				"from_time":"2020-08-10T11:30:00",
 				"params":[
@@ -96,18 +96,57 @@
 					},
 					{
 						"key":"subject_key",
-						"value":"bio1"
+						"value":"elsub1"
 					},
 					{
 						"key":"teacher_emp_key",
-						"value":"employee-2"
+						"value":"elemp1"
+					}
+				],
+				"to_time":"2020-08-10T12:10:00"
+			},
+			{
+				"event_code":"event-11",
+				"event_type":"CLASS_SESSION",
+				"from_time":"2020-08-10T11:30:00",
+				"params":[
+					{
+						"key":"period_code",
+						"value":"MON-3"
+					},
+					{
+						"key":"subject_key",
+						"value":"elsub2"
+					},
+					{
+						"key":"teacher_emp_key",
+						"value":"elemp2"
+					}
+				],
+				"to_time":"2020-08-10T12:10:00"
+			},{
+				"event_code":"event-12",
+				"event_type":"CLASS_SESSION",
+				"from_time":"2020-08-10T11:30:00",
+				"params":[
+					{
+						"key":"period_code",
+						"value":"MON-3"
+					},
+					{
+						"key":"subject_key",
+						"value":"elsub3"
+					},
+					{
+						"key":"teacher_emp_key",
+						"value":"elemp3"
 					}
 				],
 				"to_time":"2020-08-10T12:10:00"
 			}
 		],
-		"institution_key":"test-school-1",
-		"subscriber_key":"8B1B22E72AE-A",
+		"institution_key":"school-1",
+		"subscriber_key":"class-test-1-A",
 		"subscriber_type":"CLASS-DIV"
 	}
 ]

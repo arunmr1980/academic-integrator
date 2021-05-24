@@ -1,6 +1,6 @@
 import academics.calendar.CalendarDBService as calendar_service
 import academics.calendar.Calendar as cldr
-from datetime import datetime as dt
+from datetime import datetime as dt,date
 from academics.logger import GCLogger as gclogger
 import academics.academic.AcademicDBService as academic_service
 import academics.classinfo.ClassInfoDBService as class_info_service
@@ -372,7 +372,11 @@ def get_current_class_calendars_with_day_code(day_code,current_current_class_cal
 def get_day_code_from_calendar(current_class_calendar,period_code) :
 	for event in current_class_calendar.events :
 		if event.params[0].key == 'period_code' and event.params[0].value[:3] == period_code :
-			return True
+			#filtering by date
+			current_date = date.today()
+			calendar_date = datetime.datetime.strptime(current_class_calendar.calendar_date, '%Y-%m-%d').date()
+			if current_date <= calendar_date :
+				return True
 
 
 def get_updated_period_from_timetable(period_code,updated_timetable) :

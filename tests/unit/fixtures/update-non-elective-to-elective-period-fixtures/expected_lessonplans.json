@@ -81,7 +81,7 @@
                         "order_index":1,
                         "schedule": {
                            "calendar_key": "test-key-3",
-                           "event_code": "event-2",
+                           "event_code": "event-3",
                            "start_time": "2020-08-10T10:40:00",
                            "end_time": "2020-08-10T11:20:00"
                         },
@@ -127,6 +127,12 @@
                         "completion_status":false,
                         "name":"Session 1",
                         "order_index":1,
+                        "schedule": {
+                           "calendar_key": "test-key-3",
+                           "event_code": "event-4",
+                           "start_time": "2020-08-10T11:30:00",
+                           "end_time": "2020-08-10T12:10:00"
+                        },
                         "resources":[
 
                         ]
@@ -169,12 +175,6 @@
                         "completion_status":false,
                         "name":"Session 1",
                         "order_index":1,
-                        "schedule": {
-                           "calendar_key": "test-key-2",
-                           "event_code": "event-2",
-                           "start_time": "2020-08-10T11:30:00",
-                           "end_time": "2020-08-10T12:10:00"
-                        },
                         "resources":[
 
                         ]
@@ -217,12 +217,6 @@
                         "completion_status":false,
                         "name":"Session 1",
                         "order_index":1,
-                        "schedule": {
-                           "calendar_key": "test-key-2",
-                           "event_code": "event-2",
-                           "start_time": "2020-08-10T11:30:00",
-                           "end_time": "2020-08-10T12:10:00"
-                        },
                         "resources":[
 
                         ]
@@ -265,12 +259,6 @@
                         "completion_status":false,
                         "name":"Session 1",
                         "order_index":1,
-                        "schedule": {
-                           "calendar_key": "test-key-2",
-                           "event_code": "event-2",
-                           "start_time": "2020-08-10T11:30:00",
-                           "end_time": "2020-08-10T12:10:00"
-                        },
                         "resources":[
 
                         ]
