@@ -15,6 +15,8 @@ def lambda_handler(event, context):
 		payload=record["body"]
 		request = json.loads(payload)
 	try:
+		logger.info("Request--->>>")
+		logger.info(request)
 		request_type = request['request_type']
 		if request_type == 'TIMETABLE_CALENDAR_LESSON_PLAN_GEN':
 				# logger.info("--------- This SQS Request is to generate calendar,lessonplan from timetable ------------")
@@ -237,12 +239,14 @@ def teacher_substitution_integration(request) :
 		calendar_key = request['calendar_key']
 		event_code = request['event_code']
 		substitution_emp_key = request['substitution_emp_key']
-		if request.__contains__('previous_substitution_emp_key') and request['previous_substitution_emp_key'] != 'null' :
-			previous_substitution_emp_key = request['previous_substitution_emp_key']
-		if request.__contains__('previous_substitution_subject_code') and request['previous_substitution_subject_code'] != 'null' :
-			previous_substitution_subject_code = request['previous_substitution_subject_code']
-
-
+		if request.__contains__('previous_substitution_emp_key') :
+			logger.info("previous_substitution_emp_key getting from request ----->>>>" + str(request['previous_substitution_emp_key']))
+			if request['previous_substitution_emp_key'] !='null' :
+				previous_substitution_emp_key = request['previous_substitution_emp_key']
+		if request.__contains__('previous_substitution_subject_code') :
+			logger.info("previous_substitution_subject_code getting from request ----->>>>" + str(request['previous_substitution_subject_code']))
+			if request['previous_substitution_subject_code'] !='null' :
+				previous_substitution_subject_code = request['previous_substitution_subject_code']
 		integrate_lessonplan_on_substitute_teacher(calendar_key,event_code,substitution_emp_key,previous_substitution_emp_key,previous_substitution_subject_code)
 	except KeyError as ke:
 		traceback.print_exc()
