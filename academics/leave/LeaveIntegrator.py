@@ -32,7 +32,8 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 def integrate_lessonplan_on_substitute_teacher(calendar_key,event_code,substitution_emp_key,previous_substitution_emp_key,previous_substitution_subject_code) :
-
+	gclogger.info("previous_substitution_emp_key inside function ------>>>" + str(previous_substitution_emp_key))
+	gclogger.info("previous_substitution_subject_code inside function ---->>>" + str(previous_substitution_subject_code))
 	updated_calendar = calendar_service.get_calendar(calendar_key)
 	subscriber_key = updated_calendar.subscriber_key
 	class_key = subscriber_key[:-2]
@@ -74,8 +75,9 @@ def get_updated_lessonplans_on_substitute_teacher(updated_calendar,current_lesso
 	subject_key = calendar_integrator.get_subject_key(event_to_be_added.params)
 	current_lessonplan = get_current_lessonplan(current_lessonplans_list,subject_key,class_key,division)
 	events_to_be_added = events_to_be_added_to_lesson_plan(events_to_be_added,current_lessonplan)
-	updated_lessonplan = lessonplan_integrator.add_schedules_and_adjust_lessonplan(current_lessonplan,events_to_be_added,updated_calendar)
-	updated_lessonplans_list.append(updated_lessonplan)
+	if len(events_to_be_added) > 0 :
+		updated_lessonplan = lessonplan_integrator.add_schedules_and_adjust_lessonplan(current_lessonplan,events_to_be_added,updated_calendar)
+		updated_lessonplans_list.append(updated_lessonplan)
 	return updated_lessonplans_list
 
 
