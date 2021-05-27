@@ -14,19 +14,25 @@
     },
     {
         "calendar_date":"2020-08-10",
-        "calendar_key":"4e30a8739a090945fa1288447b8f297a",
+        "calendar_key":"teacher-sample-2",
         "events":[
-            
+            {
+                "event_code":"event-3",
+                "ref_calendar_key":"test-key-3"
+            }
         ],
         "institution_key":"institution-key-test",
-        "subscriber_key":"elective-emp-3",
+        "subscriber_key":"employee-first",
         "subscriber_type":"EMPLOYEE"
     },
     {
         "calendar_date":"2020-08-10",
         "calendar_key":"ca98c3983c81cca6abdfbe68fd9d7d4e",
         "events":[
-            
+            {
+                "event_code":"9f2217",
+                "ref_calendar_key":"test-key-3"
+            }
         ],
         "institution_key":"institution-key-test",
         "subscriber_key":"elective-emp-1",
@@ -36,7 +42,10 @@
         "calendar_date":"2020-08-10",
         "calendar_key":"d54ee82b90516c9254739cdda1b54669",
         "events":[
-            
+            {
+                "event_code":"f16f7a",
+                "ref_calendar_key":"test-key-3"
+            }
         ],
         "institution_key":"institution-key-test",
         "subscriber_key":"elective-emp-2",
@@ -44,19 +53,15 @@
     },
     {
         "calendar_date":"2020-08-10",
-        "calendar_key":"teacher-sample-2",
+        "calendar_key":"4e30a8739a090945fa1288447b8f297a",
         "events":[
-            {
-                "event_code":"event-3",
-                "ref_calendar_key":"test-key-3"
-            },
             {
                 "event_code":"3be5a7",
                 "ref_calendar_key":"test-key-3"
             }
         ],
         "institution_key":"institution-key-test",
-        "subscriber_key":"employee-first",
+        "subscriber_key":"elective-emp-3",
         "subscriber_type":"EMPLOYEE"
     }
 ]

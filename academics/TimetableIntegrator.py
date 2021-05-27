@@ -65,12 +65,6 @@ def update_subject_teacher_integrator(division,class_info_key,subject_code,exist
 									current_class_calendars_list
 									)
 		updated_teacher_calendars_list = update_both_teacher_calendars(updated_class_calendars_list,existing_teacher_timetable,new_teacher_timetable,subject_code)
-		# for i in updated_teacher_calendars_list :
-		# 	cal = calendar.Calendar(None)
-		# 	class_calendar_dict = cal.make_calendar_dict(i)
-		# 	pp.pprint(class_calendar_dict)
-
-
 		save_updated_calendars_and_timetables(updated_teacher_calendars_list,updated_class_calendars_list,updated_class_timetables_list,updated_teacher_timetables_list)
 
 

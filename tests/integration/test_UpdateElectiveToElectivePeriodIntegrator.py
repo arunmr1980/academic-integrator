@@ -48,25 +48,25 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 		updated_teacher_calendars = calendar_service.get_all_calendars_by_school_key_and_type(school_key,'EMPLOYEE')
 		updated_class_calendars = calendar_service.get_all_calendars_by_key_and_type(subscriber_key,'CLASS-DIV')
 		updated_lessonplan_list = lessonplan_service.get_lesson_plan_list(class_key,division)	
-		# expected_teacher_calendars = self.get_expected_teacher_calendar_list()
-		# expected_class_calendars = self.get_expected_class_calendar_list()
-		# expected_lessonplans = self.get_expected_lessonplan_list()
-		# expected_teacher_calendars_dict = self.make_expected_teacher_calendars_dict(expected_teacher_calendars)
+		expected_teacher_calendars = self.get_expected_teacher_calendar_list()
+		expected_class_calendars = self.get_expected_class_calendar_list()
+		expected_lessonplans = self.get_expected_lessonplan_list()
+		expected_teacher_calendars_dict = self.make_expected_teacher_calendars_dict(expected_teacher_calendars)
 		for updated_teacher_calendar in updated_teacher_calendars :
 
 			cal = calendar.Calendar(None)
 			calendar_dict = cal.make_calendar_dict(updated_teacher_calendar)
 			pp.pprint(calendar_dict)
 
-			# calendar_date = updated_teacher_calendar.calendar_date
-			# subscriber_key = updated_teacher_calendar.subscriber_key
-			# teacher_calendar_key = calendar_date + subscriber_key
-			# expected_teacher_calendar = expected_teacher_calendars_dict[teacher_calendar_key]
-			# self.assertEqual(expected_teacher_calendar.institution_key,updated_teacher_calendar.institution_key )
-			# self.assertEqual(expected_teacher_calendar.calendar_date,updated_teacher_calendar.calendar_date )
-			# self.assertEqual(expected_teacher_calendar.subscriber_key,updated_teacher_calendar.subscriber_key )
-			# self.assertEqual(expected_teacher_calendar.subscriber_type,updated_teacher_calendar.subscriber_type )
-			# gclogger.info("-----[ Integration Test ] Teacher calendar test passed for ------" + updated_teacher_calendar.calendar_key + "-----------------")
+			calendar_date = updated_teacher_calendar.calendar_date
+			subscriber_key = updated_teacher_calendar.subscriber_key
+			teacher_calendar_key = calendar_date + subscriber_key
+			expected_teacher_calendar = expected_teacher_calendars_dict[teacher_calendar_key]
+			self.assertEqual(expected_teacher_calendar.institution_key,updated_teacher_calendar.institution_key )
+			self.assertEqual(expected_teacher_calendar.calendar_date,updated_teacher_calendar.calendar_date )
+			self.assertEqual(expected_teacher_calendar.subscriber_key,updated_teacher_calendar.subscriber_key )
+			self.assertEqual(expected_teacher_calendar.subscriber_type,updated_teacher_calendar.subscriber_type )
+			gclogger.info("-----[ Integration Test ] Teacher calendar test passed for ------" + updated_teacher_calendar.calendar_key + "-----------------")
 
 		for updated_class_calendar in updated_class_calendars :
 
@@ -74,8 +74,8 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 			calendar_dict = cal.make_calendar_dict(updated_class_calendar)
 			pp.pprint(calendar_dict)
 
-			# self.check_class_calendars(updated_class_calendar,expected_class_calendars)	
-			# gclogger.info("-----[ Integration Test ] Class calendar test passed for ----" + updated_class_calendar.calendar_key + "-----------------")
+			self.check_class_calendars(updated_class_calendar,expected_class_calendars)	
+			gclogger.info("-----[ Integration Test ] Class calendar test passed for ----" + updated_class_calendar.calendar_key + "-----------------")
 
 		for updated_lessonplan in updated_lessonplan_list :
 
@@ -83,7 +83,7 @@ class UpdatePeriodsIntegratorTest(unittest.TestCase):
 			updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 			pp.pprint(updated_lessonplan_dict)
 
-			# self.check_lesson_plans(updated_lessonplan,expected_lessonplans)
+			self.check_lesson_plans(updated_lessonplan,expected_lessonplans)
 
 
 
