@@ -35,16 +35,22 @@ pp = pprint.PrettyPrinter(indent=4)
 # queue_url = os.environ.get('QUEUE_URL')
 # queue_name = os.environ.get('QUEUE_EXAM_REPORTS')
 
-queue_url = 'https://sqs.us-west-2.amazonaws.com/272936841180/exam-reports' 
-queue_name = 'exam-reports'
+queue_url = 'https://sqs.us-west-2.amazonaws.com/272936841180/exam-reports.fifo' 
+queue_name = 'exam-reports.fifo'
 
 sqs = boto3.client('sqs')
 
 def send_to_sqs(message_body):
+    deduplication_id = key.generate_key(16)
     response = sqs.send_message(
         QueueUrl = queue_url,
+        MessageGroupId = queue_name,
+        MessageDeduplicationId = deduplication_id,
         MessageBody = (
              json.dumps(message_body)
             )
     )
     gclogger.info(str(response) + " ---------------- SQS RESPONSE --------------------")
+
+
+

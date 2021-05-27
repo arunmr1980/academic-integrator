@@ -572,7 +572,6 @@ def delete_calendar_schedules_of_calendar_date(calendar_date,current_lessonplan)
 				if hasattr(session ,'schedule') :
 					if session.schedule is not None :
 						if is_schedule_on_calendar_date(session.schedule,calendar_date) == True :
-							# print("DELETED SHEDULE ----",session.schedule.start_time,'--',session.schedule.end_time)
 							del session.schedule
 	return current_lessonplan
 
@@ -777,3 +776,22 @@ def get_lessonplan_by_subject_key(current_lessonplans_list,subject_key) :
 	for current_lessonplan in current_lessonplans_list :
 		if current_lessonplan.subject_code == subject_key :
 			return current_lessonplan
+
+def event_exist_in_lessonplan(event,current_lessonplan) :
+	is_event_already_exist = False
+	if  hasattr(current_lessonplan,'topics') and len(current_lessonplan.topics) > 0 :
+			for main_topic in current_lessonplan.topics :
+				for topic in main_topic.topics :
+					for session in topic.sessions :
+						if hasattr (session,'schedule') :
+							if session.schedule is not None :
+								if session.schedule.start_time == event.from_time and session.schedule.end_time == event.to_time :
+									is_event_already_exist = True
+	if hasattr(current_lessonplan,'sessions') and len(current_lessonplan.sessions) > 0 :
+		for session in current_lessonplan.sessions :
+			if hasattr(session,'schedule') :
+				if session.schedule is not None :
+					if hasattr(session.schedule,"start_time") and hasattr(session.schedule,"end_time") :
+						if session.schedule.start_time == event.from_time and session.schedule.end_time == event.to_time :
+							is_event_already_exist = True	
+	return is_event_already_exist

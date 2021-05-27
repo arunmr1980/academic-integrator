@@ -467,9 +467,6 @@ def get_updated_teacher_calendars_list(removed_events,teacher_calendar_list) :
 
 def integrate_class_calendars_on_add_exams(class_calendar_list,exams_list,removed_events) :
 	exam_events = exam_integrator.make_exam_events(exams_list)
-	# print("----------- EXAM EVENTS -----")
-	# for exam_event in exam_events :
-	# 	pp.pprint(vars(exam_event))
 	get_updated_current_class_calendars(class_calendar_list,exam_events,removed_events)
 	return class_calendar_list
 

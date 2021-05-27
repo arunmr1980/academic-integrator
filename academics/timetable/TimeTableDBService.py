@@ -215,41 +215,4 @@ def delete_timetable(time_table_key) :
       }
     )
     return response
-# def get_academic_config(school_key, academic_year):
-#     dynamodb = boto3.resource('dynamodb')
-#     table = dynamodb.Table(ACADEMIC_CONFIG)
-#     response = table.query(
-#         IndexName='school_key-academic_year-index',
-#         KeyConditionExpression=Key('school_key').eq(school_key) & Key('academic_year').eq(academic_year)
-#     )
-#     for item in response['Items']:
-#         academic_config = AcademicConfig(item)
-#         return academic_config
-#
-#
-# def get_academic_config_metadata_dict(school_key):
-#     dynamodb = boto3.resource('dynamodb')
-#     table = dynamodb.Table(ACADEMIC_CONFIG)
-#     response = table.query(
-#         IndexName='school_key-index',
-#         KeyConditionExpression=Key('school_key').eq(school_key)
-#     )
-#     academic_config_dict = {}
-#     academic_config_dict = add_academic_config_from_response(response, academic_config_dict)
-#     while 'LastEvaluatedKey' in response:
-#         response = table.query(
-#             IndexName='school_key-index',
-#             KeyConditionExpression=Key('school_key').eq(school_key),
-#             ExclusiveStartKey=response['LastEvaluatedKey']
-#         )
-#         academic_config_dict = add_academic_config_from_response(response, academic_config_dict)
-#     return academic_config_dict
 
-
-# def add_academic_config_from_response(response, academic_config_dict):
-#     for item in response['Items']:
-#         academic_config = AcademicConfig(item)
-#         #print(academic_config)
-#         if academic_config.code is not None:
-#             academic_config_dict[academic_config.code] = academic_config
-#     return academic_config_dict

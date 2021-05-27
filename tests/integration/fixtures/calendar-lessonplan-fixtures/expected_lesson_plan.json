@@ -1,0 +1,133 @@
+{
+   "assignments":[
+      
+   ],
+   "class_key":"c-k-2",
+   "division":"A",
+   "lesson_plan_key":"l1",
+   "resources":[
+      
+   ],
+   "sessions":[
+      
+   ],
+   "subject_code":"bio1",
+   "topics":[
+      {
+         "code":"TOP3x0jkt-bio1",
+         "comments":[
+            
+         ],
+         "name":"chapter 1",
+         "order_index":1,
+         "topics":[
+            {
+               "assignments":[
+                  
+               ],
+               "code":"CHAP1-TOP1",
+               "description":"edited",
+               "name":"topic 1",
+               "order_index":1,
+               "resources":[
+                  
+               ],
+               "sessions":[
+                  {
+                     "code":"SESgy0567",
+                     "comments":[
+                        
+                     ],
+                     "completion_datetime":"NA",
+                     "completion_status":false,
+                     "name":"Session 1",
+                     "order_index":1,
+                     "resources":[
+                        
+                     ],
+                     "schedule":{
+                        "calendar_key":"2cd2d9b08df784d343d8f1333e725aac",
+                        "end_time":"2020-08-03T10:40:00",
+                        "event_code":"de8ef1",
+                        "start_time":"2020-08-03T10:00:00"
+                     }
+                  },
+                  {
+                     "code":"SESyy555",
+                     "comments":[
+                        
+                     ],
+                     "completion_datetime":"NA",
+                     "completion_status":false,
+                     "name":"Session 2",
+                     "order_index":1,
+                     "resources":[
+                        
+                     ],
+                     "schedule":{
+                        "calendar_key":"2ea56c4947e56377e9db6dc7ab332e99",
+                        "end_time":"2020-08-04T12:10:00",
+                        "event_code":"620247",
+                        "start_time":"2020-08-04T11:30:00"
+                     }
+                  }
+               ]
+            },
+            {
+               "assignments":[
+                  
+               ],
+               "code":"CHAP1-TOP2",
+               "description":"ghgdhhh",
+               "name":"topic 2",
+               "order_index":2,
+               "resources":[
+                  
+               ],
+               "sessions":[
+                  {
+                     "code":"SES1y944",
+                     "comments":[
+                        
+                     ],
+                     "completion_datetime":"NA",
+                     "completion_status":false,
+                     "description":"session1",
+                     "name":"Session 1",
+                     "order_index":1,
+                     "resources":[
+                        
+                     ],
+                     "schedule":{
+                        "calendar_key":"885203845926d66c45244340adac00fd",
+                        "end_time":"2020-08-05T12:10:00",
+                        "event_code":"f18da7",
+                        "start_time":"2020-08-05T11:30:00"
+                     }
+                  },
+                  {
+                     "code":"SESff4278",
+                     "comments":[
+                        
+                     ],
+                     "completion_datetime":"NA",
+                     "completion_status":true,
+                     "description":"session2",
+                     "name":"Session 2",
+                     "order_index":2,
+                     "resources":[
+                        
+                     ],
+                     "schedule":{
+                        "calendar_key":"45968df3e34825cd1bc44e6b03311667",
+                        "end_time":"2020-08-10T10:40:00",
+                        "event_code":"7491f8",
+                        "start_time":"2020-08-10T10:00:00"
+                     }
+                  }
+               ]
+            }
+         ]
+      }
+   ]
+}

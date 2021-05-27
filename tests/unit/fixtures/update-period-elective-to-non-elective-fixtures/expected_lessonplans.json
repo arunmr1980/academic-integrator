@@ -1,0 +1,344 @@
+[
+   {
+      "assignments":[
+         
+      ],
+      "class_key":"class",
+      "division":"A",
+      "lesson_plan_key":"test-single-lessonplan-3",
+      "resources":[
+         
+      ],
+      "sessions":[
+         
+      ],
+      "subject_code":"bio3",
+      "topics":[
+         {
+            "code":"TOP3x0jkt-bio3",
+            "comments":[
+               
+            ],
+            "name":"chapter 1",
+            "order_index":1,
+            "topics":[
+               {
+                  "assignments":[
+                     
+                  ],
+                  "code":"CHAP3-TOP1",
+                  "description":"edited",
+                  "name":"topic 1",
+                  "order_index":1,
+                  "resources":[
+                     
+                  ],
+                  "sessions":[
+                     {
+                        "code":"SESgy022",
+                        "comments":[
+                           
+                        ],
+                        "completion_datetime":"NA",
+                        "completion_status":false,
+                        "name":"Session 1",
+                        "order_index":1,
+                        "resources":[
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"test-key-3",
+                           "end_time":"2020-08-10T12:10:00",
+                           "event_code":"3be5a7",
+                           "start_time":"2020-08-10T11:30:00"
+                        }
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   {
+      "assignments":[
+         
+      ],
+      "class_key":"class",
+      "division":"A",
+      "lesson_plan_key":"test-single-lessonplan-5",
+      "resources":[
+         
+      ],
+      "sessions":[
+         
+      ],
+      "subject_code":"elective-subject-2",
+      "topics":[
+         {
+            "code":"TOP3x0jkt-bio3",
+            "comments":[
+               
+            ],
+            "name":"chapter 1",
+            "order_index":1,
+            "topics":[
+               {
+                  "assignments":[
+                     
+                  ],
+                  "code":"CHAP3-TOP1",
+                  "description":"edited",
+                  "name":"topic 1",
+                  "order_index":1,
+                  "resources":[
+                     
+                  ],
+                  "sessions":[
+                     {
+                        "code":"SESgy022",
+                        "comments":[
+                           
+                        ],
+                        "completion_datetime":"NA",
+                        "completion_status":false,
+                        "name":"Session 1",
+                        "order_index":1,
+                        "resources":[
+                           
+                        ]
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   {
+      "assignments":[
+         
+      ],
+      "class_key":"class",
+      "division":"A",
+      "lesson_plan_key":"test-single-lessonplan-2",
+      "resources":[
+         
+      ],
+      "sessions":[
+         
+      ],
+      "subject_code":"bio2",
+      "topics":[
+         {
+            "code":"TOP3x0jkt-bio1",
+            "comments":[
+               
+            ],
+            "name":"chapter 1",
+            "order_index":1,
+            "topics":[
+               {
+                  "assignments":[
+                     
+                  ],
+                  "code":"CHAP1-TOP1",
+                  "description":"edited",
+                  "name":"topic 1",
+                  "order_index":1,
+                  "resources":[
+                     
+                  ],
+                  "sessions":[
+                     {
+                        "code":"SESgy0567",
+                        "comments":[
+                           
+                        ],
+                        "completion_datetime":"NA",
+                        "completion_status":false,
+                        "name":"Session 1",
+                        "order_index":1,
+                        "resources":[
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"test-key-3",
+                           "end_time":"2020-08-10T11:20:00",
+                           "event_code":"event-2",
+                           "start_time":"2020-08-10T10:40:00"
+                        }
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   {
+      "assignments":[
+         
+      ],
+      "class_key":"class",
+      "division":"A",
+      "lesson_plan_key":"test-single-lessonplan-4",
+      "resources":[
+         
+      ],
+      "sessions":[
+         
+      ],
+      "subject_code":"elective-subject-1",
+      "topics":[
+         {
+            "code":"TOP3x0jkt-bio3",
+            "comments":[
+               
+            ],
+            "name":"chapter 1",
+            "order_index":1,
+            "topics":[
+               {
+                  "assignments":[
+                     
+                  ],
+                  "code":"CHAP3-TOP1",
+                  "description":"edited",
+                  "name":"topic 1",
+                  "order_index":1,
+                  "resources":[
+                     
+                  ],
+                  "sessions":[
+                     {
+                        "code":"SESgy022",
+                        "comments":[
+                           
+                        ],
+                        "completion_datetime":"NA",
+                        "completion_status":false,
+                        "name":"Session 1",
+                        "order_index":1,
+                        "resources":[
+                           
+                        ]
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   {
+      "assignments":[
+         
+      ],
+      "class_key":"class",
+      "division":"A",
+      "lesson_plan_key":"test-single-lessonplan-1",
+      "resources":[
+         
+      ],
+      "sessions":[
+         
+      ],
+      "subject_code":"bio1",
+      "topics":[
+         {
+            "code":"TOP3x0jkt-bio1",
+            "comments":[
+               
+            ],
+            "name":"chapter 1",
+            "order_index":1,
+            "topics":[
+               {
+                  "assignments":[
+                     
+                  ],
+                  "code":"CHAP1-TOP1",
+                  "description":"edited",
+                  "name":"topic 1",
+                  "order_index":1,
+                  "resources":[
+                     
+                  ],
+                  "sessions":[
+                     {
+                        "code":"SESgy0567",
+                        "comments":[
+                           
+                        ],
+                        "completion_datetime":"NA",
+                        "completion_status":false,
+                        "name":"Session 1",
+                        "order_index":1,
+                        "resources":[
+                           
+                        ],
+                        "schedule":{
+                           "calendar_key":"test-key-2",
+                           "end_time":"2020-08-04T12:10:00",
+                           "event_code":"event-2",
+                           "start_time":"2020-08-04T11:30:00"
+                        }
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   },
+   {
+      "assignments":[
+         
+      ],
+      "class_key":"class",
+      "division":"A",
+      "lesson_plan_key":"test-single-lessonplan-6",
+      "resources":[
+         
+      ],
+      "sessions":[
+         
+      ],
+      "subject_code":"elective-subject-3",
+      "topics":[
+         {
+            "code":"TOP3x0jkt-bio3",
+            "comments":[
+               
+            ],
+            "name":"chapter 1",
+            "order_index":1,
+            "topics":[
+               {
+                  "assignments":[
+                     
+                  ],
+                  "code":"CHAP3-TOP1",
+                  "description":"edited",
+                  "name":"topic 1",
+                  "order_index":1,
+                  "resources":[
+                     
+                  ],
+                  "sessions":[
+                     {
+                        "code":"SESgy022",
+                        "comments":[
+                           
+                        ],
+                        "completion_datetime":"NA",
+                        "completion_status":false,
+                        "name":"Session 1",
+                        "order_index":1,
+                        "resources":[
+                           
+                        ]
+                     }
+                  ]
+               }
+            ]
+         }
+      ]
+   }
+]

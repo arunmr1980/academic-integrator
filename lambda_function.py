@@ -2,7 +2,7 @@ import json
 import boto3
 import traceback
 from academics.TimetableIntegrator import generate_and_save_calenders,update_subject_teacher_integrator
-from academics.calendar.CalendarLessonPlanIntegrator import calendars_lesson_plan_integration, calendars_lesson_plan_integration_from_timetable
+from academics.calendar.CalendarLessonPlanIntegrator import calendars_lesson_plan_integration, calendars_lesson_plan_integration_from_timetable,integrate_calendar_to_single_lessonplan
 from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars, integrate_update_period_calendars_and_lessonplans,make_event_objects
 import academics.logger.GCLogger as logger
 from academics.exam.ExamIntegrator import integrate_add_exam_on_calendar,integrate_cancel_exam,integrate_update_exam
@@ -58,6 +58,9 @@ def lambda_handler(event, context):
 		if request_type == 'TEACHER_SUBSTITUTE_SYNC':
 				# logger.info("--------- This SQS Request is to substitute teacher ------------")
 				teacher_substitution_integration(request)
+		if request_type == "LESSONPLAN_CALENDAR_SYNC" :
+				calendars_to_single_lessonplan_integration(request)
+
 	except:
 		traceback.print_exc()
 		logger.info("Unexpected error ...")
@@ -71,6 +74,7 @@ def add_event_calendar_lessonplan_integration(request) :
 		event_code = request['event_code']
 		add_event_integrate_calendars(event_code,calendar_key)
 	except KeyError as ke:
+		traceback.print_exc()
 		logger.info("Error in input. event_code or calendar_key not present")
 		send_response(400,"input validation error")
 	logger.info(request)
@@ -85,6 +89,7 @@ def remove_event_calendar_lessonplan_integration(request) :
 		events = make_event_objects(events)
 		remove_event_integrate_calendars(calendar_key,events)
 	except KeyError as ke:
+		traceback.print_exc()
 		logger.info("Error in input. calendar_key not present")
 		send_response(400,"input validation error")
 	logger.info(request)
@@ -96,6 +101,7 @@ def update_period_calendar_lessonplan_integration(request) :
 		period_code = request['period_code']
 		integrate_update_period_calendars_and_lessonplans(period_code, time_table_key)
 	except KeyError as ke:
+		traceback.print_exc()
 		logger.info("Error in input. calendar_key not present")
 		send_response(400,"input validation error")
 	logger.info(request)
@@ -111,9 +117,11 @@ def timetable_to_calendar_and_lessonplan_integration(request):
 		calendars_lesson_plan_integration_from_timetable(timetable_key, academic_year)
 		send_response(200,"success")
 	except KeyError as ke:
+		traceback.print_exc()
 		logger.info("Error in input. time_table_key or academic_year not present")
 		send_response(400,"input validation error")
 	except:
+		traceback.print_exc()
 		logger.info("Unexpected error ...")
 		send_response(400,"unexpected error")
 	logger.info(request)
@@ -128,9 +136,11 @@ def timetable_to_calendar_integration(request):
 		generate_and_save_calenders(timetable_key, academic_year)
 		send_response(200,"success")
 	except KeyError as ke:
+		traceback.print_exc()
 		logger.info("Error in input. time_table_key or academic_year not present")
 		send_response(400,"input validation error")
 	except:
+		traceback.print_exc()
 		logger.info("Unexpected error ...")
 		send_response(400,"unexpected error")
 	logger.info(request)
@@ -146,9 +156,11 @@ def calendar_to_lessonplan_integration(request):
 		calendars_lesson_plan_integration(subscriber_key)
 		send_response(200,"success")
 	except KeyError as ke:
+		traceback.print_exc()
 		logger.info("Error in input. time_table_key or academic_year not present")
 		send_response(400,"input validation error")
 	except:
+		traceback.print_exc()
 		logger.info("Unexpected error ...")
 		send_response(400,"unexpected error")
 	logger.info(request)
@@ -184,6 +196,7 @@ def add_exam_integration(request) :
 			division = clazz['division']
 			integrate_add_exam_on_calendar(series_code,class_key,division)
 	except KeyError as ke:
+		traceback.print_exc()
 		logger.info("Error in input. series_code or classes not present")
 		send_response(400,"input validation error")
 	logger.info(request)
@@ -196,6 +209,7 @@ def cancel_exam_integration(request) :
 		school_key = request['school_key']
 		integrate_cancel_exam(exam_series,school_key,academic_year)
 	except KeyError as ke:
+		traceback.print_exc()
 		logger.info("Error in input. series_code,academic_year,school_key not present")
 		send_response(400,"input validation error")
 	logger.info(request)
@@ -210,6 +224,7 @@ def update_exam_integration(request) :
 			division = clazz['division']
 			integrate_update_exam(series_code,class_key,division)
 	except KeyError as ke:
+		traceback.print_exc()
 		logger.info("Error in input. series_code or classes present")
 		send_response(400,"input validation error")
 	logger.info(request)
@@ -230,6 +245,7 @@ def teacher_substitution_integration(request) :
 
 		integrate_lessonplan_on_substitute_teacher(calendar_key,event_code,substitution_emp_key,previous_substitution_emp_key,previous_substitution_subject_code)
 	except KeyError as ke:
+		traceback.print_exc()
 		logger.info("Error in input. calendar_key,event_code,substitution_emp_key,previous_substitution_emp_key or previous_substitution_subject_code not present")
 		send_response(400,"input validation error")
 	logger.info(request)
@@ -263,10 +279,23 @@ def special_class_session_integration(request) :
 		events = request['events']
 		integrate_add_class_session_events(calendar_key, events)
 	except KeyError as ke:
+		traceback.print_exc()
 		logger.info("Error in input. events or calendar_key not present")
 		send_response(400,"input validation error")
 	logger.info(request)
 	logger.info("--------- This SQS Request is to add class session on calendar (special class) ------------")
+
+def calendars_to_single_lessonplan_integration(request) :
+	try :
+		lesson_plan_key = request['lesson_plan_key']
+		integrate_calendar_to_single_lessonplan(lesson_plan_key)
+	except KeyError as ke:
+		traceback.print_exc()
+		logger.info("Error in input. lesson_plan_key not present")
+		send_response(400,"input validation error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to integrate calendars to single lessonplan ------------")
+
 
 def send_response(status_code, message):
 	data = {
