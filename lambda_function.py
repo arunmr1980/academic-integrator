@@ -72,9 +72,11 @@ def lambda_handler(event, context):
 
 def add_event_calendar_lessonplan_integration(request) :
 	try :
-		calendar_key = request['calendar_key']
-		event_code = request['event_code']
-		add_event_integrate_calendars(event_code,calendar_key)
+		calendars = request['calendars']
+		for calendar in calendars :	
+			calendar_key = calendar['calendar_key']
+			event_code = calendar['event_code']
+			add_event_integrate_calendars(event_code,calendar_key)
 	except KeyError as ke:
 		traceback.print_exc()
 		logger.info("Error in input. event_code or calendar_key not present")
