@@ -526,7 +526,8 @@ def get_event_updated_class_calendar_on_leave_cancel(event,current_class_calenda
 			gclogger.info("TIMETABLE SUBJECT KEY -- "+ timetable_period.subject_key)
 			# gclogger.info("TIMETABLE EMPLOYEE KEY -- "+ timetable_period.employee_key)	
 			
-			del existing_event.status 
+			del existing_event.status
+			remove_events_from_substituted_teacher_calendar_and_lessonplan(existing_event,current_class_calendar)
 			try :
 				if timetable_period.employee_key is None :
 					raise AttributeError("getting employee key None ")
@@ -600,3 +601,40 @@ def events_to_be_added_to_lesson_plan(events_to_be_added,current_lessonplan) :
 		if lessonplan_integrator.event_exist_in_lessonplan(event,current_lessonplan) == False :
 			updated_events.append(event)
 	return updated_events
+
+
+def remove_events_from_substituted_teacher_calendar_and_lessonplan(existing_event,current_class_calendar) :
+	if existing_event.params[2].value != 'null' :
+		substituted_employee_key = existing_event.params[2].value 
+		calendar_date = current_class_calendar.calendar_date
+		event_code = existing_event.event_code
+		gclogger.info(" REMOVING EVENT FROM " + substituted_employee_key + "T CALENDAR " + "EVENT CODE " + event_code + " DATE --->>" + calendar_date)
+		remove_event_from_substituted_employee_calendar(substituted_employee_key,calendar_date,event_code)
+	if existing_event.params[1].value != 'null' :
+		substituted_subject_key = existing_event.params[1].value 
+		subscriber_key = current_class_calendar.subscriber_key
+		class_key = subscriber_key[:-2]
+		division = subscriber_key[-1:]
+		lessonplan_list = lessonplan_service.get_lesson_plan_list(class_key,division)
+		for lessonplan in lessonplan_list :
+			if lessonplan.subject_code == substituted_subject_key :
+				gclogger.info(" REMOVING EVENT " + existing_event.event_code + "FROM "+ lessonplan.lesson_plan_key  )
+				updated_lessonplan = lessonplan_integrator.cancel_class_session_to_lessonplan_integrator(lessonplan,existing_event,current_class_calendar)
+				lp = lpnr.LessonPlan(None)
+				updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
+				lessonplan_service.create_lessonplan(updated_lessonplan_dict)
+				gclogger.info(" UPDATED LESSONPLAN UPDATED ------>> "+ updated_lessonplan.lesson_plan_key)
+
+def remove_event_from_substituted_employee_calendar(substituted_employee_key,calendar_date,event_code) :
+	teacher_calendar = calendar_service.get_calendar_by_date_and_key(calendar_date,substituted_employee_key)
+	updated_events = []
+	for event in teacher_calendar.events :
+		if event.event_code != event_code :
+			updated_events.append(event)
+	teacher_calendar.events = updated_events
+	cal = calendar.Calendar(None)
+	teacher_calendar_dict = cal.make_calendar_dict(teacher_calendar)
+
+	calendar_service.add_or_update_calendar(teacher_calendar_dict)
+	gclogger.info(" UPDATED TEACHER CALENDAR UPDATED ------>> "+ teacher_calendar.calendar_key)	
+
