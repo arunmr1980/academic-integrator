@@ -410,15 +410,20 @@ def generate_and_save_calenders(time_table_key,academic_year):
 		for teacher_leave in teacher_leaves :
 			update_calendars_with_pre_leaves(class_calendar_list,teacher_calendar_list,teacher_leave)
 
+	# exams_list = exam_service.get_exams_by_class_key_and_division(class_key,division)
+	# gclogger.info(str(len(exams_list)) + " <<--------------- NO OF EXAMS ")
+	# if len(exams_list) > 0 :
+	# 	series_code_list = get_series_code_list(exams_list)
+	# 	for series_code in series_code_list :
+	# 		update_calendars_with_pre_fixed_exams(series_code,class_key,division,class_calendar_list,teacher_calendar_list)
+	save_or_update_calendars(class_calendar_list, teacher_calendar_list)
 	exams_list = exam_service.get_exams_by_class_key_and_division(class_key,division)
 	gclogger.info(str(len(exams_list)) + " <<--------------- NO OF EXAMS ")
 	if len(exams_list) > 0 :
 		series_code_list = get_series_code_list(exams_list)
 		for series_code in series_code_list :
-			update_calendars_with_pre_fixed_exams(series_code,class_key,division,class_calendar_list,teacher_calendar_list)
+			exam_integrator.integrate_add_exam_on_calendar(series_code,class_key,division)
 
-
-	save_or_update_calendars(class_calendar_list, teacher_calendar_list)
 
 def get_series_code_list(exams_list) :
 	series_code_list = []
@@ -832,23 +837,26 @@ def get_holiday_events(school_calendar_event) :
 	event_list.append(event)
 	return event_list
 
+def get_timetable_configuration_periods(timetable_configuration,time_table,day_code) :
+	timetable_configuration_periods = None
+	cls_key = time_table.class_key
+	if hasattr(timetable_configuration , 'time_table_schedules'):
+		for time_table_schedule in timetable_configuration.time_table_schedules :
+				for class_key in time_table_schedule.applied_classes :
+					if class_key == cls_key :
+						for day in time_table_schedule.day_tables :
+							if (day.day_code == day_code) :
+								timetable_configuration_periods = day.periods
+
+	return timetable_configuration_periods
 
 
 def generate_class_calendar(day_code,time_table,date,timetable_configuration,partial_holiday_period_list,existing_class_calendar) :
-	timetable_configuration_periods = None
 	class_calendar = None
-	if hasattr(timetable_configuration , 'time_table_schedules'):
-		if hasattr(timetable_configuration.time_table_schedules[0],'day_tables'):
-			for day in timetable_configuration.time_table_schedules[0].day_tables :
-				if (day.day_code == day_code) :
-					timetable_configuration_periods = day.periods
-	else:
-		gclogger.warn("Time table schedules not present in configuration. Can not process")
-		return
-
+	timetable_configuration_periods = get_timetable_configuration_periods(timetable_configuration,time_table,day_code)
 	if hasattr(time_table, 'timetable') and time_table.timetable is not None :
-		class_key=time_table.class_key
-		division=time_table.division
+		class_key = time_table.class_key
+		division  = time_table.division
 		if hasattr(time_table.timetable,'day_tables') and len(time_table.timetable.day_tables) > 0 :
 			for day in time_table.timetable.day_tables :
 				periods = day.periods
