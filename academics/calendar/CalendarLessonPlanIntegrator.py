@@ -39,7 +39,7 @@ def integrate_calendars_to_single_lessonplan(class_calender_list,current_lesson_
 												schedule = create_schedule(event,generated_class_calendar)
 												session.schedule = schedule
 												schedule_added = True
-												logger.info(' ---schedule added for lessonplan ' + str(current_lesson_plan.lesson_plan_key) + ' ---')
+												# logger.info(' ---schedule added for lessonplan ' + str(current_lesson_plan.lesson_plan_key) + ' ---')
 						else :
 							if schedule_added == False : 
 								add_sessions_on_root(current_lesson_plan,event,generated_class_calendar,schedule_added)
@@ -76,13 +76,13 @@ def integrate_calendars_to_lesson_plan(generated_class_calendar_list):
 		current_lesson_plan_list = integrate_calendar_to_lesson_plan(generated_class_calendar, current_lesson_plan_list)
 
 	generated_lesson_plan_dict_list = get_generated_lesson_plan_dict_list(current_lesson_plan_list)
-	logger.info('---Generated lesson plan count--- '+str(len(generated_lesson_plan_dict_list)))
+	# logger.info('---Generated lesson plan count--- '+str(len(generated_lesson_plan_dict_list)))
 	update_lesson_plan(generated_lesson_plan_dict_list)
 
 def update_lesson_plan(generated_lesson_plan_dict_list) :
 	for lesson_plan in generated_lesson_plan_dict_list :
 		response = lessonplan_service.create_lessonplan(lesson_plan)
-		logger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Generated lesson plan uploaded '+str(lesson_plan['lesson_plan_key']))
+		# logger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' Generated lesson plan uploaded '+str(lesson_plan['lesson_plan_key']))
 
 def get_generated_lesson_plan_dict_list(generated_lesson_plan_list) :
 	generated_lesson_plan_dict_list = []
@@ -108,7 +108,7 @@ def integrate_calendar_to_lesson_plan(generated_class_calendar,current_lesson_pl
 										schedule = create_schedule(event,generated_class_calendar)
 										session.schedule = schedule
 										schedule_added = True
-										logger.info(' ---schedule added for lessonplan ' + str(current_lesson_plan.lesson_plan_key) + ' ---')
+										# logger.info(' ---schedule added for lessonplan ' + str(current_lesson_plan.lesson_plan_key) + ' ---')
 				else :
 					if schedule_added == False : 
 						add_sessions_on_root(current_lesson_plan,event,generated_class_calendar,schedule_added)
@@ -149,11 +149,11 @@ def get_all_lesson_plan_list(current_calendar, current_lesson_plan_list):
 	class_div = current_calendar.subscriber_key[-1:]
 
 	if is_lesson_plan_exist(current_lesson_plan_list, class_key, class_div):
-		logger.info(' ---lesson plan exist in list ---')
+		# logger.info(' ---lesson plan exist in list ---')
 		return current_lesson_plan_list
 	else:
 		lesson_plan_list = lessonplan_service.get_lesson_plan_list(class_key,class_div)
-		logger.info(' ---getting lesson plan list from DB ---')
+		# logger.info(' ---getting lesson plan list from DB ---')
 		for lesson_plan in lesson_plan_list:
 			current_lesson_plan_list.append(lesson_plan)
 		return current_lesson_plan_list
@@ -186,5 +186,5 @@ def get_subject_code(event) :
 		for param in event.params :
 			if param.key == 'subject_key' :
 				return param.value
-	else :
-		gclogger.info('Params not found for event')
+	# else :
+	# 	gclogger.info('Params not found for event')
