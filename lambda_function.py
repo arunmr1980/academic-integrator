@@ -293,9 +293,10 @@ def special_class_session_integration(request) :
 
 def calendars_to_single_lessonplan_integration(request) :
 	try :
-		lesson_plan_key = request['lesson_plan_key']
-		integrate_calendar_to_single_lessonplan(lesson_plan_key)
-	except KeyError as ke:
+		lesson_plan_keys = request['lesson_plan_keys']   
+		for lesson_plan_key in lesson_plan_keys :	
+			integrate_calendar_to_single_lessonplan(lesson_plan_key)
+	except KeyError as ke :
 		traceback.print_exc()
 		logger.info("Error in input. lesson_plan_key not present")
 		send_response(400,"input validation error")
