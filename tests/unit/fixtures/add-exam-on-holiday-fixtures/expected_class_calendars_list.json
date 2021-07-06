@@ -24,6 +24,18 @@
 		"calendar_date":"2020-08-04",
 		"calendar_key":"test-key-2",
 		"events":[
+				{
+			        "event_code":"event-2",
+			        "event_type":"HOLIDAY",
+			        "from_time":"2020-08-04T10:40:00",
+			        "params":[
+			          {
+			            "key":"cancel_class_flag",
+			            "value":"true"
+			          }
+			        ],
+			        "to_time":"2020-08-04T11:20:00"
+		      },
 			{
 				"event_code":"dc9dd9",
 				"event_type":"EXAM",

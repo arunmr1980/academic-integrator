@@ -409,20 +409,7 @@ def generate_and_save_calenders(time_table_key,academic_year):
 	if len(teacher_leaves) > 0 :
 		for teacher_leave in teacher_leaves :
 			update_calendars_with_pre_leaves(class_calendar_list,teacher_calendar_list,teacher_leave)
-
-	# exams_list = exam_service.get_exams_by_class_key_and_division(class_key,division)
-	# gclogger.info(str(len(exams_list)) + " <<--------------- NO OF EXAMS ")
-	# if len(exams_list) > 0 :
-	# 	series_code_list = get_series_code_list(exams_list)
-	# 	for series_code in series_code_list :
-	# 		update_calendars_with_pre_fixed_exams(series_code,class_key,division,class_calendar_list,teacher_calendar_list)
 	save_or_update_calendars(class_calendar_list, teacher_calendar_list)
-	exams_list = exam_service.get_exams_by_class_key_and_division(class_key,division)
-	gclogger.info(str(len(exams_list)) + " <<--------------- NO OF EXAMS ")
-	if len(exams_list) > 0 :
-		series_code_list = get_series_code_list(exams_list)
-		for series_code in series_code_list :
-			exam_integrator.integrate_add_exam_on_calendar(series_code,class_key,division)
 
 
 def get_series_code_list(exams_list) :
