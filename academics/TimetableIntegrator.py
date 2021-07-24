@@ -30,14 +30,14 @@ def update_subject_teacher_integrator(division,class_info_key,subject_code,exist
 	existing_teacher_timetable = get_existing_teacher_timetable(existing_teacher_emp_key,current_cls_timetable,subject_code)
 	t = ttable.TimeTable(None)
 	calendar_dict = t.make_timetable_dict(existing_teacher_timetable)
-	gclogger.info(calendar_dict)
-	gclogger.info("<<<<<---------Existing Timetable to update --------->>>>>>>>")
+	# gclogger.info(calendar_dict)
+	# gclogger.info("<<<<<---------Existing Timetable to update --------->>>>>>>>")
 
 	new_teacher_timetable = get_new_teacher_timetable(new_teacher_emp_key,current_cls_timetable,subject_code)
 	t = ttable.TimeTable(None)
 	calendar_dict = t.make_timetable_dict(new_teacher_timetable)
-	gclogger.info(calendar_dict)
-	gclogger.info("<<<<<---------New Teacher Timetable to update --------->>>>>>>>")
+	# gclogger.info(calendar_dict)
+	# gclogger.info("<<<<<---------New Teacher Timetable to update --------->>>>>>>>")
 
 
 	period_list =[]
@@ -71,13 +71,13 @@ def update_subject_teacher_integrator(division,class_info_key,subject_code,exist
 def get_existing_teacher_timetable(existing_teacher_emp_key,current_cls_timetable,subject_code) :
 	existing_teacher_timetable = None
 	existing_teacher_timetable = timetable_service.get_timetable_entry_by_employee(existing_teacher_emp_key,current_cls_timetable.academic_year)
-	if existing_teacher_timetable is not None :
-		gclogger.info(" ----------- Getting existing teacher timetable from DB ----------- " + str(existing_teacher_timetable.time_table_key) + '-----------')
+	# if existing_teacher_timetable is not None :
+	# 	gclogger.info(" ----------- Getting existing teacher timetable from DB ----------- " + str(existing_teacher_timetable.time_table_key) + '-----------')
 	if existing_teacher_timetable is None :
 		timetable = get_timetable_from_updated_class_timetable(current_cls_timetable)
 		timetable = reset_periods(timetable,existing_teacher_emp_key,subject_code)
 		existing_teacher_timetable = generate_teacher_timetable(existing_teacher_emp_key,timetable,current_cls_timetable)
-		gclogger.info(" ------------ Generating previous teacher timetable  ------------- "+ str(existing_teacher_timetable.time_table_key) + '-----------')
+		# gclogger.info(" ------------ Generating previous teacher timetable  ------------- "+ str(existing_teacher_timetable.time_table_key) + '-----------')
 
 	return existing_teacher_timetable
 
@@ -85,13 +85,13 @@ def get_existing_teacher_timetable(existing_teacher_emp_key,current_cls_timetabl
 def get_new_teacher_timetable(new_teacher_emp_key,current_cls_timetable,subject_code) :
 	new_teacher_timetable = None	
 	new_teacher_timetable = timetable_service.get_timetable_entry_by_employee(new_teacher_emp_key,current_cls_timetable.academic_year)
-	if new_teacher_timetable is not None :
-		gclogger.info(" ----------- Getting new teacher timetable from DB ----------- " + str(new_teacher_timetable.time_table_key) + '-----------')
+	# if new_teacher_timetable is not None :
+	# 	gclogger.info(" ----------- Getting new teacher timetable from DB ----------- " + str(new_teacher_timetable.time_table_key) + '-----------')
 	if new_teacher_timetable is None :
 		timetable = get_timetable_from_updated_class_timetable(current_cls_timetable)
 		timetable = reset_periods(timetable,new_teacher_emp_key,subject_code)
 		new_teacher_timetable = generate_teacher_timetable(new_teacher_emp_key,timetable,current_cls_timetable)
-		gclogger.info(" ------------ Generating new teacher timetable  ------------- "+ str(new_teacher_timetable.time_table_key) + '-----------')
+		# gclogger.info(" ------------ Generating new teacher timetable  ------------- "+ str(new_teacher_timetable.time_table_key) + '-----------')
 	return new_teacher_timetable
 
 
@@ -386,17 +386,17 @@ def update_current_class_timetable(current_class_timetable,subject_code,updated_
 
 
 def generate_and_save_calenders(time_table_key,academic_year):
-	gclogger.info("Generating for timetable " + time_table_key + " academic_year " + academic_year)
+	# gclogger.info("Generating for timetable " + time_table_key + " academic_year " + academic_year)
 	timetable = timetable_service.get_time_table(time_table_key)
 	school_key = timetable.school_key
 	academic_configuration = academic_service.get_academig(school_key,academic_year)
 	school_calendars_list = []
 	class_calendars_list = []
 	generated_class_calendar_dict = integrate_class_timetable(timetable,academic_configuration, class_calendars_list, school_calendars_list)
-	gclogger.info("Number of class calendars generated " + str(len(generated_class_calendar_dict)))
+	# gclogger.info("Number of class calendars generated " + str(len(generated_class_calendar_dict)))
 	class_calendar_list = generated_class_calendar_dict.values()
 	generated_teacher_calendar_dict = integrate_teacher_timetable(class_calendar_list)
-	gclogger.info("Number of teacher calendars generated " + str(len(generated_teacher_calendar_dict)))
+	# gclogger.info("Number of teacher calendars generated " + str(len(generated_teacher_calendar_dict)))
 	teacher_calendar_list = generated_teacher_calendar_dict.values()
 
 	class_key = timetable.class_key
@@ -405,7 +405,7 @@ def generate_and_save_calenders(time_table_key,academic_year):
 	class_div = class_integrator.get_division_from_class_info(class_info,division)
 	subject_teachers = class_integrator.get_subject_teachers_from_class_info(class_div)
 	teacher_leaves = leave_integrator.get_teacher_leaves_in_academic_year(academic_configuration,subject_teachers)
-	gclogger.info(str(len(teacher_leaves)) + " <<--------------- NO OF TEACHER LEAVES ")
+	# gclogger.info(str(len(teacher_leaves)) + " <<--------------- NO OF TEACHER LEAVES ")
 	if len(teacher_leaves) > 0 :
 		for teacher_leave in teacher_leaves :
 			update_calendars_with_pre_leaves(class_calendar_list,teacher_calendar_list,teacher_leave)
@@ -462,7 +462,6 @@ def get_updated_current_class_calendars(class_calendar_list,exam_events,removed_
 		
 
 def get_updated_class_calendar_with_exam_events(current_class_calendar,exam_events,removed_events) :
-	print('CURRENT CLASS CALENDAR ----------->>>>',current_class_calendar.calendar_key)
 	exam_integrator.get_remove_conflicted_class_events(exam_events,current_class_calendar,removed_events)	
 	
 
@@ -528,19 +527,19 @@ def get_teacher_calendar_from_list(cal_date,employee_key,teacher_calendar_list) 
 
 
 def save_or_update_calendars(class_calendar_list, teacher_calendar_list):
-	gclogger.info("------ Saving/Updating calendars ---------------------")
-	gclogger.info(" Class calendars - " + str(len(class_calendar_list)))
-	gclogger.info(" Teacher calendars - " + str(len(teacher_calendar_list)))
+	# gclogger.info("------ Saving/Updating calendars ---------------------")
+	# gclogger.info(" Class calendars - " + str(len(class_calendar_list)))
+	# gclogger.info(" Teacher calendars - " + str(len(teacher_calendar_list)))
 	for class_calendar in class_calendar_list :
 		class_calendar_dict = calendar.Calendar(None)
 		class_calendar_dict = class_calendar_dict.make_calendar_dict(class_calendar)
 		calendar_service.add_or_update_calendar(class_calendar_dict)
-		gclogger.info('A class calendar uploaded for '+ class_calendar_dict['calendar_key'])
+		# gclogger.info('A class calendar uploaded for '+ class_calendar_dict['calendar_key'])
 	for teacher_calendar in teacher_calendar_list :
 		teacher_calendar_dict = calendar.Calendar(None)
 		teacher_calendar_dict = teacher_calendar_dict.make_calendar_dict(teacher_calendar)
 		calendar_service.add_or_update_calendar(teacher_calendar_dict)
-		gclogger.info('A Teacher calendar uploaded for '+ teacher_calendar_dict['calendar_key'])
+		# gclogger.info('A Teacher calendar uploaded for '+ teacher_calendar_dict['calendar_key'])
 
 
 
@@ -557,14 +556,16 @@ def integrate_class_timetable(timetable, academic_configuration, class_calendars
 			gclogger.debug(' date - ' + date)
 			gclogger.debug(' date - ' + date)
 			day_code = findDay(date).upper()
+			gclogger.info(" <<<<<*******************************" + date + ")********************************>>>>>> ")
 			set_school_calendar_list(school_calendars_list, timetable, date)
 			set_class_calendar_list(class_calendars_list, timetable, date)
 			existing_class_calendar = get_class_calendar(date,class_calendars_list)
 			existing_school_calendar = get_school_calendar(date,school_calendars_list)
 			if existing_school_calendar is not None :
-				gclogger.info('School calendar exist for the date ---------->' + date)
+				gclogger.info('EXISTING SCHOOL CALEDAR ----------> ' + str(existing_school_calendar))
 				holiday_period_list = generate_holiday_period_list(existing_school_calendar,academic_configuration,timetable,day_code[0:3])
 				if existing_class_calendar is not None :
+					gclogger.info('EXISTING CLASS CALEDAR ----------> (*** 1 ***)' + str(existing_class_calendar))
 					holiday_period_list_from_class_calendar = generate_holiday_period_list(existing_class_calendar,academic_configuration,timetable,day_code[0:3])
 				else :
 					holiday_period_list_from_class_calendar = []
@@ -574,6 +575,7 @@ def integrate_class_timetable(timetable, academic_configuration, class_calendars
 
 
 			elif existing_class_calendar is not None :
+				gclogger.info('EXISTING CLASS CALEDAR ----------> (*** 2 ***)' + str(existing_class_calendar))
 				holiday_period_list = generate_holiday_period_list(existing_class_calendar,academic_configuration,timetable,day_code[0:3])
 				generated_class_calendar = generate_class_calendar(day_code[0:3],timetable,date,academic_configuration.time_table_configuration,holiday_period_list,existing_class_calendar)
 
@@ -589,27 +591,27 @@ def integrate_class_timetable(timetable, academic_configuration, class_calendars
 
 
 def set_school_calendar_list(school_calendars_list, timetable, date) :
-	gclogger.info("Getting School calendar -------------------------------------------------------------")
+	# gclogger.info("Getting School calendar -------------------------------------------------------------")
 	if get_school_calendar(date,school_calendars_list) is None :
 		subscriber_key = timetable.school_key
 		school_cal = calendar_service.get_calendar_by_date_and_key(date,subscriber_key)
 		if school_cal is not None:
 			school_calendars_list.append(school_cal)
-			gclogger.info("School calendar - Existing in DB "+ date)
-	else:
-		gclogger.info("School calendar - calendar present in Dict")
+			# gclogger.info("School calendar - Existing in DB "+ date)
+	# else:
+	# 	gclogger.info("School calendar - calendar present in Dict")
 
 
 def set_class_calendar_list(class_calendars_list, timetable, date) :
-	gclogger.info("Getting Class calendar -------------------------------------------------------------")
+	# gclogger.info("Getting Class calendar -------------------------------------------------------------")
 	if get_class_calendar(date,class_calendars_list) is None :
 		subscriber_key = timetable.class_key+"-"+timetable.division
 		class_cal = calendar_service.get_calendar_by_date_and_key(date,subscriber_key)
 		if class_cal is not None:
 			class_calendars_list.append(class_cal)
-			gclogger.info("Class calendar - Existing in DB "+ date)
-	else:
-		gclogger.info("Class calendar - calendar present in Dict")
+	# 		gclogger.info("Class calendar - Existing in DB "+ date)
+	# else:
+	# 	gclogger.info("Class calendar - calendar present in Dict")
 
 
 def get_class_calendar(date,class_calendars_list) :
@@ -634,7 +636,7 @@ def is_class(param) :
 
 
 def generate_holiday_period_list(calendar,academic_configuration,timetable,day_code) :
-	gclogger.info("EXISTING SCHOOL CALENDAR KEY ------------------>>>>>>  " + calendar.calendar_key)
+	# gclogger.info("EXISTING SCHOOL CALENDAR KEY ------------------>>>>>>  " + calendar.calendar_key)
 	holiday_period_list =[]
 	for event in calendar.events :
 		if hasattr(event,"params") and len(event.params) > 0:
@@ -647,7 +649,7 @@ def generate_holiday_period_list(calendar,academic_configuration,timetable,day_c
 	return holiday_period_list
 
 def generate_period_list(calendar,events,academic_configuration,timetable,day_code) :
-	gclogger.info("SCHOOL CALENDAR KEY ------------------>>>>>>  " + calendar.calendar_key)
+	# gclogger.info("SCHOOL CALENDAR KEY ------------------>>>>>>  " + calendar.calendar_key)
 	period_list =[]
 	for event in events :
 		if hasattr(event,"params") and len(event.params) > 0:
@@ -760,7 +762,7 @@ def get_event(time_table_period,timetable_configuration_periods,date):
 
 				event.from_time = get_standard_time(current_configuration_period.start_time,date)
 				event.to_time = get_standard_time(current_configuration_period.end_time,date)
-				gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
+				# gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
 				return event
 
 def get_event_list(time_table_period,timetable_configuration_periods,date):
@@ -780,7 +782,7 @@ def get_event_list(time_table_period,timetable_configuration_periods,date):
 
 				event.from_time = get_standard_time(current_configuration_period.start_time,date)
 				event.to_time = get_standard_time(current_configuration_period.end_time,date)
-				gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
+				# gclogger.info("Event created " + event.event_code + ' start ' + event.from_time + ' end ' + event.to_time)
 				events_list.append(event)
 		return events_list
 
@@ -839,6 +841,7 @@ def get_timetable_configuration_periods(timetable_configuration,time_table,day_c
 
 
 def generate_class_calendar(day_code,time_table,date,timetable_configuration,partial_holiday_period_list,existing_class_calendar) :
+	gclogger.info('EXISTING CLASS CALEDAR ----------> (*** 3 ***)' + str(existing_class_calendar))
 	class_calendar = None
 	timetable_configuration_periods = get_timetable_configuration_periods(timetable_configuration,time_table,day_code)
 	if hasattr(time_table, 'timetable') and time_table.timetable is not None :
@@ -898,7 +901,7 @@ def get_period_param(event) :
 def integrate_teacher_timetable(class_calendar_list) :
 	teacher_calendars_dict = {}
 	teacher_calendar_list = []
-	gclogger.info("Processing teacher timetable from class timetables ......")
+	# gclogger.info("Processing teacher timetable from class timetables ......")
 	for class_calendar in class_calendar_list :
 		for event in class_calendar.events :
 			employee_key = get_employee_key(event.params)
@@ -907,12 +910,12 @@ def integrate_teacher_timetable(class_calendar_list) :
 				key = class_calendar.calendar_date + employee_key
 				teacher_calendar = teacher_calendars_dict[key]
 				teacher_calendar = remove_unwanted_events(class_calendar_list,teacher_calendar)
-				gclogger.info("--- >>>> Teacher Calendar for employee key " + employee_key + " and date " + class_calendar.calendar_date )
+				# gclogger.info("--- >>>> Teacher Calendar for employee key " + employee_key + " and date " + class_calendar.calendar_date )
 				event_object = calendar.Event(None)
 				event_object.event_code = event.event_code
 				event_object.ref_calendar_key = class_calendar.calendar_key
 				teacher_calendar.events.append(event_object)
-				gclogger.info("----- Adding event with class_calendar --> " + class_calendar.calendar_key +" Event code --> "+ event_object.event_code + " to teacher calendar " + teacher_calendar.calendar_key)
+				# gclogger.info("----- Adding event with class_calendar --> " + class_calendar.calendar_key +" Event code --> "+ event_object.event_code + " to teacher calendar " + teacher_calendar.calendar_key)
 
 	return teacher_calendars_dict
 
@@ -956,18 +959,18 @@ def period_exist_or_not(time_table_period,partial_holiday_period_list) :
 
 
 def set_teacher_calendar_dict(teacher_calendars_dict,employee_key,class_calendar) :
-	gclogger.info("Getting Teacher calendar -------------------------------------------------------------")
+	# gclogger.info("Getting Teacher calendar -------------------------------------------------------------")
 	key = class_calendar.calendar_date + employee_key
 	if key not in teacher_calendars_dict:
 		teacher_cal = calendar_service.get_calendar_by_date_and_key(class_calendar.calendar_date,employee_key)
 		if teacher_cal is None:
 			teacher_cal = generate_employee_calendar(employee_key,class_calendar)
-			gclogger.info("--->>Teacher calendar - New record created in DB calendar key --> " + str(teacher_cal.calendar_key))
-		else :
-			gclogger.info(" --->>Teacher calendar - Existing record loaded from DB calendar key --> " + str(teacher_cal.calendar_key))
+			# gclogger.info("--->>Teacher calendar - New record created in DB calendar key --> " + str(teacher_cal.calendar_key))
+		# else :
+		# 	gclogger.info(" --->>Teacher calendar - Existing record loaded from DB calendar key --> " + str(teacher_cal.calendar_key))
 		teacher_calendars_dict[key] = teacher_cal
-	else:
-		gclogger.info("Teacher calendar present in Dict")
+	# else:
+	# 	gclogger.info("Teacher calendar present in Dict")
 
 
 def generate_employee_calendar(employee_key,class_calendar) :

@@ -429,13 +429,18 @@ def update_class_calendars_teacher_calendars(subscriber_key,existing_class_calen
 
 
 def update_class_calendar_by_adding_conflicted_periods(existing_class_calendar,timetable,calendar,events,academic_configuration,updated_calendars_list,day_code) :
-	period_list = timetable_integrator.generate_period_list(calendar,events,academic_configuration,timetable,day_code)
-	gclogger.info("------ Periods to adde to calendar -------")
-	for period in period_list :
-		gclogger.info(period.start_time + ' -- '  + period.end_time)
-	events = make_events(period_list,timetable,existing_class_calendar.calendar_date)
-	updated_class_calendar = add_events_to_calendar(events,existing_class_calendar)
-	updated_calendars_list.append(updated_class_calendar)
+	updated_class_calendar = None 
+	if hasattr(timetable,"status") and timetable.status == "PUBLISHED" :
+		period_list = timetable_integrator.generate_period_list(calendar,events,academic_configuration,timetable,day_code)
+		gclogger.info("------ Periods to adde to calendar -------")
+		for period in period_list :
+			gclogger.info(period.start_time + ' -- '  + period.end_time)
+		events = make_events(period_list,timetable,existing_class_calendar.calendar_date)
+		updated_class_calendar = add_events_to_calendar(events,existing_class_calendar)
+		if updated_class_calendar is not None :
+			updated_calendars_list.append(updated_class_calendar)
+	else :
+		updated_class_calendar = existing_class_calendar
 	return updated_class_calendar
 
 def update_teacher_calendar_by_adding_conflicted_periods(updated_class_calendar_events,teacher_calendar,updated_class_calendar,updated_calendars_list) :
