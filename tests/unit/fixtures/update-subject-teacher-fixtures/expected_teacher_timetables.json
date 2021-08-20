@@ -11,7 +11,7 @@
           "order_index": 1,
           "periods": [
             {
-              "class_info_key":"8B1B22E72AE",
+              "class_info_key":"class-key-1",
               "division_code": "A",
               "employee_key": "employee-1",
               "order_index": 1,
@@ -27,7 +27,7 @@
               "subject_key": null
             },
             {
-              "class_info_key":"8B1B22E72AE",
+              "class_info_key":"class-key-1",
               "division_code": "A",
               "employee_key": "employee-1",
               "order_index": 3,
@@ -49,7 +49,7 @@
               "subject_key": null
             },
             {
-              "class_info_key":"8B1B22E72AE",
+              "class_info_key":"class-key-1",
               "division_code": "A",
               "employee_key": "employee-1",
               "order_index": 2,
@@ -57,7 +57,7 @@
               "subject_key": "bio3"
             },
             {
-              "class_info_key":"8B1B22E72AE",
+              "class_info_key":"class-key-1",
               "division_code": "A",
               "employee_key": "employee-1",
               "order_index": 3,
@@ -71,7 +71,7 @@
           "order_index": 3,
           "periods": [
             {
-              "class_info_key":"8B1B22E72AE",
+              "class_info_key":"class-key-1",
               "division_code": "A",
               "employee_key": "employee-1",
               "order_index": 1,
@@ -87,7 +87,7 @@
               "subject_key": null
             },
             {
-              "class_info_key":"8B1B22E72AE",
+              "class_info_key":"class-key-1",
               "division_code": "A",
               "employee_key": "employee-1",
               "order_index": 3,
@@ -119,7 +119,7 @@
               "subject_key": null
             },
             {
-              "class_info_key":"8B1B22E72AE",
+              "class_info_key":"class-key-1",
               "division_code": "A",
               "employee_key": "employee-2",
               "order_index": 2,
@@ -149,7 +149,7 @@
               "subject_key": null
             },
             {
-              "class_info_key":"8B1B22E72AE",
+              "class_info_key":"class-key-1",
               "division_code": "A",
               "employee_key": "employee-2",
               "order_index": 2,

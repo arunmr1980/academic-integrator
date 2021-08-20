@@ -36,7 +36,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		expected_teacher_calendars = self.get_expected_teacher_calendars_list()
 		expected_teacher_calendars_list = self.update_teacher_calendars_to_future_date(expected_teacher_calendars)
 		division = "A"
-		class_info_key = '8B1B22E72AE'
+		class_info_key = 'class-key-1'
 		subject_code = 'bio3'
 		existing_teacher_emp_key = 'employee-3'
 		new_teacher_emp_key = 'employee-1'
