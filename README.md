@@ -3,6 +3,8 @@ academic-integrator
 
 academic integration code
 
+Python version ***3.8***
+
 ### Running tests
 
 Running a specific test
