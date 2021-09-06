@@ -3,6 +3,7 @@
       "academic_year":"2020-2021",
       "class_key":"class-key-1",
       "class_name":"LKG",
+      "time_table_config_code": "TMKG01",
       "config_parameters":{
          "subject_preferences":[
             {
