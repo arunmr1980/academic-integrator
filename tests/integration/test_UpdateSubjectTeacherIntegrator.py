@@ -1,7 +1,7 @@
 import unittest
 import json
 from academics.TimetableIntegrator import *
-from academics.timetable import AcademicConfiguration as academic_config
+from academics.academic import AcademicConfiguration as academic_config
 import academics.timetable.TimeTable as ttable
 from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as calendar
@@ -10,7 +10,7 @@ from academics.calendar.CalendarIntegrator import *
 import academics.classinfo.ClassInfo as classinfo
 import academics.classinfo.ClassInfoDBService as class_info_service
 import pprint
-import copy 
+import copy
 import academics.timetable.KeyGeneration as key
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -39,10 +39,10 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			response = calendar_service.add_or_update_calendar(current_calendar)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A teacher calendar uploaded --------- '+str(current_calendar['calendar_key']))
 
-		
+
 	def test_timetables_and_calendars(self) :
 		division = 'A'
-		class_info_key = '8B1B22E72AE'	
+		class_info_key = '8B1B22E72AE'
 		subject_code = 'bio3'
 		existing_teacher_emp_key = 'employee-3'
 		new_teacher_emp_key = 'employee-1'
@@ -57,7 +57,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		expected_teacher_calendars = self.get_expected_teacher_calendars_list()
 		expected_teacher_calendars_list = self.update_teacher_calendars_object_to_future_date(expected_teacher_calendars)
 		expected_class_timetables_list = self.get_expected_class_timetables_list()
-		
+
 
 		updated_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
 		updated_previous_teacher_timetable = timetable_service.get_timetable_entry_by_employee(existing_teacher_emp_key,current_cls_timetable.academic_year)
@@ -142,7 +142,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 
 	def tearDown(self) :
 		division = 'A'
-		class_info_key = '8B1B22E72AE'	
+		class_info_key = '8B1B22E72AE'
 		subject_code = 'bio3'
 		subscriber_key = class_info_key + '-' + division
 		updated_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
@@ -166,7 +166,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 
 
 
-					
+
 
 
 	def get_class_timetable(self,class_key,division,current_class_timetables_list) :
@@ -334,7 +334,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		with open('tests/unit/fixtures/update-subject-teacher-fixtures/current_class_timetables.json', 'r') as current_class_timetables:
 			current_class_timetables_dict = json.load(current_class_timetables)
 		return current_class_timetables_dict
-			
+
 
 	def get_current_teacher_timetables_list_json(self) :
 		with open('tests/unit/fixtures/update-subject-teacher-fixtures/current_teacher_timetables.json', 'r') as current_teacher_timetables:
