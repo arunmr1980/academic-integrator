@@ -204,9 +204,9 @@ def integrate_update_subject_teacher(
 
 	updated_class_timetable = update_current_class_timetable(current_class_timetable,subject_code,new_teacher_timetable.employee_key, config_code)
 	updated_class_timetables_list.append(updated_class_timetable)
-	updated_existing_teacher_timetable = update_existing_teacher_timetable(existing_teacher_timetable,subject_code,period_list)
+	updated_existing_teacher_timetable = update_existing_teacher_timetable(existing_teacher_timetable,subject_code,period_list, config_code)
 	updated_teacher_timetables_list.append(updated_existing_teacher_timetable)
-	updated_new_teacher_timetable = update_new_teacher_timetable(new_teacher_timetable,period_list,subject_code)
+	updated_new_teacher_timetable = update_new_teacher_timetable(new_teacher_timetable,period_list,subject_code, config_code)
 	updated_teacher_timetables_list.append(updated_new_teacher_timetable)
 	updated_class_calendars = get_updated_class_calendars(current_class_calendars_list,period_list)
 	updated_class_calendars_list.extend(updated_class_calendars)
@@ -274,7 +274,11 @@ def get_period_code(event) :
 				return param.value
 
 
-def update_new_teacher_timetable(new_teacher_timetable,period_list,subject_code) :
+def update_new_teacher_timetable(new_teacher_timetable,period_list,subject_code, config_code) :
+	if not hasattr(new_teacher_timetable, 'time_table_config_code'):
+		new_teacher_timetable.time_table_config_code = config_code
+	gclogger.info('[TimetableIntegrator] update_new_teacher_timetable()' + new_teacher_timetable.time_table_config_code)
+
 	period_list = updated_employee_key(period_list,new_teacher_timetable,new_teacher_timetable.employee_key,subject_code)
 	for period in period_list :
 		if hasattr(period,'order_index') :
@@ -322,7 +326,11 @@ def add_or_update_period(existing_periods,period) :
 
 
 
-def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,period_list) :
+def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,period_list, config_code) :
+	if not hasattr(existing_teacher_timetable, 'time_table_config_code'):
+		existing_teacher_timetable.time_table_config_code = config_code
+	gclogger.info('[TimetableIntegrator] update_existing_teacher_timetable()' + existing_teacher_timetable.time_table_config_code)
+
 	if hasattr(existing_teacher_timetable.timetable,'day_tables') :
 		for day in existing_teacher_timetable.timetable.day_tables :
 			for period in day.periods :

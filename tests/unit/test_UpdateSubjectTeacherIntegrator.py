@@ -263,6 +263,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 				self.assertEqual(updated_teacher_timetable.academic_year , expected_teacher_timetable.academic_year)
 				self.assertEqual(updated_teacher_timetable.school_key , expected_teacher_timetable.school_key)
 				self.assertEqual(updated_teacher_timetable.employee_key , expected_teacher_timetable.employee_key)
+				self.assertEqual(updated_teacher_timetable.time_table_config_code , expected_teacher_timetable.time_table_config_code)
 				self.check_timetable_day_tables(updated_teacher_timetable.timetable.day_tables,expected_teacher_timetable.timetable.day_tables)
 
 
