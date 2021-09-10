@@ -30,15 +30,10 @@ def update_subject_teacher_integrator(division,class_info_key,subject_code,exist
 	existing_teacher_timetable = get_existing_teacher_timetable(existing_teacher_emp_key,current_cls_timetable,subject_code)
 	t = ttable.TimeTable(None)
 	calendar_dict = t.make_timetable_dict(existing_teacher_timetable)
-	# gclogger.info(calendar_dict)
-	# gclogger.info("<<<<<---------Existing Timetable to update --------->>>>>>>>")
 
 	new_teacher_timetable = get_new_teacher_timetable(new_teacher_emp_key,current_cls_timetable,subject_code)
 	t = ttable.TimeTable(None)
 	calendar_dict = t.make_timetable_dict(new_teacher_timetable)
-	# gclogger.info(calendar_dict)
-	# gclogger.info("<<<<<---------New Teacher Timetable to update --------->>>>>>>>")
-
 
 	period_list =[]
 	updated_teacher_timetables_list = []
@@ -51,6 +46,8 @@ def update_subject_teacher_integrator(division,class_info_key,subject_code,exist
 	if current_class_timetable is not None :
 		gclogger.info("class key------> " + str(class_info_key))
 		gclogger.info("Division---------> " + str(division))
+		class_info = class_info_service.get_classinfo(class_info_key)
+		timetable_schedule_config = academic_service.get_time_table_configuration_for_class(class_info.school_key, class_info.academic_year, class_info_key)
 		integrate_update_subject_teacher(
 									current_class_timetable,
 									existing_teacher_timetable,
@@ -62,7 +59,8 @@ def update_subject_teacher_integrator(division,class_info_key,subject_code,exist
 									class_info_key,
 									division,
 									period_list,
-									current_class_calendars_list
+									current_class_calendars_list,
+									timetable_schedule_config
 									)
 		updated_teacher_calendars_list = update_both_teacher_calendars(updated_class_calendars_list,existing_teacher_timetable,new_teacher_timetable,subject_code)
 		save_updated_calendars_and_timetables(updated_teacher_calendars_list,updated_class_calendars_list,updated_class_timetables_list,updated_teacher_timetables_list)
@@ -199,7 +197,8 @@ def integrate_update_subject_teacher(
 									timetable_schedule_config
 									) :
 	if(timetable_schedule_config is None or not hasattr(timetable_schedule_config, 'code') or timetable_schedule_config.code is None):
-		gclogger.error("Timetable configuration do not config code for class " + class_info_key + " Can not integrate update_subject_teacher ")
+		gclogger.error("Timetable configuration do not have config code for class " + class_info_key + " Can not integrate update_subject_teacher ")
+		return
 	config_code = timetable_schedule_config.code
 
 	updated_class_timetable = update_current_class_timetable(current_class_timetable,subject_code,new_teacher_timetable.employee_key, config_code)
