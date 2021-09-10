@@ -1,5 +1,5 @@
 import datetime
-from academics.timetable.AcademicConfiguration import AcademicConfiguration
+from academics.academic.AcademicConfiguration import AcademicConfiguration
 from academics.timetable.TimeTable import TimeTable
 import boto3
 from boto3.dynamodb.conditions import Key,Attr
@@ -19,12 +19,29 @@ def get_academig(school_key, academic_year):
         return academic_config
 
 
+def get_time_table_configuration(school_key, academic_year):
+    academic_config = get_academig(school_key, academic_year)
+    if hasattr(academic_config, 'time_table_configuration'):
+        return academic_config.time_table_configuration
+
+
+def get_time_table_configuration_for_class(school_key, academic_year, class_key):
+    timetable_config = get_time_table_configuration(school_key, academic_year)
+    if hasattr(timetable_config,'time_table_schedules'):
+        timetable_schedules = timetable_config.time_table_schedules
+        for timetable_schedule in timetable_schedules:
+            applied_classes = timetable_schedule.applied_classes
+            for applied_class in applied_classes:
+                if applied_class == class_key:
+                    return timetable_schedule 
+
+
 def get_academic_year(school_key, calendar_date):
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(ACADEMIC_CONFIG_TBL)
     response = table.query(
         IndexName = 'school_key-index',
-        KeyConditionExpression = Key('school_key').eq(school_key) 
+        KeyConditionExpression = Key('school_key').eq(school_key)
     )
     for item in response['Items']:
         academic_config = AcademicConfiguration(item)
@@ -72,13 +89,8 @@ def delete_academic_config(academic_config_key) :
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(ACADEMIC_CONFIG_TBL)
     response=table.delete_item(
-      Key={ 
+      Key={
         'academic_config_key':academic_config_key
       }
     )
     return response
-
-
-
-
-

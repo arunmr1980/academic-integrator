@@ -1,7 +1,7 @@
 import unittest
 import json
 from academics.TimetableIntegrator import *
-from academics.timetable import AcademicConfiguration as academic_config
+from academics.academic import AcademicConfiguration as academic_config
 import academics.timetable.TimeTable as ttable
 from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as calendar
@@ -36,10 +36,12 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		expected_teacher_calendars = self.get_expected_teacher_calendars_list()
 		expected_teacher_calendars_list = self.update_teacher_calendars_to_future_date(expected_teacher_calendars)
 		division = "A"
-		class_info_key = '8B1B22E72AE'
+		class_info_key = 'class-key-1'
 		subject_code = 'bio3'
 		existing_teacher_emp_key = 'employee-3'
 		new_teacher_emp_key = 'employee-1'
+		time_table_schedule_config = self.get_timetable_schedule_config(class_info_key)
+
 		current_class_timetable = self.get_class_timetable(class_info_key,division,current_class_timetables_list)
 		existing_teacher_timetable = self.get_existing_teacher_timetable(subject_code,existing_teacher_emp_key,current_teacher_timetables_list,current_class_timetable)
 		new_teacher_timetable = self.get_new_teacher_timetable(new_teacher_emp_key,subject_code,current_teacher_timetables_list,current_class_timetable)
@@ -71,7 +73,8 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 											class_info_key,
 											division,
 											period_list,
-											current_class_calendars_list
+											current_class_calendars_list,
+											time_table_schedule_config
 											)
 			for updated_class_calendar in updated_class_calendars_list :
 				updated_class_calendar_events = updated_class_calendar.events
@@ -251,6 +254,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 				self.assertEqual(updated_class_timetable.class_key , expected_class_timetable.class_key)
 				self.assertEqual(updated_class_timetable.class_name , expected_class_timetable.class_name)
 				self.assertEqual(updated_class_timetable.division , expected_class_timetable.division)
+				self.assertEqual(updated_class_timetable.time_table_config_code , expected_class_timetable.time_table_config_code)
 				self.check_timetable_day_tables(updated_class_timetable.timetable.day_tables,expected_class_timetable.timetable.day_tables)
 
 	def check_teacher_timetables(self,updated_teacher_timetable,expected_teacher_timetables_list) :
@@ -259,6 +263,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 				self.assertEqual(updated_teacher_timetable.academic_year , expected_teacher_timetable.academic_year)
 				self.assertEqual(updated_teacher_timetable.school_key , expected_teacher_timetable.school_key)
 				self.assertEqual(updated_teacher_timetable.employee_key , expected_teacher_timetable.employee_key)
+				self.assertEqual(updated_teacher_timetable.time_table_config_code , expected_teacher_timetable.time_table_config_code)
 				self.check_timetable_day_tables(updated_teacher_timetable.timetable.day_tables,expected_teacher_timetable.timetable.day_tables)
 
 
@@ -340,6 +345,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			expected_teacher_timetables.append(ttable.TimeTable(current_teacher_timetable))
 		return expected_teacher_timetables
 
+
 	def get_current_class_timetables_list(self) :
 		current_class_timetables_list = []
 		with open('tests/unit/fixtures/update-subject-teacher-fixtures/current_class_timetables.json', 'r') as current_class_timetables:
@@ -347,6 +353,20 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			for current_class_timetable in current_class_timetables_dict :
 				current_class_timetables_list.append(ttable.TimeTable(current_class_timetable))
 		return current_class_timetables_list
+
+
+	def get_timetable_schedule_config(self, class_key) :
+		timetable_schedule_config = []
+		with open('tests/unit/fixtures/update-subject-teacher-fixtures/academic_configuration.json', 'r') as academic_configuration:
+			academic_configuration_dict = json.load(academic_configuration)
+			time_table_configuration_dict = academic_configuration_dict['time_table_configuration']
+			time_table_schedules = time_table_configuration_dict['time_table_schedules']
+			for timetable_schedule in time_table_schedules :
+				applied_classes = timetable_schedule['applied_classes']
+				for clz in applied_classes:
+					if class_key == clz:
+						return academic_config.TimeTableSchedule(timetable_schedule)
+
 
 	def get_current_teacher_timetables_list(self) :
 		current_teacher_timetable_list = []

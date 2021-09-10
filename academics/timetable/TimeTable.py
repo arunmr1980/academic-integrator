@@ -16,8 +16,9 @@ class TimeTable:
             self.timetable = {}
             self.config_parameters = {}
             self.generation_logs = []
+            self.time_table_config_code = None
         else:
-           
+
             self.school_key = item['school_key']
             self.time_table_key = item['time_table_key']
             self.academic_year = None
@@ -46,6 +47,11 @@ class TimeTable:
                 logger.debug('[WARN] - KeyError in TimeTable - employee_key not found')
 
             try:
+                self.time_table_config_code = item['time_table_config_code']
+            except KeyError:
+                logger.debug('[WARN] - KeyError in TimeTable - time_table_config_code not found')
+
+            try:
                 self.timetable = TimeTable.TimeTable(item['timetable'])
             except KeyError:
                 logger.debug('[WARN] - KeyError in TimeTable - TimeTable not found')
@@ -63,7 +69,7 @@ class TimeTable:
             except KeyError:
                 logger.debug('[WARN] - KeyError in TimeTable - GenerationLogs not found')
 
-  
+
 
     def make_timetable_dict (self , timetable) :
         if timetable is not None :
@@ -281,7 +287,7 @@ class TimeTable:
                 try:
                     periods = item['periods']
                     self.periods = []
-                    for period in periods:      
+                    for period in periods:
                         self.periods.append(TimeTable.Period(period))
                 except Exception:
                     logger.debug('KeyError in DayTable - periods not found')
