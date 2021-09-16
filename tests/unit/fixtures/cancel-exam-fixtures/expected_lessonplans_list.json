@@ -1,251 +1,171 @@
-[
-    {
-        "assignments":[
-            
+[{
+        "assignments": [
+
         ],
-        "class_key":"8B1B22E72AE",
-        "division":"A",
-        "lesson_plan_key":"test-lessonplan-1",
-        "resources":[
-            
+        "class_key": "8B1B22E72AE",
+        "division": "A",
+        "lesson_plan_key": "test-lessonplan-1",
+        "resources": [
+
         ],
-        "sessions":[
-            {
-                "code":"54e3dbfa",
-                "comments":[
-                    
-                ],
-                "name":"None",
-                "order_index":1,
-                "resources":[
-                    
-                ],
-                "schedule":{
-                    "calendar_key":"test-key-3",
-                    "end_time":"2020-08-10T10:40:00",
-                    "event_code":"c5f18b",
-                    "start_time":"2020-08-10T10:00:00"
-                }
-            }
+        "sessions": [
+
         ],
-        "subject_code":"bio1",
-        "topics":[
-            {
-                "code":"TOP3x0jkt-bio1",
-                "comments":[
-                    
+        "subject_code": "bio1",
+        "topics": [{
+            "code": "TOP3x0jkt-bio1",
+            "comments": [
+
+            ],
+            "name": "chapter 1",
+            "order_index": 1,
+            "topics": [{
+                "assignments": [
+
                 ],
-                "name":"chapter 1",
-                "order_index":1,
-                "topics":[
-                    {
-                        "assignments":[
-                            
-                        ],
-                        "code":"CHAP1-TOP1",
-                        "description":"edited",
-                        "name":"topic 1",
-                        "order_index":1,
-                        "resources":[
-                            
-                        ],
-                        "sessions":[
-                            {
-                                "code":"SESgy0567",
-                                "comments":[
-                                    
-                                ],
-                                "completion_datetime":"NA",
-                                "completion_status":false,
-                                "name":"Session 1",
-                                "order_index":1,
-                                "resources":[
-                                    
-                                ],
-                                "schedule":{
-                                    "calendar_key":"test-key-2",
-                                    "end_time":"2020-08-04T12:10:00",
-                                    "event_code":"2e7fda",
-                                    "start_time":"2020-08-04T11:30:00"
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
+                "code": "CHAP1-TOP1",
+                "description": "edited",
+                "name": "topic 1",
+                "order_index": 1,
+                "resources": [
+
+                ],
+                "sessions": [{
+                    "code": "SESgy0567",
+                    "comments": [
+
+                    ],
+                    "completion_datetime": "NA",
+                    "completion_status": false,
+                    "name": "Session 1",
+                    "order_index": 1,
+                    "resources": [
+
+                    ]
+                }]
+            }]
+        }]
     },
     {
-        "assignments":[
-            
+        "assignments": [
+
         ],
-        "class_key":"8B1B22E72AE",
-        "division":"A",
-        "lesson_plan_key":"test-lessonplan-2",
-        "resources":[
-            
+        "class_key": "8B1B22E72AE",
+        "division": "A",
+        "lesson_plan_key": "test-lessonplan-3",
+        "resources": [
+
         ],
-        "sessions":[
-            
+        "sessions": [
+
         ],
-        "subject_code":"bio2",
-        "topics":[
-            {
-                "code":"TOP3x0jkt-bio2",
-                "comments":[
-                    
+        "subject_code": "bio3",
+        "topics": [{
+            "code": "TOP3x0jkt-bio3",
+            "comments": [
+
+            ],
+            "name": "chapter 1",
+            "order_index": 1,
+            "topics": [{
+                "assignments": [
+
                 ],
-                "name":"chapter 1",
-                "order_index":1,
-                "topics":[
+                "code": "CHAP3-TOP1",
+                "description": "edited",
+                "name": "topic 1",
+                "order_index": 1,
+                "resources": [
+
+                ],
+                "sessions": [{
+                        "code": "SESgy022",
+                        "comments": [
+
+                        ],
+                        "completion_datetime": "NA",
+                        "completion_status": false,
+                        "name": "Session 1",
+                        "order_index": 1,
+                        "resources": [
+
+                        ],
+                        "schedule": {
+                            "calendar_key": "test-key-2",
+                            "end_time": "2020-08-04T14:10:00",
+                            "event_code": "event-555555",
+                            "start_time": "2020-08-04T13:30:00"
+                        }
+                    },
                     {
-                        "assignments":[
-                            
+                        "code": "SESgy022",
+                        "comments": [
+
                         ],
-                        "code":"CHAP3-TOP1",
-                        "description":"edited",
-                        "name":"topic 1",
-                        "order_index":1,
-                        "resources":[
-                            
+                        "completion_datetime": "NA",
+                        "completion_status": false,
+                        "name": "Session 1",
+                        "order_index": 1,
+                        "resources": [
+
                         ],
-                        "sessions":[
-                            {
-                                "code":"SESgy022",
-                                "comments":[
-                                    
-                                ],
-                                "completion_datetime":"NA",
-                                "completion_status":false,
-                                "name":"Session 1",
-                                "order_index":1,
-                                "resources":[
-                                    
-                                ],
-                                "schedule":{
-                                    "calendar_key":"test-key-3",
-                                    "end_time":"2020-08-10T11:20:00",
-                                    "event_code":"8322eb",
-                                    "start_time":"2020-08-10T10:40:00"
-                                }
-                            }
-                        ]
+                        "schedule": {
+                            "calendar_key": "test-key-3",
+                            "end_time": "2020-08-10T14:10:00",
+                            "event_code": "event-1000000000",
+                            "start_time": "2020-08-10T13:30:00"
+                        }
                     }
                 ]
-            }
-        ]
+            }]
+        }]
     },
     {
-        "assignments":[
-            
+        "assignments": [
+
         ],
-        "class_key":"8B1B22E72AE",
-        "division":"A",
-        "lesson_plan_key":"test-lessonplan-3",
-        "resources":[
-            
+        "class_key": "8B1B22E72AE",
+        "division": "A",
+        "lesson_plan_key": "test-lessonplan-2",
+        "resources": [
+
         ],
-        "sessions":[
-            {
-                "code":"c1012ebc",
-                "comments":[
-                    
-                ],
-                "name":"None",
-                "order_index":1,
-                "resources":[
-                    
-                ],
-                "schedule":{
-                    "calendar_key":"test-key-3",
-                    "end_time":"2020-08-10T12:10:00",
-                    "event_code":"e9ff4f",
-                    "start_time":"2020-08-10T11:30:00"
-                }
-            },
-            {
-                "code":"8dd32d66",
-                "comments":[
-                    
-                ],
-                "name":"None",
-                "order_index":1,
-                "resources":[
-                    
-                ],
-                
-                "schedule":{
-                    "calendar_key":"test-key-3",
-                    "end_time":"2020-08-10T14:10:00",
-                    "event_code":"event-1000000000",
-                    "start_time":"2020-08-10T13:30:00"
-                }
-            }
+        "sessions": [
+
         ],
-        "subject_code":"bio3",
-        "topics":[
-            {
-                "code":"TOP3x0jkt-bio3",
-                "comments":[
-                    
+        "subject_code": "bio2",
+        "topics": [{
+            "code": "TOP3x0jkt-bio2",
+            "comments": [
+
+            ],
+            "name": "chapter 1",
+            "order_index": 1,
+            "topics": [{
+                "assignments": [
+
                 ],
-                "name":"chapter 1",
-                "order_index":1,
-                "topics":[
-                    {
-                        "assignments":[
-                            
-                        ],
-                        "code":"CHAP3-TOP1",
-                        "description":"edited",
-                        "name":"topic 1",
-                        "order_index":1,
-                        "resources":[
-                            
-                        ],
-                        "sessions":[
-                            {
-                                "code":"SESgy022",
-                                "comments":[
-                                    
-                                ],
-                                "completion_datetime":"NA",
-                                "completion_status":false,
-                                "name":"Session 1",
-                                "order_index":1,
-                                "resources":[
-                                    
-                                ],
-                                "schedule":{
-                                    "calendar_key":"test-key-2",
-                                    "end_time":"2020-08-04T11:20:00",
-                                    "event_code":"1a3be1",
-                                    "start_time":"2020-08-04T10:40:00"
-                                }
-                            },
-                            {
-                                "code":"SESgy022",
-                                "comments":[
-                                    
-                                ],
-                                "completion_datetime":"NA",
-                                "completion_status":false,
-                                "name":"Session 1",
-                                "order_index":1,
-                                "resources":[
-                                    
-                                ],
-                                "schedule":{
-                                    "calendar_key":"test-key-2",
-                                    "end_time":"2020-08-04T14:10:00",
-                                    "event_code":"event-555555",
-                                    "start_time":"2020-08-04T13:30:00"
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
+                "code": "CHAP3-TOP1",
+                "description": "edited",
+                "name": "topic 1",
+                "order_index": 1,
+                "resources": [
+
+                ],
+                "sessions": [{
+                    "code": "SESgy022",
+                    "comments": [
+
+                    ],
+                    "completion_datetime": "NA",
+                    "completion_status": false,
+                    "name": "Session 1",
+                    "order_index": 1,
+                    "resources": [
+
+                    ]
+                }]
+            }]
+        }]
     }
 ]
