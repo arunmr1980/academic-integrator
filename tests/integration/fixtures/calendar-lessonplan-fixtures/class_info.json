@@ -1,0 +1,22 @@
+{
+  "academic_year": "2020-2021",
+  "class_code": "IV",
+  "class_info_key": "c-k-2",
+  "divisions": [
+    {
+      "code": "A",
+      "name": "A"
+    },
+    {
+      "code": "B",
+      "name": "B"
+    }
+  ],
+  "eligible_classes": [
+
+  ],
+  "name": "IV",
+  "order_index": 41,
+  "school_key": "s-k-2",
+  "type": "regular"
+}

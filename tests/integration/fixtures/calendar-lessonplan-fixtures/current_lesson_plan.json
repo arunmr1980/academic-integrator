@@ -1,0 +1,89 @@
+
+{
+   "class_key":"c-k-2",
+   "division":"A",
+   "lesson_plan_key":"l1",
+   "resources":[
+      
+   ],
+   "subject_code":"bio1",
+   "topics":[
+      {
+         "code":"TOP3x0jkt-bio1",
+         "name":"chapter 1",
+         "order_index":1,
+         "topics":[
+            {
+               "assignments":[
+                  
+               ],
+               "code":"CHAP1-TOP1",
+               "description":"edited",
+               "name":"topic 1",
+               "order_index":1,
+               "resources":[
+                  
+               ],
+               "sessions":[
+                  {
+                     "code":"SESgy0567",
+                     "completion_datetime":"NA",
+                     "completion_status":false,
+                     "name":"Session 1",
+                     "order_index":1,
+                     "resources":[
+                        
+                     ]
+                  },
+                  {
+                     "code":"SESyy555",
+                     "completion_datetime":"NA",
+                     "completion_status":false,
+                     "name":"Session 2",
+                     "order_index":1,
+                     "resources":[
+                        
+                     ]
+                  }
+               ]
+            },
+            {
+               "assignments":[
+                  
+               ],
+               "code":"CHAP1-TOP2",
+               "description":"ghgdhhh",
+               "name":"topic 2",
+               "order_index":2,
+               "resources":[
+                  
+               ],
+               "sessions":[
+                  {
+                     "code":"SES1y944",
+                     "completion_datetime":"NA",
+                     "completion_status":false,
+                     "description":"session1",
+                     "name":"Session 1",
+                     "order_index":1,
+                     "resources":[
+                        
+                     ]
+                  },
+                  {
+                     "code":"SESff4278",
+                     "completion_datetime":"NA",
+                     "completion_status":true,
+                     "description":"session2",
+                     "name":"Session 2",
+                     "order_index":2,
+                     "resources":[
+                        
+                     ]
+                  }
+               ]
+            }
+         ]
+      }
+   ]
+}

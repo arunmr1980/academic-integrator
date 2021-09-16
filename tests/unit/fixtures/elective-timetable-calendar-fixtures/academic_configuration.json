@@ -1,0 +1,99 @@
+
+{
+  "start_date": "2020-08-01",
+  "end_date": "2020-08-10",
+  "academic_config_key" :"academic-test-key",
+  "academic_year" :"2020-2021",
+  "school_key" :"test-school-key-1-elective",
+  "time_table_configuration":{
+    "time_table_schedules":[
+      {
+        "applied_classes":[
+          "test-class-key-1-elective",
+          "8B1B22E72AY"
+         
+        ],
+        "code":"TMKG01",
+        "day_tables":[
+          {
+            "day_code":"MON",
+            "name":"Monday",
+            "order_index":1,
+            "periods":[
+              {
+                "end_time":"10.40 AM",
+                "order_index":1,
+                "period_code":"MON-1",
+                "start_time":"10.00 AM"
+              },
+              {
+                "end_time":"11.20 AM",
+                "order_index":2,
+                "period_code":"MON-2",
+                "start_time":"10.40 AM"
+              },
+              {
+                "end_time":"12.10 AM",
+                "order_index":3,
+                "period_code":"MON-3",
+                "start_time":"11.30 AM"
+              }
+            ]
+          },
+          {
+            "day_code":"TUE",
+            "name":"Tuesday",
+            "order_index":2,
+            "periods":[
+              {
+                "end_time":"10.40 AM",
+                "order_index":1,
+                "period_code":"TUE-1",
+                "start_time":"10.00 AM"
+              },
+              {
+                "end_time":"11.20 AM",
+                "order_index":2,
+                "period_code":"TUE-2",
+                "start_time":"10.40 AM"
+              },
+              {
+                "end_time":"12.10 AM",
+                "order_index":3,
+                "period_code":"TUE-3",
+                "start_time":"11.30 AM"
+              }
+            ]
+          },
+          {
+            "day_code":"WED",
+            "name":"Wednesday",
+            "order_index":3,
+            "periods":[
+              {
+                "end_time":"10.40 AM",
+                "order_index":1,
+                "period_code":"WED-1",
+                "start_time":"10.00 AM"
+              },
+              {
+                "end_time":"11.20 AM",
+                "order_index":2,
+                "period_code":"WED-2",
+                "start_time":"10.40 AM"
+              },
+              {
+                "end_time":"12.10 AM",
+                "order_index":3,
+                "period_code":"WED-3",
+                "start_time":"11.30 AM"
+              }
+            ]
+          }
+
+        ],
+        "name":"Test timetable data"
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+[
+  {
+     "institution_key": "test-school-1",
+     "calendar_key": "test-key",
+     "calendar_date": "2020-08-04",
+     "subscriber_key": "8B1B22E72AE-A",
+     "subscriber_type": "SCHOOL",
+     "events": [
+     ]
+   }
+]

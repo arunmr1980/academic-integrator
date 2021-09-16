@@ -1,0 +1,80 @@
+{
+  "academic_year": "2020-2021",
+  "class_code": "IT BATCH-02",
+  "class_info_key": "test-class-key-1-elective",
+  "divisions": [
+    {
+      "code": "A",
+      "name": "A",
+      "order_index": 1,
+      "students": [
+        {
+          "electives": [
+            {
+              "code": "MAL",
+              "group": "elective-1"
+            },
+            {
+              "code": "HIND",
+              "group": "elective-1"
+            },
+            {
+              "code": "ENG",
+              "group": "elective-2"
+            }
+          ],
+          "student_key": "001589183624941806C274907F-20F3-4D8A-B8D2-3D1D215FD069331514056"
+        },
+        {
+          "student_key": "001589180441193905FBAB9345-953E-4FB9-9E54-1F8347681369-175585301"
+        }
+      ],
+      "subject_teachers": [
+        {
+          "subject_code": "bio1-elective",
+          "teacher_employee_key": "emp-1-elective"
+        },
+        {
+          "subject_code": "bio2-elective",
+          "teacher_employee_key": "emp-1-elective"
+        },
+        {
+          "subject_code": "bio3-elective",
+          "teacher_employee_key": "emp-1-elective"
+        },
+        {
+          "subject_code": "bio2-elective",
+          "teacher_employee_key": "emp-2-elective"
+        },
+        {
+          "subject_code": "bio3-elective",
+          "teacher_employee_key": "emp-2-elective"
+        },
+        {
+          "subject_code": "bio1-elective",
+          "teacher_employee_key": "emp-3-elective"
+        }
+      ]
+    }
+  ],
+  "name": "IT BATCH-02",
+  "order_index": 250,
+  "school_key": "test-school-key-1-elective",
+  "subjects": [
+    {
+      "assessment_type": "SUMMATIVE",
+      "code": "a b01",
+      "name": "A BIO",
+      "students": [
+        {
+          "student_key": "001589183624941806C274907F-20F3-4D8A-B8D2-3D1D215FD069331514056"
+        },
+        {
+          "student_key": "001589180441193905FBAB9345-953E-4FB9-9E54-1F8347681369-175585301"
+        }
+      ],
+      "type": "ELECTIVE"
+    }
+  ],
+  "type": "regular"
+}

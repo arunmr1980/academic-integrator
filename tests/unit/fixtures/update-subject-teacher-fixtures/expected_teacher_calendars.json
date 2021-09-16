@@ -1,0 +1,29 @@
+[
+   {
+      "calendar_date":"2020-12-30",
+      "calendar_key":"teacher-sample-2",
+      "events":[
+         {
+            "event_code":"event-3",
+            "ref_calendar_key":"test-key-3"
+         },
+         {
+            "event_code":"event-5",
+            "ref_calendar_key":"test-key-3"
+         }
+      ],
+      "institution_key":"test-school-1",
+      "subscriber_key":"employee-1",
+      "subscriber_type":"EMPLOYEE"
+   },
+   {
+      "calendar_date":"2020-12-30",
+      "calendar_key":"teacher-sample-4",
+      "events":[
+         
+      ],
+      "institution_key":"test-school-1",
+      "subscriber_key":"employee-3",
+      "subscriber_type":"EMPLOYEE"
+   }
+]
