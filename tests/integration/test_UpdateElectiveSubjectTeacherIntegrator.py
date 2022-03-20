@@ -1,7 +1,7 @@
 import unittest
 import json
 from academics.TimetableIntegrator import *
-from academics.timetable import AcademicConfiguration as academic_config
+from academics.academic import AcademicConfiguration as academic_config
 import academics.timetable.TimeTable as ttable
 from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as calendar
@@ -38,6 +38,10 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		for current_calendar in current_teacher_calendars_list :
 			response = calendar_service.add_or_update_calendar(current_calendar)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A teacher calendar uploaded --------- '+str(current_calendar['calendar_key']))
+   
+		class_info_dict = self.get_classinfo_json()
+		class_info_service.add_or_update_class_info(class_info_dict)
+		gclogger.info("Class info uploaded --- " + class_info_dict['class_info_key'])
 
 		
 	def test_timetables_and_calendars(self) :
@@ -157,6 +161,8 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		class_info_key = 'LKG'	
 		subject_code = 'elective-subject_key-3'
 		subscriber_key = class_info_key + '-' + division
+		class_info_service.delete_class_info(class_info_key)
+		gclogger.info("--------------- A class deleted  " + class_info_key +"  -----------------")
 		updated_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
 		timetable_service.delete_timetable(updated_class_timetable.time_table_key)
 		gclogger.info("--------------- A updated class timetable deleted  " + updated_class_timetable.time_table_key+"  -----------------")
@@ -333,10 +339,15 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 			expected_teacher_timetables.append(ttable.TimeTable(current_teacher_timetable))
 		return expected_teacher_timetables
 
-	def get_class_info_list_json(self) :
-		with open('tests/unit/fixtures/update-elective-subject-teacher-fixtures/class_info_list.json', 'r') as class_infos:
-			class_info_list_dict = json.load(class_infos)
-		return class_info_list_dict
+	# def get_class_info(self) :
+    # 		with open('tests/unit/fixtures/update-elective-subject-teacher-fixtures/class_info_list.json', 'r') as class_infos:
+	# 		class_info_list_dict = json.load(class_infos)
+	# 	return class_info_list_dict
+
+	def get_classinfo_json(self) :
+		with open('tests/unit/fixtures/update-elective-subject-teacher-fixtures/class_info.json', 'r') as class_info:
+			class_info_dict = json.load(class_info)
+		return class_info_dict
 
 	def get_current_class_timetables_list_json(self) :
 		with open('tests/unit/fixtures/update-elective-subject-teacher-fixtures/current_class_timetables.json', 'r') as current_class_timetables:

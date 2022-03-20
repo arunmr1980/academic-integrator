@@ -1,7 +1,7 @@
 import unittest
 import json
 from academics.TimetableIntegrator import integrate_class_timetable,integrate_teacher_timetable
-from academics.timetable import AcademicConfiguration as academic_config
+from academics.academic import AcademicConfiguration as academic_config
 import academics.timetable.TimeTable as ttable
 from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as calendar

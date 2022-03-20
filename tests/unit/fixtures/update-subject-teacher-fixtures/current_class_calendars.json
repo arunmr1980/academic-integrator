@@ -17,7 +17,7 @@
 			}
 		],
 		"institution_key":"test-school-1",
-		"subscriber_key":"8B1B22E72AE-A",
+		"subscriber_key":"class-key-1-A",
 		"subscriber_type":"CLASS-DIV"
 	},
 	{
@@ -58,7 +58,7 @@
 			}
 		],
 		"institution_key":"test-school-1",
-		"subscriber_key":"8B1B22E72AE-A",
+		"subscriber_key":"class-key-1-A",
 		"subscriber_type":"CLASS-DIV"
 	},
 	{
@@ -127,7 +127,7 @@
 			}
 		],
 		"institution_key":"test-school-1",
-		"subscriber_key":"8B1B22E72AE-A",
+		"subscriber_key":"class-key-1-A",
 		"subscriber_type":"CLASS-DIV"
 	}
 ]

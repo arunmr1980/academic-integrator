@@ -1,7 +1,8 @@
 import unittest
 import json
 from academics.TimetableIntegrator import *
-from academics.timetable import AcademicConfiguration as academic_config
+from academics.academic import AcademicConfiguration as academic_config
+import academics.academic.AcademicDBService as academic_service
 import academics.timetable.TimeTable as ttable
 from academics.logger import GCLogger as gclogger
 import academics.calendar.Calendar as calendar
@@ -10,13 +11,26 @@ from academics.calendar.CalendarIntegrator import *
 import academics.classinfo.ClassInfo as classinfo
 import academics.classinfo.ClassInfoDBService as class_info_service
 import pprint
-import copy 
+import copy
 import academics.timetable.KeyGeneration as key
 pp = pprint.PrettyPrinter(indent=4)
 
 class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 
+	test_academic_config_key = None
+
 	def setUp(self) :
+		gclogger.info("  ")
+		gclogger.info("[UpdateSubjectTeacherIntegratorTest] Setup START ------\n")
+		class_info_dict = self.get_classinfo_json()
+		class_info_service.add_or_update_class_info(class_info_dict)
+		gclogger.info("Class info uploaded --- " + class_info_dict['class_info_key'])
+
+		academic_config_dict = self.get_academic_config_json()
+		academic_service.create_academic_config(academic_config_dict)
+		self.test_academic_config_key = academic_config_dict['academic_config_key']
+		gclogger.info("Academic Config uploaded --- " + self.test_academic_config_key)
+
 		current_class_timetables_list = self.get_current_class_timetables_list_json()
 		for current_class_timetable in current_class_timetables_list :
 			response = timetable_service.create_timetable(current_class_timetable)
@@ -38,11 +52,12 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		for current_calendar in current_teacher_calendars_list :
 			response = calendar_service.add_or_update_calendar(current_calendar)
 			gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A teacher calendar uploaded --------- '+str(current_calendar['calendar_key']))
+		gclogger.info("\n[UpdateSubjectTeacherIntegratorTest] Setup COMPLETE ------\n")
 
-		
+
 	def test_timetables_and_calendars(self) :
 		division = 'A'
-		class_info_key = '8B1B22E72AE'	
+		class_info_key = 'class-key-1'
 		subject_code = 'bio3'
 		existing_teacher_emp_key = 'employee-3'
 		new_teacher_emp_key = 'employee-1'
@@ -57,7 +72,7 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		expected_teacher_calendars = self.get_expected_teacher_calendars_list()
 		expected_teacher_calendars_list = self.update_teacher_calendars_object_to_future_date(expected_teacher_calendars)
 		expected_class_timetables_list = self.get_expected_class_timetables_list()
-		
+
 
 		updated_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
 		updated_previous_teacher_timetable = timetable_service.get_timetable_entry_by_employee(existing_teacher_emp_key,current_cls_timetable.academic_year)
@@ -141,8 +156,16 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		return updated_teacher_calendars_list
 
 	def tearDown(self) :
+		gclogger.info("\n[UpdateSubjectTeacherIntegratorTest] Tear Down START ------\n")
 		division = 'A'
-		class_info_key = '8B1B22E72AE'	
+		class_info_key = 'class-key-1'
+		class_info_service.delete_class_info(class_info_key)
+		gclogger.info("--------------- A class deleted  " + class_info_key +"  -----------------")
+
+		academic_service.delete_academic_config(self.test_academic_config_key)
+		gclogger.info("--------------- Academic config deleted  " + self.test_academic_config_key +"  -----------------")
+
+
 		subject_code = 'bio3'
 		subscriber_key = class_info_key + '-' + division
 		updated_class_timetable = timetable_service.get_timetable_by_class_key_and_division(class_info_key,division)
@@ -163,10 +186,11 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		for updated_teacher_calendar in updated_teacher_calendars_list :
 			calendar_service.delete_calendar(updated_teacher_calendar.calendar_key)
 			gclogger.info("--------------- A updated teacher calendar deleted " + updated_teacher_calendar.calendar_key+" -----------------")
+		gclogger.info("\n[UpdateSubjectTeacherIntegratorTest] Tear Down completed ------\n")
 
 
 
-					
+
 
 
 	def get_class_timetable(self,class_key,division,current_class_timetables_list) :
@@ -337,7 +361,17 @@ class UpdateSubjectTeacherIntegratorTest(unittest.TestCase):
 		with open('tests/unit/fixtures/update-subject-teacher-fixtures/current_class_timetables.json', 'r') as current_class_timetables:
 			current_class_timetables_dict = json.load(current_class_timetables)
 		return current_class_timetables_dict
-			
+
+	def get_classinfo_json(self) :
+		with open('tests/unit/fixtures/update-subject-teacher-fixtures/class_info.json', 'r') as class_info:
+			class_info_dict = json.load(class_info)
+		return class_info_dict
+
+	def get_academic_config_json(self) :
+		with open('tests/unit/fixtures/update-subject-teacher-fixtures/academic_configuration.json', 'r') as class_info:
+			class_info_dict = json.load(class_info)
+		return class_info_dict
+
 
 	def get_current_teacher_timetables_list_json(self) :
 		with open('tests/unit/fixtures/update-subject-teacher-fixtures/current_teacher_timetables.json', 'r') as current_teacher_timetables:

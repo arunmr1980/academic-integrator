@@ -1,7 +1,7 @@
 [
    {
       "academic_year":"2020-2021",
-      "class_key":"8B1B22E72AE",
+      "class_key":"class-key-1",
       "class_name":"LKG",
       "config_parameters":{
          "subject_preferences":[
@@ -146,7 +146,7 @@
                      "division_code":null,
                      "employee_key":"employee-1",
                      "period_code":"MON-1",
-                     "subject_key":"bio1"
+                     "subject_key":"che1"
                   },
                   {
                      "class_info_key":null,
@@ -187,7 +187,7 @@
                      "division_code":null,
                      "employee_key":"employee-1",
                      "period_code":"TUE-3",
-                     "subject_key":"bio1"
+                     "subject_key":"che1"
                   }
                ]
             },
@@ -214,7 +214,7 @@
                      "division_code":null,
                      "employee_key":"employee-1",
                      "period_code":"WED-3",
-                     "subject_key":"bio1"
+                     "subject_key":"che1"
                   }
                ]
             }
