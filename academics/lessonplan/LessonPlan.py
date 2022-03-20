@@ -163,9 +163,9 @@ class LessonPlan:
 		assignments_list = []
 		for assignment in assignments :
 			item = {
-				'code' : assignment.code,
-				'time_to_complete_mins' : assignment.time_to_complete_mins
 			}
+			if hasattr(assignment,'course_assignment_key') and assignment.course_assignment_key is not None :
+				item['course_assignment_key'] = assignment.course_assignment_key
 			if hasattr(assignment,'assigned_to') and assignment.assigned_to is not None :
 				item['assigned_to'] = self.get_assigned_to(assignment.assigned_to)
 			assignments_list.append(item)
@@ -175,6 +175,8 @@ class LessonPlan:
 		item = {}
 		if hasattr(assigned_to,'type') and assigned_to.type is not None :
 			item['type'] = assigned_to.type
+		if hasattr(assigned_to,'time_to_complete_mins') and assigned_to.time_to_complete_mins is not None :
+			item['time_to_complete_mins'] = assigned_to.time_to_complete_mins
 		if hasattr(assigned_to,'status') and assigned_to.status is not None :
 			item['status'] = assigned_to.status
 		if hasattr(assigned_to,'assigned_date') and assigned_to.assigned_date is not None :
@@ -201,6 +203,8 @@ class LessonPlan:
 				item['resources'] = session.resources
 			if hasattr(session,'comments') and session.comments is not None :
 				item['comments'] = self.get_comments(session.comments)
+			if hasattr(session,'assignments') and session.assignments is not None :
+				item['assignments'] = self.get_assignment(session.assignments)
 			if hasattr(session,'schedule') and session.schedule is not None :
 				item['schedule'] = self.get_schedule(session.schedule)
 			sessions_list.append(item)
@@ -392,11 +396,12 @@ class Assignment :
 	def __init__(self, item):
 		if item is None:
 			self.code = None
+			self.course_assignment_key = None
 			self.time_to_complete_mins = None
 			self.assigned_to = {}
 		else :
-			self.code = item['code']
-			self.time_to_complete_mins = item['time_to_complete_mins']
+			self.course_assignment_key = item['course_assignment_key']
+			# self.time_to_complete_mins = item['time_to_complete_mins']
 			# self.description = item['description']
 			self.assigned_to = None
 			try :
@@ -410,8 +415,12 @@ class AssignedTo :
 			self.status = None
 			self.type = None
 			self.assigned_date = None
+			self.time_to_complete_mins = None
 		else :
-
+			try :
+				self.time_to_complete_mins = item['time_to_complete_mins']
+			except KeyError as ke:
+				logger.debug('[WARN] - KeyError in time_to_complete_mins - type not present'.format(str (ke)))
 			try :
 				self.type = item['type']
 			except KeyError as ke:
@@ -448,6 +457,7 @@ class Session :
 			self.name = None
 			self.order_index = None
 			self.resources = []
+			self.assignments = []
 			self.comments = []
 			self.schedule = None
 		else :
@@ -455,13 +465,19 @@ class Session :
 			self.name = item['name']
 			self.order_index = item['order_index']
 			self.comments = []
+			self.assignments = []
 			try :
 				comments = item['comments']
 				for comment in comments :
 					self.comments.append(Comment(comment))
 			except KeyError as ke:
 				logger.debug('[WARN] - KeyError in Session - comments not present'.format(str (ke)))
-
+			try :
+				assignments = item['assignments']
+				for assignment in assignments :
+					self.assignments.append(Assignment(assignment))
+			except KeyError as ke:
+				logger.debug('[WARN] - KeyError in Session - assignments not present'.format(str (ke)))
 			try :
 				description = item['description']
 				self.description = description
