@@ -95,7 +95,7 @@ class LessonPlan:
 			}
 			if hasattr(resource,'description') and resource.description is not None :
 				item['description'] = resource.description
-			if hasattr(resource,'description') and resource.description is not None :
+			if hasattr(resource,'link') and resource.link is not None :
 				item['link'] = resource.link
 			if hasattr(resource,'file_key') and resource.file_key is not None :
 				item['file_key'] = resource.file_key
