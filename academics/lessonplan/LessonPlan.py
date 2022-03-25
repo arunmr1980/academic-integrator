@@ -261,6 +261,7 @@ class Resources :
 			self.code = None
 			self.link = None
 			self.name = None
+			self.description = None
 			self.publishable = None
 			self.type = None
 			self.file_key = None
@@ -274,7 +275,11 @@ class Resources :
 				self.link = link
 			except KeyError as ke:
 				logger.debug('[WARN] - KeyError in Resources - link not present'.format(str (ke)))
-
+			try :
+				description = item['description']
+				self.description = description
+			except KeyError as ke:
+				logger.debug('[WARN] - KeyError in Resources - description not present'.format(str (ke)))
 			try :
 				file_key = item['file_key']
 				self.file_key = file_key
