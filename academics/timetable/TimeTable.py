@@ -78,7 +78,9 @@ class TimeTable:
                 'school_key': timetable.school_key,
                 'time_table_key': timetable.time_table_key,
             }
-
+            if hasattr(timetable,'time_table_config_code') and timetable.time_table_config_code is not None:
+                item['time_table_config_code'] = timetable.time_table_config_code
+                
             if hasattr(timetable,'class_key') and timetable.class_key is not None:
                 item['class_key'] = timetable.class_key
 
