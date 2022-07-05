@@ -89,7 +89,7 @@ def get_new_teacher_timetable(new_teacher_emp_key,current_cls_timetable,subject_
 		timetable = get_timetable_from_updated_class_timetable(current_cls_timetable)
 		timetable = reset_periods(timetable,new_teacher_emp_key,subject_code)
 		new_teacher_timetable = generate_teacher_timetable(new_teacher_emp_key,timetable,current_cls_timetable)
-		# gclogger.info(" ------------ Generating new teacher timetable  ------------- "+ str(new_teacher_timetable.time_table_key) + '-----------')
+		gclogger.info(" ------------ Generating new teacher timetable  ------------- "+ str(new_teacher_timetable.time_table_key) + '-----------')
 	return new_teacher_timetable
 
 
@@ -203,7 +203,7 @@ def integrate_update_subject_teacher(
 
 	updated_class_timetable = update_current_class_timetable(current_class_timetable,subject_code,new_teacher_timetable.employee_key, config_code)
 	updated_class_timetables_list.append(updated_class_timetable)
-	updated_existing_teacher_timetable = update_existing_teacher_timetable(existing_teacher_timetable,subject_code,period_list, config_code)
+	updated_existing_teacher_timetable = update_existing_teacher_timetable(existing_teacher_timetable,subject_code,period_list, config_code, class_info_key,division)
 	updated_teacher_timetables_list.append(updated_existing_teacher_timetable)
 	updated_new_teacher_timetable = update_new_teacher_timetable(new_teacher_timetable,period_list,subject_code, config_code)
 	updated_teacher_timetables_list.append(updated_new_teacher_timetable)
@@ -325,7 +325,7 @@ def add_or_update_period(existing_periods,period) :
 
 
 
-def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,period_list, config_code) :
+def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,period_list, config_code, class_info_key, division) :
 	if not hasattr(existing_teacher_timetable, 'time_table_config_code'):
 		existing_teacher_timetable.time_table_config_code = config_code
 	gclogger.info('[TimetableIntegrator] update_existing_teacher_timetable()' + existing_teacher_timetable.time_table_config_code)
@@ -346,7 +346,7 @@ def update_existing_teacher_timetable(existing_teacher_timetable,subject_code,pe
 							updated_period = update_previous_employee_period(period_copy)
 							day.periods[order_index - 1] = updated_period
 				else :
-					if period.subject_key == subject_code :
+					if period.subject_key == subject_code and period.class_info_key == class_info_key and period.division_code == division:
 						period_list.append(period)
 						period_copy = copy.deepcopy(period)
 						updated_period = update_previous_employee_period(period_copy)
