@@ -24,6 +24,11 @@ class TimeTable:
             self.academic_year = None
 
             try:
+                self.status = item['status']
+            except KeyError:
+                logger.debug('[WARN] - KeyError in TimeTable - status not found')
+
+            try:
                 self.academic_year = item['academic_year']
             except KeyError:
                 logger.debug('[WARN] - KeyError in TimeTable - academic_year not found')
@@ -83,6 +88,9 @@ class TimeTable:
                 
             if hasattr(timetable,'class_key') and timetable.class_key is not None:
                 item['class_key'] = timetable.class_key
+
+            if hasattr(timetable,'status') and timetable.status is not None:
+                item['status'] = timetable.status
 
             if hasattr(timetable,'class_name') and timetable.class_name is not None:
                 item['class_name'] = timetable.class_name
