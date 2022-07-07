@@ -59,7 +59,7 @@ def remove_calendar_schedules_from_lp(school_key,academic_year):
 		for div in cls.divisions:
 			lessonplans = lessonplan_service.get_lesson_plan_list(cls.class_info_key,div.code )
 			for lessonplan in lessonplans:
-				lessonplan.sessions = None
+				lessonplan.sessions = []
 				for topics in lessonplan.topics:
 					for topic in topics.topics:
 						topic.schedule = None
@@ -78,8 +78,8 @@ def reintegrate_all_class_timetable_calendar_lessonplan(school_key,academic_year
 		for div in cls.divisions:
 			timetable = timetable_service.get_timetable_by_class_key_and_division(cls.class_info_key, div.code)
 			if hasattr(timetable, 'status') and timetable.status == 'PUBLISHED':
-				generate_and_save_calenders(timetable.timetable_key, academic_year)
-				calendars_lesson_plan_integration_from_timetable(timetable.timetable_key, academic_year)
+				generate_and_save_calenders(timetable.time_table_key, academic_year)
+				calendars_lesson_plan_integration_from_timetable(timetable.time_table_key, academic_year)
 
 
 
