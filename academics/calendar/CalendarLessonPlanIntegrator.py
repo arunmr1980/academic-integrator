@@ -77,8 +77,9 @@ def reintegrate_all_class_timetable_calendar_lessonplan(school_key,academic_year
 	for cls in class_list:
 		for div in cls.divisions:
 			timetable = timetable_service.get_timetable_by_class_key_and_division(cls.class_info_key, div.code)
-			generate_and_save_calenders(timetable.timetable_key, academic_year)
-			calendars_lesson_plan_integration_from_timetable(timetable.timetable_key, academic_year)
+			if hasattr(timetable, 'status') and timetable.status == 'PUBLISHED':
+				generate_and_save_calenders(timetable.timetable_key, academic_year)
+				calendars_lesson_plan_integration_from_timetable(timetable.timetable_key, academic_year)
 
 
 
