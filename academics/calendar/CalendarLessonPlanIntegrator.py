@@ -9,6 +9,7 @@ from datetime import datetime as dt,date, timedelta
 import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.calendar.Calendar as cldr
 import academics.lessonplan.LessonPlan as lnpr
+from academics.TimetableIntegrator import generate_and_save_calenders,update_subject_teacher_integrator
 
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
@@ -19,7 +20,6 @@ def remove_calendar_lessonplan_integration(school_key,academic_year) :
 	academic_configuration = academic_service.get_academig(school_key,academic_year)
 	start_date = academic_configuration.start_date
 	end_date = academic_configuration.end_date
-
 	format = '%Y-%m-%d'
 
 	process_start_date = dt.strptime(start_date, format)
@@ -33,9 +33,11 @@ def remove_calendar_lessonplan_integration(school_key,academic_year) :
 		calendars =  calendar_service.get_all_calendars_by_school_key_and_date(school_key, str(process_start_date) )
 		for calendar in calendars:
 			if calendar.subscriber_type == 'CLASS-DIV':
+				event_list = []
 				for event in calendar.events:
-					if event.event_type == 'CLASS_SESSION':
-						event = None
+					if event.event_type != 'CLASS_SESSION':
+						event_list.append(event)
+				calendar.events = event_list
 				cal = cldr.Calendar(None)
 				calendar_dict = cal.make_calendar_dict(calendar)
 				calendar_service.add_or_update_calendar(calendar_dict)
@@ -47,6 +49,7 @@ def remove_calendar_lessonplan_integration(school_key,academic_year) :
 
 
 	remove_calendar_schedules_from_lp(school_key,academic_year)
+	reintegrate_all_class_timetable_calendar_lessonplan(school_key,academic_year)
 
 
 def remove_calendar_schedules_from_lp(school_key,academic_year):
@@ -68,6 +71,14 @@ def remove_calendar_schedules_from_lp(school_key,academic_year):
 
 	logger.info('---CALENDAR LESSONPLAN CLEAN UP COMPLETED--- ')
 
+
+def reintegrate_all_class_timetable_calendar_lessonplan(school_key,academic_year):
+	class_list = class_info_service.get_classinfo_list(school_key,academic_year)
+	for cls in class_list:
+		for div in cls.divisions:
+			timetable = timetable_service.get_timetable_by_class_key_and_division(cls.class_info_key, div.code)
+			generate_and_save_calenders(timetable.timetable_key, academic_year)
+			calendars_lesson_plan_integration_from_timetable(timetable.timetable_key, academic_year)
 
 
 
