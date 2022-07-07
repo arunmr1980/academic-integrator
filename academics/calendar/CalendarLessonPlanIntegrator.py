@@ -4,9 +4,70 @@ import academics.calendar.CalendarDBService as calendar_service
 from academics.lessonplan import LessonplanDBService as lessonplan_service
 import academics.timetable.TimeTableDBService as timetable_service
 import academics.timetable.KeyGeneration as key
+import academics.academic.AcademicDBService as academic_service
+from datetime import datetime as dt,date, timedelta
+import academics.classinfo.ClassInfoDBService as class_info_service
+import academics.calendar.Calendar as cldr
+import academics.lessonplan.LessonPlan as lnpr
 
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
+
+
+def remove_calendar_lessonplan_integration(school_key,academic_year) :
+	logger.info('---Remove_calendar_lessonplan_timetable_integration---- ')
+	academic_configuration = academic_service.get_academig(school_key,academic_year)
+	start_date = academic_configuration.start_date
+	end_date = academic_configuration.end_date
+
+	format = '%Y-%m-%d'
+
+	process_start_date = dt.strptime(start_date, format)
+	process_start_date = process_start_date.date()
+
+	process_end_date = dt.strptime(end_date, format)
+	process_end_date = process_end_date.date() + timedelta(days=1)
+
+	while str(process_end_date) != str(process_start_date):
+		logger.info('---Process on date--- '+str(process_start_date))
+		calendars =  calendar_service.get_all_calendars_by_school_key_and_date(school_key, str(process_start_date) )
+		for calendar in calendars:
+			if calendar.subscriber_type == 'CLASS-DIV':
+				for event in calendar.events:
+					if event.event_type == 'CLASS_SESSION':
+						event = None
+				cal = cldr.Calendar(None)
+				calendar_dict = cal.make_calendar_dict(calendar)
+				calendar_service.add_or_update_calendar(calendar_dict)
+
+			elif calendar.subscriber_type == 'EMPLOYEE':
+				logger.info('---Deleting employee calender on date--- '+str(process_start_date))
+				calendar_service.delete_calendar(calendar.calendar_key)
+		process_start_date = process_start_date + timedelta(days=1)
+
+
+	remove_calendar_schedules_from_lp(school_key,academic_year)
+
+
+def remove_calendar_schedules_from_lp(school_key,academic_year):
+	logger.info('---Removing schedules from lessonplan--- ')
+	class_list = class_info_service.get_classinfo_list(school_key,academic_year)
+	for cls in class_list:
+		for div in cls.divisions:
+			lessonplans = lessonplan_service.get_lesson_plan_list(cls.class_info_key,div.code )
+			for lessonplan in lessonplans:
+				lessonplan.sessions = None
+				for topics in lessonplan.topics:
+					for topic in topics.topics:
+						topic.schedule = None
+						for session in topic.sessions:
+							session.schedule = None
+				lp = lnpr.LessonPlan(None)
+				lp_dict = lp.make_lessonplan_dict(lessonplan)
+				lessonplan_service.create_lessonplan(lp_dict)
+
+	logger.info('---CALENDAR LESSONPLAN CLEAN UP COMPLETED--- ')
+
 
 
 
