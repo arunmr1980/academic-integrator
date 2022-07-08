@@ -4,9 +4,82 @@ import academics.calendar.CalendarDBService as calendar_service
 from academics.lessonplan import LessonplanDBService as lessonplan_service
 import academics.timetable.TimeTableDBService as timetable_service
 import academics.timetable.KeyGeneration as key
+import academics.academic.AcademicDBService as academic_service
+from datetime import datetime as dt,date, timedelta
+import academics.classinfo.ClassInfoDBService as class_info_service
+import academics.calendar.Calendar as cldr
+import academics.lessonplan.LessonPlan as lnpr
+from academics.TimetableIntegrator import generate_and_save_calenders,update_subject_teacher_integrator
 
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
+
+
+def remove_calendar_lessonplan_integration(school_key,academic_year) :
+	logger.info('---Remove_calendar_lessonplan_timetable_integration---- ')
+	academic_configuration = academic_service.get_academig(school_key,academic_year)
+	start_date = academic_configuration.start_date
+	end_date = academic_configuration.end_date
+	format = '%Y-%m-%d'
+
+	process_start_date = dt.strptime(start_date, format)
+	process_start_date = process_start_date.date()
+
+	process_end_date = dt.strptime(end_date, format)
+	process_end_date = process_end_date.date() + timedelta(days=1)
+
+	while str(process_end_date) != str(process_start_date):
+		logger.info('---Process on date--- '+str(process_start_date))
+		calendars =  calendar_service.get_all_calendars_by_school_key_and_date(school_key, str(process_start_date) )
+		for calendar in calendars:
+			if calendar.subscriber_type == 'CLASS-DIV':
+				event_list = []
+				for event in calendar.events:
+					if event.event_type != 'CLASS_SESSION':
+						event_list.append(event)
+				calendar.events = event_list
+				cal = cldr.Calendar(None)
+				calendar_dict = cal.make_calendar_dict(calendar)
+				calendar_service.add_or_update_calendar(calendar_dict)
+
+			elif calendar.subscriber_type == 'EMPLOYEE':
+				logger.info('---Deleting employee calender on date--- '+str(process_start_date))
+				calendar_service.delete_calendar(calendar.calendar_key)
+		process_start_date = process_start_date + timedelta(days=1)
+
+
+	remove_calendar_schedules_from_lp(school_key,academic_year)
+	reintegrate_all_class_timetable_calendar_lessonplan(school_key,academic_year)
+
+
+def remove_calendar_schedules_from_lp(school_key,academic_year):
+	logger.info('---Removing schedules from lessonplan--- ')
+	class_list = class_info_service.get_classinfo_list(school_key,academic_year)
+	for cls in class_list:
+		for div in cls.divisions:
+			lessonplans = lessonplan_service.get_lesson_plan_list(cls.class_info_key,div.code )
+			for lessonplan in lessonplans:
+				lessonplan.sessions = []
+				for topics in lessonplan.topics:
+					for topic in topics.topics:
+						topic.schedule = None
+						for session in topic.sessions:
+							session.schedule = None
+				lp = lnpr.LessonPlan(None)
+				lp_dict = lp.make_lessonplan_dict(lessonplan)
+				lessonplan_service.create_lessonplan(lp_dict)
+
+	logger.info('---CALENDAR LESSONPLAN CLEAN UP COMPLETED--- ')
+
+
+def reintegrate_all_class_timetable_calendar_lessonplan(school_key,academic_year):
+	class_list = class_info_service.get_classinfo_list(school_key,academic_year)
+	for cls in class_list:
+		for div in cls.divisions:
+			timetable = timetable_service.get_timetable_by_class_key_and_division(cls.class_info_key, div.code)
+			if hasattr(timetable, 'status') and timetable.status == 'PUBLISHED':
+				generate_and_save_calenders(timetable.time_table_key, academic_year)
+				calendars_lesson_plan_integration_from_timetable(timetable.time_table_key, academic_year)
 
 
 
