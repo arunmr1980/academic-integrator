@@ -82,6 +82,30 @@ def reintegrate_all_class_timetable_calendar_lessonplan(school_key,academic_year
 				calendars_lesson_plan_integration_from_timetable(timetable.time_table_key, academic_year)
 
 
+def integrate_lessonplan_from_calendar(class_key):
+	class_info= class_info_service.get_classinfo(class_key)
+
+	for div in class_info.divisions:
+		if div.code != 'NONE':
+			logger.info('---Division '+ str(div.code)+ ' process started---')
+			lessonplans = lessonplan_service.get_lesson_plan_list(class_key,div.code)
+			for lessonplan in lessonplans:
+				lessonplan.sessions = []
+				for topics in lessonplan.topics:
+					for topic in topics.topics:
+						topic.schedule = None
+						for session in topic.sessions:
+							session.schedule = None
+				lp = lnpr.LessonPlan(None)
+				lp_dict = lp.make_lessonplan_dict(lessonplan)
+				lessonplan_service.create_lessonplan(lp_dict)
+				logger.info('---Lessonplan Integration started---'+ str(lessonplan.subject_code))
+				integrate_calendar_to_single_lessonplan(lessonplan.lesson_plan_key)
+
+	logger.info('--- Lessonplan Integration has completed for class---'+ str(class_info.class_code))
+
+
+		
 
 def integrate_calendar_to_single_lessonplan(lesson_plan_key) :
 	current_lessonplan = lessonplan_service.get_lessonplan(lesson_plan_key)

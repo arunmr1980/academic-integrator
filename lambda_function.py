@@ -2,7 +2,7 @@ import json
 import boto3
 import traceback
 from academics.TimetableIntegrator import generate_and_save_calenders,update_subject_teacher_integrator
-from academics.calendar.CalendarLessonPlanIntegrator import calendars_lesson_plan_integration, remove_calendar_lessonplan_integration, calendars_lesson_plan_integration_from_timetable,integrate_calendar_to_single_lessonplan
+from academics.calendar.CalendarLessonPlanIntegrator import calendars_lesson_plan_integration, remove_calendar_lessonplan_integration, calendars_lesson_plan_integration_from_timetable,integrate_calendar_to_single_lessonplan, integrate_lessonplan_from_calendar
 from academics.calendar.CalendarIntegrator import add_event_integrate_calendars, remove_event_integrate_calendars, integrate_update_period_calendars_and_lessonplans,make_event_objects
 import academics.logger.GCLogger as logger
 from academics.exam.ExamIntegrator import integrate_add_exam_on_calendar,integrate_cancel_exam,integrate_update_exam
@@ -64,6 +64,8 @@ def lambda_handler(event, context):
 				calendars_to_single_lessonplan_integration(request)
 		if request_type == "REMOVE_CALENDAR_LESSONPLAN_INTEGRATION" :
 				remove_all_class_calendar_lessonplan_integration(request)
+		if request_type == "LESSONPLAN_INTEGRATION_FROM_CALENDER" :
+				calendar_lessonplan_integration(request)
 
 	except:
 		traceback.print_exc()
@@ -82,6 +84,17 @@ def remove_all_class_calendar_lessonplan_integration(request) :
 		send_response(400,"input validation error")
 	logger.info(request)
 	logger.info("--------- This SQS Request is to remove all calendar timetable lp integration ------------")
+
+def calendar_lessonplan_integration(request) :
+	try :
+		class_key = request['class_key']
+		integrate_lessonplan_from_calendar(class_key)
+	except KeyError as ke:
+		traceback.print_exc()
+		logger.info("Error in input. class_key not present")
+		send_response(400,"input validation error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to lp integration from calendar------------")
 
 
 def add_event_calendar_lessonplan_integration(request) :
