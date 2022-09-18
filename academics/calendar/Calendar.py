@@ -58,7 +58,8 @@ class Calendar:
                 item['from_time'] = event.from_time
             if hasattr(event,'to_time') and event.to_time is not None :
                 item['to_time'] = event.to_time
-
+            if hasattr(event,'event_name') and event.event_name is not None :
+                item['event_name'] = event.event_name
             if hasattr(event,'ref_calendar_key') and event.ref_calendar_key is not None :
                 item['ref_calendar_key'] = event.ref_calendar_key
             if hasattr(event, 'params') and event.params is not None and len(event.params) > 0  :
@@ -87,6 +88,7 @@ class Event :
             self.event_type = None
             self.from_time = None
             self.to_time = None
+            self.event_name = None
             # self.is_class = None
             self.status = None
             self.ref_calendar_key = None
@@ -119,6 +121,11 @@ class Event :
                 self.event_type = item['event_type']
             except KeyError as ke:
                 logger.debug ('[WARN] - KeyError in Event -event_type not present'.format (str (ke)))
+            try :
+                event_name = item['event_name']
+                self.event_name = event_name
+            except KeyError as ke:
+                logger.debug ('[WARN] - KeyError in Event -event_name not present'.format (str (ke)))
             try :
                 from_time = item['from_time']
                 self.from_time = item['from_time']
