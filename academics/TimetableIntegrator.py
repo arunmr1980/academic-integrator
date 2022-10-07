@@ -9,6 +9,7 @@ import academics.timetable.KeyGeneration as key
 import academics.calendar.Calendar as calendar
 import academics.academic.AcademicDBService as academic_service
 import academics.calendar.CalendarDBService as calendar_service
+import academics.calendar.CalendarLessonPlanIntegrator as calendarLessonPlanIntegrator
 import academics.timetable.KeyGeneration as key
 import academics.classinfo.ClassInfoDBService as class_info_service
 import academics.exam.ExamDBService as exam_service
@@ -392,10 +393,13 @@ def update_current_class_timetable(current_class_timetable,subject_code,updated_
 
 
 
+def reintegrate_timetable_calendar(time_table_key,academic_year):
 
+	generate_and_save_calenders(time_table_key,academic_year)
+	timetable = timetable_service.get_time_table(time_table_key)
+	school_key = timetable.school_key
 
-
-
+	calendarLessonPlanIntegrator.remove_calendar_lessonplan_integration_by_class_key(timetable.class_key, school_key,academic_year)
 
 
 
@@ -407,16 +411,18 @@ def generate_and_save_calenders(time_table_key,academic_year):
 	academic_configuration = academic_service.get_academig(school_key,academic_year)
 	school_calendars_list = []
 	class_calendars_list = []
-	generated_class_calendar_dict = integrate_class_timetable(timetable,academic_configuration, class_calendars_list, school_calendars_list)
+	class_key = timetable.class_key
+	division = timetable.division
+	class_info = class_info_service.get_classinfo(class_key)
+
+	generated_class_calendar_dict = integrate_class_timetable(timetable,academic_configuration, class_calendars_list, school_calendars_list,class_info)
 	# gclogger.info("Number of class calendars generated " + str(len(generated_class_calendar_dict)))
 	class_calendar_list = generated_class_calendar_dict.values()
 	generated_teacher_calendar_dict = integrate_teacher_timetable(class_calendar_list)
 	# gclogger.info("Number of teacher calendars generated " + str(len(generated_teacher_calendar_dict)))
 	teacher_calendar_list = generated_teacher_calendar_dict.values()
 
-	class_key = timetable.class_key
-	division = timetable.division
-	class_info = class_info_service.get_classinfo(class_key)
+	
 	class_div = class_integrator.get_division_from_class_info(class_info,division)
 	subject_teachers = class_integrator.get_subject_teachers_from_class_info(class_div)
 	teacher_leaves = leave_integrator.get_teacher_leaves_in_academic_year(academic_configuration,subject_teachers)
@@ -558,7 +564,7 @@ def save_or_update_calendars(class_calendar_list, teacher_calendar_list):
 
 
 
-def integrate_class_timetable(timetable, academic_configuration, class_calendars_list, school_calendars_list):
+def integrate_class_timetable(timetable, academic_configuration, class_calendars_list, school_calendars_list, class_info):
 	class_calendar_dict = {}
 	start_date = academic_configuration.start_date
 	end_date = academic_configuration.end_date
@@ -566,7 +572,11 @@ def integrate_class_timetable(timetable, academic_configuration, class_calendars
 
 	gclogger.info("Processing timetable " + timetable.time_table_key + ' between dates ' + start_date + ' - ' + end_date)
 	if is_exist_employee_key_and_subject_code(timetable) == True :
-		dates_list = get_dates(start_date,end_date)
+
+		dates_list = get_date_periods_of_academic_activity(class_info, academic_configuration)
+		# dates_list = get_dates(start_date,end_date)
+
+
 		for date in dates_list :
 			gclogger.debug(' date - ' + date)
 			gclogger.debug(' date - ' + date)
@@ -999,6 +1009,35 @@ def generate_employee_calendar(employee_key,class_calendar) :
 	employee_calendar.events = []
 
 	return employee_calendar
+
+ 
+def get_date_periods_of_academic_activity(class_info, academic_configuration):
+	# this method is to get academic activity period list from class record if present or from academic configuration(if present activity date or  acadmeic config start and end date)
+
+	dates_list = []
+	periods_of_academic_activity
+
+	if hasattr(class_info, 'periods_of_academic_activity'):
+		periods_of_academic_activity = class_info.periods_of_academic_activity
+	elif hasattr(academic_configuration, 'periods_of_academic_activity'):
+		periods_of_academic_activity = academic_configuration.periods_of_academic_activity
+	
+
+	if (periods_of_academic_activity is not None):
+		for schedule in periods_of_academic_activity:
+			start_date = schedule.start_date
+			end_date = schedule.end_date
+			date_list = get_dates(start_date,end_date)
+			dates_list.append(date_list)
+	else:
+		start_date = academic_configuration.start_date
+		end_date = academic_configuration.end_date
+		dates_list = get_dates(start_date,end_date)
+
+	return dates_list
+
+
+	
 
 
 def get_dates(start_date,end_date):

@@ -15,6 +15,60 @@ import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
 
+
+def remove_calendar_lessonplan_integration_by_class_key(class_info_key, school_key,academic_year):
+	class_info = class_info_service.get_classinfo(class_info_key)
+
+	logger.info('---Remove_calendar_lessonplan_integration_by_class_key---- ')
+	academic_configuration = academic_service.get_academig(school_key,academic_year)
+	start_date = academic_configuration.start_date
+	end_date = academic_configuration.end_date
+	format = '%Y-%m-%d'
+
+	process_start_date = dt.strptime(start_date, format) 
+	#   ----------------Need to remove from current date--------------------
+
+	process_start_date = process_start_date.date()
+
+	process_end_date = dt.strptime(end_date, format)
+	process_end_date = process_end_date.date() + timedelta(days=1)
+
+	while str(process_end_date) != str(process_start_date):
+		for cls in class_info:
+			for div in cls.divisions:
+				class_calendars =  calendar_service.get_calendar_by_date_and_key(str(process_start_date), str(class_info_key)+'-'+str(div.code) ):
+				for calendar in class_calendars:
+					removed_event_list = []
+					add_event_list = []
+					for event in calendar.events:
+						if event.event_type == 'CLASS_SESSION':
+							removed_event_list.append(event)
+						else:
+							add_event_list.append(event)
+					calendar.events = add_event_list
+					cal = cldr.Calendar(None)
+					calendar_dict = cal.make_calendar_dict(calendar)
+					calendar_service.add_or_update_calendar(calendar_dict)
+				
+				for event in removed_event_list:
+					employee_key = get_employee_key(event.params)
+					employee_calendars =  calendar_service.get_calendar_by_date_and_key(str(process_start_date), employee_key ):
+					add_event_list = []
+					for event in employee_calendars[0].events:
+						if event.event_code != event.event_code:
+							add_event_list.append(event)
+					calendar.events = add_event_list
+					cal = cldr.Calendar(None)
+					calendar_dict = cal.make_calendar_dict(calendar)
+					calendar_service.add_or_update_calendar(calendar_dict)
+
+
+def get_employee_key(params) :
+	for param in params :
+		if param.key == 'teacher_emp_key' :
+			return param.value
+
+
 def remove_calendar_lessonplan_integration(school_key,academic_year) :
 	logger.info('---Remove_calendar_lessonplan_timetable_integration---- ')
 	academic_configuration = academic_service.get_academig(school_key,academic_year)

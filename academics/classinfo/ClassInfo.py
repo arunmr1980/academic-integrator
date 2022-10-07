@@ -7,6 +7,12 @@ class ClassInfo:
             self.class_info_key = item["class_info_key"]
             self.school_key = item["school_key"]
             self.academic_year = item["academic_year"]
+             try:
+                periods_of_academic_activity = item["periods_of_academic_activity"]
+                for division_item in division_items:
+                    self.divisions.append(Division(division_item))
+            except KeyError as ke:
+                gclogger.debug(' KeyError in ClassInfo - class_code not found'.format(str(ke)))
             try:
                 self.class_code = item["class_code"]
             except KeyError as ke:
