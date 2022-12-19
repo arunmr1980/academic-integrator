@@ -14,6 +14,7 @@ class LessonPlan:
 			self.resources = []
 			self.assignments = []
 			self.sessions = []
+			self.audit_logs = []
 		else:
 			self.lesson_plan_key = item['lesson_plan_key']
 			self.class_key = item['class_key']
@@ -23,6 +24,13 @@ class LessonPlan:
 			self.resources = []
 			self.assignments = []
 			self.sessions = []
+			self.audit_logs = []
+			try :
+				audit_logs = item['audit_logs']
+				for audit_log in audit_logs :
+					self.audit_logs.append(AuditLog(audit_log))
+			except KeyError as ke:
+				logger.debug('[WARN] - KeyError in LessonPlan - audit_logs not present'.format(str (ke)))
 			try :
 				sessions = item['sessions']
 				for session in sessions :
@@ -64,7 +72,22 @@ class LessonPlan:
 			item['resources'] = self.get_resources_dict(lessonplan.resources)
 		if hasattr(lessonplan,'assignments') and lessonplan.assignments is not None :
 			item['assignments'] = self.get_assignments_dict(lessonplan.assignments)
+		if hasattr(lessonplan,'audit_logs') and lessonplan.audit_logs is not None :
+			item['audit_logs'] = self.get_audit_log_dict(lessonplan.audit_logs)
 		return item
+
+	def get_audit_log_dict(self,audit_logs) :
+		audit_log_list = []
+		for log in audit_logs :
+			item = {
+				'date' : log.date,
+				'message' :log.message,
+			}
+		
+			audit_log_list.append(item)
+		return audit_log_list
+
+
 
 	def get_assignments_dict(self,assignments) :
 		assignments_list = []
@@ -452,6 +475,22 @@ class Resource :
 				self.code = code
 			except KeyError as ke:
 				logger.debug ('[WARN] - KeyError in Resource - code not present'.format (str (ke)))
+
+class AuditLog :
+	def __init__(self, item):
+		if item is None:
+			self.date = None
+			self.message = None
+		else :
+			try :
+				date = item['code']
+				message = item['message']
+				self.date = date
+				self.message = message
+			except KeyError as ke:
+				logger.debug ('[WARN] - KeyError in Auditlog - log not present'.format (str (ke)))
+
+
 class Session :
 	def __init__(self, item):
 		if item is None:
