@@ -7,7 +7,7 @@ from academics.calendar.CalendarIntegrator import add_event_integrate_calendars,
 import academics.logger.GCLogger as logger
 from academics.exam.ExamIntegrator import integrate_add_exam_on_calendar,integrate_cancel_exam,integrate_update_exam
 from academics.leave.LeaveIntegrator import integrate_add_leave_on_calendar,integrate_leave_cancel,integrate_lessonplan_on_substitute_teacher
-from academics.lessonplan.LessonplanIntegrator import integrate_add_class_session_events
+from academics.lessonplan.LessonplanIntegrator import integrate_add_class_session_events,copy_lesson_plan
 from academics.classinfo.ClassInfoDBService import get_classinfo 
 
 def lambda_handler(event, context):
@@ -66,6 +66,8 @@ def lambda_handler(event, context):
 				remove_all_class_calendar_lessonplan_integration(request)
 		if request_type == "LESSONPLAN_INTEGRATION_FROM_CALENDER" :
 				calendar_lessonplan_integration(request)
+		if request_type == "COPY_LESSONPLAN_FROM_PREVIOUS_YEAR" :
+				copy_lessonplan_from_previous_year_integration(request)
 
 	except:
 		traceback.print_exc()
@@ -95,6 +97,20 @@ def calendar_lessonplan_integration(request) :
 		send_response(400,"input validation error")
 	logger.info(request)
 	logger.info("--------- This SQS Request is to lp integration from calendar------------")
+
+def copy_lessonplan_from_previous_year_integration(request) :
+	try :
+		school_key = request['school_key']
+		copy_from_year = request['copy_from_year']
+		copy_to_year = request['copy_to_year']
+
+		copy_lesson_plan(school_key, copy_from_year, copy_to_year)
+	except KeyError as ke:
+		traceback.print_exc()
+		logger.info("Error in input. school_key not present")
+		send_response(400,"input validation error")
+	logger.info(request)
+	logger.info("--------- This SQS Request is to copy lp integration from previous year------------")
 
 
 def add_event_calendar_lessonplan_integration(request) :

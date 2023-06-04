@@ -13,6 +13,73 @@ import copy
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
+def copy_lesson_plan(school_key, copy_from_acc_year = '2022-2023', copy_to_acc_year = '2023-2024'):
+	copy_from_class_info_list = class_info_service.get_classinfo_list(school_key, copy_from_acc_year)
+	copy_to_class_info_list = class_info_service.get_classinfo_list(school_key, copy_to_acc_year)
+
+	for class_info in copy_to_class_info_list :
+		gclogger.info("class ------------------->  " + str(class_info.class_code))
+		matched_cls =  getClassByClassCode(copy_from_class_info_list,class_info)
+		if matched_cls != None:
+			for division in class_info.divisions:
+				gclogger.info("division ------------------->  " + str(division.code))
+				matched_div = getDivisionByDivCode(matched_cls.divisons, division)
+				if matched_div != None:
+					previous_lessonplans_list = lessonplan_service.get_lesson_plan_list(matched_cls.class_info_key, matched_div.code)
+					for sub in class_info.subjects:
+						matched_lesson_plan = getLessonplanBySubCode(previous_lessonplans_list, sub)
+						if matched_lesson_plan != None:
+							modifyAndCopyLessonplan(matched_lesson_plan, class_info, division)
+
+							if hasattr(sub , 'constituent_subjects') :
+								for consub in sub.constituent_subjects:
+									matched_lesson_plan = getLessonplanBySubCode(previous_lessonplans_list, consub)
+									modifyAndCopyLessonplan(matched_lesson_plan, class_info, division)
+
+
+
+def modifyAndCopyLessonplan(matched_lesson_plan, cls, division):
+	gclogger.info("Modify And Copy Lesson plan ------------------->  " + str(matched_lesson_plan.subject_code))
+	matched_lesson_plan.lesson_plan_key = key.generate_key(32)
+	matched_lesson_plan.assignments = []
+	matched_lesson_plan.audit_logs = []
+	matched_lesson_plan.class_key = cls.class_info_key
+	matched_lesson_plan.division = division.code
+	matched_lesson_plan.sessions = []
+	for topics in matched_lesson_plan.topics:
+		topics.comments = []
+		for topic in topics.topics:
+			topic.assignments = []
+			for session in topic.sessions:
+				session.completion_datetime = None
+				session.completion_datetime = 'NA'
+				session.comments = []
+				session.assignments = []
+				session.schedule = None
+
+	updateLessonplan = []
+	updateLessonplan.append(matched_lesson_plan)
+
+	save_lessonplans(updateLessonplan)
+
+
+def getLessonplanBySubCode(lessonplans, subject):
+	for lessonplan in lessonplans:
+		if lessonplan.subject_code == subject.code:
+			return lessonplan
+
+
+def getClassByClassCode(class_info_list, _cls):
+	for current_cls in class_info_list :
+		if current_cls.class_code == _cls.class_code:
+			return current_cls
+
+def getDivisionByDivCode(divisions, division):
+	for div in divisions :
+		if div.code == division.code:
+			return div
+
+
 
 def integrate_add_class_session_events(calendar_key,events) :
 	updated_lessonplans_list = []
@@ -36,7 +103,7 @@ def save_lessonplans(updated_lessonplans_list) :
 		lp = lnpr.LessonPlan(None)
 		updated_lessonplan_dict = lp.make_lessonplan_dict(updated_lessonplan)
 		response = lessonplan_service.create_lessonplan(updated_lessonplan_dict)
-		# gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated lessonplan uploaded --------- '+str(updated_lessonplan_dict['lesson_plan_key']))
+		gclogger.info(str(response['ResponseMetadata']['HTTPStatusCode']) + ' ------- A updated lessonplan uploaded --------- '+str(updated_lessonplan_dict['lesson_plan_key']))
 		
 
 def get_event_code_list(events,calendar_key,updated_calendar) :
